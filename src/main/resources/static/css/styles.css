@@ -126,7 +126,7 @@ section      { padding: 6rem 2rem; }
 /* ── Hero ──────────────────────────────────────────────────── */
 .hero {
   min-height: 92vh;
-  background: url('/img/hero-bg.png') center / cover no-repeat;
+  background: url('../img/hero-bg.png') center / cover no-repeat;
   display: flex; align-items: center;
   position: relative; overflow: hidden;
   padding: 6rem 2.5rem;
