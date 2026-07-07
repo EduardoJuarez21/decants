@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle pedido — Admin | Decants MX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-page">
+
+    <!-- Header -->
+    <div class="admin-header">
+        <h1>Pedido <span th:text="'#' + ${pedido.id}" style="color: var(--gold);"></span></h1>
+        <span class="admin-brand">Decants</span>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div style="margin-bottom: 1.25rem;">
+        <a th:href="@{/admin/pedidos}" class="admin-link">&#8592; Volver a todos los pedidos</a>
+    </div>
+
+    <!-- Tarjeta de detalle -->
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2>Información del pedido</h2>
+            <!-- Badge de estado -->
+            <span th:switch="${pedido.estadoPedido.name()}">
+                <span th:case="'NUEVO'"       class="badge badge-nuevo">Nuevo</span>
+                <span th:case="'EN_REVISION'" class="badge badge-revision">En revisión</span>
+                <span th:case="'CONFIRMADO'"  class="badge badge-confirmado">Confirmado</span>
+                <span th:case="'CANCELADO'"   class="badge badge-cancelado">Cancelado</span>
+                <span th:case="'ENTREGADO'"   class="badge badge-entregado">Entregado</span>
+                <span th:case="*"             class="badge" th:text="${pedido.estadoPedido.etiqueta}"></span>
+            </span>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-field">
+                <span class="field-label">Nombre del cliente</span>
+                <span class="field-value" th:text="${pedido.nombreCliente}"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Teléfono / WhatsApp</span>
+                <span class="field-value" th:text="${pedido.telefono}"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Correo electrónico</span>
+                <span class="field-value"
+                      th:text="${pedido.email != null and !#strings.isEmpty(pedido.email)} ? ${pedido.email} : '—'"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Tipo de producto</span>
+                <span class="field-value" th:text="${pedido.tipoProducto}"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Cantidad</span>
+                <span class="field-value" th:text="${pedido.cantidad} + ' pieza(s)'"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Color preferido</span>
+                <span class="field-value"
+                      th:text="${pedido.colorPreferido != null and !#strings.isEmpty(pedido.colorPreferido)} ? ${pedido.colorPreferido} : '—'"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Texto personalizado</span>
+                <span class="field-value"
+                      th:text="${pedido.textoPersonalizado != null and !#strings.isEmpty(pedido.textoPersonalizado)} ? ${pedido.textoPersonalizado} : '—'"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Fecha del evento</span>
+                <span class="field-value"
+                      th:text="${pedido.fechaEvento != null} ? ${#temporals.format(pedido.fechaEvento, 'dd/MM/yyyy')} : '—'"></span>
+            </div>
+            <div class="detail-field full-width"
+                 th:if="${pedido.productosSeleccionados != null and !#strings.isEmpty(pedido.productosSeleccionados)}">
+                <span class="field-label">Productos seleccionados</span>
+                <span class="field-value" th:text="${pedido.productosSeleccionados}"
+                      style="font-weight:500; color:var(--dark);"></span>
+            </div>
+
+            <div class="detail-field full-width">
+                <span class="field-label">Comentarios</span>
+                <span class="field-value"
+                      th:text="${pedido.comentarios != null and !#strings.isEmpty(pedido.comentarios)} ? ${pedido.comentarios} : '—'"
+                      style="white-space: pre-wrap;"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Fecha de creación</span>
+                <span class="field-value" th:text="${#temporals.format(pedido.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Última actualización</span>
+                <span class="field-value" th:text="${#temporals.format(pedido.fechaActualizacion, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a th:href="'https://wa.me/52' + ${#strings.replace(pedido.telefono, ' ', '')}"
+           target="_blank"
+           class="btn btn-whatsapp btn-sm">
+            &#128172; Contactar por WhatsApp
+        </a>
+        <a th:href="@{/admin/pedidos}" class="btn btn-sm" style="background: var(--beige); color: var(--dark);">
+            &#8592; Lista de pedidos
+        </a>
+    </div>
+
+</div>
+</body>
+</html>

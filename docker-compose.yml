@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: decants_db
+      POSTGRES_USER: decants_user
+      POSTGRES_PASSWORD: decants_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - decants_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+volumes:
+  decants_data:

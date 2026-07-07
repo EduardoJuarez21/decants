@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realizar pedido — Decants MX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <a th:href="@{/}" class="navbar-brand">Decants</a>
+    <ul class="navbar-nav">
+        <li><a th:href="@{/}">← Seguir viendo</a></li>
+    </ul>
+</nav>
+
+<div class="form-page">
+    <div class="form-header">
+        <div class="gold-line"></div>
+        <h1 class="section-title">Realiza tu pedido</h1>
+        <p class="section-subtitle" style="margin-bottom: 0;">
+            Completa tus datos y te contactamos para confirmar detalles y envío.
+        </p>
+    </div>
+
+    <div class="form-card">
+
+        <!-- Resumen del carrito (llenado por JS desde localStorage) -->
+        <div id="cartSummarySection" class="cart-summary-form" style="display:none;">
+            <h4>&#128722; Tu selección</h4>
+            <div id="cartFormItems"></div>
+            <div class="cart-form-total-row">
+                <span>Total estimado</span>
+                <strong id="cartFormTotal"></strong>
+            </div>
+            <a th:href="@{/}" class="cart-form-edit">← Modificar carrito</a>
+        </div>
+
+        <!-- Mensaje si el carrito está vacío -->
+        <div id="emptyCartMsg" style="display:none; text-align:center; padding:2rem 0; color:var(--muted);">
+            <p style="font-size:1.8rem; margin-bottom:0.5rem;">&#128722;</p>
+            <p>Tu carrito está vacío.</p>
+            <a th:href="@{/}" class="btn btn-primary" style="margin-top:1rem; display:inline-flex;">Ver productos</a>
+        </div>
+
+        <form th:action="@{/pedido/crear}" th:object="${pedidoDTO}" method="post" id="pedidoForm">
+
+            <!-- Campos ocultos que se llenan desde el carrito (JS) -->
+            <input type="hidden" th:field="*{tipoProducto}" id="tipoProductoInput">
+            <input type="hidden" th:field="*{cantidad}"     id="cantidadInput">
+            <input type="hidden" th:field="*{productosSeleccionados}" id="productosInput">
+
+            <div class="form-grid">
+
+                <!-- ── DATOS DE CONTACTO ─────────────────────────────── -->
+                <div class="form-section-title">Datos de contacto</div>
+                <div class="form-divider"></div>
+
+                <div class="form-group">
+                    <label for="nombreCliente">Nombre completo <span class="required">*</span></label>
+                    <input type="text"
+                           id="nombreCliente"
+                           th:field="*{nombreCliente}"
+                           th:class="${#fields.hasErrors('nombreCliente')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="Tu nombre completo" />
+                    <span class="field-error"
+                          th:if="${#fields.hasErrors('nombreCliente')}"
+                          th:errors="*{nombreCliente}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono / WhatsApp <span class="required">*</span></label>
+                    <input type="tel"
+                           id="telefono"
+                           th:field="*{telefono}"
+                           th:class="${#fields.hasErrors('telefono')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="55 1234 5678" />
+                    <span class="field-error"
+                          th:if="${#fields.hasErrors('telefono')}"
+                          th:errors="*{telefono}"></span>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="email">Correo electrónico <span style="color:var(--muted); font-weight:400;">(opcional)</span></label>
+                    <input type="email"
+                           id="email"
+                           th:field="*{email}"
+                           th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="tu@correo.com" />
+                    <span class="field-error"
+                          th:if="${#fields.hasErrors('email')}"
+                          th:errors="*{email}"></span>
+                </div>
+
+                <!-- Opciones de caja — solo paquete regalo -->
+                <div id="boxSection" class="form-group full-width" style="display:none;">
+                    <div class="form-section-title" style="margin-bottom:0.75rem;">Opciones de caja</div>
+                    <div class="form-divider" style="margin-bottom:1rem;"></div>
+                    <label style="font-size:0.83rem; font-weight:500; margin-bottom:0.5rem; display:block;">Estilo de caja</label>
+                    <div class="box-options">
+                        <label class="box-option">
+                            <input type="radio" name="boxStyle" value="Caja premium negra" checked>
+                            <span class="box-option-label"><span class="box-option-icon">🖤</span>Negra</span>
+                        </label>
+                        <label class="box-option">
+                            <input type="radio" name="boxStyle" value="Caja premium dorada">
+                            <span class="box-option-label"><span class="box-option-icon">✨</span>Dorada</span>
+                        </label>
+                        <label class="box-option">
+                            <input type="radio" name="boxStyle" value="Caja premium crema">
+                            <span class="box-option-label"><span class="box-option-icon">🤍</span>Crema</span>
+                        </label>
+                    </div>
+                    <div style="margin-top:1rem;">
+                        <label for="boxMessage" style="font-size:0.83rem; font-weight:500;">Mensaje en la caja <span style="color:var(--muted); font-weight:400;">(opcional)</span></label>
+                        <textarea id="boxMessage" class="form-control" maxlength="150" rows="2" style="margin-top:0.45rem;"
+                                  placeholder="Ej: Feliz cumpleaños, te quiero mucho ♡"></textarea>
+                    </div>
+                </div>
+
+                <!-- Comentarios ocultos: recibe datos de paquete y caja -->
+                <input type="hidden" th:field="*{comentarios}" id="comentariosInput">
+
+                <div class="form-submit" id="submitSection" style="display:none;">
+                    <button type="submit" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1rem;">
+                        Enviar pedido
+                    </button>
+                </div>
+
+                <p class="form-note" id="formNote" style="display:none;">
+                    <span class="required">*</span> Campos obligatorios.
+                    Te contactaremos para confirmar tu pedido y darte el costo final.
+                </p>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <span class="brand">Decants</span>
+        <p>&copy; 2024 Decants MX. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<script>
+    var cart = JSON.parse(localStorage.getItem('decants_cart') || '[]');
+    var activePkg = JSON.parse(localStorage.getItem('decants_paquete') || 'null');
+
+    function getTotal() {
+        return cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
+    }
+    function getCount() {
+        return cart.reduce(function(s, i) { return s + i.qty; }, 0);
+    }
+
+    function initForm() {
+        var summarySection = document.getElementById('cartSummarySection');
+        var emptyMsg       = document.getElementById('emptyCartMsg');
+        var formGrid       = document.getElementById('pedidoForm').querySelector('.form-grid');
+        var submitSection  = document.getElementById('submitSection');
+        var formNote       = document.getElementById('formNote');
+        var boxSection     = document.getElementById('boxSection');
+
+        if (cart.length === 0) {
+            emptyMsg.style.display = 'block';
+            formGrid.style.display = 'none';
+            return;
+        }
+
+        // Validar mínimo de paquete
+        if (activePkg && getCount() < activePkg.min) {
+            emptyMsg.style.display = 'block';
+            emptyMsg.innerHTML =
+                '<p style="font-size:1.8rem; margin-bottom:0.5rem;">⚠️</p>' +
+                '<p style="font-weight:600;">Tu ' + activePkg.label + ' necesita ' + activePkg.min + ' fragancias.</p>' +
+                '<p style="margin-top:0.3rem;">Solo tienes ' + getCount() + ' elegida' + (getCount() !== 1 ? 's' : '') + '.</p>' +
+                '<a href="/#productos" class="btn btn-primary" style="margin-top:1rem; display:inline-flex;">← Volver a elegir</a>';
+            formGrid.style.display = 'none';
+            return;
+        }
+
+        // Mostrar resumen
+        summarySection.style.display = 'block';
+        submitSection.style.display  = 'flex';
+        formNote.style.display       = 'block';
+
+        // Mostrar opciones de caja si es paquete regalo
+        if (activePkg && activePkg.hasBox) {
+            boxSection.style.display = 'block';
+        }
+
+        // Renderizar ítems en resumen
+        var itemsHtml = cart.map(function(item) {
+            return '<div class="cart-form-item">' +
+                '<div>' +
+                    '<p class="cart-form-item-name">' + item.name + '</p>' +
+                    '<p class="cart-form-item-sub">Decant 10 ml × ' + item.qty + '</p>' +
+                '</div>' +
+                (activePkg ? '' : '<span class="cart-form-price">$' + (item.price * item.qty).toFixed(2) + '</span>') +
+            '</div>';
+        }).join('');
+
+        // Si hay paquete activo mostrar su precio fijo; si no, la suma individual
+        var totalHtml;
+        if (activePkg) {
+            totalHtml = '<span style="font-size:0.8rem;color:var(--muted);text-decoration:line-through;margin-right:0.5rem;">$' +
+                        getTotal().toFixed(2) + '</span>' +
+                        '<strong style="color:var(--gold);">$' + activePkg.price.toFixed(2) + '</strong>' +
+                        '<span style="font-size:0.72rem;color:var(--gold);margin-left:0.4rem;">Precio ' + activePkg.label + '</span>';
+        } else {
+            totalHtml = '<strong>$' + getTotal().toFixed(2) + '</strong>';
+        }
+        document.getElementById('cartFormItems').innerHTML = itemsHtml;
+        document.getElementById('cartFormTotal').innerHTML = totalHtml;
+
+        // Rellenar campos ocultos
+        var tipoLabel = activePkg ? 'Paquete ' + activePkg.label : 'Decant 10ml';
+        var totalLabel = activePkg ? '$' + activePkg.price.toFixed(2) + ' (paquete)' : '$' + getTotal().toFixed(2);
+        var resumen = (activePkg ? '[' + activePkg.label + '] ' : '') +
+            cart.map(function(i) { return i.name + ' x' + i.qty; }).join(', ') +
+            ' — Total: ' + totalLabel;
+
+        document.getElementById('tipoProductoInput').value = tipoLabel;
+        document.getElementById('cantidadInput').value     = getCount();
+        document.getElementById('productosInput').value    = resumen;
+    }
+
+    // Al enviar: recoger datos de caja y limpiar localStorage
+    document.getElementById('pedidoForm').addEventListener('submit', function() {
+        if (document.getElementById('boxSection').style.display !== 'none') {
+            var boxStyle = document.querySelector('input[name="boxStyle"]:checked');
+            var boxMsg   = document.getElementById('boxMessage').value.trim();
+            var extras   = boxStyle ? boxStyle.value : 'Caja premium negra';
+            if (boxMsg) extras += ' — Mensaje: "' + boxMsg + '"';
+            document.getElementById('comentariosInput').value = extras;
+        }
+        localStorage.removeItem('decants_cart');
+        localStorage.removeItem('decants_paquete');
+    });
+
+    initForm();
+</script>
+</body>
+</html>

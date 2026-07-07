@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos — Admin | Decants MX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-page">
+
+    <!-- Header -->
+    <div class="admin-header">
+        <h1>Panel de administración</h1>
+        <span class="admin-brand">Decants</span>
+    </div>
+
+    <!-- Tabla de pedidos -->
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2>Todos los pedidos</h2>
+            <a th:href="@{/pedido/nuevo}" class="btn btn-primary btn-sm">+ Nuevo pedido</a>
+        </div>
+
+        <!-- Sin pedidos -->
+        <div th:if="${#lists.isEmpty(pedidos)}" style="padding: 3.5rem; text-align: center; color: var(--muted);">
+            <p style="font-size: 1rem; margin-bottom: 1.25rem;">Aún no hay pedidos registrados.</p>
+            <a th:href="@{/pedido/nuevo}" class="btn btn-primary btn-sm">Crear primer pedido</a>
+        </div>
+
+        <!-- Con pedidos -->
+        <div th:unless="${#lists.isEmpty(pedidos)}" style="overflow-x: auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${pedidos}">
+                        <td th:text="${p.id}"></td>
+                        <td th:text="${p.nombreCliente}"></td>
+                        <td th:text="${p.telefono}"></td>
+                        <td th:text="${p.tipoProducto}"></td>
+                        <td th:text="${p.cantidad}"></td>
+                        <td>
+                            <span th:switch="${p.estadoPedido.name()}">
+                                <span th:case="'NUEVO'"      class="badge badge-nuevo">Nuevo</span>
+                                <span th:case="'EN_REVISION'" class="badge badge-revision">En revisión</span>
+                                <span th:case="'CONFIRMADO'" class="badge badge-confirmado">Confirmado</span>
+                                <span th:case="'CANCELADO'"  class="badge badge-cancelado">Cancelado</span>
+                                <span th:case="'ENTREGADO'"  class="badge badge-entregado">Entregado</span>
+                                <span th:case="*"            class="badge">-</span>
+                            </span>
+                        </td>
+                        <td th:text="${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <a th:href="@{/admin/pedidos/{id}(id=${p.id})}" class="admin-link">Ver detalle</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Vínculo a la landing -->
+    <div style="margin-top: 1.5rem; text-align: center;">
+        <a th:href="@{/}" class="admin-link">&#8592; Ir a la página principal</a>
+    </div>
+
+</div>
+</body>
+</html>

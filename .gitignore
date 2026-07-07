@@ -1,0 +1,15 @@
+target/
+*.class
+*.jar
+*.war
+
+.env
+*.env
+
+.idea/
+*.iml
+.vscode/
+
+docker-compose.vps-fragment.yml
+
+HELP.md

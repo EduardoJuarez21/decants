@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido registrado — Decants MX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <a th:href="@{/}" class="navbar-brand">Decants</a>
+</nav>
+
+<div class="confirmation-page">
+    <div class="confirmation-card">
+
+        <div class="check-circle">&#10003;</div>
+
+        <h1>¡Pedido registrado!</h1>
+        <p class="subtitle">
+            Recibimos tu solicitud con éxito. Te contactaremos pronto
+            para confirmar los detalles y darte el costo final.
+        </p>
+
+        <!-- Resumen del pedido (disponible via FlashAttribute) -->
+        <div class="order-summary" th:if="${pedido != null}">
+            <div class="order-summary-item">
+                <span class="label">Número de pedido</span>
+                <span class="value order-id" th:text="'#' + ${pedido.id}"></span>
+            </div>
+            <div class="order-summary-item">
+                <span class="label">Nombre</span>
+                <span class="value" th:text="${pedido.nombreCliente}"></span>
+            </div>
+            <div class="order-summary-item">
+                <span class="label">Producto</span>
+                <span class="value" th:text="${pedido.tipoProducto}"></span>
+            </div>
+            <div class="order-summary-item">
+                <span class="label">Cantidad</span>
+                <span class="value" th:text="${pedido.cantidad} + ' pieza(s)'"></span>
+            </div>
+            <div class="order-summary-item"
+                 th:if="${pedido.textoPersonalizado != null and !#strings.isEmpty(pedido.textoPersonalizado)}">
+                <span class="label">Texto personalizado</span>
+                <span class="value" th:text="${pedido.textoPersonalizado}"></span>
+            </div>
+            <div class="order-summary-item">
+                <span class="label">Estado</span>
+                <span class="value" th:text="${pedido.estadoPedido.etiqueta}"></span>
+            </div>
+        </div>
+
+        <div class="btn-group" style="justify-content: center; flex-direction: column; align-items: center; gap: 0.9rem;">
+            <a href="https://wa.me/520000000000"
+               target="_blank"
+               class="btn btn-whatsapp"
+               style="width: 100%; justify-content: center;">
+                &#128172; Contactar por WhatsApp
+            </a>
+            <a th:href="@{/}" class="btn" style="color: var(--dark); border: 1.5px solid var(--nude); width: 100%; justify-content: center;">
+                Volver al inicio
+            </a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
