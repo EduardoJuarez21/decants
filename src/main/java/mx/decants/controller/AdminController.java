@@ -22,6 +22,13 @@ public class AdminController {
         this.productoService = productoService;
     }
 
+    // ── Login ────────────────────────────────────────────────────────────────
+
+    @GetMapping("/login")
+    public String login() {
+        return "admin/login";
+    }
+
     // ── Pedidos ──────────────────────────────────────────────────────────────
 
     @GetMapping("/pedidos")

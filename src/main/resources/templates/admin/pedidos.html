@@ -14,9 +14,16 @@
 <div class="admin-page">
 
     <!-- Header -->
-    <div class="admin-header">
+    <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
         <h1>Panel de administración</h1>
-        <span class="admin-brand">Decants</span>
+        <div style="display:flex; align-items:center; gap:1.5rem;">
+            <span class="admin-brand">Decants</span>
+            <form th:action="@{/admin/logout}" method="post" style="margin:0;">
+                <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- Nav admin -->
