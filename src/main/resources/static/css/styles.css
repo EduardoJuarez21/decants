@@ -284,7 +284,7 @@ section      { padding: 6rem 2rem; }
   object-fit: contain;
   padding: 1rem 1.2rem 0.8rem;
   filter: drop-shadow(0 6px 16px rgba(0,0,0,0.16));
-  transition: transform var(--ease), filter var(--ease);
+  transition: transform var(--ease), filter var(--ease), opacity var(--ease);
 }
 .product-card:hover .product-img {
   transform: scale(1.07) translateY(-6px);
@@ -332,6 +332,24 @@ section      { padding: 6rem 2rem; }
   z-index: 2;
 }
 .product-add-btn:hover { background: var(--gold); color: var(--black); transform: scale(1.12); }
+
+/* Hover swap — imagen de características al hacer hover sobre la imagen principal */
+.product-img-hover {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  padding: 1rem 1.2rem 0.8rem;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,0.16));
+  opacity: 0;
+  z-index: 1;
+  transition: opacity var(--ease), transform var(--ease), filter var(--ease);
+}
+.product-image-area.has-hover-img:hover .product-img { opacity: 0; }
+.product-image-area.has-hover-img:hover .product-img-hover {
+  opacity: 1;
+  transform: scale(1.07) translateY(-6px);
+  filter: drop-shadow(0 14px 28px rgba(0,0,0,0.24));
+}
 
 /* Card info */
 .product-info { padding: 1rem 1.2rem 1.3rem; text-align: left; }
