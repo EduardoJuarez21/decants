@@ -766,6 +766,12 @@
 <!-- Toast notification -->
 <div class="cart-toast" id="cartToast"></div>
 
+<!-- Lightbox características -->
+<div class="lb-overlay" id="lbOverlay" onclick="closeLightbox()">
+    <button class="lb-close" onclick="closeLightbox()">✕</button>
+    <img class="lb-img" id="lbImg" src="" alt="">
+</div>
+
 <!-- ═══════════════════════════════════════════════════════════
      FOOTER
 ════════════════════════════════════════════════════════════ -->
@@ -1022,6 +1028,28 @@
     renderCart();
     updatePkgBanner();
     updateProductButtons();
+
+    /* ── Lightbox características ── */
+    document.querySelectorAll('.product-image-area.has-hover-img').forEach(function(area) {
+        area.addEventListener('click', function(e) {
+            if (e.target.classList.contains('product-add-btn') || e.target.closest('.product-add-btn')) return;
+            var hoverImg = area.querySelector('.product-img-hover');
+            if (!hoverImg) return;
+            document.getElementById('lbImg').src = hoverImg.src;
+            document.getElementById('lbImg').alt = hoverImg.alt;
+            document.getElementById('lbOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    function closeLightbox() {
+        document.getElementById('lbOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLightbox();
+    });
 </script>
 </body>
 </html>
