@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo — Admin | Decants MX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-page">
+
+    <div class="admin-header">
+        <h1>Panel de administración</h1>
+        <span class="admin-brand">Decants</span>
+    </div>
+
+    <!-- Nav admin -->
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+        <a th:href="@{/admin/pedidos}" class="admin-link">Pedidos</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/admin/productos}" class="admin-link" style="font-weight:700;">Catálogo</a>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2>Catálogo de productos</h2>
+            <span style="font-size:0.8rem; color:var(--muted);">
+                Activos: <strong th:text="${#lists.size(productos.?[activo == true])}"></strong>
+                &nbsp;·&nbsp;
+                Inactivos: <strong th:text="${#lists.size(productos.?[activo == false])}"></strong>
+            </span>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Marca</th>
+                        <th>Categoría</th>
+                        <th>Género</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${productos}">
+                        <td th:text="${p.id}" style="color:var(--muted);"></td>
+                        <td>
+                            <strong th:text="${p.nombre}"></strong>
+                            <span th:if="${p.bestSeller}"
+                                  style="margin-left:6px; font-size:0.65rem; background:#1a1a1a; color:#c9a96e;
+                                         padding:2px 6px; border-radius:4px; vertical-align:middle;">
+                                ★ Best Seller
+                            </span>
+                        </td>
+                        <td th:text="${p.marca}"></td>
+                        <td>
+                            <span th:text="${p.categoria == 'alta-perfumeria' ? 'Alta Perfumería' : 'Nicho Árabe'}"></span>
+                        </td>
+                        <td style="text-transform:capitalize;" th:text="${p.genero}"></td>
+                        <td>
+                            <span th:text="|$${p.precio}|"></span>
+                            <span th:if="${p.precio5ml != null}"
+                                  style="font-size:0.75rem; color:var(--muted);"
+                                  th:text="| / $${p.precio5ml} (5ml)|"></span>
+                        </td>
+                        <td>
+                            <span th:if="${p.activo}"  class="badge badge-activo">Activo</span>
+                            <span th:unless="${p.activo}" class="badge badge-inactivo">Inactivo</span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/productos/{id}/toggle(id=${p.id})}" method="post">
+                                <button type="submit"
+                                        th:class="${p.activo ? 'btn-toggle btn-toggle-off' : 'btn-toggle btn-toggle-on'}">
+                                    <span th:text="${p.activo ? 'Desactivar' : 'Activar'}"></span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin-top: 1.5rem; text-align: center;">
+        <a th:href="@{/}" class="admin-link">&#8592; Ir a la página principal</a>
+    </div>
+
+</div>
+</body>
+</html>

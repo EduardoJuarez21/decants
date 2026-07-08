@@ -2,6 +2,7 @@ package mx.decants.controller;
 
 import mx.decants.entity.Pedido;
 import mx.decants.service.PedidoService;
+import mx.decants.service.ProductoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,14 @@ import java.util.Optional;
 public class AdminController {
 
     private final PedidoService pedidoService;
+    private final ProductoService productoService;
 
-    public AdminController(PedidoService pedidoService) {
+    public AdminController(PedidoService pedidoService, ProductoService productoService) {
         this.pedidoService = pedidoService;
+        this.productoService = productoService;
     }
+
+    // ── Pedidos ──────────────────────────────────────────────────────────────
 
     @GetMapping("/pedidos")
     public String listarPedidos(Model model) {
@@ -34,5 +39,19 @@ public class AdminController {
         }
         model.addAttribute("pedido", pedido.get());
         return "admin/detalle";
+    }
+
+    // ── Productos ─────────────────────────────────────────────────────────────
+
+    @GetMapping("/productos")
+    public String listarProductos(Model model) {
+        model.addAttribute("productos", productoService.listarTodos());
+        return "admin/productos";
+    }
+
+    @PostMapping("/productos/{id}/toggle")
+    public String toggleProducto(@PathVariable Long id) {
+        productoService.toggleActivo(id);
+        return "redirect:/admin/productos";
     }
 }

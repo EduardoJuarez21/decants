@@ -802,6 +802,18 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 .badge-confirmado { background: #e8f5e9; color: #2e7d32; }
 .badge-cancelado  { background: #fce4ec; color: #c62828; }
 .badge-entregado  { background: #f3e5f5; color: #6a1b9a; }
+.badge-activo     { background: #e8f5e9; color: #2e7d32; }
+.badge-inactivo   { background: #fce4ec; color: #c62828; }
+
+/* Toggle buttons en tabla de productos admin */
+.btn-toggle {
+  border: none; border-radius: 6px; padding: 0.32rem 0.85rem;
+  font-size: 0.75rem; font-weight: 600; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-toggle:hover { opacity: 0.8; }
+.btn-toggle-off { background: #fce4ec; color: #c62828; }
+.btn-toggle-on  { background: #e8f5e9; color: #2e7d32; }
 .detail-grid {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 1.5rem; padding: 2rem;

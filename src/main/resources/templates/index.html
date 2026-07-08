@@ -86,314 +86,50 @@
 
         <div class="products-grid" id="grid-designer">
 
-            <!-- Acqua di Gio — Hombre -->
-            <div class="product-card" data-filter="hombre">
-                <div class="product-image-area pi-acqua has-hover-img">
-                    <img th:src="@{/img/alta-perfumeria/hombre/aqua-di-gio.png}" alt="Acqua di Giò" class="product-img">
-                    <img th:src="@{/img/alta-perfumeria/hombre/car-aqua-di-gio.png}" alt="Características Acqua di Giò" class="product-img-hover">
+            <div class="product-card" th:each="p : ${productosDesigner}" th:data-filter="${p.genero}">
+                <div th:class="|product-image-area ${p.claseCss}${p.imagenCaracteristicas != null ? ' has-hover-img' : ''}|">
+                    <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img">
+                    <img th:if="${p.imagenCaracteristicas != null}"
+                         th:src="@{${p.imagenCaracteristicas}}"
+                         th:alt="|Características ${p.nombre}|"
+                         class="product-img-hover">
+                    <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
+                    <button th:if="${p.precio5ml == null}"
+                            class="product-add-btn"
+                            th:data-name="${p.nombre}"
+                            th:data-price="${p.precio}"
+                            th:data-solo="${p.soloItem}"
+                            onclick="addFromBtn(this)">+</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Giorgio Armani</p>
-                    <h3>Acqua di Giò</h3>
-                    <p class="product-family">Acuático Aromático · Hombre</p>
-                    <p class="product-notes">Bergamota · Neroli · Mar · Pachulí</p>
+                    <p class="product-brand" th:text="${p.marca}"></p>
+                    <h3 th:text="${p.nombre}"></h3>
+                    <p class="product-family" th:text="${p.familia}"></p>
+                    <p class="product-notes" th:text="${p.notas}"></p>
                     <div class="star-rating">
                         <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.9)</span>
+                        <span class="rating-num" th:text="|([[${p.calificacion}]])|"></span>
                     </div>
-                    <div class="size-options">
-                        <button class="size-btn" data-name="Acqua di Giò 5ml" onclick="addToCart('Acqua di Giò 5ml', 160)">
+                    <div th:if="${p.precio5ml != null}" class="size-options">
+                        <button class="size-btn"
+                                th:data-name="|${p.nombre} 5ml|"
+                                th:data-price="${p.precio5ml}"
+                                onclick="addFromBtn(this)">
                             <span class="size-label">5 ml</span>
-                            <span class="size-price">$160</span>
+                            <span class="size-price" th:text="|$${p.precio5ml}|"></span>
                         </button>
-                        <button class="size-btn" data-name="Acqua di Giò 10ml" onclick="addToCart('Acqua di Giò 10ml', 310)">
+                        <button class="size-btn"
+                                th:data-name="|${p.nombre} 10ml|"
+                                th:data-price="${p.precio}"
+                                onclick="addFromBtn(this)">
                             <span class="size-label">10 ml</span>
-                            <span class="size-price">$310</span>
+                            <span class="size-price" th:text="|$${p.precio}|"></span>
                         </button>
                     </div>
-                </div>
-            </div>
-
-            <!-- D&G Light Blue — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-lightblue">
-                    <img th:src="@{/img/alta-perfumeria/hombre/dg-light-blue.webp}" alt="D&G Light Blue" class="product-img">
-                    <button class="product-add-btn" data-name="D&G Light Blue" onclick="addToCart('D&G Light Blue', 160)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Dolce &amp; Gabbana</p>
-                    <h3>Light Blue</h3>
-                    <p class="product-family">Floral Frutal · Mujer</p>
-                    <p class="product-notes">Manzana · Cedro · Bambú · Ámbar</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.8)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $160.00</p>
-                </div>
-            </div>
-
-            <!-- Tom Ford Ombré Leather — Hombre -->
-            <div class="product-card" data-filter="hombre">
-                <div class="product-image-area pi-tomford">
-                    <img th:src="@{/img/alta-perfumeria/hombre/tom-ford-ombre-leather.webp}" alt="Tom Ford Ombré Leather" class="product-img">
-                    <button class="product-add-btn" data-name="Tom Ford Ombré Leather" onclick="addToCart('Tom Ford Ombré Leather', 290)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Tom Ford</p>
-                    <h3>Ombré Leather</h3>
-                    <p class="product-family">Cuero Amaderado · Hombre</p>
-                    <p class="product-notes">Cuero · Cardamomo · Jazmín · Patchouli</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.9)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $290.00</p>
-                </div>
-            </div>
-
-            <!-- Valentino — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-valentino">
-                    <img th:src="@{/img/alta-perfumeria/hombre/valentino.webp}" alt="Valentino" class="product-img">
-                    <button class="product-add-btn" data-name="Valentino Donna Born in Roma" onclick="addToCart('Valentino Donna Born in Roma', 220)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Valentino</p>
-                    <h3>Donna Born in Roma</h3>
-                    <p class="product-family">Floral Gourmand · Mujer</p>
-                    <p class="product-notes">Jazmín · Vainilla · Vetiver · Iris</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.7)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $220.00</p>
-                </div>
-            </div>
-
-            <!-- Ariana Grande Cloud — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-cloud">
-                    <span class="badge-bestseller">Best Seller</span>
-                    <img th:src="@{/img/alta-perfumeria/mujer/ariana-cloud.jpg}" alt="Ariana Grande Cloud" class="product-img">
-                    <button class="product-add-btn" data-name="Ariana Grande Cloud" data-solo="true" onclick="addToCart('Ariana Grande Cloud', 219)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Ariana Grande</p>
-                    <h3>Cloud</h3>
-                    <p class="product-family">Floral Frutal · Mujer</p>
-                    <p class="product-notes">Lavanda · Pera · Coco · Praliné</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.5)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $219.00</p>
-                </div>
-            </div>
-
-            <!-- Bleu de Chanel — Hombre -->
-            <div class="product-card" data-filter="hombre">
-                <div class="product-image-area pi-bleu has-hover-img">
-                    <img th:src="@{/img/alta-perfumeria/hombre/blue-de-chanel.png}" alt="Bleu de Chanel" class="product-img">
-                    <img th:src="@{/img/alta-perfumeria/hombre/car-blue-de-chanel.png}" alt="Características Bleu de Chanel" class="product-img-hover">
-                    <button class="product-add-btn" data-name="Bleu de Chanel" onclick="addToCart('Bleu de Chanel', 250)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Chanel</p>
-                    <h3>Bleu de Chanel</h3>
-                    <p class="product-family">Aromático Amaderado · Hombre</p>
-                    <p class="product-notes">Limón · Jengibre · Sándalo · Cedro</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.9)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $250.00</p>
-                </div>
-            </div>
-
-            <!-- Dior Sauvage — Hombre -->
-            <div class="product-card" data-filter="hombre">
-                <div class="product-image-area pi-sauvage">
-                    <img th:src="@{/img/alta-perfumeria/hombre/dior-sauvage.webp}" alt="Dior Sauvage" class="product-img">
-                    <button class="product-add-btn" data-name="Dior Sauvage" onclick="addToCart('Dior Sauvage', 240)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Dior</p>
-                    <h3>Sauvage</h3>
-                    <p class="product-family">Aromático Especiado · Hombre</p>
-                    <p class="product-notes">Bergamota · Pimienta · Ambroxan · Vetiver</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.9)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $240.00</p>
-                </div>
-            </div>
-
-            <!-- Jean Paul Gaultier Le Male — Hombre -->
-            <div class="product-card" data-filter="hombre">
-                <div class="product-image-area pi-lemale has-hover-img">
-                    <img th:src="@{/img/alta-perfumeria/hombre/paul-gaultier.png}" alt="Jean Paul Gaultier Le Male" class="product-img">
-                    <img th:src="@{/img/alta-perfumeria/hombre/car-paul-gaultier.png}" alt="Características Jean Paul Gaultier Le Male" class="product-img-hover">
-                    <button class="product-add-btn" data-name="JPG Le Male" onclick="addToCart('JPG Le Male', 190)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Jean Paul Gaultier</p>
-                    <h3>Le Male</h3>
-                    <p class="product-family">Oriental Fougère · Hombre</p>
-                    <p class="product-notes">Lavanda · Menta · Vainilla · Ámbar</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.8)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $190.00</p>
-                </div>
-            </div>
-
-            <!-- Paco Rabanne 1 Million — Hombre -->
-            <div class="product-card" data-filter="hombre">
-                <div class="product-image-area pi-million">
-                    <img th:src="@{/img/alta-perfumeria/hombre/one-million.webp}" alt="1 Million Paco Rabanne" class="product-img">
-                    <button class="product-add-btn" data-name="1 Million Paco Rabanne" onclick="addToCart('1 Million Paco Rabanne', 190)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Paco Rabanne</p>
-                    <h3>1 Million</h3>
-                    <p class="product-family">Oriental Especiado · Hombre</p>
-                    <p class="product-notes">Mandarina · Canela · Cuero · Pachulí</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.8)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $190.00</p>
-                </div>
-            </div>
-
-            <!-- YSL Black Opium — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-blackopium">
-                    <img th:src="@{/img/alta-perfumeria/mujer/black-opium.webp}" alt="YSL Black Opium" class="product-img">
-                    <button class="product-add-btn" data-name="YSL Black Opium" onclick="addToCart('YSL Black Opium', 200)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Yves Saint Laurent</p>
-                    <h3>Black Opium</h3>
-                    <p class="product-family">Oriental Gourmand · Mujer</p>
-                    <p class="product-notes">Café · Vainilla · Flor Blanca · Cedro</p>
-                    <div class="star-rating"><span class="stars">★★★★★</span><span class="rating-num">(4.8)</span></div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $200.00</p>
-                </div>
-            </div>
-
-            <!-- Coco Mademoiselle Chanel — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-coco">
-                    <img th:src="@{/img/alta-perfumeria/mujer/coco-chanel.webp}" alt="Coco Mademoiselle" class="product-img">
-                    <button class="product-add-btn" data-name="Coco Mademoiselle Chanel" onclick="addToCart('Coco Mademoiselle Chanel', 280)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Chanel</p>
-                    <h3>Coco Mademoiselle</h3>
-                    <p class="product-family">Oriental Floral · Mujer</p>
-                    <p class="product-notes">Naranja · Rosa · Jazmín · Pachulí</p>
-                    <div class="star-rating"><span class="stars">★★★★★</span><span class="rating-num">(4.9)</span></div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $280.00</p>
-                </div>
-            </div>
-
-            <!-- Daisy Marc Jacobs — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-daisy">
-                    <img th:src="@{/img/alta-perfumeria/mujer/daysi.jfif}" alt="Daisy Marc Jacobs" class="product-img">
-                    <button class="product-add-btn" data-name="Daisy Marc Jacobs" onclick="addToCart('Daisy Marc Jacobs', 180)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Marc Jacobs</p>
-                    <h3>Daisy</h3>
-                    <p class="product-family">Floral Frutal · Mujer</p>
-                    <p class="product-notes">Fresa · Violeta · Jazmín · Sándalo</p>
-                    <div class="star-rating"><span class="stars">★★★★★</span><span class="rating-num">(4.7)</span></div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $180.00</p>
-                </div>
-            </div>
-
-            <!-- Good Girl Carolina Herrera — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-goodgirl">
-                    <img th:src="@{/img/alta-perfumeria/mujer/goodgirlcherrera.jfif}" alt="Good Girl Carolina Herrera" class="product-img">
-                    <button class="product-add-btn" data-name="Good Girl Carolina Herrera" onclick="addToCart('Good Girl Carolina Herrera', 220)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Carolina Herrera</p>
-                    <h3>Good Girl</h3>
-                    <p class="product-family">Oriental Floral · Mujer</p>
-                    <p class="product-notes">Jazmín · Cacao · Tonka · Café</p>
-                    <div class="star-rating"><span class="stars">★★★★★</span><span class="rating-num">(4.8)</span></div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $220.00</p>
-                </div>
-            </div>
-
-            <!-- J'adore Dior — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-jadore">
-                    <img th:src="@{/img/alta-perfumeria/mujer/jadore.webp}" alt="J'adore Dior" class="product-img">
-                    <button class="product-add-btn" data-name="J'adore Dior" onclick="addToCart('J\'adore Dior', 240)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Dior</p>
-                    <h3>J'adore</h3>
-                    <p class="product-family">Floral Afrutado · Mujer</p>
-                    <p class="product-notes">Ylang Ylang · Rosa · Jazmín · Vainilla</p>
-                    <div class="star-rating"><span class="stars">★★★★★</span><span class="rating-num">(4.8)</span></div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $240.00</p>
-                </div>
-            </div>
-
-            <!-- Libre YSL — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-libre">
-                    <img th:src="@{/img/alta-perfumeria/mujer/libre.webp}" alt="Libre YSL" class="product-img">
-                    <button class="product-add-btn" data-name="Libre YSL" onclick="addToCart('Libre YSL', 220)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Yves Saint Laurent</p>
-                    <h3>Libre</h3>
-                    <p class="product-family">Floral Amaderado · Mujer</p>
-                    <p class="product-notes">Lavanda · Naranja · Jazmín · Musgo</p>
-                    <div class="star-rating"><span class="stars">★★★★★</span><span class="rating-num">(4.8)</span></div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $220.00</p>
-                </div>
-            </div>
-
-            <!-- Sì Giorgio Armani — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-si">
-                    <img th:src="@{/img/alta-perfumeria/mujer/si-giorgio-armani.webp}" alt="Sì Giorgio Armani" class="product-img">
-                    <button class="product-add-btn" data-name="Sì Giorgio Armani" onclick="addToCart('Sì Giorgio Armani', 200)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Giorgio Armani</p>
-                    <h3>Sì</h3>
-                    <p class="product-family">Chypre Floral · Mujer</p>
-                    <p class="product-notes">Grosella negra · Rosa · Pachulí · Vainilla</p>
-                    <div class="star-rating"><span class="stars">★★★★★</span><span class="rating-num">(4.7)</span></div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $200.00</p>
-                </div>
-            </div>
-
-            <!-- Viktor & Rolf Flowerbomb — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-flowerbomb">
-                    <img th:src="@{/img/alta-perfumeria/mujer/viktor.webp}" alt="Flowerbomb Viktor&Rolf" class="product-img">
-                    <button class="product-add-btn" data-name="Flowerbomb Viktor&amp;Rolf" onclick="addToCart('Flowerbomb Viktor&amp;Rolf', 230)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Viktor &amp; Rolf</p>
-                    <h3>Flowerbomb</h3>
-                    <p class="product-family">Floral Oriental · Mujer</p>
-                    <p class="product-notes">Bergamota · Jazmín · Rosa · Pachulí</p>
-                    <div class="star-rating"><span class="stars">★★★★★</span><span class="rating-num">(4.8)</span></div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $230.00</p>
+                    <p th:unless="${p.precio5ml != null}" class="product-price-tag">
+                        <span class="desde">Decant 10 ml</span>
+                        <span th:text="|$${p.precio}.00|"></span>
+                    </p>
                 </div>
             </div>
 
@@ -418,90 +154,34 @@
 
         <div class="products-grid" id="grid-arabe">
 
-            <!-- ① Armaf Club de Nuit Intense Man — Hombre -->
-            <div class="product-card" data-filter="hombre">
-                <div class="product-image-area pi-cdni has-hover-img">
-                    <img th:src="@{/img/arabe/club-de-nuit.png}" alt="Armaf Club de Nuit Intense Man" class="product-img">
-                    <img th:src="@{/img/arabe/car-club-de-nuit.png}" alt="Características Club de Nuit Intense Man" class="product-img-hover">
-                    <span class="badge-bestseller">Best Seller</span>
-                    <button class="product-add-btn" data-name="Armaf Club de Nuit Intense Man" onclick="addToCart('Armaf Club de Nuit Intense Man', 99)">+</button>
+            <div class="product-card" th:each="p : ${productosArabe}" th:data-filter="${p.genero}">
+                <div th:class="|product-image-area ${p.claseCss}${p.imagenCaracteristicas != null ? ' has-hover-img' : ''}|">
+                    <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img">
+                    <img th:if="${p.imagenCaracteristicas != null}"
+                         th:src="@{${p.imagenCaracteristicas}}"
+                         th:alt="|Características ${p.nombre}|"
+                         class="product-img-hover">
+                    <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
+                    <button class="product-add-btn"
+                            th:data-name="${p.nombre}"
+                            th:data-price="${p.precio}"
+                            onclick="addFromBtn(this)">+</button>
                 </div>
                 <div class="product-info">
-                    <p class="product-brand">Armaf</p>
-                    <h3>Club de Nuit Intense Man</h3>
-                    <p class="product-family">Woody Especiado · Hombre</p>
-                    <p class="product-notes">Limón · Piña · Abedul · Almizclé</p>
+                    <p class="product-brand" th:text="${p.marca}"></p>
+                    <h3 th:text="${p.nombre}"></h3>
+                    <p class="product-family" th:text="${p.familia}"></p>
+                    <p class="product-notes" th:text="${p.notas}"></p>
                     <div class="star-rating">
                         <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.8)</span>
+                        <span class="rating-num" th:text="|([[${p.calificacion}]])|"></span>
                     </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $99.00</p>
+                    <p class="product-price-tag">
+                        <span class="desde">Decant 10 ml</span>
+                        <span th:text="|$${p.precio}.00|"></span>
+                    </p>
                 </div>
             </div>
-
-            <!-- ② Afnan 9PM — Hombre -->
-            <div class="product-card" data-filter="hombre">
-                <div class="product-image-area pi-9pm has-hover-img">
-                    <img th:src="@{/img/arabe/9pm.png}" alt="Afnan 9PM" class="product-img">
-                    <img th:src="@{/img/arabe/car-9pm.png}" alt="Características Afnan 9PM" class="product-img-hover">
-                    <span class="badge-bestseller">Best Seller</span>
-                    <button class="product-add-btn" data-name="Afnan 9PM" onclick="addToCart('Afnan 9PM', 99)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Afnan</p>
-                    <h3>9PM</h3>
-                    <p class="product-family">Oriental Vainilla · Hombre</p>
-                    <p class="product-notes">Manzana · Canela · Vainilla · Ámbar</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.7)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $99.00</p>
-                </div>
-            </div>
-
-            <!-- ③ Lattafa Khamrah — Unisex -->
-            <div class="product-card" data-filter="unisex">
-                <div class="product-image-area pi-khamrah has-hover-img">
-                    <img th:src="@{/img/arabe/khamrah.jpeg}" alt="Lattafa Khamrah" class="product-img">
-                    <img th:src="@{/img/arabe/car-khamrah.png}" alt="Características Lattafa Khamrah" class="product-img-hover">
-                    <span class="badge-bestseller">Best Seller</span>
-                    <button class="product-add-btn" data-name="Lattafa Khamrah" onclick="addToCart('Lattafa Khamrah', 99)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Lattafa</p>
-                    <h3>Khamrah</h3>
-                    <p class="product-family">Oriental Especiado · Unisex</p>
-                    <p class="product-notes">Canela · Dátiles · Praliné · Vainilla</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.8)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $99.00</p>
-                </div>
-            </div>
-
-            <!-- ④ Lattafa Yara — Mujer -->
-            <div class="product-card" data-filter="mujer">
-                <div class="product-image-area pi-yara has-hover-img">
-                    <img th:src="@{/img/arabe/yara.png}" alt="Lattafa Yara" class="product-img">
-                    <img th:src="@{/img/arabe/car-yara.png}" alt="Características Lattafa Yara" class="product-img-hover">
-                    <span class="badge-bestseller">Best Seller</span>
-                    <button class="product-add-btn" data-name="Lattafa Yara" onclick="addToCart('Lattafa Yara', 89)">+</button>
-                </div>
-                <div class="product-info">
-                    <p class="product-brand">Lattafa</p>
-                    <h3>Yara</h3>
-                    <p class="product-family">Floral Gourmand · Mujer</p>
-                    <p class="product-notes">Orquídea · Mandarina · Vainilla · Sándalo</p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num">(4.6)</span>
-                    </div>
-                    <p class="product-price-tag"><span class="desde">Decant 10 ml</span> $89.00</p>
-                </div>
-            </div>
-
 
         </div>
 
@@ -874,7 +554,11 @@
     /* ── Shopping Cart ── */
     var cart = JSON.parse(localStorage.getItem('decants_cart') || '[]');
 
-    var SOLO_ITEMS = ['Ariana Grande Cloud'];
+    var SOLO_ITEMS = ['Cloud'];
+
+    function addFromBtn(btn) {
+        addToCart(btn.dataset.name, parseInt(btn.dataset.price));
+    }
     var SOLO_RESTRICTED_PKGS = ['discovery', 'coleccion', 'regalo'];
 
     function addToCart(name, price) {
