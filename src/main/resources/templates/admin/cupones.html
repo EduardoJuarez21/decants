@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cupones — Admin | Decants MX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-page">
+
+    <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
+        <h1>Panel de administración</h1>
+        <div style="display:flex; align-items:center; gap:1.5rem;">
+            <span class="admin-brand">Decants</span>
+            <form th:action="@{/admin/logout}" method="post" style="margin:0;">
+                <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Nav admin -->
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+        <a th:href="@{/admin/pedidos}"  class="admin-link">Pedidos</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/admin/productos}" class="admin-link">Catálogo</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/admin/cupones}"  class="admin-link" style="font-weight:700;">Cupones</a>
+    </div>
+
+    <!-- Formulario nuevo cupón -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>Nuevo cupón</h2>
+        </div>
+        <form th:action="@{/admin/cupones}" th:object="${nuevoCupon}" method="post"
+              style="display:flex; gap:0.75rem; padding:1.25rem 1.75rem; flex-wrap:wrap; align-items:flex-end;">
+            <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:140px;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">Código</label>
+                <input th:field="*{codigo}" type="text" placeholder="ej. BIENVENIDO10" required
+                       style="padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                              font-size:0.85rem; font-family:inherit; outline:none; text-transform:uppercase;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.3rem; flex:2; min-width:180px;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">Descripción</label>
+                <input th:field="*{descripcion}" type="text" placeholder="ej. 10% en primer pedido"
+                       style="padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                              font-size:0.85rem; font-family:inherit; outline:none;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.3rem; min-width:100px;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">Descuento %</label>
+                <input th:field="*{descuentoPorcentaje}" type="number" min="1" max="100" placeholder="10" required
+                       style="padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                              font-size:0.85rem; font-family:inherit; outline:none; width:90px;">
+            </div>
+            <button type="submit"
+                    style="padding:0.6rem 1.4rem; background:#1a1a1a; color:#fff; border:none;
+                           border-radius:8px; font-size:0.85rem; font-family:inherit; cursor:pointer;
+                           font-weight:600; white-space:nowrap;">
+                + Crear cupón
+            </button>
+        </form>
+    </div>
+
+    <!-- Tabla de cupones -->
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2>Cupones registrados</h2>
+            <span style="font-size:0.8rem; color:var(--muted);">
+                Activos: <strong th:text="${#lists.size(cupones.?[activo == true])}"></strong>
+                &nbsp;·&nbsp;
+                Inactivos: <strong th:text="${#lists.size(cupones.?[activo == false])}"></strong>
+            </span>
+        </div>
+
+        <div th:if="${#lists.isEmpty(cupones)}"
+             style="padding:3rem; text-align:center; color:var(--muted); font-size:0.9rem;">
+            No hay cupones registrados todavía.
+        </div>
+
+        <div th:unless="${#lists.isEmpty(cupones)}" style="overflow-x:auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Descuento</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${cupones}">
+                        <td th:text="${c.id}" style="color:var(--muted);"></td>
+                        <td><strong th:text="${c.codigo}" style="font-family:monospace; letter-spacing:0.5px;"></strong></td>
+                        <td th:text="${c.descripcion}"></td>
+                        <td><strong th:text="|${c.descuentoPorcentaje}%|" style="color:#2e7d32;"></strong></td>
+                        <td>
+                            <span th:if="${c.activo}"  class="badge badge-activo">Activo</span>
+                            <span th:unless="${c.activo}" class="badge badge-inactivo">Inactivo</span>
+                        </td>
+                        <td style="display:flex; gap:0.5rem;">
+                            <form th:action="@{/admin/cupones/{id}/toggle(id=${c.id})}" method="post">
+                                <button type="submit"
+                                        th:class="${c.activo ? 'btn-toggle btn-toggle-off' : 'btn-toggle btn-toggle-on'}">
+                                    <span th:text="${c.activo ? 'Desactivar' : 'Activar'}"></span>
+                                </button>
+                            </form>
+                            <form th:action="@{/admin/cupones/{id}/eliminar(id=${c.id})}" method="post"
+                                  onsubmit="return confirm('¿Eliminar este cupón?')">
+                                <button type="submit"
+                                        style="padding:0.3rem 0.75rem; background:#fce4ec; color:#c62828;
+                                               border:none; border-radius:6px; font-size:0.75rem;
+                                               cursor:pointer; font-family:inherit;">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin-top:1.5rem; text-align:center;">
+        <a th:href="@{/}" class="admin-link">&#8592; Ir a la página principal</a>
+    </div>
+
+</div>
+</body>
+</html>

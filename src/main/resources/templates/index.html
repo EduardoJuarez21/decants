@@ -28,7 +28,7 @@
         <li><a href="#inicio">Inicio</a></li>
         <li><a href="#alta-perfumeria">Alta Perfumería</a></li>
         <li><a href="#nicho-arabe">Nicho Árabe</a></li>
-        <li><a href="#paquetes">Paquetes</a></li>
+        <li style="display:none;"><a href="#paquetes">Paquetes</a></li>
         <li><a href="#personalizacion">Personalización</a></li>
         <li><a href="#galeria">Galería</a></li>
         <li><a href="#contacto">Contacto</a></li>
@@ -204,7 +204,7 @@
 <!-- ═══════════════════════════════════════════════════════════
      PAQUETES / DISCOVERY SETS
 ════════════════════════════════════════════════════════════ -->
-<section id="paquetes" class="section-center">
+<section id="paquetes" class="section-center" style="display:none;">
     <div class="container">
         <div class="gold-line"></div>
         <h2 class="section-title">Arma tu Discovery Set</h2>
@@ -416,13 +416,9 @@
     </div>
 </section>
 
-<!-- Badge flotante lateral -->
-<a th:href="@{/pedido/nuevo}" class="floating-discount" title="Primer pedido con descuento">
-    <span>&#127873; Primer pedido · 10% off</span>
-</a>
 
 <!-- Package progress banner (fixed bottom) -->
-<div class="pkg-banner" id="pkgBanner">
+<div class="pkg-banner" id="pkgBanner" style="display:none!important;">
     <div class="pkg-banner-left">
         <span class="pkg-label" id="pkgLabel">Discovery Set</span>
         <div class="pkg-dots" id="pkgDots"></div>
@@ -444,11 +440,32 @@
     <div class="cart-items" id="cartItems"></div>
     <div class="cart-footer" id="cartFooter" style="display:none;">
         <div class="cart-total-row">
-            <span>Total estimado</span>
+            <span>Subtotal</span>
+            <strong id="cartSubtotal">$0.00</strong>
+        </div>
+        <!-- Cupón -->
+        <div class="cart-cupon-section">
+            <div class="cart-cupon-row" id="cuponInputRow">
+                <input type="text" id="cuponInput" placeholder="Código de descuento"
+                       class="cupon-input" oninput="this.value=this.value.toUpperCase()">
+                <button class="cupon-apply-btn" onclick="aplicarCupon()">Aplicar</button>
+            </div>
+            <div id="cuponAplicadoRow" style="display:none;" class="cupon-aplicado-row">
+                <span id="cuponLabel"></span>
+                <button class="cupon-quitar-btn" onclick="quitarCupon()">✕</button>
+            </div>
+            <p id="cuponMsg" class="cupon-msg" style="display:none;"></p>
+        </div>
+        <div id="cuponDescRow" class="cart-total-row" style="display:none; color:#2e7d32;">
+            <span id="cuponDescLabel">Descuento</span>
+            <strong id="cuponDescMonto" style="color:#2e7d32;"></strong>
+        </div>
+        <div class="cart-total-row cart-total-final">
+            <span>Total</span>
             <strong id="cartTotal">$0.00</strong>
         </div>
         <p class="cart-pkg-warning" style="display:none; text-align:center; font-size:0.82rem; color:var(--gold); font-weight:600; background:rgba(201,169,110,0.1); padding:0.65rem 1rem; border-radius:8px; margin:0;"></p>
-        <a th:href="@{/pedido/nuevo}" class="btn btn-primary cart-checkout-btn" style="width:100%; justify-content:center;">
+        <a th:href="@{/pedido/nuevo}" class="btn btn-primary cart-checkout-btn" id="cartCheckoutBtn" style="width:100%; justify-content:center;">
             Proceder con mi pedido &rarr;
         </a>
         <p class="cart-footer-note">Te confirmamos precio y envío por WhatsApp</p>
@@ -622,12 +639,51 @@
         localStorage.setItem('decants_cart', JSON.stringify(cart));
     }
 
+    var cuponAplicado = null;
+
     function getTotal() {
         return cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
     }
 
     function getCount() {
         return cart.reduce(function(s, i) { return s + i.qty; }, 0);
+    }
+
+    function aplicarCupon() {
+        if (cuponAplicado) return;
+        var codigo = document.getElementById('cuponInput').value.trim();
+        if (!codigo) return;
+        var msgEl = document.getElementById('cuponMsg');
+        fetch('/api/cupones/validar?codigo=' + encodeURIComponent(codigo))
+            .then(function(r) {
+                if (!r.ok) throw new Error();
+                return r.json();
+            })
+            .then(function(data) {
+                cuponAplicado = { codigo: codigo, descuento: data.descuento, descripcion: data.descripcion };
+                document.getElementById('cuponInputRow').style.display = 'none';
+                var aplicadoRow = document.getElementById('cuponAplicadoRow');
+                aplicadoRow.style.display = 'flex';
+                document.getElementById('cuponLabel').textContent = codigo + ' · ' + data.descuento + '% off';
+                msgEl.style.display = 'none';
+                renderCart();
+            })
+            .catch(function() {
+                cuponAplicado = null;
+                msgEl.textContent = 'Cupón inválido o inactivo.';
+                msgEl.className = 'cupon-msg cupon-error';
+                msgEl.style.display = 'block';
+                renderCart();
+            });
+    }
+
+    function quitarCupon() {
+        cuponAplicado = null;
+        document.getElementById('cuponInput').value = '';
+        document.getElementById('cuponInputRow').style.display = 'flex';
+        document.getElementById('cuponAplicadoRow').style.display = 'none';
+        document.getElementById('cuponMsg').style.display = 'none';
+        renderCart();
     }
 
     function renderCart() {
@@ -646,14 +702,43 @@
         }
 
         var count = getCount();
-        var checkoutBtn  = footerEl.querySelector('.cart-checkout-btn');
+        var checkoutBtn  = document.getElementById('cartCheckoutBtn');
         var pkgWarning   = footerEl.querySelector('.cart-pkg-warning');
 
         footerEl.style.display = 'flex';
-        var totalDisplay = activePackage
-            ? '$' + activePackage.price.toFixed(2) + ' (precio del paquete)'
-            : '$' + getTotal().toFixed(2);
-        document.getElementById('cartTotal').textContent = totalDisplay;
+
+        // Sincronizar UI del cupón con el estado real
+        document.getElementById('cuponInputRow').style.display   = cuponAplicado ? 'none' : 'flex';
+        document.getElementById('cuponAplicadoRow').style.display = cuponAplicado ? 'flex' : 'none';
+
+        // Subtotal
+        var subtotal = activePackage ? activePackage.price : getTotal();
+        document.getElementById('cartSubtotal').textContent = '$' + subtotal.toFixed(2);
+
+        // Descuento cupón (solo si no hay paquete activo)
+        var descRow = document.getElementById('cuponDescRow');
+        if (cuponAplicado && !activePackage) {
+            var ahorro = Math.round(subtotal * cuponAplicado.descuento / 100);
+            var totalFinal = subtotal - ahorro;
+            descRow.style.display = '';
+            document.getElementById('cuponDescLabel').textContent = 'Descuento (' + cuponAplicado.descuento + '%)';
+            document.getElementById('cuponDescMonto').textContent = '-$' + ahorro.toFixed(2);
+            document.getElementById('cartTotal').textContent = '$' + totalFinal.toFixed(2);
+            if (checkoutBtn) {
+                var base = checkoutBtn.getAttribute('data-base') || checkoutBtn.href;
+                checkoutBtn.setAttribute('data-base', base);
+                checkoutBtn.href = base + '?cupon=' + encodeURIComponent(cuponAplicado.codigo);
+            }
+        } else {
+            descRow.style.display = 'none';
+            document.getElementById('cartTotal').textContent = activePackage
+                ? '$' + subtotal.toFixed(2) + ' (precio del paquete)'
+                : '$' + subtotal.toFixed(2);
+            if (checkoutBtn) {
+                var base = checkoutBtn.getAttribute('data-base');
+                if (base) checkoutBtn.href = base;
+            }
+        }
 
         // Bloquear checkout si el paquete no está completo
         if (activePackage && count < activePackage.min) {

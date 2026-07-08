@@ -914,6 +914,32 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 }
 .cart-total-row strong { font-size: 1.25rem; color: var(--black); font-family: var(--font-heading); }
 .cart-footer-note { text-align: center; font-size: 0.73rem; color: var(--muted); }
+.cart-total-final strong { font-size: 1.35rem; color: var(--black); }
+.cart-cupon-section { display: flex; flex-direction: column; gap: 0.4rem; }
+.cart-cupon-row { display: flex; gap: 0.5rem; }
+.cupon-input {
+  flex: 1; padding: 0.5rem 0.75rem; border: 1.5px solid #e0e0e0; border-radius: 8px;
+  font-size: 0.82rem; font-family: inherit; outline: none; letter-spacing: 0.5px;
+  transition: border-color 0.2s;
+}
+.cupon-input:focus { border-color: var(--gold); }
+.cupon-apply-btn {
+  padding: 0.5rem 1rem; background: #1a1a1a; color: #fff; border: none; border-radius: 8px;
+  font-size: 0.8rem; font-family: inherit; cursor: pointer; font-weight: 600; white-space: nowrap;
+  transition: background 0.2s;
+}
+.cupon-apply-btn:hover { background: var(--gold); }
+.cupon-aplicado-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #e8f5e9; border-radius: 8px; padding: 0.45rem 0.75rem;
+  font-size: 0.82rem; font-weight: 600; color: #2e7d32;
+}
+.cupon-quitar-btn {
+  background: none; border: none; cursor: pointer; color: #2e7d32;
+  font-size: 0.85rem; line-height: 1; padding: 0 0.2rem;
+}
+.cupon-msg { font-size: 0.78rem; }
+.cupon-error { color: #c62828; }
 .cart-toast {
   position: fixed; bottom: 2rem; left: 50%;
   transform: translateX(-50%) translateY(12px);

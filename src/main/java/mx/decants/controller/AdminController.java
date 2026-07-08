@@ -1,6 +1,8 @@
 package mx.decants.controller;
 
+import mx.decants.entity.Cupon;
 import mx.decants.entity.Pedido;
+import mx.decants.service.CuponService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
 import org.springframework.stereotype.Controller;
@@ -16,10 +18,12 @@ public class AdminController {
 
     private final PedidoService pedidoService;
     private final ProductoService productoService;
+    private final CuponService cuponService;
 
-    public AdminController(PedidoService pedidoService, ProductoService productoService) {
+    public AdminController(PedidoService pedidoService, ProductoService productoService, CuponService cuponService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
+        this.cuponService = cuponService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────────
@@ -60,5 +64,32 @@ public class AdminController {
     public String toggleProducto(@PathVariable Long id) {
         productoService.toggleActivo(id);
         return "redirect:/admin/productos";
+    }
+
+    // ── Cupones ───────────────────────────────────────────────────────────────
+
+    @GetMapping("/cupones")
+    public String listarCupones(Model model) {
+        model.addAttribute("cupones", cuponService.listarTodos());
+        model.addAttribute("nuevoCupon", new Cupon());
+        return "admin/cupones";
+    }
+
+    @PostMapping("/cupones")
+    public String crearCupon(@ModelAttribute Cupon cupon) {
+        cuponService.guardar(cupon);
+        return "redirect:/admin/cupones";
+    }
+
+    @PostMapping("/cupones/{id}/toggle")
+    public String toggleCupon(@PathVariable Long id) {
+        cuponService.toggleActivo(id);
+        return "redirect:/admin/cupones";
+    }
+
+    @PostMapping("/cupones/{id}/eliminar")
+    public String eliminarCupon(@PathVariable Long id) {
+        cuponService.eliminar(id);
+        return "redirect:/admin/cupones";
     }
 }
