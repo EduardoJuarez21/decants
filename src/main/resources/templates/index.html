@@ -71,6 +71,21 @@
 <section id="productos" class="bg-beige section-center">
     <div class="container">
 
+        <!-- ── Buscador global ──────────────────────────────── -->
+        <div style="margin-bottom:2rem;">
+            <input id="buscadorProductos" type="search"
+                   placeholder="&#128269; Buscar fragancia o marca…"
+                   oninput="buscarProductos()"
+                   style="width:100%; box-sizing:border-box; padding:0.85rem 1.2rem;
+                          border:1.5px solid #e0e0e0; border-radius:12px;
+                          font-size:0.95rem; font-family:inherit; outline:none;
+                          transition:border-color 0.2s; background:#fff;">
+            <p id="buscarSinResultados" style="display:none; text-align:center;
+               color:var(--muted); padding:1.5rem 0; font-size:0.9rem;">
+               Sin resultados. Intenta con otro nombre o marca.
+            </p>
+        </div>
+
         <!-- ── Alta Perfumería ──────────────────────────────── -->
         <div id="alta-perfumeria">
             <div class="gold-line"></div>
@@ -108,7 +123,7 @@
                     <p class="product-notes" th:text="${p.notas}"></p>
                     <div class="star-rating">
                         <span class="stars">★★★★★</span>
-                        <span class="rating-num" th:text="|([[${p.calificacion}]])|"></span>
+                        <span class="rating-num" th:text="|(${p.calificacion})|"></span>
                     </div>
                     <div th:if="${p.precio5ml != null}" class="size-options">
                         <button class="size-btn"
@@ -174,7 +189,7 @@
                     <p class="product-notes" th:text="${p.notas}"></p>
                     <div class="star-rating">
                         <span class="stars">★★★★★</span>
-                        <span class="rating-num" th:text="|([[${p.calificacion}]])|"></span>
+                        <span class="rating-num" th:text="|(${p.calificacion})|"></span>
                     </div>
                     <p class="product-price-tag">
                         <span class="desde">Decant 10 ml</span>
@@ -712,6 +727,22 @@
     renderCart();
     updatePkgBanner();
     updateProductButtons();
+
+    /* ── Buscador de productos ── */
+    function buscarProductos() {
+        var q = document.getElementById('buscadorProductos').value.toLowerCase().trim();
+        var total = 0;
+
+        document.querySelectorAll('#grid-designer .product-card, #grid-arabe .product-card').forEach(function(card) {
+            var nombre = card.querySelector('h3')  ? card.querySelector('h3').textContent.toLowerCase()  : '';
+            var marca  = card.querySelector('.product-brand') ? card.querySelector('.product-brand').textContent.toLowerCase() : '';
+            var match  = !q || nombre.includes(q) || marca.includes(q);
+            card.style.display = match ? '' : 'none';
+            if (match) total++;
+        });
+
+        document.getElementById('buscarSinResultados').style.display = (!q || total > 0) ? 'none' : 'block';
+    }
 
     /* ── Lightbox características ── */
     document.querySelectorAll('.product-image-area.has-hover-img').forEach(function(area) {

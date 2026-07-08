@@ -42,6 +42,31 @@
             </span>
         </div>
 
+        <!-- Filtros -->
+        <div style="display:flex; gap:0.75rem; padding:1rem 1.75rem; border-bottom:1px solid #ececec; flex-wrap:wrap;">
+            <input id="filtroTexto" type="search" placeholder="Buscar por nombre o marca…"
+                   oninput="filtrarTabla()"
+                   style="flex:1; min-width:200px; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
+                          border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
+            <select id="filtroCategoria" onchange="filtrarTabla()"
+                    style="padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                           font-size:0.85rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
+                <option value="">Todas las categorías</option>
+                <option value="Alta Perfumería">Alta Perfumería</option>
+                <option value="Nicho Árabe">Nicho Árabe</option>
+            </select>
+            <select id="filtroEstado" onchange="filtrarTabla()"
+                    style="padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                           font-size:0.85rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
+                <option value="">Todos los estados</option>
+                <option value="Activo">Activos</option>
+                <option value="Inactivo">Inactivos</option>
+            </select>
+        </div>
+        <p id="sinResultados" style="display:none; padding:2rem; text-align:center; color:var(--muted); font-size:0.88rem;">
+            Sin resultados para los filtros aplicados.
+        </p>
+
         <div style="overflow-x: auto;">
             <table class="admin-table">
                 <thead>
@@ -101,5 +126,34 @@
     </div>
 
 </div>
+
+<script>
+    function filtrarTabla() {
+        var texto     = document.getElementById('filtroTexto').value.toLowerCase().trim();
+        var categoria = document.getElementById('filtroCategoria').value.toLowerCase();
+        var estado    = document.getElementById('filtroEstado').value.toLowerCase();
+
+        var filas     = document.querySelectorAll('.admin-table tbody tr');
+        var visibles  = 0;
+
+        filas.forEach(function(fila) {
+            var celdas    = fila.querySelectorAll('td');
+            var nombre    = celdas[1].textContent.toLowerCase();
+            var marca     = celdas[2].textContent.toLowerCase();
+            var cat       = celdas[3].textContent.toLowerCase();
+            var estadoFila = celdas[6].textContent.toLowerCase().trim();
+
+            var okTexto    = !texto     || nombre.includes(texto) || marca.includes(texto);
+            var okCat      = !categoria || cat.includes(categoria);
+            var okEstado   = !estado    || estadoFila.includes(estado);
+
+            var mostrar = okTexto && okCat && okEstado;
+            fila.style.display = mostrar ? '' : 'none';
+            if (mostrar) visibles++;
+        });
+
+        document.getElementById('sinResultados').style.display = visibles === 0 ? 'block' : 'none';
+    }
+</script>
 </body>
 </html>
