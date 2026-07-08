@@ -71,21 +71,6 @@
 <section id="productos" class="bg-beige section-center">
     <div class="container">
 
-        <!-- ── Buscador global ──────────────────────────────── -->
-        <div style="margin-bottom:2rem;">
-            <input id="buscadorProductos" type="search"
-                   placeholder="&#128269; Buscar fragancia o marca…"
-                   oninput="buscarProductos()"
-                   style="width:100%; box-sizing:border-box; padding:0.85rem 1.2rem;
-                          border:1.5px solid #e0e0e0; border-radius:12px;
-                          font-size:0.95rem; font-family:inherit; outline:none;
-                          transition:border-color 0.2s; background:#fff;">
-            <p id="buscarSinResultados" style="display:none; text-align:center;
-               color:var(--muted); padding:1.5rem 0; font-size:0.9rem;">
-               Sin resultados. Intenta con otro nombre o marca.
-            </p>
-        </div>
-
         <!-- ── Alta Perfumería ──────────────────────────────── -->
         <div id="alta-perfumeria">
             <div class="gold-line"></div>
@@ -93,11 +78,23 @@
             <p class="section-subtitle">Casas de diseñador y firmas de lujo. Lo mejor del perfume occidental.</p>
         </div>
 
-        <div class="filter-tabs" style="margin-top:0;">
-            <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-designer')">Todos</button>
-            <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-designer')">Hombre</button>
-            <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-designer')">Mujer</button>
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2.75rem;">
+            <div class="filter-tabs" style="margin-top:0; margin-bottom:0; flex-shrink:0;">
+                <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-designer')">Todos</button>
+                <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-designer')">Hombre</button>
+                <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-designer')">Mujer</button>
+            </div>
+            <input id="buscadorProductos" type="search"
+                   placeholder="&#128269; Buscar…"
+                   oninput="buscarProductos()"
+                   style="flex:1; padding:0.55rem 1rem; border:1.5px solid #e0e0e0;
+                          border-radius:50px; font-size:0.85rem; font-family:inherit;
+                          outline:none; background:#fff; transition:border-color 0.2s;">
         </div>
+        <p id="buscarSinResultados" style="display:none; text-align:center;
+           color:var(--muted); margin-top:-2rem; margin-bottom:1.5rem; font-size:0.88rem;">
+           Sin resultados para esa búsqueda.
+        </p>
 
         <div class="products-grid" id="grid-designer">
 
