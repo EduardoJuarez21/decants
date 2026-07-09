@@ -3,6 +3,7 @@ package mx.decants.entity;
 public enum EstadoPedido {
 
     NUEVO("Nuevo"),
+    PENDIENTE_PAGO("Pendiente de pago"),
     EN_REVISION("En revisión"),
     CONFIRMADO("Confirmado"),
     CANCELADO("Cancelado"),

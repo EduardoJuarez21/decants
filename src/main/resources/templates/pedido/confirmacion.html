@@ -20,8 +20,11 @@
 
         <div class="check-circle">&#10003;</div>
 
-        <h1>¡Pedido registrado!</h1>
-        <p class="subtitle">
+        <h1 th:text="${pagado} ? '¡Pago recibido!' : '¡Pedido registrado!'">¡Pago recibido!</h1>
+        <p class="subtitle" th:if="${pagado}">
+            Tu pago fue procesado con éxito. Prepararemos tu pedido y te contactaremos para coordinar el envío.
+        </p>
+        <p class="subtitle" th:unless="${pagado}">
             Recibimos tu solicitud con éxito. Te contactaremos pronto
             para confirmar los detalles y darte el costo final.
         </p>
@@ -48,6 +51,10 @@
                  th:if="${pedido.textoPersonalizado != null and !#strings.isEmpty(pedido.textoPersonalizado)}">
                 <span class="label">Texto personalizado</span>
                 <span class="value" th:text="${pedido.textoPersonalizado}"></span>
+            </div>
+            <div class="order-summary-item" th:if="${pedido.totalPagado != null}">
+                <span class="label">Total pagado</span>
+                <span class="value" th:text="'$' + ${pedido.totalPagado} + ' MXN'"></span>
             </div>
             <div class="order-summary-item">
                 <span class="label">Estado</span>

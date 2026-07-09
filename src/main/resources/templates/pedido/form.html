@@ -53,6 +53,7 @@
             <input type="hidden" th:field="*{tipoProducto}" id="tipoProductoInput">
             <input type="hidden" th:field="*{cantidad}"     id="cantidadInput">
             <input type="hidden" th:field="*{productosSeleccionados}" id="productosInput">
+            <input type="hidden" th:field="*{totalMxn}"     id="totalMxnInput">
 
             <div class="form-grid">
 
@@ -229,6 +230,7 @@
         document.getElementById('tipoProductoInput').value = tipoLabel;
         document.getElementById('cantidadInput').value     = getCount();
         document.getElementById('productosInput').value    = resumen;
+        document.getElementById('totalMxnInput').value     = activePkg ? Math.round(activePkg.price) : Math.round(getTotal());
     }
 
     // Al enviar: recoger datos de caja y limpiar localStorage

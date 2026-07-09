@@ -39,6 +39,10 @@ public class Pedido {
     @Column(columnDefinition = "TEXT")
     private String productosSeleccionados;
 
+    private String stripeSessionId;
+
+    private Integer totalPagado;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoPedido estadoPedido = EstadoPedido.NUEVO;
@@ -94,6 +98,12 @@ public class Pedido {
 
     public String getProductosSeleccionados() { return productosSeleccionados; }
     public void setProductosSeleccionados(String productosSeleccionados) { this.productosSeleccionados = productosSeleccionados; }
+
+    public String getStripeSessionId() { return stripeSessionId; }
+    public void setStripeSessionId(String stripeSessionId) { this.stripeSessionId = stripeSessionId; }
+
+    public Integer getTotalPagado() { return totalPagado; }
+    public void setTotalPagado(Integer totalPagado) { this.totalPagado = totalPagado; }
 
     public EstadoPedido getEstadoPedido() { return estadoPedido; }
     public void setEstadoPedido(EstadoPedido estadoPedido) { this.estadoPedido = estadoPedido; }

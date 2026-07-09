@@ -38,6 +38,8 @@ public class PedidoDTO {
 
     private String productosSeleccionados;
 
+    private Integer totalMxn;
+
     // --- Getters & Setters ---
 
     public String getNombreCliente() { return nombreCliente; }
@@ -69,4 +71,7 @@ public class PedidoDTO {
 
     public String getProductosSeleccionados() { return productosSeleccionados; }
     public void setProductosSeleccionados(String v) { this.productosSeleccionados = v; }
+
+    public Integer getTotalMxn() { return totalMxn; }
+    public void setTotalMxn(Integer totalMxn) { this.totalMxn = totalMxn; }
 }

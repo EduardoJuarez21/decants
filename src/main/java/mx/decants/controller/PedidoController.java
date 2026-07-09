@@ -1,9 +1,12 @@
 package mx.decants.controller;
 
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
 import mx.decants.dto.PedidoDTO;
 import mx.decants.entity.Pedido;
 import mx.decants.service.PedidoService;
+import mx.decants.service.StripeService;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +20,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class PedidoController {
 
     private final PedidoService pedidoService;
+    private final StripeService stripeService;
 
-    public PedidoController(PedidoService pedidoService) {
+    public PedidoController(PedidoService pedidoService, StripeService stripeService) {
         this.pedidoService = pedidoService;
+        this.stripeService = stripeService;
     }
 
-    // Convierte campos vacíos a null para que @Email no rechace el correo en blanco
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
@@ -50,13 +54,44 @@ public class PedidoController {
             return "pedido/form";
         }
 
+        if (dto.getTotalMxn() == null || dto.getTotalMxn() <= 0) {
+            redirectAttributes.addFlashAttribute("error", "El carrito está vacío o el total no es válido.");
+            return "redirect:/pedido/nuevo";
+        }
+
         Pedido pedido = pedidoService.crearPedido(dto);
-        redirectAttributes.addFlashAttribute("pedido", pedido);
-        return "redirect:/pedido/confirmacion";
+
+        try {
+            Session session = stripeService.crearCheckoutSession(pedido);
+            pedidoService.actualizarStripeSession(pedido.getId(), session.getId());
+            return "redirect:" + session.getUrl();
+        } catch (StripeException e) {
+            pedidoService.cancelarPedido(pedido.getId());
+            redirectAttributes.addFlashAttribute("error", "Error al procesar el pago. Inténtalo de nuevo.");
+            return "redirect:/pedido/nuevo";
+        }
     }
 
     @GetMapping("/confirmacion")
-    public String confirmacion(Model model) {
+    public String confirmacion(
+            @RequestParam(name = "session_id", required = false) String sessionId,
+            Model model) {
+
+        if (sessionId != null) {
+            try {
+                boolean pagado = stripeService.verificarPago(sessionId);
+                if (pagado) {
+                    Pedido pedido = pedidoService.confirmarPorSession(sessionId);
+                    model.addAttribute("pedido", pedido);
+                    model.addAttribute("pagado", true);
+                    return "pedido/confirmacion";
+                }
+            } catch (StripeException | IllegalArgumentException e) {
+                // sesión inválida o no encontrada
+            }
+            return "redirect:/pedido/nuevo";
+        }
+
         if (!model.containsAttribute("pedido")) {
             return "redirect:/pedido/nuevo";
         }

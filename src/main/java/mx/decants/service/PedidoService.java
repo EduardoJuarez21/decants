@@ -32,8 +32,31 @@ public class PedidoService {
         pedido.setFechaEvento(dto.getFechaEvento());
         pedido.setComentarios(dto.getComentarios());
         pedido.setProductosSeleccionados(dto.getProductosSeleccionados());
-        pedido.setEstadoPedido(EstadoPedido.NUEVO);
+        pedido.setTotalPagado(dto.getTotalMxn());
+        pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
         return pedidoRepository.save(pedido);
+    }
+
+    public void actualizarStripeSession(Long pedidoId, String sessionId) {
+        Pedido pedido = pedidoRepository.findById(pedidoId).orElseThrow();
+        pedido.setStripeSessionId(sessionId);
+        pedidoRepository.save(pedido);
+    }
+
+    public void cancelarPedido(Long pedidoId) {
+        Pedido pedido = pedidoRepository.findById(pedidoId).orElseThrow();
+        pedido.setEstadoPedido(EstadoPedido.CANCELADO);
+        pedidoRepository.save(pedido);
+    }
+
+    public Pedido confirmarPorSession(String sessionId) {
+        Pedido pedido = pedidoRepository.findByStripeSessionId(sessionId)
+            .orElseThrow(() -> new IllegalArgumentException("Sesión no encontrada: " + sessionId));
+        if (pedido.getEstadoPedido() == EstadoPedido.PENDIENTE_PAGO) {
+            pedido.setEstadoPedido(EstadoPedido.CONFIRMADO);
+            pedidoRepository.save(pedido);
+        }
+        return pedido;
     }
 
     @Transactional(readOnly = true)
