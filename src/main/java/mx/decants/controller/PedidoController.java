@@ -54,12 +54,13 @@ public class PedidoController {
             return "pedido/form";
         }
 
-        if (dto.getTotalMxn() == null || dto.getTotalMxn() <= 0) {
-            redirectAttributes.addFlashAttribute("error", "El carrito está vacío o el total no es válido.");
+        Pedido pedido;
+        try {
+            pedido = pedidoService.crearPedido(dto);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "Carrito inválido. Regresa y vuelve a seleccionar tus productos.");
             return "redirect:/pedido/nuevo";
         }
-
-        Pedido pedido = pedidoService.crearPedido(dto);
 
         try {
             Session session = stripeService.crearCheckoutSession(pedido);

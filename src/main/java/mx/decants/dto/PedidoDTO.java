@@ -11,6 +11,7 @@ public class PedidoDTO {
     private String nombreCliente;
 
     @NotBlank(message = "El teléfono es obligatorio")
+    @Pattern(regexp = "^[0-9]{10}$", message = "El teléfono debe tener exactamente 10 dígitos")
     private String telefono;
 
     // Null cuando el usuario deja el campo vacío (StringTrimmerEditor convierte "" → null)
@@ -38,7 +39,9 @@ public class PedidoDTO {
 
     private String productosSeleccionados;
 
-    private Integer totalMxn;
+    private String cartItemsJson;
+
+    private String packageType;
 
     // --- Getters & Setters ---
 
@@ -72,6 +75,9 @@ public class PedidoDTO {
     public String getProductosSeleccionados() { return productosSeleccionados; }
     public void setProductosSeleccionados(String v) { this.productosSeleccionados = v; }
 
-    public Integer getTotalMxn() { return totalMxn; }
-    public void setTotalMxn(Integer totalMxn) { this.totalMxn = totalMxn; }
+    public String getCartItemsJson() { return cartItemsJson; }
+    public void setCartItemsJson(String cartItemsJson) { this.cartItemsJson = cartItemsJson; }
+
+    public String getPackageType() { return packageType; }
+    public void setPackageType(String packageType) { this.packageType = packageType; }
 }

@@ -61,7 +61,7 @@
                 Atomizador, etiqueta y empaque de regalo incluidos.
             </p>
             <div class="btn-group fade-up fade-up-4">
-                <a th:href="@{/pedido/nuevo}" class="btn btn-primary">Realizar pedido</a>
+                <a href="#productos" class="btn btn-primary">Realizar pedido</a>
                 <a href="https://wa.me/520000000000" target="_blank" class="btn btn-outline">Cotizar por WhatsApp</a>
             </div>
         </div>
@@ -112,8 +112,10 @@
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
                     <button th:if="${p.precio5ml == null}"
                             class="product-add-btn"
+                            th:data-id="${p.id}"
                             th:data-name="${p.nombre}"
                             th:data-price="${p.precio}"
+                            th:data-variant="10ml"
                             th:data-solo="${p.soloItem}"
                             onclick="addFromBtn(this)">+</button>
                 </div>
@@ -128,15 +130,19 @@
                     </div>
                     <div th:if="${p.precio5ml != null}" class="size-options">
                         <button class="size-btn"
+                                th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 5ml|"
                                 th:data-price="${p.precio5ml}"
+                                th:data-variant="5ml"
                                 onclick="addFromBtn(this)">
                             <span class="size-label">5 ml</span>
                             <span class="size-price" th:text="|$${p.precio5ml}|"></span>
                         </button>
                         <button class="size-btn"
+                                th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 10ml|"
                                 th:data-price="${p.precio}"
+                                th:data-variant="10ml"
                                 onclick="addFromBtn(this)">
                             <span class="size-label">10 ml</span>
                             <span class="size-price" th:text="|$${p.precio}|"></span>
@@ -179,8 +185,10 @@
                          class="product-img-hover">
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
                     <button class="product-add-btn"
+                            th:data-id="${p.id}"
                             th:data-name="${p.nombre}"
                             th:data-price="${p.precio}"
+                            th:data-variant="10ml"
                             onclick="addFromBtn(this)">+</button>
                 </div>
                 <div class="product-info">
@@ -590,11 +598,11 @@
     var SOLO_ITEMS = ['Cloud'];
 
     function addFromBtn(btn) {
-        addToCart(btn.dataset.name, parseInt(btn.dataset.price));
+        addToCart(btn.dataset.id ? parseInt(btn.dataset.id) : null, btn.dataset.name, parseInt(btn.dataset.price), btn.dataset.variant || '10ml');
     }
     var SOLO_RESTRICTED_PKGS = ['discovery', 'coleccion', 'regalo'];
 
-    function addToCart(name, price) {
+    function addToCart(id, name, price, variant) {
         if (activePackage) {
             if (getCount() >= activePackage.max) {
                 showToast('Ya completaste tu ' + activePackage.label + ' (' + activePackage.max + '/' + activePackage.max + ')');
@@ -606,7 +614,7 @@
             }
         }
         var existing = cart.find(function(i) { return i.name === name; });
-        if (existing) { existing.qty++; } else { cart.push({ name:name, price:price, qty:1 }); }
+        if (existing) { existing.qty++; } else { cart.push({ id:id, name:name, price:price, qty:1, variant:variant||'10ml' }); }
         saveCart();
         renderCart();
         updatePkgBanner();

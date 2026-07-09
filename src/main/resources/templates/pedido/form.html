@@ -54,7 +54,8 @@
             <input type="hidden" th:field="*{tipoProducto}" id="tipoProductoInput">
             <input type="hidden" th:field="*{cantidad}"     id="cantidadInput">
             <input type="hidden" th:field="*{productosSeleccionados}" id="productosInput">
-            <input type="hidden" th:field="*{totalMxn}"     id="totalMxnInput">
+            <input type="hidden" th:field="*{cartItemsJson}" id="cartItemsJsonInput">
+            <input type="hidden" th:field="*{packageType}"  id="packageTypeInput">
 
             <div class="form-grid">
 
@@ -80,7 +81,10 @@
                            id="telefono"
                            th:field="*{telefono}"
                            th:class="${#fields.hasErrors('telefono')} ? 'form-control is-invalid' : 'form-control'"
-                           placeholder="55 1234 5678" />
+                           placeholder="5512345678"
+                           pattern="[0-9]{10}"
+                           maxlength="10"
+                           inputmode="numeric" />
                     <span class="field-error"
                           th:if="${#fields.hasErrors('telefono')}"
                           th:errors="*{telefono}"></span>
@@ -231,7 +235,11 @@
         document.getElementById('tipoProductoInput').value = tipoLabel;
         document.getElementById('cantidadInput').value     = getCount();
         document.getElementById('productosInput').value    = resumen;
-        document.getElementById('totalMxnInput').value     = activePkg ? Math.round(activePkg.price) : Math.round(getTotal());
+        document.getElementById('packageTypeInput').value  = activePkg ? activePkg.id : '';
+        var cartItemsForServer = cart
+            .filter(function(i) { return i.id != null; })
+            .map(function(i) { return { id: i.id, qty: i.qty, variant: i.variant || '10ml' }; });
+        document.getElementById('cartItemsJsonInput').value = JSON.stringify(cartItemsForServer);
     }
 
     // Al enviar: recoger datos de caja y limpiar localStorage
