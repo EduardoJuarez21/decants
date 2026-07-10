@@ -18,7 +18,7 @@
         <h1>Panel de administración</h1>
         <div style="display:flex; align-items:center; gap:1.5rem;">
             <span class="admin-brand">Decants</span>
-            <form th:action="@{/admin/logout}" method="post" style="margin:0;">
+            <form th:action="@{/aura-gestion/logout}" method="post" style="margin:0;">
                 <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
                     Cerrar sesión
                 </button>
@@ -28,13 +28,13 @@
 
     <!-- Nav admin -->
     <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-        <a th:href="@{/admin/pedidos}"   class="admin-link">Pedidos</a>
+        <a th:href="@{/aura-gestion/pedidos}"   class="admin-link">Pedidos</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/admin/clientes}"  class="admin-link">Clientes</a>
+        <a th:href="@{/aura-gestion/clientes}"  class="admin-link">Clientes</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/admin/productos}" class="admin-link">Catálogo</a>
+        <a th:href="@{/aura-gestion/productos}" class="admin-link">Catálogo</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/admin/cupones}"   class="admin-link" style="font-weight:700;">Cupones</a>
+        <a th:href="@{/aura-gestion/cupones}"   class="admin-link" style="font-weight:700;">Cupones</a>
     </div>
 
     <!-- Formulario nuevo cupón -->
@@ -42,7 +42,7 @@
         <div class="admin-card-header">
             <h2>Nuevo cupón</h2>
         </div>
-        <form th:action="@{/admin/cupones}" th:object="${nuevoCupon}" method="post"
+        <form th:action="@{/aura-gestion/cupones}" th:object="${nuevoCupon}" method="post"
               style="display:flex; gap:0.75rem; padding:1.25rem 1.5rem; flex-wrap:wrap; align-items:flex-end;">
             <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:130px;">
                 <label style="font-size:0.75rem; font-weight:600; color:#444;">Código</label>
@@ -110,13 +110,13 @@
                             <span th:unless="${c.activo}" class="badge badge-inactivo">Inactivo</span>
                         </td>
                         <td style="display:flex; gap:0.5rem;">
-                            <form th:action="@{/admin/cupones/{id}/toggle(id=${c.id})}" method="post">
+                            <form th:action="@{/aura-gestion/cupones/{id}/toggle(id=${c.id})}" method="post">
                                 <button type="submit"
                                         th:class="${c.activo ? 'btn-toggle btn-toggle-off' : 'btn-toggle btn-toggle-on'}">
                                     <span th:text="${c.activo ? 'Desactivar' : 'Activar'}"></span>
                                 </button>
                             </form>
-                            <form th:action="@{/admin/cupones/{id}/eliminar(id=${c.id})}" method="post"
+                            <form th:action="@{/aura-gestion/cupones/{id}/eliminar(id=${c.id})}" method="post"
                                   onsubmit="return confirm('¿Eliminar este cupón?')">
                                 <button type="submit"
                                         style="padding:0.3rem 0.75rem; background:#fce4ec; color:#c62828;

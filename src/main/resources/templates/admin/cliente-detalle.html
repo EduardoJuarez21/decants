@@ -20,7 +20,7 @@
     </div>
 
     <div style="margin-bottom:1.25rem; display:flex; align-items:center; gap:1rem;">
-        <a th:href="@{/admin/clientes}" class="admin-link">&#8592; Volver a clientes</a>
+        <a th:href="@{/aura-gestion/clientes}" class="admin-link">&#8592; Volver a clientes</a>
         <span th:if="${#lists.size(cliente.pedidos) > 1}"
               style="background:#e8f5e9; color:#2e7d32; padding:3px 10px; border-radius:5px; font-size:0.78rem; font-weight:600;">
             &#10003; Cliente recurrente
@@ -109,7 +109,7 @@
                         </td>
                         <td th:text="${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
-                            <a th:href="@{/admin/pedidos/{id}(id=${p.id})}" class="admin-link">Ver</a>
+                            <a th:href="@{/aura-gestion/pedidos/{id}(id=${p.id})}" class="admin-link">Ver</a>
                         </td>
                     </tr>
                 </tbody>
@@ -123,7 +123,7 @@
            class="btn btn-whatsapp btn-sm">
             &#128172; Contactar por WhatsApp
         </a>
-        <a th:href="@{/admin/clientes}" class="btn btn-sm" style="background:var(--beige); color:var(--dark);">
+        <a th:href="@{/aura-gestion/clientes}" class="btn btn-sm" style="background:var(--beige); color:var(--dark);">
             &#8592; Lista de clientes
         </a>
     </div>

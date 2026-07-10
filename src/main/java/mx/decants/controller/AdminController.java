@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/aura-gestion")
 public class AdminController {
 
     private final PedidoService pedidoService;
@@ -46,7 +46,7 @@ public class AdminController {
     public String detallePedido(@PathVariable Long id, Model model) {
         Optional<Pedido> pedido = pedidoService.buscarPorId(id);
         if (pedido.isEmpty()) {
-            return "redirect:/admin/pedidos";
+            return "redirect:/aura-gestion/pedidos";
         }
         model.addAttribute("pedido", pedido.get());
         return "admin/detalle";
@@ -63,7 +63,7 @@ public class AdminController {
     @PostMapping("/productos/{id}/toggle")
     public String toggleProducto(@PathVariable Long id) {
         productoService.toggleActivo(id);
-        return "redirect:/admin/productos";
+        return "redirect:/aura-gestion/productos";
     }
 
     // ── Clientes ──────────────────────────────────────────────────────────────
@@ -78,7 +78,7 @@ public class AdminController {
     public String detalleCliente(@PathVariable Long id, Model model) {
         return pedidoService.buscarClientePorId(id)
                 .map(c -> { model.addAttribute("cliente", c); return "admin/cliente-detalle"; })
-                .orElse("redirect:/admin/clientes");
+                .orElse("redirect:/aura-gestion/clientes");
     }
 
     // ── Cupones ───────────────────────────────────────────────────────────────
@@ -93,18 +93,18 @@ public class AdminController {
     @PostMapping("/cupones")
     public String crearCupon(@ModelAttribute Cupon cupon) {
         cuponService.guardar(cupon);
-        return "redirect:/admin/cupones";
+        return "redirect:/aura-gestion/cupones";
     }
 
     @PostMapping("/cupones/{id}/toggle")
     public String toggleCupon(@PathVariable Long id) {
         cuponService.toggleActivo(id);
-        return "redirect:/admin/cupones";
+        return "redirect:/aura-gestion/cupones";
     }
 
     @PostMapping("/cupones/{id}/eliminar")
     public String eliminarCupon(@PathVariable Long id) {
         cuponService.eliminar(id);
-        return "redirect:/admin/cupones";
+        return "redirect:/aura-gestion/cupones";
     }
 }

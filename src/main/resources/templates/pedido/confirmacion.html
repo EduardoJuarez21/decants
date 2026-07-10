@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedido registrado — Decants MX</title>
+    <title>Pedido confirmado — Aura Decants MX</title>
     <link rel="icon" type="image/png" th:href="@{/favicon.png}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,54 +23,96 @@
 
         <h1 th:text="${pagado} ? '¡Pago recibido!' : '¡Pedido registrado!'">¡Pago recibido!</h1>
         <p class="subtitle" th:if="${pagado}">
-            Tu pago fue procesado con éxito. Prepararemos tu pedido y te contactaremos para coordinar el envío.
+            Tu pago fue procesado con éxito. En breve te contactamos por WhatsApp para coordinar tu envío.
         </p>
         <p class="subtitle" th:unless="${pagado}">
-            Recibimos tu solicitud con éxito. Te contactaremos pronto
-            para confirmar los detalles y darte el costo final.
+            Recibimos tu solicitud. Te contactaremos pronto para confirmar los detalles.
         </p>
 
-        <!-- Resumen del pedido (disponible via FlashAttribute) -->
+        <!-- Resumen del pedido -->
         <div class="order-summary" th:if="${pedido != null}">
+
             <div class="order-summary-item">
                 <span class="label">Número de pedido</span>
                 <span class="value order-id" th:text="'#' + ${pedido.id}"></span>
             </div>
+
             <div class="order-summary-item">
                 <span class="label">Nombre</span>
                 <span class="value" th:text="${pedido.nombreCliente}"></span>
             </div>
-            <div class="order-summary-item">
-                <span class="label">Producto</span>
-                <span class="value" th:text="${pedido.tipoProducto}"></span>
-            </div>
-            <div class="order-summary-item">
-                <span class="label">Cantidad</span>
-                <span class="value" th:text="${pedido.cantidad} + ' pieza(s)'"></span>
-            </div>
-            <div class="order-summary-item"
-                 th:if="${pedido.textoPersonalizado != null and !#strings.isEmpty(pedido.textoPersonalizado)}">
-                <span class="label">Texto personalizado</span>
-                <span class="value" th:text="${pedido.textoPersonalizado}"></span>
-            </div>
+
             <div class="order-summary-item" th:if="${pedido.totalPagado != null}">
                 <span class="label">Total pagado</span>
-                <span class="value" th:text="'$' + ${pedido.totalPagado} + ' MXN'"></span>
+                <span class="value" style="color:var(--gold); font-weight:700;"
+                      th:text="'$' + ${pedido.totalPagado} + ' MXN'"></span>
             </div>
+
             <div class="order-summary-item">
                 <span class="label">Estado</span>
-                <span class="value" th:text="${pedido.estadoPedido.etiqueta}"></span>
+                <span class="value" style="color:#2e7d32; font-weight:600;"
+                      th:text="${pedido.estadoPedido.etiqueta}"></span>
+            </div>
+
+            <!-- Fragancias pedidas -->
+            <div class="order-summary-item"
+                 th:if="${pedido.productosSeleccionados != null and !#strings.isEmpty(pedido.productosSeleccionados)}"
+                 style="flex-direction:column; align-items:flex-start; gap:0.25rem;">
+                <span class="label">Fragancias</span>
+                <span class="value" style="font-size:0.82rem; color:var(--muted); line-height:1.5;"
+                      th:text="${pedido.productosSeleccionados}"></span>
+            </div>
+
+            <!-- Dirección de entrega -->
+            <div class="order-summary-item"
+                 th:if="${pedido.direccion != null and !#strings.isEmpty(pedido.direccion)}"
+                 style="flex-direction:column; align-items:flex-start; gap:0.25rem;">
+                <span class="label">Dirección de entrega</span>
+                <span class="value" style="font-size:0.82rem; color:var(--muted); line-height:1.5;"
+                      th:text="${pedido.direccion}"></span>
+            </div>
+
+        </div>
+
+        <!-- Próximos pasos -->
+        <div style="margin:1.5rem 0; padding:1rem 1.25rem; background:#faf8f5; border-radius:10px; text-align:left;">
+            <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:0.75rem;">
+                ¿Qué sigue?
+            </p>
+            <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                <div style="display:flex; align-items:flex-start; gap:0.75rem; font-size:0.83rem; color:var(--dark);">
+                    <span style="background:var(--gold); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; flex-shrink:0;">1</span>
+                    Te contactamos por WhatsApp para confirmar tu dirección y tiempo de entrega.
+                </div>
+                <div style="display:flex; align-items:flex-start; gap:0.75rem; font-size:0.83rem; color:var(--dark);">
+                    <span style="background:var(--gold); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; flex-shrink:0;">2</span>
+                    Preparamos tu pedido con los mejores cuidados.
+                </div>
+                <div style="display:flex; align-items:flex-start; gap:0.75rem; font-size:0.83rem; color:var(--dark);">
+                    <span style="background:var(--gold); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; flex-shrink:0;">3</span>
+                    Envío a toda la República en 3 a 5 días hábiles.
+                </div>
             </div>
         </div>
 
-        <div class="btn-group" style="justify-content: center; flex-direction: column; align-items: center; gap: 0.9rem;">
-            <a href="https://wa.me/525631555401"
+        <!-- Botones -->
+        <div class="btn-group" style="justify-content:center; flex-direction:column; align-items:center; gap:0.9rem;">
+            <a th:if="${pedido != null}"
+               th:href="${'https://wa.me/525631555401?text=' + #uris.escapeQueryParam('Hola! Acabo de realizar el pedido #' + pedido.id + ' a nombre de ' + pedido.nombreCliente + '.')}"
                target="_blank"
                class="btn btn-whatsapp"
-               style="width: 100%; justify-content: center;">
+               style="width:100%; justify-content:center;">
+                &#128172; Confirmar por WhatsApp
+            </a>
+            <a th:unless="${pedido != null}"
+               href="https://wa.me/525631555401"
+               target="_blank"
+               class="btn btn-whatsapp"
+               style="width:100%; justify-content:center;">
                 &#128172; Contactar por WhatsApp
             </a>
-            <a th:href="@{/}" class="btn" style="color: var(--dark); border: 1.5px solid var(--nude); width: 100%; justify-content: center;">
+            <a th:href="@{/}" class="btn"
+               style="color:var(--dark); border:1.5px solid var(--nude); width:100%; justify-content:center;">
                 Volver al inicio
             </a>
         </div>

@@ -18,7 +18,7 @@
         <h1>Panel de administración</h1>
         <div style="display:flex; align-items:center; gap:1.5rem;">
             <span class="admin-brand">Decants</span>
-            <form th:action="@{/admin/logout}" method="post" style="margin:0;">
+            <form th:action="@{/aura-gestion/logout}" method="post" style="margin:0;">
                 <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
                     Cerrar sesión
                 </button>
@@ -27,13 +27,13 @@
     </div>
 
     <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-        <a th:href="@{/admin/pedidos}"   class="admin-link">Pedidos</a>
+        <a th:href="@{/aura-gestion/pedidos}"   class="admin-link">Pedidos</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/admin/clientes}"  class="admin-link" style="font-weight:700;">Clientes</a>
+        <a th:href="@{/aura-gestion/clientes}"  class="admin-link" style="font-weight:700;">Clientes</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/admin/productos}" class="admin-link">Catálogo</a>
+        <a th:href="@{/aura-gestion/productos}" class="admin-link">Catálogo</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/admin/cupones}"   class="admin-link">Cupones</a>
+        <a th:href="@{/aura-gestion/cupones}"   class="admin-link">Cupones</a>
     </div>
 
     <div class="admin-card">
@@ -92,7 +92,7 @@
                             th:text="${c.ultimaDireccion != null ? c.ultimaDireccion : '—'}"></td>
                         <td th:text="${#temporals.format(c.fechaRegistro, 'dd/MM/yyyy')}"></td>
                         <td>
-                            <a th:href="@{/admin/clientes/{id}(id=${c.id})}" class="admin-link">Ver</a>
+                            <a th:href="@{/aura-gestion/clientes/{id}(id=${c.id})}" class="admin-link">Ver</a>
                         </td>
                     </tr>
                 </tbody>

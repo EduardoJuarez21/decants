@@ -66,8 +66,11 @@
         <div th:if="${param.error}" class="login-error">
             Usuario o contraseña incorrectos.
         </div>
+        <div th:if="${param.bloqueado}" class="login-error">
+            Demasiados intentos fallidos. Intenta de nuevo en 15 minutos.
+        </div>
 
-        <form th:action="@{/admin/login}" method="post">
+        <form th:action="@{/aura-gestion/login}" method="post">
             <label for="username">Usuario</label>
             <input type="text" id="username" name="username" autocomplete="username" required autofocus>
 
