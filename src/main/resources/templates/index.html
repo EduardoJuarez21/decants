@@ -651,6 +651,7 @@
 
         // Descuento cupón (solo si no hay paquete activo)
         var descRow = document.getElementById('cuponDescRow');
+        var pkgBtn  = document.getElementById('pkgProceedBtn');
         if (cuponAplicado && !activePackage) {
             var ahorro = Math.round(subtotal * cuponAplicado.descuento / 100);
             var totalFinal = subtotal - ahorro;
@@ -663,6 +664,11 @@
                 checkoutBtn.setAttribute('data-base', base);
                 checkoutBtn.href = base + '?cupon=' + encodeURIComponent(cuponAplicado.codigo);
             }
+            if (pkgBtn) {
+                var pkgBase = pkgBtn.getAttribute('data-base') || pkgBtn.href;
+                pkgBtn.setAttribute('data-base', pkgBase);
+                pkgBtn.href = pkgBase + '?cupon=' + encodeURIComponent(cuponAplicado.codigo);
+            }
         } else {
             descRow.style.display = 'none';
             document.getElementById('cartTotal').textContent = activePackage
@@ -671,6 +677,10 @@
             if (checkoutBtn) {
                 var base = checkoutBtn.getAttribute('data-base');
                 if (base) checkoutBtn.href = base;
+            }
+            if (pkgBtn) {
+                var pkgBase = pkgBtn.getAttribute('data-base');
+                if (pkgBase) pkgBtn.href = pkgBase;
             }
         }
 
