@@ -57,10 +57,19 @@
             <!-- Fragancias pedidas -->
             <div class="order-summary-item"
                  th:if="${pedido.productosSeleccionados != null and !#strings.isEmpty(pedido.productosSeleccionados)}"
-                 style="flex-direction:column; align-items:flex-start; gap:0.25rem;">
+                 style="flex-direction:column; align-items:flex-start; gap:0.5rem;">
                 <span class="label">Fragancias</span>
-                <span class="value" style="font-size:0.82rem; color:var(--muted); line-height:1.5;"
-                      th:text="${pedido.productosSeleccionados}"></span>
+                <div style="width:100%; display:flex; flex-direction:column; gap:0.3rem;">
+                    <div th:each="f : ${#strings.arraySplit(
+                             (#strings.contains(pedido.productosSeleccionados, ' — Total:')
+                                 ? #strings.substringBefore(pedido.productosSeleccionados, ' — Total:')
+                                 : pedido.productosSeleccionados),
+                             ', ')}"
+                         th:text="${f}"
+                         style="font-size:0.82rem; color:var(--dark); padding:0.18rem 0 0.18rem 0.7rem;
+                                border-left:2px solid var(--gold);">
+                    </div>
+                </div>
             </div>
 
             <!-- Dirección de entrega -->
