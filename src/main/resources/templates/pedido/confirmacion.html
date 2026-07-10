@@ -54,17 +54,34 @@
                       th:text="${pedido.estadoPedido.etiqueta}"></span>
             </div>
 
-            <!-- Fragancias pedidas -->
+            <!-- Fragancias pedidas — desde pedido_items si existen -->
             <div class="order-summary-item"
-                 th:if="${pedido.productosSeleccionados != null and !#strings.isEmpty(pedido.productosSeleccionados)}"
+                 th:if="${not #lists.isEmpty(pedido.items)}"
                  style="flex-direction:column; align-items:flex-start; gap:0.5rem;">
                 <span class="label">Fragancias</span>
                 <div style="width:100%; display:flex; flex-direction:column; gap:0.3rem;">
-                    <div th:each="f : ${#strings.arraySplit(
-                             (#strings.contains(pedido.productosSeleccionados, ' — Total:')
-                                 ? #strings.substringBefore(pedido.productosSeleccionados, ' — Total:')
-                                 : pedido.productosSeleccionados),
-                             ',')}"
+                    <div th:each="item : ${pedido.items}"
+                         style="display:flex; justify-content:space-between; align-items:center;
+                                font-size:0.82rem; padding:0.18rem 0 0.18rem 0.7rem;
+                                border-left:2px solid var(--gold);">
+                        <span style="color:var(--dark);">
+                            <span th:text="${item.nombre}"></span>
+                            <span th:if="${item.variante != 'paquete'}"
+                                  style="color:var(--muted); font-size:0.75rem;"
+                                  th:text="' · ' + ${item.variante} + (${item.cantidad > 1} ? ' x' + ${item.cantidad} : '')"></span>
+                        </span>
+                        <span style="color:var(--muted); font-size:0.78rem; margin-left:0.5rem;"
+                              th:text="'$' + ${item.subtotal}"></span>
+                    </div>
+                </div>
+            </div>
+            <!-- Fallback para pedidos anteriores -->
+            <div class="order-summary-item"
+                 th:if="${#lists.isEmpty(pedido.items) and pedido.productosSeleccionados != null and !#strings.isEmpty(pedido.productosSeleccionados)}"
+                 style="flex-direction:column; align-items:flex-start; gap:0.5rem;">
+                <span class="label">Fragancias</span>
+                <div style="width:100%; display:flex; flex-direction:column; gap:0.3rem;">
+                    <div th:each="f : ${#strings.arraySplit(pedido.productosSeleccionados, ',')}"
                          th:text="${#strings.trim(f)}"
                          style="font-size:0.82rem; color:var(--dark); padding:0.18rem 0 0.18rem 0.7rem;
                                 border-left:2px solid var(--gold);">

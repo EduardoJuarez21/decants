@@ -13,3 +13,5 @@ target/
 docker-compose.vps-fragment.yml
 
 HELP.md
+
+*.exe

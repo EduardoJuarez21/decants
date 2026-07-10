@@ -61,6 +61,7 @@
                         <th>Teléfono</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
+                        <th>Total</th>
                         <th>Estado</th>
                         <th>Fecha</th>
                         <th></th>
@@ -73,6 +74,8 @@
                         <td th:text="${p.telefono}"></td>
                         <td th:text="${p.tipoProducto}"></td>
                         <td th:text="${p.cantidad}"></td>
+                        <td style="font-weight:600; color:var(--gold);"
+                            th:text="${p.totalPagado != null ? '$' + p.totalPagado + ' MXN' : '—'}"></td>
                         <td>
                             <span th:switch="${p.estadoPedido.name()}">
                                 <span th:case="'NUEVO'"      class="badge badge-nuevo">Nuevo</span>

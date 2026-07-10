@@ -6,6 +6,7 @@ import mx.decants.dto.PedidoDTO;
 import mx.decants.entity.Cliente;
 import mx.decants.entity.EstadoPedido;
 import mx.decants.entity.Pedido;
+import mx.decants.entity.PedidoItem;
 import mx.decants.entity.Producto;
 import mx.decants.repository.ClienteRepository;
 import mx.decants.repository.PedidoRepository;
@@ -13,11 +14,11 @@ import mx.decants.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import mx.decants.entity.Cliente;
+import java.util.StringJoiner;
 
 @Service
 @Transactional
@@ -59,7 +60,10 @@ public class PedidoService {
         pedido.setColorPreferido(dto.getColorPreferido());
         pedido.setFechaEvento(dto.getFechaEvento());
         pedido.setComentarios(dto.getComentarios());
-        pedido.setProductosSeleccionados(dto.getProductosSeleccionados());
+        List<PedidoItem> items = buildItems(dto, pedido);
+        items.forEach(it -> it.setPedido(pedido));
+        pedido.setItems(items);
+        pedido.setProductosSeleccionados(buildResumen(items));
         pedido.setTotalPagado(total);
         pedido.setDireccion(dto.getDireccion());
         if (dto.getLatitud() != null && !dto.getLatitud().isBlank()) {
@@ -71,6 +75,62 @@ public class PedidoService {
         pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
         pedido.setCliente(encontrarOCrearCliente(dto));
         return pedidoRepository.save(pedido);
+    }
+
+    private List<PedidoItem> buildItems(PedidoDTO dto, Pedido pedido) {
+        List<PedidoItem> items = new ArrayList<>();
+        if (dto.getPackageType() != null && !dto.getPackageType().isBlank()) {
+            PedidoItem item = new PedidoItem();
+            item.setNombre(formatPaquete(dto.getPackageType()));
+            item.setVariante("paquete");
+            item.setCantidad(1);
+            item.setPrecioUnitario(PACKAGE_PRICES.get(dto.getPackageType()));
+            items.add(item);
+        } else {
+            try {
+                JsonNode cartItems = objectMapper.readTree(dto.getCartItemsJson());
+                for (JsonNode ci : cartItems) {
+                    long productId = ci.get("id").asLong();
+                    int qty = ci.get("qty").asInt(1);
+                    String variant = ci.has("variant") ? ci.get("variant").asText() : "10ml";
+                    Producto p = productoRepository.findById(productId).orElseThrow();
+                    int price = "5ml".equals(variant) && p.getPrecio5ml() != null
+                            ? p.getPrecio5ml() : p.getPrecio();
+                    PedidoItem item = new PedidoItem();
+                    item.setProducto(p);
+                    item.setNombre(p.getNombre());
+                    item.setVariante(variant);
+                    item.setCantidad(qty);
+                    item.setPrecioUnitario(price);
+                    items.add(item);
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Carrito inválido");
+            }
+        }
+        return items;
+    }
+
+    private String buildResumen(List<PedidoItem> items) {
+        StringJoiner sj = new StringJoiner(", ");
+        for (PedidoItem item : items) {
+            String entry = item.getNombre();
+            if (!"paquete".equals(item.getVariante())) entry += " " + item.getVariante();
+            if (item.getCantidad() > 1) entry += " x" + item.getCantidad();
+            sj.add(entry);
+        }
+        return sj.toString();
+    }
+
+    private String formatPaquete(String type) {
+        return switch (type) {
+            case "individual" -> "Paquete Individual";
+            case "discovery"  -> "Discovery Set";
+            case "coleccion"  -> "Colección";
+            case "exclusivo"  -> "Paquete Exclusivo";
+            case "regalo"     -> "Set de Regalo";
+            default           -> type;
+        };
     }
 
     private Cliente encontrarOCrearCliente(PedidoDTO dto) {

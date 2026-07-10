@@ -3,6 +3,8 @@ package mx.decants.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "pedidos")
@@ -38,6 +40,9 @@ public class Pedido {
 
     @Column(columnDefinition = "TEXT")
     private String productosSeleccionados;
+
+    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PedidoItem> items = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")
@@ -109,6 +114,9 @@ public class Pedido {
 
     public String getProductosSeleccionados() { return productosSeleccionados; }
     public void setProductosSeleccionados(String productosSeleccionados) { this.productosSeleccionados = productosSeleccionados; }
+
+    public List<PedidoItem> getItems() { return items; }
+    public void setItems(List<PedidoItem> items) { this.items = items; }
 
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
