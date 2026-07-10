@@ -385,11 +385,46 @@
             if (cpInput.value.length === 5) geocodeCP(cpInput.value);
         }
 
+        // Al salir del campo calle: geocodificar dirección completa
+        var calleInput = document.getElementById('calle');
+        if (calleInput) {
+            calleInput.addEventListener('blur', function() {
+                var calle  = this.value.trim();
+                var cp     = document.getElementById('codigoPostal').value.trim();
+                if (calle && cp.length === 5) geocodeFullAddress();
+            });
+        }
+
         // Al arrastrar el pin: actualizar coordenadas
         _marker.addListener('dragend', function() {
             var pos = _marker.getPosition();
             document.getElementById('latitudInput').value = pos.lat();
             document.getElementById('longitudInput').value = pos.lng();
+        });
+    }
+
+    function geocodeFullAddress() {
+        if (!_geocoder) return;
+        var calle   = document.getElementById('calle').value.trim();
+        var colonia = document.getElementById('colonia').value.trim();
+        var cp      = document.getElementById('codigoPostal').value.trim();
+        var ciudad  = document.getElementById('ciudad').value.trim();
+        var estado  = document.getElementById('estado').value.trim();
+        var address = calle
+            + (colonia ? ', ' + colonia : '')
+            + ', CP ' + cp
+            + (ciudad ? ', ' + ciudad : '')
+            + (estado ? ', ' + estado : '')
+            + ', México';
+        _geocoder.geocode({ address: address }, function(results, status) {
+            if (status !== 'OK' || !results[0]) return;
+            var pos = results[0].geometry.location;
+            _map.setCenter(pos);
+            _map.setZoom(18);
+            _marker.setPosition(pos);
+            document.getElementById('latitudInput').value = pos.lat();
+            document.getElementById('longitudInput').value = pos.lng();
+            document.getElementById('mapContainer').style.display = 'block';
         });
     }
 
