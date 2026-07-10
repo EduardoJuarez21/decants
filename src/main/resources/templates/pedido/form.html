@@ -107,33 +107,95 @@
                 <div class="form-divider"></div>
 
                 <div class="form-group full-width">
-                    <label for="addressSearch">Buscar tu dirección <span class="required">*</span></label>
-                    <input type="text" id="addressSearch" class="form-control"
-                           placeholder="Calle y número, Colonia, Ciudad..."
-                           autocomplete="off">
-                    <span class="field-error" id="addressError" style="display:none;">
-                        Por favor selecciona tu dirección de entrega
-                    </span>
-                    <span class="field-error"
-                          th:if="${#fields.hasErrors('direccion')}"
-                          th:errors="*{direccion}"></span>
+                    <label for="calle">Calle y número <span class="required">*</span></label>
+                    <input type="text" id="calle" th:field="*{calle}"
+                           th:class="${#fields.hasErrors('calle')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="Ej. Av. Paseo de los Olivos 175 Int. 3A"
+                           required>
+                    <span class="field-error" th:if="${#fields.hasErrors('calle')}" th:errors="*{calle}"></span>
                 </div>
 
-                <div id="mapContainer" style="display:none; width:100%; border-radius:12px; overflow:hidden; margin-bottom:1rem; box-shadow:0 2px 12px rgba(0,0,0,0.08);" class="full-width">
-                    <div id="map" style="width:100%; height:280px;"></div>
+                <div class="form-group">
+                    <label for="colonia">Colonia <span class="required">*</span></label>
+                    <input type="text" id="colonia" th:field="*{colonia}"
+                           th:class="${#fields.hasErrors('colonia')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="Ej. San Miguel"
+                           required>
+                    <span class="field-error" th:if="${#fields.hasErrors('colonia')}" th:errors="*{colonia}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="codigoPostal">Código Postal <span class="required">*</span></label>
+                    <input type="text" id="codigoPostal" th:field="*{codigoPostal}"
+                           th:class="${#fields.hasErrors('codigoPostal')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="64000"
+                           maxlength="5"
+                           inputmode="numeric"
+                           pattern="[0-9]{5}"
+                           required>
+                    <span class="field-error" th:if="${#fields.hasErrors('codigoPostal')}" th:errors="*{codigoPostal}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="ciudad">Ciudad / Municipio <span class="required">*</span></label>
+                    <input type="text" id="ciudad" th:field="*{ciudad}"
+                           th:class="${#fields.hasErrors('ciudad')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="Ej. Apodaca"
+                           required>
+                    <span class="field-error" th:if="${#fields.hasErrors('ciudad')}" th:errors="*{ciudad}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="estado">Estado <span class="required">*</span></label>
+                    <select id="estado" th:field="*{estado}"
+                            th:class="${#fields.hasErrors('estado')} ? 'form-control is-invalid' : 'form-control'"
+                            required>
+                        <option value="">Selecciona tu estado</option>
+                        <option>Aguascalientes</option>
+                        <option>Baja California</option>
+                        <option>Baja California Sur</option>
+                        <option>Campeche</option>
+                        <option>Chiapas</option>
+                        <option>Chihuahua</option>
+                        <option>Ciudad de México</option>
+                        <option>Coahuila</option>
+                        <option>Colima</option>
+                        <option>Durango</option>
+                        <option>Estado de México</option>
+                        <option>Guanajuato</option>
+                        <option>Guerrero</option>
+                        <option>Hidalgo</option>
+                        <option>Jalisco</option>
+                        <option>Michoacán</option>
+                        <option>Morelos</option>
+                        <option>Nayarit</option>
+                        <option>Nuevo León</option>
+                        <option>Oaxaca</option>
+                        <option>Puebla</option>
+                        <option>Querétaro</option>
+                        <option>Quintana Roo</option>
+                        <option>San Luis Potosí</option>
+                        <option>Sinaloa</option>
+                        <option>Sonora</option>
+                        <option>Tabasco</option>
+                        <option>Tamaulipas</option>
+                        <option>Tlaxcala</option>
+                        <option>Veracruz</option>
+                        <option>Yucatán</option>
+                        <option>Zacatecas</option>
+                    </select>
+                    <span class="field-error" th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}"></span>
+                </div>
+
+                <div id="mapContainer" style="display:none; width:100%; border-radius:12px; overflow:hidden; margin-bottom:0.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.08);" class="full-width">
+                    <div id="map" style="width:100%; height:260px;"></div>
                     <div style="padding:0.5rem 0.9rem; background:#fff; font-size:0.73rem; color:var(--muted); border-top:1px solid #eee;">
                         &#128205; Arrastra el pin para ajustar la ubicación exacta
                     </div>
                 </div>
 
-                <div id="addressConfirmBox" class="full-width" style="display:none; padding:0.75rem 1rem; background:#f9f5ef; border:1px solid #e8d9c4; border-radius:8px; font-size:0.85rem; color:var(--dark); margin-bottom:0.5rem;">
-                    <span style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.5px;">Dirección confirmada</span><br>
-                    <strong id="addressConfirmText" style="line-height:1.5; display:block; margin-top:0.2rem;"></strong>
-                </div>
-
-                <input type="hidden" th:field="*{direccion}" id="direccionInput">
-                <input type="hidden" th:field="*{latitud}"   id="latitudInput">
-                <input type="hidden" th:field="*{longitud}"  id="longitudInput">
+                <input type="hidden" th:field="*{latitud}"  id="latitudInput">
+                <input type="hidden" th:field="*{longitud}" id="longitudInput">
 
                 <!-- Opciones de caja — solo paquete regalo -->
                 <div id="boxSection" class="form-group full-width" style="display:none;">
@@ -275,15 +337,8 @@
         document.getElementById('cartItemsJsonInput').value = JSON.stringify(cartItemsForServer);
     }
 
-    // Al enviar: validar dirección, recoger datos de caja y limpiar localStorage
+    // Al enviar: recoger datos de caja y limpiar localStorage
     document.getElementById('pedidoForm').addEventListener('submit', function(e) {
-        if (!document.getElementById('direccionInput').value.trim()) {
-            e.preventDefault();
-            document.getElementById('addressError').style.display = 'block';
-            document.getElementById('addressSearch').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            document.getElementById('addressSearch').focus();
-            return false;
-        }
         if (document.getElementById('boxSection').style.display !== 'none') {
             var boxStyle = document.querySelector('input[name="boxStyle"]:checked');
             var boxMsg   = document.getElementById('boxMessage').value.trim();
@@ -318,47 +373,69 @@
             animation: google.maps.Animation.DROP
         });
 
-        var input = document.getElementById('addressSearch');
-        var autocomplete = new google.maps.places.Autocomplete(input, {
-            componentRestrictions: { country: 'mx' },
-            fields: ['formatted_address', 'geometry']
-        });
+        // Geocodificar al escribir el CP completo (5 dígitos)
+        var cpInput = document.getElementById('codigoPostal');
+        if (cpInput) {
+            cpInput.addEventListener('input', function() {
+                var cp = this.value.replace(/\D/g, '').slice(0, 5);
+                this.value = cp;
+                if (cp.length === 5) geocodeCP(cp);
+            });
+            // También al cargar la página si ya hay un valor (re-render por error de validación)
+            if (cpInput.value.length === 5) geocodeCP(cpInput.value);
+        }
 
-        autocomplete.addListener('place_changed', function() {
-            var place = autocomplete.getPlace();
-            if (!place.geometry || !place.geometry.location) return;
-            var pos = place.geometry.location;
-            _map.setCenter(pos);
-            _map.setZoom(17);
-            _marker.setPosition(pos);
-            setAddress(place.formatted_address, pos.lat(), pos.lng());
-            document.getElementById('mapContainer').style.display = 'block';
-        });
-
+        // Al arrastrar el pin: actualizar coordenadas
         _marker.addListener('dragend', function() {
             var pos = _marker.getPosition();
-            _geocoder.geocode({ location: pos }, function(results, status) {
-                var addr = (status === 'OK' && results[0]) ? results[0].formatted_address : null;
-                if (addr) document.getElementById('addressSearch').value = addr;
-                setAddress(addr, pos.lat(), pos.lng());
-            });
+            document.getElementById('latitudInput').value = pos.lat();
+            document.getElementById('longitudInput').value = pos.lng();
         });
     }
 
-    function setAddress(addr, lat, lng) {
-        if (addr) {
-            document.getElementById('direccionInput').value = addr;
-            document.getElementById('addressConfirmText').textContent = addr;
-            document.getElementById('addressConfirmBox').style.display = 'block';
-            document.getElementById('addressError').style.display = 'none';
-        }
-        document.getElementById('latitudInput').value = lat;
-        document.getElementById('longitudInput').value = lng;
+    function geocodeCP(cp) {
+        if (!_geocoder) return;
+        _geocoder.geocode(
+            { componentRestrictions: { country: 'mx', postalCode: cp } },
+            function(results, status) {
+                if (status !== 'OK' || !results[0]) return;
+                var pos = results[0].geometry.location;
+                _map.setCenter(pos);
+                _map.setZoom(15);
+                _marker.setPosition(pos);
+                document.getElementById('latitudInput').value = pos.lat();
+                document.getElementById('longitudInput').value = pos.lng();
+                document.getElementById('mapContainer').style.display = 'block';
+
+                // Autollenar ciudad y estado si están vacíos
+                var components = results[0].address_components;
+                var ciudad = '', estado = '';
+                components.forEach(function(c) {
+                    if (!ciudad && (c.types.indexOf('locality') >= 0 || c.types.indexOf('administrative_area_level_2') >= 0)) {
+                        ciudad = c.long_name;
+                    }
+                    if (!estado && c.types.indexOf('administrative_area_level_1') >= 0) {
+                        estado = c.long_name;
+                    }
+                });
+                var ciudadInput = document.getElementById('ciudad');
+                if (ciudad && ciudadInput && !ciudadInput.value) ciudadInput.value = ciudad;
+                var estadoSel = document.getElementById('estado');
+                if (estado && estadoSel && !estadoSel.value) {
+                    for (var i = 0; i < estadoSel.options.length; i++) {
+                        if (estadoSel.options[i].value === estado) {
+                            estadoSel.value = estado;
+                            break;
+                        }
+                    }
+                }
+            }
+        );
     }
 
     if (_gmKey) {
         var _s = document.createElement('script');
-        _s.src = 'https://maps.googleapis.com/maps/api/js?key=' + _gmKey + '&libraries=places&callback=initMap';
+        _s.src = 'https://maps.googleapis.com/maps/api/js?key=' + _gmKey + '&callback=initMap';
         _s.async = true;
         _s.defer = true;
         document.head.appendChild(_s);

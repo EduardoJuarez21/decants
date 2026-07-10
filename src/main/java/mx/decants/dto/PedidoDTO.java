@@ -43,8 +43,21 @@ public class PedidoDTO {
 
     private String packageType;
 
-    @NotBlank(message = "La dirección de entrega es obligatoria")
-    private String direccion;
+    @NotBlank(message = "La calle es obligatoria")
+    private String calle;
+
+    @NotBlank(message = "La colonia es obligatoria")
+    private String colonia;
+
+    @NotBlank(message = "El código postal es obligatorio")
+    @Pattern(regexp = "^[0-9]{5}$", message = "El código postal debe tener 5 dígitos")
+    private String codigoPostal;
+
+    @NotBlank(message = "La ciudad es obligatoria")
+    private String ciudad;
+
+    @NotBlank(message = "El estado es obligatorio")
+    private String estado;
 
     private String latitud;
 
@@ -88,8 +101,20 @@ public class PedidoDTO {
     public String getPackageType() { return packageType; }
     public void setPackageType(String packageType) { this.packageType = packageType; }
 
-    public String getDireccion() { return direccion; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public String getCalle() { return calle; }
+    public void setCalle(String calle) { this.calle = calle; }
+
+    public String getColonia() { return colonia; }
+    public void setColonia(String colonia) { this.colonia = colonia; }
+
+    public String getCodigoPostal() { return codigoPostal; }
+    public void setCodigoPostal(String codigoPostal) { this.codigoPostal = codigoPostal; }
+
+    public String getCiudad() { return ciudad; }
+    public void setCiudad(String ciudad) { this.ciudad = ciudad; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
     public String getLatitud() { return latitud; }
     public void setLatitud(String latitud) { this.latitud = latitud; }

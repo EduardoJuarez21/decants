@@ -54,7 +54,9 @@ public class PedidoService {
         pedido.setComentarios(dto.getComentarios());
         pedido.setProductosSeleccionados(dto.getProductosSeleccionados());
         pedido.setTotalPagado(total);
-        pedido.setDireccion(dto.getDireccion());
+        String direccion = dto.getCalle() + ", Col. " + dto.getColonia()
+            + ", CP " + dto.getCodigoPostal() + ", " + dto.getCiudad() + ", " + dto.getEstado();
+        pedido.setDireccion(direccion);
         if (dto.getLatitud() != null && !dto.getLatitud().isBlank()) {
             try { pedido.setLatitud(Double.parseDouble(dto.getLatitud())); } catch (NumberFormatException ignored) {}
         }
