@@ -37,3 +37,27 @@ server:
   address: 0.0.0.0
   servlet:
     context-path: ${SERVER_SERVLET_CONTEXT_PATH:/}
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: /app/logs
+      prefix: access
+      suffix: .log
+      pattern: "%{yyyy-MM-dd HH:mm:ss}t %h \"%r\" %s %b %Dms"
+      rotate: true
+
+logging:
+  file:
+    name: /app/logs/decants.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+      file-name-pattern: /app/logs/decants.%d{yyyy-MM-dd}.%i.log.gz
+  level:
+    root: INFO
+    mx.decants: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"
