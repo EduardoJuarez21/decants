@@ -22,8 +22,8 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("Acqua di Giò", "Giorgio Armani", "alta-perfumeria", "hombre",
                 "Acuático Aromático · Hombre", "Bergamota · Neroli · Mar · Pachulí",
-                "/img/alta-perfumeria/hombre/aqua-di-gio.png",
-                "/img/alta-perfumeria/hombre/car-aqua-di-gio.png",
+                "/img/alta-perfumeria/hombre/aqua-di-gio.webp",
+                "/img/alta-perfumeria/hombre/car-aqua-di-gio.webp",
                 "pi-acqua", 310, 160, 4.9, false, false, 1));
 
         repo.save(p("Light Blue", "Dolce & Gabbana", "alta-perfumeria", "mujer",
@@ -43,13 +43,13 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("Cloud", "Ariana Grande", "alta-perfumeria", "mujer",
                 "Floral Frutal · Mujer", "Lavanda · Pera · Coco · Praliné",
-                "/img/alta-perfumeria/mujer/ariana-cloud.jpg", null,
+                "/img/alta-perfumeria/mujer/ariana-cloud.webp", null,
                 "pi-cloud", 219, null, 4.5, true, true, 5));
 
         repo.save(p("Bleu de Chanel", "Chanel", "alta-perfumeria", "hombre",
                 "Aromático Amaderado · Hombre", "Limón · Jengibre · Sándalo · Cedro",
-                "/img/alta-perfumeria/hombre/blue-de-chanel.png",
-                "/img/alta-perfumeria/hombre/car-blue-de-chanel.png",
+                "/img/alta-perfumeria/hombre/blue-de-chanel.webp",
+                "/img/alta-perfumeria/hombre/car-blue-de-chanel.webp",
                 "pi-bleu", 250, null, 4.9, false, false, 6));
 
         repo.save(p("Sauvage", "Dior", "alta-perfumeria", "hombre",
@@ -59,8 +59,8 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("Le Male", "Jean Paul Gaultier", "alta-perfumeria", "hombre",
                 "Oriental Fougère · Hombre", "Lavanda · Menta · Vainilla · Ámbar",
-                "/img/alta-perfumeria/hombre/paul-gaultier.png",
-                "/img/alta-perfumeria/hombre/car-paul-gaultier.png",
+                "/img/alta-perfumeria/hombre/paul-gaultier.webp",
+                "/img/alta-perfumeria/hombre/car-paul-gaultier.webp",
                 "pi-lemale", 190, null, 4.8, false, false, 8));
 
         repo.save(p("1 Million", "Paco Rabanne", "alta-perfumeria", "hombre",
@@ -112,22 +112,22 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("Club de Nuit Intense Man", "Armaf", "nicho-arabe", "hombre",
                 "Woody Especiado · Hombre", "Limón · Piña · Abedul · Almizclé",
-                "/img/arabe/club-de-nuit.png", "/img/arabe/car-club-de-nuit.png",
+                "/img/arabe/club-de-nuit.webp", "/img/arabe/car-club-de-nuit.webp",
                 "pi-cdni", 99, null, 4.8, true, false, 1));
 
         repo.save(p("9PM", "Afnan", "nicho-arabe", "hombre",
                 "Oriental Vainilla · Hombre", "Manzana · Canela · Vainilla · Ámbar",
-                "/img/arabe/9pm.png", "/img/arabe/car-9pm.png",
+                "/img/arabe/9pm.webp", "/img/arabe/car-9pm.webp",
                 "pi-9pm", 99, null, 4.7, true, false, 2));
 
         repo.save(p("Khamrah", "Lattafa", "nicho-arabe", "unisex",
                 "Oriental Especiado · Unisex", "Canela · Dátiles · Praliné · Vainilla",
-                "/img/arabe/khamrah.jpeg", "/img/arabe/car-khamrah.png",
+                "/img/arabe/khamrah.webp", "/img/arabe/car-khamrah.webp",
                 "pi-khamrah", 99, null, 4.8, true, false, 3));
 
         repo.save(p("Yara", "Lattafa", "nicho-arabe", "mujer",
                 "Floral Gourmand · Mujer", "Orquídea · Mandarina · Vainilla · Sándalo",
-                "/img/arabe/yara.png", "/img/arabe/car-yara.png",
+                "/img/arabe/yara.webp", "/img/arabe/car-yara.webp",
                 "pi-yara", 89, null, 4.6, true, false, 4));
     }
 
