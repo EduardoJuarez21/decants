@@ -92,11 +92,18 @@ public class PedidoController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> validarCupon(@RequestParam String codigo) {
         return cuponService.validar(codigo)
-                .map(c -> ResponseEntity.ok(Map.of(
-                        "valido", true,
-                        "descuento", c.getDescuentoPorcentaje(),
-                        "descripcion", c.getDescripcion() != null ? c.getDescripcion() : "")))
-                .orElseGet(() -> ResponseEntity.ok(Map.of("valido", false)));
+                .map(c -> {
+                    Map<String, Object> res = new java.util.HashMap<>();
+                    res.put("valido", true);
+                    res.put("descuento", c.getDescuentoPorcentaje());
+                    res.put("descripcion", c.getDescripcion() != null ? c.getDescripcion() : "");
+                    return ResponseEntity.<Map<String, Object>>ok(res);
+                })
+                .orElseGet(() -> {
+                    Map<String, Object> res = new java.util.HashMap<>();
+                    res.put("valido", false);
+                    return ResponseEntity.<Map<String, Object>>ok(res);
+                });
     }
 
     @GetMapping("/confirmacion")
