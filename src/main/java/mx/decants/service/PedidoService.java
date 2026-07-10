@@ -12,6 +12,8 @@ import mx.decants.entity.Cupon;
 import mx.decants.repository.ClienteRepository;
 import mx.decants.repository.PedidoRepository;
 import mx.decants.repository.ProductoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,8 @@ import java.util.StringJoiner;
 @Service
 @Transactional
 public class PedidoService {
+
+    private static final Logger log = LoggerFactory.getLogger(PedidoService.class);
 
     private static final Map<String, Integer> PACKAGE_PRICES = Map.of(
         "individual", 99,
@@ -88,7 +92,10 @@ public class PedidoService {
         }
         pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
         pedido.setCliente(encontrarOCrearCliente(dto));
-        return pedidoRepository.save(pedido);
+        Pedido saved = pedidoRepository.save(pedido);
+        log.info("Pedido #{} creado — cliente: {}, total: ${} MXN, productos: {}",
+                saved.getId(), dto.getNombreCliente(), saved.getTotalPagado(), saved.getProductosSeleccionados());
+        return saved;
     }
 
     private List<PedidoItem> buildItems(PedidoDTO dto, Pedido pedido) {
@@ -217,6 +224,7 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.findById(pedidoId).orElseThrow();
         pedido.setEstadoPedido(EstadoPedido.CANCELADO);
         pedidoRepository.save(pedido);
+        log.warn("Pedido #{} cancelado (error en Stripe)", pedidoId);
     }
 
     public Pedido confirmarPorSession(String sessionId) {
@@ -225,6 +233,8 @@ public class PedidoService {
         if (pedido.getEstadoPedido() == EstadoPedido.PENDIENTE_PAGO) {
             pedido.setEstadoPedido(EstadoPedido.CONFIRMADO);
             pedidoRepository.save(pedido);
+            log.info("Pedido #{} CONFIRMADO (pago recibido) — cliente: {}, total: ${} MXN",
+                    pedido.getId(), pedido.getNombreCliente(), pedido.getTotalPagado());
         }
         return pedido;
     }
