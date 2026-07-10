@@ -168,6 +168,28 @@
                 <!-- Comentarios ocultos: recibe datos de paquete y caja -->
                 <input type="hidden" th:field="*{comentarios}" id="comentariosInput">
 
+                <!-- Cupón de descuento -->
+                <div id="cuponSection" style="display:none; margin-bottom:1rem;">
+                    <label style="font-size:0.83rem; font-weight:500; display:block; margin-bottom:0.4rem;">
+                        ¿Tienes un código de descuento?
+                    </label>
+                    <div style="display:flex; gap:0.5rem;">
+                        <input type="text" id="cuponInput" th:field="*{codigoCupon}"
+                               placeholder="Ej: BIENVENIDO10"
+                               style="flex:1; padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0;
+                                      border-radius:8px; font-size:0.85rem; font-family:inherit;
+                                      text-transform:uppercase; outline:none;"
+                               oninput="this.value=this.value.toUpperCase()">
+                        <button type="button" onclick="aplicarCupon()"
+                                style="padding:0.6rem 1.1rem; background:#1a1a1a; color:#fff;
+                                       border:none; border-radius:8px; font-size:0.83rem;
+                                       font-family:inherit; cursor:pointer; white-space:nowrap;">
+                            Aplicar
+                        </button>
+                    </div>
+                    <div id="cuponMsg" style="font-size:0.8rem; margin-top:0.4rem;"></div>
+                </div>
+
                 <div class="form-submit" id="submitSection" style="display:none;">
                     <button type="submit" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1rem;">
                         Enviar pedido
@@ -232,6 +254,7 @@
         summarySection.style.display = 'block';
         submitSection.style.display  = 'flex';
         formNote.style.display       = 'block';
+        document.getElementById('cuponSection').style.display = 'block';
 
         // Mostrar opciones de caja si es paquete regalo
         if (activePkg && activePkg.hasBox) {
@@ -300,6 +323,28 @@
     });
 
     initForm();
+
+    function aplicarCupon() {
+        var codigo = document.getElementById('cuponInput').value.trim();
+        var msg = document.getElementById('cuponMsg');
+        if (!codigo) { msg.textContent = ''; return; }
+
+        fetch('/pedido/cupon?codigo=' + encodeURIComponent(codigo))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.valido) {
+                    msg.innerHTML = '<span style="color:#2e7d32; font-weight:600;">✓ ' + data.descuento + '% de descuento aplicado</span>' +
+                        (data.descripcion ? ' — ' + data.descripcion : '');
+                } else {
+                    msg.innerHTML = '<span style="color:#c62828;">Código no válido o inactivo.</span>';
+                    document.getElementById('cuponInput').value = '';
+                    document.querySelector('[name="codigoCupon"]').value = '';
+                }
+            })
+            .catch(function() {
+                msg.innerHTML = '<span style="color:#c62828;">Error al validar el código.</span>';
+            });
+    }
 </script>
 
 <script th:inline="javascript">

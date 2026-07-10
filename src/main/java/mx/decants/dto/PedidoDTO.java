@@ -50,6 +50,8 @@ public class PedidoDTO {
 
     private String longitud;
 
+    private String codigoCupon;
+
     // --- Getters & Setters ---
 
     public String getNombreCliente() { return nombreCliente; }
@@ -96,4 +98,7 @@ public class PedidoDTO {
 
     public String getLongitud() { return longitud; }
     public void setLongitud(String longitud) { this.longitud = longitud; }
+
+    public String getCodigoCupon() { return codigoCupon; }
+    public void setCodigoCupon(String codigoCupon) { this.codigoCupon = codigoCupon; }
 }

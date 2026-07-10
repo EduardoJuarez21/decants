@@ -136,6 +136,14 @@
                       th:text="${pedido.comentarios != null and !#strings.isEmpty(pedido.comentarios)} ? ${pedido.comentarios} : '—'"
                       style="white-space: pre-wrap;"></span>
             </div>
+            <div class="detail-field" th:if="${pedido.codigoCuponAplicado != null}">
+                <span class="field-label">Cupón aplicado</span>
+                <span class="field-value" style="color:#2e7d32; font-weight:600;">
+                    <span th:text="${pedido.codigoCuponAplicado}"></span>
+                    <span th:text="' (−$' + ${pedido.descuentoAplicado} + ' MXN)'"></span>
+                </span>
+            </div>
+
             <div class="detail-field">
                 <span class="field-label">Fecha de creación</span>
                 <span class="field-value" th:text="${#temporals.format(pedido.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></span>

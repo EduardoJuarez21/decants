@@ -5,16 +5,20 @@ import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
 import mx.decants.dto.PedidoDTO;
 import mx.decants.entity.Pedido;
+import mx.decants.service.CuponService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.StripeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping("/pedido")
@@ -25,10 +29,12 @@ public class PedidoController {
 
     private final PedidoService pedidoService;
     private final StripeService stripeService;
+    private final CuponService cuponService;
 
-    public PedidoController(PedidoService pedidoService, StripeService stripeService) {
+    public PedidoController(PedidoService pedidoService, StripeService stripeService, CuponService cuponService) {
         this.pedidoService = pedidoService;
         this.stripeService = stripeService;
+        this.cuponService = cuponService;
     }
 
     @ModelAttribute("googleMapsKey")
@@ -80,6 +86,17 @@ public class PedidoController {
             redirectAttributes.addFlashAttribute("error", "Error al procesar el pago. Inténtalo de nuevo.");
             return "redirect:/pedido/nuevo";
         }
+    }
+
+    @GetMapping("/cupon")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> validarCupon(@RequestParam String codigo) {
+        return cuponService.validar(codigo)
+                .map(c -> ResponseEntity.ok(Map.of(
+                        "valido", true,
+                        "descuento", c.getDescuentoPorcentaje(),
+                        "descripcion", c.getDescripcion() != null ? c.getDescripcion() : "")))
+                .orElseGet(() -> ResponseEntity.ok(Map.of("valido", false)));
     }
 
     @GetMapping("/confirmacion")

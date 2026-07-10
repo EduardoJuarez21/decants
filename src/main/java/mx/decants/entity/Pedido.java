@@ -52,6 +52,10 @@ public class Pedido {
 
     private Integer totalPagado;
 
+    private String codigoCuponAplicado;
+
+    private Integer descuentoAplicado;
+
     @Column(length = 500)
     private String direccion;
 
@@ -126,6 +130,12 @@ public class Pedido {
 
     public Integer getTotalPagado() { return totalPagado; }
     public void setTotalPagado(Integer totalPagado) { this.totalPagado = totalPagado; }
+
+    public String getCodigoCuponAplicado() { return codigoCuponAplicado; }
+    public void setCodigoCuponAplicado(String codigoCuponAplicado) { this.codigoCuponAplicado = codigoCuponAplicado; }
+
+    public Integer getDescuentoAplicado() { return descuentoAplicado; }
+    public void setDescuentoAplicado(Integer descuentoAplicado) { this.descuentoAplicado = descuentoAplicado; }
 
     public String getDireccion() { return direccion; }
     public void setDireccion(String direccion) { this.direccion = direccion; }

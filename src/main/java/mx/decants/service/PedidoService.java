@@ -8,6 +8,7 @@ import mx.decants.entity.EstadoPedido;
 import mx.decants.entity.Pedido;
 import mx.decants.entity.PedidoItem;
 import mx.decants.entity.Producto;
+import mx.decants.entity.Cupon;
 import mx.decants.repository.ClienteRepository;
 import mx.decants.repository.PedidoRepository;
 import mx.decants.repository.ProductoRepository;
@@ -35,15 +36,18 @@ public class PedidoService {
     private final PedidoRepository pedidoRepository;
     private final ProductoRepository productoRepository;
     private final ClienteRepository clienteRepository;
+    private final CuponService cuponService;
     private final ObjectMapper objectMapper;
 
     public PedidoService(PedidoRepository pedidoRepository,
                          ProductoRepository productoRepository,
                          ClienteRepository clienteRepository,
+                         CuponService cuponService,
                          ObjectMapper objectMapper) {
         this.pedidoRepository = pedidoRepository;
         this.productoRepository = productoRepository;
         this.clienteRepository = clienteRepository;
+        this.cuponService = cuponService;
         this.objectMapper = objectMapper;
     }
 
@@ -64,7 +68,17 @@ public class PedidoService {
         items.forEach(it -> it.setPedido(pedido));
         pedido.setItems(items);
         pedido.setProductosSeleccionados(buildResumen(items));
-        pedido.setTotalPagado(total);
+
+        int totalFinal = total;
+        if (dto.getCodigoCupon() != null && !dto.getCodigoCupon().isBlank()) {
+            cuponService.validar(dto.getCodigoCupon()).ifPresent(cupon -> {
+                int descuento = Math.round(total * cupon.getDescuentoPorcentaje() / 100f);
+                pedido.setCodigoCuponAplicado(cupon.getCodigo());
+                pedido.setDescuentoAplicado(descuento);
+            });
+        }
+        int descuento = pedido.getDescuentoAplicado() != null ? pedido.getDescuentoAplicado() : 0;
+        pedido.setTotalPagado(total - descuento);
         pedido.setDireccion(dto.getDireccion());
         if (dto.getLatitud() != null && !dto.getLatitud().isBlank()) {
             try { pedido.setLatitud(Double.parseDouble(dto.getLatitud())); } catch (NumberFormatException ignored) {}
