@@ -106,24 +106,6 @@
                 <div class="form-section-title" style="margin-top:0.5rem;">Dirección de entrega</div>
                 <div class="form-divider"></div>
 
-                <div class="form-group full-width">
-                    <label for="calle">Calle y número <span class="required">*</span></label>
-                    <input type="text" id="calle" th:field="*{calle}"
-                           th:class="${#fields.hasErrors('calle')} ? 'form-control is-invalid' : 'form-control'"
-                           placeholder="Ej. Av. Paseo de los Olivos 175 Int. 3A"
-                           required>
-                    <span class="field-error" th:if="${#fields.hasErrors('calle')}" th:errors="*{calle}"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="colonia">Colonia <span class="required">*</span></label>
-                    <input type="text" id="colonia" th:field="*{colonia}"
-                           th:class="${#fields.hasErrors('colonia')} ? 'form-control is-invalid' : 'form-control'"
-                           placeholder="Ej. San Miguel"
-                           required>
-                    <span class="field-error" th:if="${#fields.hasErrors('colonia')}" th:errors="*{colonia}"></span>
-                </div>
-
                 <div class="form-group">
                     <label for="codigoPostal">Código Postal <span class="required">*</span></label>
                     <input type="text" id="codigoPostal" th:field="*{codigoPostal}"
@@ -134,15 +116,6 @@
                            pattern="[0-9]{5}"
                            required>
                     <span class="field-error" th:if="${#fields.hasErrors('codigoPostal')}" th:errors="*{codigoPostal}"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="ciudad">Ciudad / Municipio <span class="required">*</span></label>
-                    <input type="text" id="ciudad" th:field="*{ciudad}"
-                           th:class="${#fields.hasErrors('ciudad')} ? 'form-control is-invalid' : 'form-control'"
-                           placeholder="Ej. Apodaca"
-                           required>
-                    <span class="field-error" th:if="${#fields.hasErrors('ciudad')}" th:errors="*{ciudad}"></span>
                 </div>
 
                 <div class="form-group">
@@ -185,6 +158,33 @@
                         <option value="Zacatecas">Zacatecas</option>
                     </select>
                     <span class="field-error" th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="ciudad">Ciudad / Municipio <span class="required">*</span></label>
+                    <input type="text" id="ciudad" th:field="*{ciudad}"
+                           th:class="${#fields.hasErrors('ciudad')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="Ej. Apodaca"
+                           required>
+                    <span class="field-error" th:if="${#fields.hasErrors('ciudad')}" th:errors="*{ciudad}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="colonia">Colonia <span class="required">*</span></label>
+                    <input type="text" id="colonia" th:field="*{colonia}"
+                           th:class="${#fields.hasErrors('colonia')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="Ej. Paseo de los Nogales"
+                           required>
+                    <span class="field-error" th:if="${#fields.hasErrors('colonia')}" th:errors="*{colonia}"></span>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="calle">Calle y número <span class="required">*</span></label>
+                    <input type="text" id="calle" th:field="*{calle}"
+                           th:class="${#fields.hasErrors('calle')} ? 'form-control is-invalid' : 'form-control'"
+                           placeholder="Ej. Av. Paseo de los Olivos 175 Int. 3A"
+                           required>
+                    <span class="field-error" th:if="${#fields.hasErrors('calle')}" th:errors="*{calle}"></span>
                 </div>
 
                 <div id="mapContainer" style="display:none; width:100%; border-radius:12px; overflow:hidden; margin-bottom:0.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.08);" class="full-width">
