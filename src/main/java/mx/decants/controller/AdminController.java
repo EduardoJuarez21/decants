@@ -66,6 +66,21 @@ public class AdminController {
         return "redirect:/admin/productos";
     }
 
+    // ── Clientes ──────────────────────────────────────────────────────────────
+
+    @GetMapping("/clientes")
+    public String listarClientes(Model model) {
+        model.addAttribute("clientes", pedidoService.listarClientes());
+        return "admin/clientes";
+    }
+
+    @GetMapping("/clientes/{id}")
+    public String detalleCliente(@PathVariable Long id, Model model) {
+        return pedidoService.buscarClientePorId(id)
+                .map(c -> { model.addAttribute("cliente", c); return "admin/cliente-detalle"; })
+                .orElse("redirect:/admin/clientes");
+    }
+
     // ── Cupones ───────────────────────────────────────────────────────────────
 
     @GetMapping("/cupones")

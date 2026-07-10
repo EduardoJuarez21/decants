@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cliente — Admin | Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-page">
+
+    <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
+        <h1>Cliente <span th:text="'#' + ${cliente.id}" style="color:var(--gold);"></span></h1>
+        <span class="admin-brand">Decants</span>
+    </div>
+
+    <div style="margin-bottom:1.25rem; display:flex; align-items:center; gap:1rem;">
+        <a th:href="@{/admin/clientes}" class="admin-link">&#8592; Volver a clientes</a>
+        <span th:if="${#lists.size(cliente.pedidos) > 1}"
+              style="background:#e8f5e9; color:#2e7d32; padding:3px 10px; border-radius:5px; font-size:0.78rem; font-weight:600;">
+            &#10003; Cliente recurrente
+        </span>
+        <span th:unless="${#lists.size(cliente.pedidos) > 1}"
+              style="background:#f3f3f3; color:#888; padding:3px 10px; border-radius:5px; font-size:0.78rem;">
+            Cliente nuevo
+        </span>
+    </div>
+
+    <!-- Datos del cliente -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header"><h2>Datos del cliente</h2></div>
+        <div class="detail-grid">
+            <div class="detail-field">
+                <span class="field-label">Nombre</span>
+                <span class="field-value" th:text="${cliente.nombre}"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Teléfono / WhatsApp</span>
+                <span class="field-value" th:text="${cliente.telefono}"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Correo electrónico</span>
+                <span class="field-value"
+                      th:text="${cliente.email != null and !#strings.isEmpty(cliente.email)} ? ${cliente.email} : '—'"></span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Total de pedidos</span>
+                <span class="field-value" th:text="${#lists.size(cliente.pedidos)}"></span>
+            </div>
+            <div class="detail-field full-width"
+                 th:if="${cliente.ultimaDireccion != null and !#strings.isEmpty(cliente.ultimaDireccion)}">
+                <span class="field-label">Última dirección</span>
+                <span class="field-value">
+                    <span th:text="${cliente.ultimaDireccion}"></span>
+                    <a th:if="${cliente.latitud != null and cliente.longitud != null}"
+                       th:href="${'https://www.google.com/maps?q=' + cliente.latitud + ',' + cliente.longitud}"
+                       target="_blank"
+                       style="margin-left:0.75rem; font-size:0.78rem; color:var(--gold); font-weight:600;">
+                        Ver en mapa ↗
+                    </a>
+                </span>
+            </div>
+            <div class="detail-field">
+                <span class="field-label">Cliente desde</span>
+                <span class="field-value" th:text="${#temporals.format(cliente.fechaRegistro, 'dd/MM/yyyy')}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de pedidos -->
+    <div class="admin-card">
+        <div class="admin-card-header"><h2>Historial de pedidos</h2></div>
+        <div th:if="${#lists.isEmpty(cliente.pedidos)}"
+             style="padding:2rem; text-align:center; color:var(--muted); font-size:0.9rem;">
+            Sin pedidos registrados.
+        </div>
+        <div th:unless="${#lists.isEmpty(cliente.pedidos)}" style="overflow-x:auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Producto</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${cliente.pedidos}">
+                        <td th:text="${p.id}" style="color:var(--muted);"></td>
+                        <td th:text="${p.tipoProducto}"></td>
+                        <td th:text="${p.totalPagado != null ? '$' + p.totalPagado + ' MXN' : '—'}"></td>
+                        <td>
+                            <span th:switch="${p.estadoPedido.name()}">
+                                <span th:case="'NUEVO'"           class="badge badge-nuevo">Nuevo</span>
+                                <span th:case="'EN_REVISION'"     class="badge badge-revision">En revisión</span>
+                                <span th:case="'CONFIRMADO'"      class="badge badge-confirmado">Confirmado</span>
+                                <span th:case="'CANCELADO'"       class="badge badge-cancelado">Cancelado</span>
+                                <span th:case="'ENTREGADO'"       class="badge badge-entregado">Entregado</span>
+                                <span th:case="'PENDIENTE_PAGO'"  class="badge">Pendiente pago</span>
+                                <span th:case="*"                 class="badge" th:text="${p.estadoPedido.etiqueta}"></span>
+                            </span>
+                        </td>
+                        <td th:text="${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <a th:href="@{/admin/pedidos/{id}(id=${p.id})}" class="admin-link">Ver</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
+        <a th:href="${'https://wa.me/52' + cliente.telefono}"
+           target="_blank"
+           class="btn btn-whatsapp btn-sm">
+            &#128172; Contactar por WhatsApp
+        </a>
+        <a th:href="@{/admin/clientes}" class="btn btn-sm" style="background:var(--beige); color:var(--dark);">
+            &#8592; Lista de clientes
+        </a>
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes — Admin | Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-page">
+
+    <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
+        <h1>Panel de administración</h1>
+        <div style="display:flex; align-items:center; gap:1.5rem;">
+            <span class="admin-brand">Decants</span>
+            <form th:action="@{/admin/logout}" method="post" style="margin:0;">
+                <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+        <a th:href="@{/admin/pedidos}"   class="admin-link">Pedidos</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/admin/clientes}"  class="admin-link" style="font-weight:700;">Clientes</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/admin/productos}" class="admin-link">Catálogo</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/admin/cupones}"   class="admin-link">Cupones</a>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2>Clientes</h2>
+            <span style="font-size:0.8rem; color:var(--muted);">
+                Total: <strong th:text="${#lists.size(clientes)}"></strong>
+                &nbsp;·&nbsp;
+                Recurrentes: <strong th:text="${#lists.size(clientes.?[#lists.size(pedidos) > 1])}"></strong>
+            </span>
+        </div>
+
+        <div th:if="${#lists.isEmpty(clientes)}"
+             style="padding:3rem; text-align:center; color:var(--muted); font-size:0.9rem;">
+            Aún no hay clientes registrados.
+        </div>
+
+        <div th:unless="${#lists.isEmpty(clientes)}" style="overflow-x:auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Pedidos</th>
+                        <th>Tipo</th>
+                        <th>Última dirección</th>
+                        <th>Registro</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${clientes}">
+                        <td th:text="${c.id}" style="color:var(--muted);"></td>
+                        <td><strong th:text="${c.nombre}"></strong></td>
+                        <td>
+                            <a th:href="${'https://wa.me/52' + c.telefono}" target="_blank"
+                               style="color:var(--dark); text-decoration:none;">
+                                &#128172; <span th:text="${c.telefono}"></span>
+                            </a>
+                        </td>
+                        <td style="text-align:center;">
+                            <strong th:text="${#lists.size(c.pedidos)}"></strong>
+                        </td>
+                        <td>
+                            <span th:if="${#lists.size(c.pedidos) > 1}"
+                                  style="background:#e8f5e9; color:#2e7d32; padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:600;">
+                                Recurrente
+                            </span>
+                            <span th:unless="${#lists.size(c.pedidos) > 1}"
+                                  style="background:#f3f3f3; color:#888; padding:2px 8px; border-radius:4px; font-size:0.75rem;">
+                                Nuevo
+                            </span>
+                        </td>
+                        <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:0.8rem; color:var(--muted);"
+                            th:text="${c.ultimaDireccion != null ? c.ultimaDireccion : '—'}"></td>
+                        <td th:text="${#temporals.format(c.fechaRegistro, 'dd/MM/yyyy')}"></td>
+                        <td>
+                            <a th:href="@{/admin/clientes/{id}(id=${c.id})}" class="admin-link">Ver</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="margin-top:1.5rem; text-align:center;">
+        <a th:href="@{/}" class="admin-link">&#8592; Ir a la página principal</a>
+    </div>
+
+</div>
+</body>
+</html>

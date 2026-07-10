@@ -3,9 +3,11 @@ package mx.decants.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import mx.decants.dto.PedidoDTO;
+import mx.decants.entity.Cliente;
 import mx.decants.entity.EstadoPedido;
 import mx.decants.entity.Pedido;
 import mx.decants.entity.Producto;
+import mx.decants.repository.ClienteRepository;
 import mx.decants.repository.PedidoRepository;
 import mx.decants.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import mx.decants.entity.Cliente;
 
 @Service
 @Transactional
@@ -29,13 +33,16 @@ public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
     private final ProductoRepository productoRepository;
+    private final ClienteRepository clienteRepository;
     private final ObjectMapper objectMapper;
 
     public PedidoService(PedidoRepository pedidoRepository,
                          ProductoRepository productoRepository,
+                         ClienteRepository clienteRepository,
                          ObjectMapper objectMapper) {
         this.pedidoRepository = pedidoRepository;
         this.productoRepository = productoRepository;
+        this.clienteRepository = clienteRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -54,9 +61,7 @@ public class PedidoService {
         pedido.setComentarios(dto.getComentarios());
         pedido.setProductosSeleccionados(dto.getProductosSeleccionados());
         pedido.setTotalPagado(total);
-        String direccion = dto.getCalle() + ", Col. " + dto.getColonia()
-            + ", CP " + dto.getCodigoPostal() + ", " + dto.getCiudad() + ", " + dto.getEstado();
-        pedido.setDireccion(direccion);
+        pedido.setDireccion(dto.getDireccion());
         if (dto.getLatitud() != null && !dto.getLatitud().isBlank()) {
             try { pedido.setLatitud(Double.parseDouble(dto.getLatitud())); } catch (NumberFormatException ignored) {}
         }
@@ -64,7 +69,24 @@ public class PedidoService {
             try { pedido.setLongitud(Double.parseDouble(dto.getLongitud())); } catch (NumberFormatException ignored) {}
         }
         pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
+        pedido.setCliente(encontrarOCrearCliente(dto));
         return pedidoRepository.save(pedido);
+    }
+
+    private Cliente encontrarOCrearCliente(PedidoDTO dto) {
+        Cliente cliente = clienteRepository.findByTelefono(dto.getTelefono())
+                .orElseGet(Cliente::new);
+        cliente.setTelefono(dto.getTelefono());
+        cliente.setNombre(dto.getNombreCliente());
+        if (dto.getEmail() != null) cliente.setEmail(dto.getEmail());
+        if (dto.getDireccion() != null) cliente.setUltimaDireccion(dto.getDireccion());
+        if (dto.getLatitud() != null && !dto.getLatitud().isBlank()) {
+            try { cliente.setLatitud(Double.parseDouble(dto.getLatitud())); } catch (NumberFormatException ignored) {}
+        }
+        if (dto.getLongitud() != null && !dto.getLongitud().isBlank()) {
+            try { cliente.setLongitud(Double.parseDouble(dto.getLongitud())); } catch (NumberFormatException ignored) {}
+        }
+        return clienteRepository.save(cliente);
     }
 
     private int calcularTotal(String cartItemsJson, String packageType) {
@@ -141,5 +163,20 @@ public class PedidoService {
     @Transactional(readOnly = true)
     public Optional<Pedido> buscarPorId(Long id) {
         return pedidoRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Cliente> listarClientes() {
+        return clienteRepository.findAllWithPedidos();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Cliente> buscarClientePorId(Long id) {
+        return clienteRepository.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Cliente> buscarClientePorTelefono(String telefono) {
+        return clienteRepository.findByTelefono(telefono);
     }
 }

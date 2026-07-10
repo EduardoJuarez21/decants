@@ -39,6 +39,10 @@ public class Pedido {
     @Column(columnDefinition = "TEXT")
     private String productosSeleccionados;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
+
     private String stripeSessionId;
 
     private Integer totalPagado;
@@ -105,6 +109,9 @@ public class Pedido {
 
     public String getProductosSeleccionados() { return productosSeleccionados; }
     public void setProductosSeleccionados(String productosSeleccionados) { this.productosSeleccionados = productosSeleccionados; }
+
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
     public String getStripeSessionId() { return stripeSessionId; }
     public void setStripeSessionId(String stripeSessionId) { this.stripeSessionId = stripeSessionId; }

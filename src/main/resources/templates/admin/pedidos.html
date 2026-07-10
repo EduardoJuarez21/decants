@@ -29,11 +29,13 @@
 
     <!-- Nav admin -->
     <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-        <a th:href="@{/admin/pedidos}"  class="admin-link" style="font-weight:700;">Pedidos</a>
+        <a th:href="@{/admin/pedidos}"   class="admin-link" style="font-weight:700;">Pedidos</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/admin/clientes}"  class="admin-link">Clientes</a>
         <span style="color:#ccc;">|</span>
         <a th:href="@{/admin/productos}" class="admin-link">Catálogo</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/admin/cupones}"  class="admin-link">Cupones</a>
+        <a th:href="@{/admin/cupones}"   class="admin-link">Cupones</a>
     </div>
 
     <!-- Tabla de pedidos -->
