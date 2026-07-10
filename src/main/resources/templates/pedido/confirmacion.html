@@ -64,8 +64,8 @@
                              (#strings.contains(pedido.productosSeleccionados, ' — Total:')
                                  ? #strings.substringBefore(pedido.productosSeleccionados, ' — Total:')
                                  : pedido.productosSeleccionados),
-                             ', ')}"
-                         th:text="${f}"
+                             ',')}"
+                         th:text="${#strings.trim(f)}"
                          style="font-size:0.82rem; color:var(--dark); padding:0.18rem 0 0.18rem 0.7rem;
                                 border-left:2px solid var(--gold);">
                     </div>
