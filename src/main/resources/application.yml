@@ -28,6 +28,10 @@ stripe:
 app:
   base-url: ${APP_BASE_URL:http://localhost:8080}
 
+google:
+  maps:
+    api-key: ${GOOGLE_MAPS_KEY:}
+
 server:
   port: ${PORT:8080}
   address: 0.0.0.0

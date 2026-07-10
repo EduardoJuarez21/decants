@@ -43,6 +43,13 @@ public class PedidoDTO {
 
     private String packageType;
 
+    @NotBlank(message = "La dirección de entrega es obligatoria")
+    private String direccion;
+
+    private String latitud;
+
+    private String longitud;
+
     // --- Getters & Setters ---
 
     public String getNombreCliente() { return nombreCliente; }
@@ -80,4 +87,13 @@ public class PedidoDTO {
 
     public String getPackageType() { return packageType; }
     public void setPackageType(String packageType) { this.packageType = packageType; }
+
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+
+    public String getLatitud() { return latitud; }
+    public void setLatitud(String latitud) { this.latitud = latitud; }
+
+    public String getLongitud() { return longitud; }
+    public void setLongitud(String longitud) { this.longitud = longitud; }
 }

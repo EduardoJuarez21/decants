@@ -43,6 +43,13 @@ public class Pedido {
 
     private Integer totalPagado;
 
+    @Column(length = 500)
+    private String direccion;
+
+    private Double latitud;
+
+    private Double longitud;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoPedido estadoPedido = EstadoPedido.NUEVO;
@@ -104,6 +111,15 @@ public class Pedido {
 
     public Integer getTotalPagado() { return totalPagado; }
     public void setTotalPagado(Integer totalPagado) { this.totalPagado = totalPagado; }
+
+    public String getDireccion() { return direccion; }
+    public void setDireccion(String direccion) { this.direccion = direccion; }
+
+    public Double getLatitud() { return latitud; }
+    public void setLatitud(Double latitud) { this.latitud = latitud; }
+
+    public Double getLongitud() { return longitud; }
+    public void setLongitud(Double longitud) { this.longitud = longitud; }
 
     public EstadoPedido getEstadoPedido() { return estadoPedido; }
     public void setEstadoPedido(EstadoPedido estadoPedido) { this.estadoPedido = estadoPedido; }

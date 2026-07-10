@@ -83,6 +83,20 @@
                       style="font-weight:500; color:var(--dark);"></span>
             </div>
 
+            <div class="detail-field full-width"
+                 th:if="${pedido.direccion != null and !#strings.isEmpty(pedido.direccion)}">
+                <span class="field-label">Dirección de entrega</span>
+                <span class="field-value">
+                    <span th:text="${pedido.direccion}"></span>
+                    <a th:if="${pedido.latitud != null and pedido.longitud != null}"
+                       th:href="${'https://www.google.com/maps?q=' + pedido.latitud + ',' + pedido.longitud}"
+                       target="_blank"
+                       style="margin-left:0.75rem; font-size:0.78rem; color:var(--gold); font-weight:600;">
+                        Ver en mapa ↗
+                    </a>
+                </span>
+            </div>
+
             <div class="detail-field full-width">
                 <span class="field-label">Comentarios</span>
                 <span class="field-value"

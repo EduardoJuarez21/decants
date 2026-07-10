@@ -7,6 +7,7 @@ import mx.decants.dto.PedidoDTO;
 import mx.decants.entity.Pedido;
 import mx.decants.service.PedidoService;
 import mx.decants.service.StripeService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,12 +20,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/pedido")
 public class PedidoController {
 
+    @Value("${google.maps.api-key:}")
+    private String googleMapsKey;
+
     private final PedidoService pedidoService;
     private final StripeService stripeService;
 
     public PedidoController(PedidoService pedidoService, StripeService stripeService) {
         this.pedidoService = pedidoService;
         this.stripeService = stripeService;
+    }
+
+    @ModelAttribute("googleMapsKey")
+    public String googleMapsKey() {
+        return googleMapsKey;
     }
 
     @InitBinder

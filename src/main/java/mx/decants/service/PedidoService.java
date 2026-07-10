@@ -54,6 +54,13 @@ public class PedidoService {
         pedido.setComentarios(dto.getComentarios());
         pedido.setProductosSeleccionados(dto.getProductosSeleccionados());
         pedido.setTotalPagado(total);
+        pedido.setDireccion(dto.getDireccion());
+        if (dto.getLatitud() != null && !dto.getLatitud().isBlank()) {
+            try { pedido.setLatitud(Double.parseDouble(dto.getLatitud())); } catch (NumberFormatException ignored) {}
+        }
+        if (dto.getLongitud() != null && !dto.getLongitud().isBlank()) {
+            try { pedido.setLongitud(Double.parseDouble(dto.getLongitud())); } catch (NumberFormatException ignored) {}
+        }
         pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
         return pedidoRepository.save(pedido);
     }
