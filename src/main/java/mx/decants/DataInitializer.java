@@ -43,7 +43,8 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("Cloud", "Ariana Grande", "alta-perfumeria", "mujer",
                 "Floral Frutal · Mujer", "Lavanda · Pera · Coco · Praliné",
-                "/img/alta-perfumeria/mujer/ariana-cloud.webp", null,
+                "/img/alta-perfumeria/mujer/ariana-grande-cloud.webp",
+                "/img/alta-perfumeria/mujer/car-ariana-grande-cloud.webp",
                 "pi-cloud", 219, null, 4.5, true, true, 5));
 
         repo.save(p("Bleu de Chanel", "Chanel", "alta-perfumeria", "hombre",
@@ -70,42 +71,50 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("Black Opium", "Yves Saint Laurent", "alta-perfumeria", "mujer",
                 "Oriental Gourmand · Mujer", "Café · Vainilla · Flor Blanca · Cedro",
-                "/img/alta-perfumeria/mujer/black-opium.webp", null,
+                "/img/alta-perfumeria/mujer/black-opium.webp",
+                "/img/alta-perfumeria/mujer/car-black-opium.webp",
                 "pi-blackopium", 200, null, 4.8, false, false, 10));
 
         repo.save(p("Coco Mademoiselle", "Chanel", "alta-perfumeria", "mujer",
                 "Oriental Floral · Mujer", "Naranja · Rosa · Jazmín · Pachulí",
-                "/img/alta-perfumeria/mujer/coco-chanel.webp", null,
+                "/img/alta-perfumeria/mujer/coco-chanel.webp",
+                "/img/alta-perfumeria/mujer/car-coco-chanel.webp",
                 "pi-coco", 280, null, 4.9, false, false, 11));
 
         repo.save(p("Daisy", "Marc Jacobs", "alta-perfumeria", "mujer",
                 "Floral Frutal · Mujer", "Fresa · Violeta · Jazmín · Sándalo",
-                "/img/alta-perfumeria/mujer/daysi.jfif", null,
+                "/img/alta-perfumeria/mujer/daysi.webp",
+                "/img/alta-perfumeria/mujer/car-daysi.webp",
                 "pi-daisy", 180, null, 4.7, false, false, 12));
 
         repo.save(p("Good Girl", "Carolina Herrera", "alta-perfumeria", "mujer",
                 "Oriental Floral · Mujer", "Jazmín · Cacao · Tonka · Café",
-                "/img/alta-perfumeria/mujer/goodgirlcherrera.jfif", null,
+                "/img/alta-perfumeria/mujer/good-girl.webp",
+                "/img/alta-perfumeria/mujer/car-good-girl.webp",
                 "pi-goodgirl", 220, null, 4.8, false, false, 13));
 
         repo.save(p("J'adore", "Dior", "alta-perfumeria", "mujer",
                 "Floral Afrutado · Mujer", "Ylang Ylang · Rosa · Jazmín · Vainilla",
-                "/img/alta-perfumeria/mujer/jadore.webp", null,
+                "/img/alta-perfumeria/mujer/jadore.webp",
+                "/img/alta-perfumeria/mujer/car-jadore.webp",
                 "pi-jadore", 240, null, 4.8, false, false, 14));
 
         repo.save(p("Libre", "Yves Saint Laurent", "alta-perfumeria", "mujer",
                 "Floral Amaderado · Mujer", "Lavanda · Naranja · Jazmín · Musgo",
-                "/img/alta-perfumeria/mujer/libre.webp", null,
+                "/img/alta-perfumeria/mujer/libre.webp",
+                "/img/alta-perfumeria/mujer/car-libre.webp",
                 "pi-libre", 220, null, 4.8, false, false, 15));
 
         repo.save(p("Sì", "Giorgio Armani", "alta-perfumeria", "mujer",
                 "Chypre Floral · Mujer", "Grosella negra · Rosa · Pachulí · Vainilla",
-                "/img/alta-perfumeria/mujer/si-giorgio-armani.webp", null,
+                "/img/alta-perfumeria/mujer/si-giorgio-armani.webp",
+                "/img/alta-perfumeria/mujer/car-si-giorgio-armani.webp",
                 "pi-si", 200, null, 4.7, false, false, 16));
 
         repo.save(p("Flowerbomb", "Viktor & Rolf", "alta-perfumeria", "mujer",
                 "Floral Oriental · Mujer", "Bergamota · Jazmín · Rosa · Pachulí",
-                "/img/alta-perfumeria/mujer/viktor.webp", null,
+                "/img/alta-perfumeria/mujer/viktor.webp",
+                "/img/alta-perfumeria/mujer/car-viktor.webp",
                 "pi-flowerbomb", 230, null, 4.8, false, false, 17));
 
         // ── Nicho Árabe ──────────────────────────────────────────────────────
