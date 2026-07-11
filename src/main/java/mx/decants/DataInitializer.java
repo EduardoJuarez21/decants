@@ -155,6 +155,61 @@ public class DataInitializer implements CommandLineRunner {
                 "Floral Gourmand · Mujer", "Orquídea · Mandarina · Vainilla · Sándalo",
                 "/img/arabe/yara.webp", "/img/arabe/car-yara.webp",
                 "pi-yara", 89, null, 4.6, true, false, 4));
+
+        repo.save(p("Hawas", "Rasasi", "nicho-arabe", "hombre",
+                "Acuático Amaderado · Hombre", "Menta · Manzana · Cardamomo · Cedro · Ámbar",
+                "/img/arabe/hawas.webp", "/img/arabe/car-hawas.webp",
+                "pi-hawas", 999, null, 4.8, true, false, 5));
+
+        repo.save(p("L'Aventure", "Al Haramain", "nicho-arabe", "hombre",
+                "Aromático Fresco · Hombre", "Bergamota · Lavanda · Madera · Vetiver · Almizcle",
+                "/img/arabe/laventure.webp", "/img/arabe/car-laventure.webp",
+                "pi-laventure", 999, null, 4.7, false, false, 6));
+
+        repo.save(p("Supremacy Silver", "Afnan", "nicho-arabe", "hombre",
+                "Acuático Floral · Hombre", "Bergamota · Jazmín · Cedro · Sándalo · Almizcle",
+                "/img/arabe/supremacy-silver.webp", "/img/arabe/car-supremacy-silver.webp",
+                "pi-supremacy-silver", 999, null, 4.6, false, false, 7));
+
+        repo.save(p("Asad", "Lattafa", "nicho-arabe", "hombre",
+                "Amaderado Oriental · Hombre", "Cuero · Oud · Especias · Vainilla · Ámbar",
+                "/img/arabe/asad.webp", "/img/arabe/car-asad.webp",
+                "pi-asad", 999, null, 4.7, false, false, 8));
+
+        repo.save(p("Supremacy Pink", "Afnan", "nicho-arabe", "mujer",
+                "Frutal Floral · Mujer", "Litchi · Fresia · Rosa · Almizcle · Sándalo",
+                "/img/arabe/supremacy-pink.webp", "/img/arabe/car-supremacy-pink.webp",
+                "pi-supremacy-pink", 999, null, 4.6, false, false, 9));
+
+        repo.save(p("La Yuqawam Femme", "Rasasi", "nicho-arabe", "mujer",
+                "Floral Oriental · Mujer", "Bergamota · Rosa · Jazmín · Pachulí · Ámbar",
+                "/img/arabe/la-yuqawam-femme.webp", "/img/arabe/car-la-yuqawam-femme.webp",
+                "pi-layuqawam", 999, null, 4.7, false, false, 10));
+
+        repo.save(p("Lail Maleki", "Lattafa", "nicho-arabe", "mujer",
+                "Oriental Floral · Mujer", "Rosa · Oud · Sándalo · Vainilla · Ámbar",
+                "/img/arabe/lail-maleki.webp", "/img/arabe/car-lail-maleki.webp",
+                "pi-lailmaleki", 999, null, 4.7, false, false, 11));
+
+        repo.save(p("Yara Moi", "Lattafa", "nicho-arabe", "mujer",
+                "Floral Gourmand · Mujer", "Cereza · Rosa · Vainilla · Caramelo · Almizcle",
+                "/img/arabe/yara-moi.webp", "/img/arabe/car-yara-moi.webp",
+                "pi-yaramoi", 999, null, 4.7, true, false, 12));
+
+        repo.save(p("Nouf", "Swiss Arabian", "nicho-arabe", "mujer",
+                "Floral Amaderado · Mujer", "Rosa · Jazmín · Cedro · Sándalo · Almizcle",
+                "/img/arabe/nouf.webp", "/img/arabe/car-nouf.webp",
+                "pi-nouf", 999, null, 4.6, false, false, 13));
+
+        repo.save(p("Amber Oud", "Al Haramain", "nicho-arabe", "unisex",
+                "Oriental Amaderado · Unisex", "Oud · Ámbar · Rosa · Sándalo · Almizcle",
+                "/img/arabe/amber-oud.webp", "/img/arabe/car-amber-oud.webp",
+                "pi-amberoud", 999, null, 4.9, true, false, 14));
+
+        repo.save(p("Raghba", "Lattafa", "nicho-arabe", "unisex",
+                "Oriental Dulce · Unisex", "Vainilla · Ámbar · Cuero · Madera · Almizcle",
+                "/img/arabe/raghba.webp", "/img/arabe/car-raghba.webp",
+                "pi-raghba", 999, null, 4.7, false, false, 15));
     }
 
     private Producto p(String nombre, String marca, String categoria, String genero,
