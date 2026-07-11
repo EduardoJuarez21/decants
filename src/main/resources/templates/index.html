@@ -420,6 +420,19 @@
     </div>
 </footer>
 
+<!-- Cupón flotante lateral -->
+<div class="coupon-side" title="Haz clic en el código para copiarlo">
+    <div class="coupon-tab">Descuento</div>
+    <div class="coupon-body">
+        <span class="coupon-pct">10%</span>
+        <span class="coupon-off">de descuento</span>
+        <hr class="coupon-divider">
+        <span class="coupon-label">Código</span>
+        <span class="coupon-code" id="couponCode" onclick="copiarCupon()">AURADECANTS10</span>
+        <span class="coupon-copy-hint" id="couponHint">Toca para copiar</span>
+    </div>
+</div>
+
 <!-- Botón flotante WhatsApp -->
 <a href="https://wa.me/525631555401?text=Hola%2C%20me%20interesan%20sus%20decants%20de%20perfume.%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" rel="noopener" class="wa-fab" aria-label="Contactar por WhatsApp">
     <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -428,6 +441,20 @@
 </a>
 
 <script>
+    /* ── Cupón lateral: copiar al portapapeles ── */
+    function copiarCupon() {
+        navigator.clipboard.writeText('AURADECANTS10').then(function() {
+            var hint = document.getElementById('couponHint');
+            var code = document.getElementById('couponCode');
+            hint.textContent = '¡Copiado!';
+            code.style.background = '#d4edda';
+            setTimeout(function() {
+                hint.textContent = 'Toca para copiar';
+                code.style.background = '';
+            }, 2000);
+        });
+    }
+
     /* ── Navbar mobile ── */
     function toggleNav() {
         document.getElementById('navMenu').classList.toggle('open');
