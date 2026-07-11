@@ -1117,3 +1117,30 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   .admin-table th,
   .admin-table td { padding: 0.75rem 0.85rem; font-size: 0.82rem; }
 }
+
+/* ── Botón flotante WhatsApp ── */
+.wa-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 1500;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+.wa-fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 22px rgba(37,211,102,0.55);
+}
+.wa-fab svg { width: 28px; height: 28px; fill: #fff; }
+@media (max-width: 600px) {
+  .wa-fab { bottom: 1rem; right: 1rem; width: 46px; height: 46px; }
+  .wa-fab svg { width: 24px; height: 24px; }
+}
