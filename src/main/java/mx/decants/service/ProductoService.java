@@ -19,7 +19,7 @@ public class ProductoService {
 
     @Transactional(readOnly = true)
     public List<Producto> activosPorCategoria(String categoria) {
-        return productoRepository.findByCategoriaAndActivoTrueOrderByOrdenAsc(categoria);
+        return productoRepository.findByCategoriaAndActivoTrueOrderByNombreAsc(categoria);
     }
 
     @Transactional(readOnly = true)

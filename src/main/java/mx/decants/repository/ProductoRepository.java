@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
-    List<Producto> findByCategoriaAndActivoTrueOrderByOrdenAsc(String categoria);
+    List<Producto> findByCategoriaAndActivoTrueOrderByNombreAsc(String categoria);
 
     List<Producto> findAllByOrderByCategoriaAscOrdenAsc();
 
