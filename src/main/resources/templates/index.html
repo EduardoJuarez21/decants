@@ -182,11 +182,13 @@
                          th:alt="|Características ${p.nombre}|"
                          class="product-img-hover">
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
-                    <button class="product-add-btn"
+                    <button th:if="${p.precio5ml == null}"
+                            class="product-add-btn"
                             th:data-id="${p.id}"
                             th:data-name="${p.nombre}"
                             th:data-price="${p.precio}"
                             th:data-variant="10ml"
+                            th:data-solo="${p.soloItem}"
                             onclick="addFromBtn(this)">+</button>
                 </div>
                 <div class="product-info">
@@ -198,7 +200,27 @@
                         <span class="stars">★★★★★</span>
                         <span class="rating-num" th:text="|(${p.calificacion})|"></span>
                     </div>
-                    <p class="product-price-tag">
+                    <div th:if="${p.precio5ml != null}" class="size-options">
+                        <button class="size-btn"
+                                th:data-id="${p.id}"
+                                th:data-name="|${p.nombre} 5ml|"
+                                th:data-price="${p.precio5ml}"
+                                th:data-variant="5ml"
+                                onclick="addFromBtn(this)">
+                            <span class="size-label">5 ml</span>
+                            <span class="size-price" th:text="|$${p.precio5ml}|"></span>
+                        </button>
+                        <button class="size-btn"
+                                th:data-id="${p.id}"
+                                th:data-name="|${p.nombre} 10ml|"
+                                th:data-price="${p.precio}"
+                                th:data-variant="10ml"
+                                onclick="addFromBtn(this)">
+                            <span class="size-label">10 ml</span>
+                            <span class="size-price" th:text="|$${p.precio}|"></span>
+                        </button>
+                    </div>
+                    <p th:unless="${p.precio5ml != null}" class="product-price-tag">
                         <span class="desde">Decant 10 ml</span>
                         <span th:text="|$${p.precio}.00|"></span>
                     </p>
