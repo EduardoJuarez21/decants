@@ -28,17 +28,20 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("Light Blue", "Dolce & Gabbana", "alta-perfumeria", "mujer",
                 "Floral Frutal · Mujer", "Manzana · Cedro · Bambú · Ámbar",
-                "/img/alta-perfumeria/hombre/dg-light-blue.webp", null,
+                "/img/alta-perfumeria/mujer/light-blue.webp",
+                "/img/alta-perfumeria/mujer/car-light-blue.webp",
                 "pi-lightblue", 160, null, 4.8, false, false, 2));
 
         repo.save(p("Ombré Leather", "Tom Ford", "alta-perfumeria", "hombre",
                 "Cuero Amaderado · Hombre", "Cuero · Cardamomo · Jazmín · Patchouli",
-                "/img/alta-perfumeria/hombre/tom-ford-ombre-leather.webp", null,
+                "/img/alta-perfumeria/hombre/ombre-leather.webp",
+                "/img/alta-perfumeria/hombre/car-ombre-leather.webp",
                 "pi-tomford", 290, null, 4.9, false, false, 3));
 
         repo.save(p("Donna Born in Roma", "Valentino", "alta-perfumeria", "mujer",
                 "Floral Gourmand · Mujer", "Jazmín · Vainilla · Vetiver · Iris",
-                "/img/alta-perfumeria/hombre/valentino.webp", null,
+                "/img/alta-perfumeria/hombre/valentino.webp",
+                "/img/alta-perfumeria/hombre/car-valentino.webp",
                 "pi-valentino", 220, null, 4.7, false, false, 4));
 
         repo.save(p("Cloud", "Ariana Grande", "alta-perfumeria", "mujer",
@@ -55,7 +58,8 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("Sauvage", "Dior", "alta-perfumeria", "hombre",
                 "Aromático Especiado · Hombre", "Bergamota · Pimienta · Ambroxan · Vetiver",
-                "/img/alta-perfumeria/hombre/dior-sauvage.webp", null,
+                "/img/alta-perfumeria/hombre/sauvage.webp",
+                "/img/alta-perfumeria/hombre/car-sauvage.webp",
                 "pi-sauvage", 240, null, 4.9, false, false, 7));
 
         repo.save(p("Le Male", "Jean Paul Gaultier", "alta-perfumeria", "hombre",
@@ -66,7 +70,8 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("1 Million", "Paco Rabanne", "alta-perfumeria", "hombre",
                 "Oriental Especiado · Hombre", "Mandarina · Canela · Cuero · Pachulí",
-                "/img/alta-perfumeria/hombre/one-million.webp", null,
+                "/img/alta-perfumeria/hombre/one-million.webp",
+                "/img/alta-perfumeria/hombre/car-one-million.webp",
                 "pi-million", 190, null, 4.8, false, false, 9));
 
         repo.save(p("Black Opium", "Yves Saint Laurent", "alta-perfumeria", "mujer",
@@ -116,6 +121,18 @@ public class DataInitializer implements CommandLineRunner {
                 "/img/alta-perfumeria/mujer/viktor.webp",
                 "/img/alta-perfumeria/mujer/car-viktor.webp",
                 "pi-flowerbomb", 230, null, 4.8, false, false, 17));
+
+        repo.save(p("Acqua di Giò Profondo", "Giorgio Armani", "alta-perfumeria", "hombre",
+                "Aromático Acuático · Hombre", "Mar · Bergamota · Mandarina · Romero · Lavanda · Pachulí · Ámbar",
+                "/img/alta-perfumeria/hombre/acqua-di-gio-profondo.webp",
+                "/img/alta-perfumeria/hombre/car-acqua-di-gio-profondo.webp",
+                "pi-profondo", 420, 230, 4.8, false, false, 18));
+
+        repo.save(p("Acqua di Giò Parfum", "Giorgio Armani", "alta-perfumeria", "hombre",
+                "Acuático Amaderado · Hombre", "Marina · Bergamota · Romero · Salvia · Geranio · Olíbano · Pachulí",
+                "/img/alta-perfumeria/hombre/acqua-di-gio-parfum.webp",
+                "/img/alta-perfumeria/hombre/car-acqua-di-gio-parfum.webp",
+                "pi-parfum", 420, 230, 4.8, false, false, 19));
 
         // ── Nicho Árabe ──────────────────────────────────────────────────────
 
