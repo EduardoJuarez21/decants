@@ -421,8 +421,8 @@
 </footer>
 
 <!-- Cupón flotante lateral -->
-<div class="coupon-side" title="Haz clic en el código para copiarlo">
-    <div class="coupon-tab">Descuento</div>
+<div class="coupon-side" id="couponSide">
+    <div class="coupon-tab" onclick="toggleCupon()" title="Ver descuento" style="cursor:pointer;">Descuento</div>
     <div class="coupon-body">
         <span class="coupon-pct">10%</span>
         <span class="coupon-off">de descuento</span>
@@ -441,7 +441,11 @@
 </a>
 
 <script>
-    /* ── Cupón lateral: copiar al portapapeles ── */
+    /* ── Cupón lateral: toggle y copiar ── */
+    function toggleCupon() {
+        document.getElementById('couponSide').classList.toggle('open');
+    }
+
     function copiarCupon() {
         navigator.clipboard.writeText('AURADECANTS10').then(function() {
             var hint = document.getElementById('couponHint');
