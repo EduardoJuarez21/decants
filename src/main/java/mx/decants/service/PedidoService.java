@@ -243,6 +243,40 @@ public class PedidoService {
         return pedido;
     }
 
+    public Pedido crearPedidoManual(String nombre, String telefono, String email,
+                                     String productosDesc, Integer total,
+                                     String direccion, String comentarios,
+                                     String estadoStr) {
+        Pedido pedido = new Pedido();
+        pedido.setNombreCliente(nombre.trim());
+        pedido.setTelefono(telefono.trim());
+        pedido.setEmail(email != null && !email.isBlank() ? email.trim() : null);
+        pedido.setTipoProducto("Venta directa");
+        pedido.setCantidad(1);
+        pedido.setProductosSeleccionados(productosDesc != null ? productosDesc.trim() : "");
+        pedido.setTotalPagado(total);
+        pedido.setDireccion(direccion != null && !direccion.isBlank() ? direccion.trim() : null);
+        pedido.setComentarios(comentarios != null && !comentarios.isBlank() ? comentarios.trim() : null);
+        pedido.setEntorno("manual");
+        EstadoPedido estado = switch (estadoStr) {
+            case "ENTREGADO"   -> EstadoPedido.ENTREGADO;
+            case "EN_REVISION" -> EstadoPedido.EN_REVISION;
+            default            -> EstadoPedido.CONFIRMADO;
+        };
+        pedido.setEstadoPedido(estado);
+
+        Cliente cliente = clienteRepository.findByTelefono(telefono.trim()).orElseGet(Cliente::new);
+        cliente.setTelefono(telefono.trim());
+        cliente.setNombre(nombre.trim());
+        if (email != null && !email.isBlank()) cliente.setEmail(email.trim());
+        if (direccion != null && !direccion.isBlank()) cliente.setUltimaDireccion(direccion.trim());
+        pedido.setCliente(clienteRepository.save(cliente));
+
+        Pedido saved = pedidoRepository.save(pedido);
+        log.info("Pedido manual #{} creado — cliente: {}, total: ${} MXN", saved.getId(), nombre, total);
+        return saved;
+    }
+
     @Transactional(readOnly = true)
     public List<Pedido> listarPedidos() {
         return pedidoRepository.findAllByOrderByFechaCreacionDesc();

@@ -40,11 +40,20 @@
         <a th:href="@{/aura-gestion/configuracion}" class="admin-link">Configuración</a>
     </div>
 
+    <div th:if="${mensaje}"
+         style="background:#d4edda; color:#155724; border:1px solid #c3e6cb; border-radius:8px;
+                padding:0.75rem 1.25rem; margin-bottom:1.25rem; font-size:0.88rem;"
+         th:text="${mensaje}"></div>
+
     <!-- Tabla de pedidos -->
     <div class="admin-card">
         <div class="admin-card-header">
             <h2>Todos los pedidos</h2>
-            <a th:href="@{/pedido/nuevo}" class="btn btn-primary btn-sm">+ Nuevo pedido</a>
+            <a th:href="@{/aura-gestion/pedidos/nuevo}"
+               style="padding:0.45rem 1rem; background:#1a1a1a; color:#fff; border-radius:7px;
+                      font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap;">
+                + Registrar venta
+            </a>
         </div>
 
         <!-- Sin pedidos -->
@@ -83,6 +92,9 @@
                             <span th:if="${p.entorno == 'test'}"
                                   style="background:#fff3cd; color:#856404; font-size:0.7rem; font-weight:700;
                                          padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">TEST</span>
+                            <span th:if="${p.entorno == 'manual'}"
+                                  style="background:#e8e0f8; color:#4a2d8a; font-size:0.7rem; font-weight:700;
+                                         padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">MANUAL</span>
                             <span th:if="${p.entorno == null or p.entorno == 'live'}"
                                   style="background:#d4edda; color:#155724; font-size:0.7rem; font-weight:700;
                                          padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">LIVE</span>

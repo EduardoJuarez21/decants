@@ -47,6 +47,26 @@ public class AdminController {
         return "admin/pedidos";
     }
 
+    @GetMapping("/pedidos/nuevo")
+    public String nuevoPedidoForm() {
+        return "admin/pedido-nuevo";
+    }
+
+    @PostMapping("/pedidos/nuevo")
+    public String guardarPedidoManual(@RequestParam String nombre,
+                                      @RequestParam String telefono,
+                                      @RequestParam(required = false) String email,
+                                      @RequestParam String productos,
+                                      @RequestParam Integer total,
+                                      @RequestParam(required = false) String direccion,
+                                      @RequestParam(required = false) String comentarios,
+                                      @RequestParam(defaultValue = "CONFIRMADO") String estado,
+                                      RedirectAttributes ra) {
+        Pedido p = pedidoService.crearPedidoManual(nombre, telefono, email, productos, total, direccion, comentarios, estado);
+        ra.addFlashAttribute("mensaje", "Pedido #" + p.getId() + " registrado correctamente.");
+        return "redirect:/aura-gestion/pedidos";
+    }
+
     @GetMapping("/pedidos/{id}")
     public String detallePedido(@PathVariable Long id, Model model) {
         Optional<Pedido> pedido = pedidoService.buscarPorId(id);
