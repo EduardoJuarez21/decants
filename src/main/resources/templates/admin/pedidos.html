@@ -36,6 +36,8 @@
         <a th:href="@{/aura-gestion/productos}" class="admin-link">Catálogo</a>
         <span style="color:#ccc;">|</span>
         <a th:href="@{/aura-gestion/cupones}"   class="admin-link">Cupones</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/configuracion}" class="admin-link">Configuración</a>
     </div>
 
     <!-- Tabla de pedidos -->
@@ -62,6 +64,7 @@
                         <th>Producto</th>
                         <th>Cantidad</th>
                         <th>Total</th>
+                        <th>Entorno</th>
                         <th>Estado</th>
                         <th>Fecha</th>
                         <th></th>
@@ -76,6 +79,14 @@
                         <td th:text="${p.cantidad}"></td>
                         <td style="font-weight:600; color:var(--gold);"
                             th:text="${p.totalPagado != null ? '$' + p.totalPagado + ' MXN' : '—'}"></td>
+                        <td>
+                            <span th:if="${p.entorno == 'test'}"
+                                  style="background:#fff3cd; color:#856404; font-size:0.7rem; font-weight:700;
+                                         padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">TEST</span>
+                            <span th:if="${p.entorno == null or p.entorno == 'live'}"
+                                  style="background:#d4edda; color:#155724; font-size:0.7rem; font-weight:700;
+                                         padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">LIVE</span>
+                        </td>
                         <td>
                             <span th:switch="${p.estadoPedido.name()}">
                                 <span th:case="'NUEVO'"      class="badge badge-nuevo">Nuevo</span>

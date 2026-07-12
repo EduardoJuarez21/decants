@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración — Admin | Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-page">
+
+    <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
+        <h1>Panel de administración</h1>
+        <div style="display:flex; align-items:center; gap:1.5rem;">
+            <span class="admin-brand">Decants</span>
+            <form th:action="@{/aura-gestion/logout}" method="post" style="margin:0;">
+                <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Nav admin -->
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+        <a th:href="@{/aura-gestion/pedidos}"       class="admin-link">Pedidos</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/clientes}"      class="admin-link">Clientes</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/productos}"     class="admin-link">Catálogo</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/cupones}"       class="admin-link">Cupones</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/configuracion}" class="admin-link" style="font-weight:700;">Configuración</a>
+    </div>
+
+    <!-- Mensaje flash -->
+    <div th:if="${mensaje}"
+         style="background:#d4edda; color:#155724; border:1px solid #c3e6cb; border-radius:8px;
+                padding:0.75rem 1.25rem; margin-bottom:1.25rem; font-size:0.88rem;">
+        <span th:text="${mensaje}"></span>
+    </div>
+
+    <!-- Stripe entorno -->
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2>Entorno de Stripe</h2>
+        </div>
+
+        <div style="padding:1.75rem 2rem;">
+
+            <!-- Estado actual -->
+            <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+                <span style="font-size:0.85rem; color:#555; font-weight:600;">Modo actual:</span>
+                <span th:if="${stripeModo == 'live'}"
+                      style="background:#d4edda; color:#155724; font-size:0.95rem; font-weight:700;
+                             padding:0.3rem 1rem; border-radius:6px; letter-spacing:1px;">
+                    &#9654; PRODUCCIÓN (LIVE)
+                </span>
+                <span th:if="${stripeModo == 'test'}"
+                      style="background:#fff3cd; color:#856404; font-size:0.95rem; font-weight:700;
+                             padding:0.3rem 1rem; border-radius:6px; letter-spacing:1px;">
+                    &#9654; PRUEBAS (TEST)
+                </span>
+            </div>
+
+            <!-- Advertencia live -->
+            <div th:if="${stripeModo == 'live'}"
+                 style="background:#fff8f0; border-left:4px solid #e67e22; border-radius:6px;
+                        padding:0.9rem 1.2rem; margin-bottom:1.75rem; font-size:0.83rem; color:#7a4d00;">
+                <strong>Modo LIVE activo.</strong> Los pagos son reales. Usa modo TEST para hacer pruebas sin cobrar a clientes.
+            </div>
+
+            <!-- Advertencia test -->
+            <div th:if="${stripeModo == 'test'}"
+                 style="background:#fffbe6; border-left:4px solid #f5c518; border-radius:6px;
+                        padding:0.9rem 1.2rem; margin-bottom:1.75rem; font-size:0.83rem; color:#7a6800;">
+                <strong>Modo TEST activo.</strong> Los pagos no son reales. Recuerda cambiar a LIVE antes de recibir clientes reales.
+            </div>
+
+            <!-- Botones de cambio -->
+            <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+
+                <form th:action="@{/aura-gestion/configuracion/stripe-modo}" method="post"
+                      onsubmit="return confirm('¿Activar modo PRODUCCIÓN? Los pagos serán reales.');">
+                    <input type="hidden" name="modo" value="live">
+                    <button type="submit"
+                            th:disabled="${stripeModo == 'live'}"
+                            style="padding:0.65rem 1.5rem; background:#1a1a1a; color:#fff; border:none;
+                                   border-radius:8px; font-size:0.85rem; font-family:inherit; cursor:pointer;
+                                   font-weight:600; opacity:1;"
+                            th:style="${stripeModo == 'live'} ? 'padding:0.65rem 1.5rem; background:#aaa; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-family:inherit; cursor:not-allowed; font-weight:600;'
+                                                              : 'padding:0.65rem 1.5rem; background:#1a1a1a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-family:inherit; cursor:pointer; font-weight:600;'">
+                        Activar PRODUCCIÓN
+                    </button>
+                </form>
+
+                <form th:action="@{/aura-gestion/configuracion/stripe-modo}" method="post">
+                    <input type="hidden" name="modo" value="test">
+                    <button type="submit"
+                            th:disabled="${stripeModo == 'test'}"
+                            th:style="${stripeModo == 'test'} ? 'padding:0.65rem 1.5rem; background:#aaa; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-family:inherit; cursor:not-allowed; font-weight:600;'
+                                                             : 'padding:0.65rem 1.5rem; background:#e67e22; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-family:inherit; cursor:pointer; font-weight:600;'">
+                        Activar TEST
+                    </button>
+                </form>
+
+            </div>
+
+            <!-- Info tarjeta de prueba -->
+            <div th:if="${stripeModo == 'test'}"
+                 style="margin-top:1.75rem; background:#f8f9fa; border-radius:8px;
+                        padding:1rem 1.25rem; font-size:0.82rem; color:#555;">
+                <p style="font-weight:700; margin-bottom:0.5rem; color:#333;">Tarjeta de prueba Stripe:</p>
+                <p style="font-family:monospace; margin:0.2rem 0;">Número: <strong>4242 4242 4242 4242</strong></p>
+                <p style="font-family:monospace; margin:0.2rem 0;">Vencimiento: <strong>cualquier fecha futura</strong></p>
+                <p style="font-family:monospace; margin:0.2rem 0;">CVV: <strong>cualquier 3 dígitos</strong></p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -59,6 +59,8 @@ public class Pedido {
     @Column(length = 500)
     private String direccion;
 
+    private String entorno;
+
     private Double latitud;
 
     private Double longitud;
@@ -139,6 +141,9 @@ public class Pedido {
 
     public String getDireccion() { return direccion; }
     public void setDireccion(String direccion) { this.direccion = direccion; }
+
+    public String getEntorno() { return entorno; }
+    public void setEntorno(String entorno) { this.entorno = entorno; }
 
     public Double getLatitud() { return latitud; }
     public void setLatitud(Double latitud) { this.latitud = latitud; }

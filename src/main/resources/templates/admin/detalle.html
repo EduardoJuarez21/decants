@@ -145,6 +145,18 @@
             </div>
 
             <div class="detail-field">
+                <span class="field-label">Entorno Stripe</span>
+                <span class="field-value">
+                    <span th:if="${pedido.entorno == 'test'}"
+                          style="background:#fff3cd; color:#856404; font-size:0.75rem; font-weight:700;
+                                 padding:0.15rem 0.6rem; border-radius:4px;">TEST</span>
+                    <span th:if="${pedido.entorno == null or pedido.entorno == 'live'}"
+                          style="background:#d4edda; color:#155724; font-size:0.75rem; font-weight:700;
+                                 padding:0.15rem 0.6rem; border-radius:4px;">LIVE</span>
+                </span>
+            </div>
+
+            <div class="detail-field">
                 <span class="field-label">Fecha de creación</span>
                 <span class="field-value" th:text="${#temporals.format(pedido.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></span>
             </div>

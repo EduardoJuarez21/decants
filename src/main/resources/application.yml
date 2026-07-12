@@ -23,7 +23,8 @@ admin:
   password: ${ADMIN_PASSWORD:changeme123}
 
 stripe:
-  secret-key: ${STRIPE_SECRET_KEY:sk_test_PON_TU_KEY_AQUI}
+  secret-key-live: ${STRIPE_SECRET_KEY:}
+  secret-key-test: ${STRIPE_SECRET_KEY_TEST:}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
 
 app:

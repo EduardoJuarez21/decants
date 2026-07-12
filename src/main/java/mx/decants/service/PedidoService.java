@@ -41,17 +41,20 @@ public class PedidoService {
     private final ProductoRepository productoRepository;
     private final ClienteRepository clienteRepository;
     private final CuponService cuponService;
+    private final ConfiguracionService configuracionService;
     private final ObjectMapper objectMapper;
 
     public PedidoService(PedidoRepository pedidoRepository,
                          ProductoRepository productoRepository,
                          ClienteRepository clienteRepository,
                          CuponService cuponService,
+                         ConfiguracionService configuracionService,
                          ObjectMapper objectMapper) {
         this.pedidoRepository = pedidoRepository;
         this.productoRepository = productoRepository;
         this.clienteRepository = clienteRepository;
         this.cuponService = cuponService;
+        this.configuracionService = configuracionService;
         this.objectMapper = objectMapper;
     }
 
@@ -91,6 +94,7 @@ public class PedidoService {
             try { pedido.setLongitud(Double.parseDouble(dto.getLongitud())); } catch (NumberFormatException ignored) {}
         }
         pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
+        pedido.setEntorno(configuracionService.getStripeModo());
         pedido.setCliente(encontrarOCrearCliente(dto));
         Pedido saved = pedidoRepository.save(pedido);
         log.info("Pedido #{} creado — cliente: {}, total: ${} MXN, productos: {}",

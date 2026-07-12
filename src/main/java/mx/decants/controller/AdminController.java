@@ -2,12 +2,14 @@ package mx.decants.controller;
 
 import mx.decants.entity.Cupon;
 import mx.decants.entity.Pedido;
+import mx.decants.service.ConfiguracionService;
 import mx.decants.service.CuponService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +21,14 @@ public class AdminController {
     private final PedidoService pedidoService;
     private final ProductoService productoService;
     private final CuponService cuponService;
+    private final ConfiguracionService configuracionService;
 
-    public AdminController(PedidoService pedidoService, ProductoService productoService, CuponService cuponService) {
+    public AdminController(PedidoService pedidoService, ProductoService productoService,
+                           CuponService cuponService, ConfiguracionService configuracionService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
         this.cuponService = cuponService;
+        this.configuracionService = configuracionService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────────
@@ -106,5 +111,22 @@ public class AdminController {
     public String eliminarCupon(@PathVariable Long id) {
         cuponService.eliminar(id);
         return "redirect:/aura-gestion/cupones";
+    }
+
+    // ── Configuración ─────────────────────────────────────────────────────────
+
+    @GetMapping("/configuracion")
+    public String configuracion(Model model) {
+        model.addAttribute("stripeModo", configuracionService.getStripeModo());
+        return "admin/configuracion";
+    }
+
+    @PostMapping("/configuracion/stripe-modo")
+    public String cambiarStripeModo(@RequestParam String modo, RedirectAttributes ra) {
+        if ("test".equals(modo) || "live".equals(modo)) {
+            configuracionService.setStripeModo(modo);
+            ra.addFlashAttribute("mensaje", "Modo Stripe cambiado a: " + modo.toUpperCase());
+        }
+        return "redirect:/aura-gestion/configuracion";
     }
 }

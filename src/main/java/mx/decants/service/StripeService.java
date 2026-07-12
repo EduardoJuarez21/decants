@@ -11,14 +11,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class StripeService {
 
-    @Value("${stripe.secret-key}")
-    private String secretKey;
+    @Value("${stripe.secret-key-live}")
+    private String secretKeyLive;
+
+    @Value("${stripe.secret-key-test}")
+    private String secretKeyTest;
 
     @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
 
+    private final ConfiguracionService configuracionService;
+
+    public StripeService(ConfiguracionService configuracionService) {
+        this.configuracionService = configuracionService;
+    }
+
+    private String resolverKey() {
+        return "test".equals(configuracionService.getStripeModo()) ? secretKeyTest : secretKeyLive;
+    }
+
     public Session crearCheckoutSession(Pedido pedido) throws StripeException {
-        Stripe.apiKey = secretKey;
+        Stripe.apiKey = resolverKey();
 
         SessionCreateParams params = SessionCreateParams.builder()
             .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -43,7 +56,7 @@ public class StripeService {
     }
 
     public boolean verificarPago(String sessionId) throws StripeException {
-        Stripe.apiKey = secretKey;
+        Stripe.apiKey = resolverKey();
         Session session = Session.retrieve(sessionId);
         return "paid".equals(session.getPaymentStatus());
     }
