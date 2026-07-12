@@ -79,7 +79,9 @@
                            placeholder="5512345678"
                            pattern="[0-9]{10}"
                            maxlength="10"
-                           inputmode="numeric" />
+                           inputmode="numeric"
+                           required />
+                    <span class="field-error" id="telefonoError" style="display:none;">Ingresa tu número de 10 dígitos.</span>
                     <span class="field-error"
                           th:if="${#fields.hasErrors('telefono')}"
                           th:errors="*{telefono}"></span>
@@ -91,7 +93,9 @@
                            id="nombreCliente"
                            th:field="*{nombreCliente}"
                            th:class="${#fields.hasErrors('nombreCliente')} ? 'form-control is-invalid' : 'form-control'"
-                           placeholder="Tu nombre completo" />
+                           placeholder="Tu nombre completo"
+                           required />
+                    <span class="field-error" id="nombreError" style="display:none;">Ingresa tu nombre completo.</span>
                     <span class="field-error"
                           th:if="${#fields.hasErrors('nombreCliente')}"
                           th:errors="*{nombreCliente}"></span>
@@ -285,15 +289,58 @@
         document.getElementById('cartItemsJsonInput').value = JSON.stringify(cartItemsForServer);
     }
 
-    // Al enviar: validar dirección, recoger datos de caja y limpiar localStorage
+    // Al enviar: validar nombre, teléfono y dirección antes de proceder
     document.getElementById('pedidoForm').addEventListener('submit', function(e) {
-        if (!document.getElementById('direccionInput').value.trim()) {
+        var valid = true;
+        var primerError = null;
+
+        var nombre = document.getElementById('nombreCliente').value.trim();
+        var tel    = document.getElementById('telefono').value.trim();
+        var dir    = document.getElementById('direccionInput').value.trim();
+
+        // Nombre
+        var nombreEl = document.getElementById('nombreCliente');
+        var nombreErr = document.getElementById('nombreError');
+        if (nombre.length < 3) {
+            nombreErr.style.display = 'block';
+            nombreEl.classList.add('is-invalid');
+            if (!primerError) primerError = nombreEl;
+            valid = false;
+        } else {
+            nombreErr.style.display = 'none';
+            nombreEl.classList.remove('is-invalid');
+        }
+
+        // Teléfono
+        var telEl  = document.getElementById('telefono');
+        var telErr = document.getElementById('telefonoError');
+        if (!/^[0-9]{10}$/.test(tel)) {
+            telErr.style.display = 'block';
+            telEl.classList.add('is-invalid');
+            if (!primerError) primerError = telEl;
+            valid = false;
+        } else {
+            telErr.style.display = 'none';
+            telEl.classList.remove('is-invalid');
+        }
+
+        // Dirección
+        var addrErr = document.getElementById('addressError');
+        if (!dir) {
+            addrErr.style.display = 'block';
+            if (!primerError) primerError = document.getElementById('addressSearch');
+            valid = false;
+        } else {
+            addrErr.style.display = 'none';
+        }
+
+        if (!valid) {
             e.preventDefault();
-            document.getElementById('addressError').style.display = 'block';
-            document.getElementById('addressSearch').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            document.getElementById('addressSearch').focus();
+            primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            primerError.focus();
             return false;
         }
+
         if (document.getElementById('boxSection').style.display !== 'none') {
             var boxStyle = document.querySelector('input[name="boxStyle"]:checked');
             var boxMsg   = document.getElementById('boxMessage').value.trim();
