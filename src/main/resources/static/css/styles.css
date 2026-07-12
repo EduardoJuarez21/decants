@@ -1140,7 +1140,8 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   letter-spacing: 2px;
   text-transform: uppercase;
   padding: 1rem 0.45rem;
-  border-radius: 8px 0 0 8px;
+  border-radius: 0 0 0 0;
+  border-left: 2px solid rgba(0,0,0,0.08);
   cursor: pointer;
   user-select: none;
   box-shadow: -3px 0 12px rgba(0,0,0,0.15);
@@ -1150,8 +1151,8 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   background: var(--white);
   border-top: 2px solid var(--gold);
   border-bottom: 2px solid var(--gold);
-  border-right: 2px solid var(--gold);
-  border-radius: 0 0 0 0;
+  border-left: 2px solid var(--gold);
+  border-radius: 8px 0 0 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
