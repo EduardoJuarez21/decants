@@ -71,6 +71,26 @@ public class AdminController {
         return "redirect:/aura-gestion/productos";
     }
 
+    @GetMapping("/productos/{id}/editar")
+    public String editarProducto(@PathVariable Long id, Model model) {
+        return productoService.buscarPorId(id)
+                .map(p -> { model.addAttribute("producto", p); return "admin/producto-editar"; })
+                .orElse("redirect:/aura-gestion/productos");
+    }
+
+    @PostMapping("/productos/{id}/editar")
+    public String guardarProducto(@PathVariable Long id,
+                                  @RequestParam String nombre,
+                                  @RequestParam String marca,
+                                  @RequestParam Integer precio,
+                                  @RequestParam(required = false) Integer precio5ml,
+                                  @RequestParam(defaultValue = "false") boolean bestSeller,
+                                  RedirectAttributes ra) {
+        productoService.actualizar(id, precio, precio5ml, nombre, marca, bestSeller);
+        ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
+        return "redirect:/aura-gestion/productos";
+    }
+
     // ── Clientes ──────────────────────────────────────────────────────────────
 
     @GetMapping("/clientes")

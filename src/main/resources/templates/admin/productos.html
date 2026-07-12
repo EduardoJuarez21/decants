@@ -39,6 +39,11 @@
         <a th:href="@{/aura-gestion/configuracion}" class="admin-link">Configuración</a>
     </div>
 
+    <div th:if="${mensaje}"
+         style="background:#d4edda; color:#155724; border:1px solid #c3e6cb; border-radius:8px;
+                padding:0.75rem 1.25rem; margin-bottom:1.25rem; font-size:0.88rem;"
+         th:text="${mensaje}"></div>
+
     <div class="admin-card">
         <div class="admin-card-header">
             <h2>Catálogo de productos</h2>
@@ -116,8 +121,14 @@
                             <span th:if="${p.activo}"  class="badge badge-activo">Activo</span>
                             <span th:unless="${p.activo}" class="badge badge-inactivo">Inactivo</span>
                         </td>
-                        <td>
-                            <form th:action="@{/aura-gestion/productos/{id}/toggle(id=${p.id})}" method="post">
+                        <td style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                            <a th:href="@{/aura-gestion/productos/{id}/editar(id=${p.id})}"
+                               class="admin-link"
+                               style="font-size:0.78rem; padding:0.25rem 0.6rem; border:1px solid #ddd;
+                                      border-radius:5px; background:#fff; white-space:nowrap;">
+                                ✏ Editar
+                            </a>
+                            <form th:action="@{/aura-gestion/productos/{id}/toggle(id=${p.id})}" method="post" style="margin:0;">
                                 <button type="submit"
                                         th:class="${p.activo ? 'btn-toggle btn-toggle-off' : 'btn-toggle btn-toggle-on'}">
                                     <span th:text="${p.activo ? 'Desactivar' : 'Activar'}"></span>
