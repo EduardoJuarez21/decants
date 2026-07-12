@@ -86,7 +86,7 @@
             <p class="section-subtitle">Casas de diseñador y firmas de lujo. Lo mejor del perfume occidental.</p>
         </div>
 
-        <div class="filter-tabs">
+        <div class="filter-tabs" id="filtros-designer">
             <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-designer')">Todos</button>
             <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-designer')">Hombre</button>
             <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-designer')">Mujer</button>
@@ -154,7 +154,7 @@
         </div>
 
         <!-- ── Divisor ──────────────────────────────────────── -->
-        <div class="coleccion-divider"></div>
+        <div class="coleccion-divider" id="divider-colecciones"></div>
 
         <!-- ── Nicho Árabe ───────────────────────────────────── -->
         <div id="nicho-arabe">
@@ -861,21 +861,34 @@
     /* ── Buscador de productos ── */
     function buscarProductos() {
         var q = document.getElementById('buscadorProductos').value.toLowerCase().trim();
-        var total = 0;
+        var totalDesigner = 0, totalArabe = 0;
 
         if (q) {
             document.getElementById('productos').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        document.querySelectorAll('#grid-designer .product-card, #grid-arabe .product-card').forEach(function(card) {
-            var nombre = card.querySelector('h3')  ? card.querySelector('h3').textContent.toLowerCase()  : '';
+        document.querySelectorAll('#grid-designer .product-card').forEach(function(card) {
+            var nombre = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
             var marca  = card.querySelector('.product-brand') ? card.querySelector('.product-brand').textContent.toLowerCase() : '';
             var match  = !q || nombre.includes(q) || marca.includes(q);
             card.style.display = match ? '' : 'none';
-            if (match) total++;
+            if (match) totalDesigner++;
         });
 
-        document.getElementById('buscarSinResultados').style.display = (!q || total > 0) ? 'none' : 'block';
+        document.querySelectorAll('#grid-arabe .product-card').forEach(function(card) {
+            var nombre = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
+            var marca  = card.querySelector('.product-brand') ? card.querySelector('.product-brand').textContent.toLowerCase() : '';
+            var match  = !q || nombre.includes(q) || marca.includes(q);
+            card.style.display = match ? '' : 'none';
+            if (match) totalArabe++;
+        });
+
+        var show = !q;
+        document.getElementById('alta-perfumeria').style.display    = (show || totalDesigner > 0) ? '' : 'none';
+        document.getElementById('filtros-designer').style.display   = (show || totalDesigner > 0) ? '' : 'none';
+        document.getElementById('nicho-arabe').style.display        = (show || totalArabe > 0)    ? '' : 'none';
+        document.getElementById('divider-colecciones').style.display = (show || (totalDesigner > 0 && totalArabe > 0)) ? '' : 'none';
+        document.getElementById('buscarSinResultados').style.display = (!q || totalDesigner + totalArabe > 0) ? 'none' : 'block';
     }
 
     /* ── Lightbox características ── */
