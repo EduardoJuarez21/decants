@@ -188,7 +188,7 @@ section      { padding: 6rem 2rem; }
 }
 .hero h1 em { color: var(--gold); font-style: italic; }
 .hero-sub {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   color: rgba(255,255,255,0.65);
   font-weight: 300;
   margin-bottom: 2.8rem;
