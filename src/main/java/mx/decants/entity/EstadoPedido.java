@@ -2,12 +2,17 @@ package mx.decants.entity;
 
 public enum EstadoPedido {
 
-    NUEVO("Nuevo"),
     PENDIENTE_PAGO("Pendiente de pago"),
-    EN_REVISION("En revisión"),
+    CREADO("Creado"),
     CONFIRMADO("Confirmado"),
+    LISTO_PARA_ENVIO("Listo para envío"),
+    ENVIADO("Enviado"),
+    ENTREGADO("Entregado"),
     CANCELADO("Cancelado"),
-    ENTREGADO("Entregado");
+
+    // Valores legacy — solo para compatibilidad con registros anteriores
+    NUEVO("Nuevo"),
+    EN_REVISION("En revisión");
 
     private final String etiqueta;
 

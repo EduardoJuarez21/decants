@@ -75,6 +75,7 @@
                         <th>Total</th>
                         <th>Entorno</th>
                         <th>Estado</th>
+                        <th>Guía</th>
                         <th>Fecha</th>
                         <th></th>
                     </tr>
@@ -100,15 +101,37 @@
                                          padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">LIVE</span>
                         </td>
                         <td>
-                            <span th:switch="${p.estadoPedido.name()}">
-                                <span th:case="'NUEVO'"      class="badge badge-nuevo">Nuevo</span>
-                                <span th:case="'EN_REVISION'" class="badge badge-revision">En revisión</span>
-                                <span th:case="'CONFIRMADO'" class="badge badge-confirmado">Confirmado</span>
-                                <span th:case="'CANCELADO'"  class="badge badge-cancelado">Cancelado</span>
-                                <span th:case="'ENTREGADO'"  class="badge badge-entregado">Entregado</span>
-                                <span th:case="*"            class="badge">-</span>
-                            </span>
+                            <form th:action="@{/aura-gestion/pedidos/{id}/estado(id=${p.id})}" method="post">
+                                <select name="estado" onchange="this.form.submit()"
+                                        style="border:none; border-radius:20px; font-size:0.72rem; font-weight:600;
+                                               letter-spacing:0.2px; cursor:pointer; padding:0.28rem 0.6rem;
+                                               font-family:inherit; outline:none;"
+                                        th:classappend="${
+                                            p.estadoPedido.name() == 'CREADO'          ? 'badge-creado'       :
+                                            p.estadoPedido.name() == 'CONFIRMADO'      ? 'badge-confirmado'   :
+                                            p.estadoPedido.name() == 'LISTO_PARA_ENVIO'? 'badge-listo-envio'  :
+                                            p.estadoPedido.name() == 'ENVIADO'         ? 'badge-enviado'      :
+                                            p.estadoPedido.name() == 'ENTREGADO'       ? 'badge-entregado'    :
+                                            p.estadoPedido.name() == 'CANCELADO'       ? 'badge-cancelado'    :
+                                            p.estadoPedido.name() == 'PENDIENTE_PAGO'  ? 'badge-pendiente'    :
+                                            'badge-creado'}">
+                                    <option value="CREADO"          th:selected="${p.estadoPedido.name() == 'CREADO' or p.estadoPedido.name() == 'NUEVO'}">Creado</option>
+                                    <option value="CONFIRMADO"      th:selected="${p.estadoPedido.name() == 'CONFIRMADO'}">Confirmado</option>
+                                    <option value="LISTO_PARA_ENVIO" th:selected="${p.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
+                                    <option value="ENVIADO"         th:selected="${p.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
+                                    <option value="ENTREGADO"       th:selected="${p.estadoPedido.name() == 'ENTREGADO'}">Entregado</option>
+                                    <option value="CANCELADO"       th:selected="${p.estadoPedido.name() == 'CANCELADO'}">Cancelado</option>
+                                    <option th:if="${p.estadoPedido.name() == 'PENDIENTE_PAGO'}"
+                                            value="PENDIENTE_PAGO" selected disabled
+                                            style="color:#999;">Pendiente de pago</option>
+                                    <option th:if="${p.estadoPedido.name() == 'EN_REVISION'}"
+                                            value="EN_REVISION" selected disabled
+                                            style="color:#999;">En revisión (legacy)</option>
+                                </select>
+                            </form>
                         </td>
+                        <td style="font-family:monospace; font-size:0.78rem;"
+                            th:text="${p.numeroGuia != null and !#strings.isEmpty(p.numeroGuia)} ? ${p.numeroGuia} : '—'"></td>
                         <td th:text="${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
                             <a th:href="@{/aura-gestion/pedidos/{id}(id=${p.id})}" class="admin-link">Ver detalle</a>

@@ -929,13 +929,17 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   border-radius: 20px; font-size: 0.72rem; font-weight: 600;
   letter-spacing: 0.2px;
 }
-.badge-nuevo      { background: #e3f2fd; color: #1565c0; }
-.badge-revision   { background: #fff8e1; color: #e65100; }
-.badge-confirmado { background: #e8f5e9; color: #2e7d32; }
-.badge-cancelado  { background: #fce4ec; color: #c62828; }
-.badge-entregado  { background: #f3e5f5; color: #6a1b9a; }
-.badge-activo     { background: #e8f5e9; color: #2e7d32; }
-.badge-inactivo   { background: #fce4ec; color: #c62828; }
+.badge-nuevo         { background: #e3f2fd; color: #1565c0; }
+.badge-revision      { background: #fff8e1; color: #e65100; }
+.badge-creado        { background: #e3f2fd; color: #1565c0; }
+.badge-confirmado    { background: #e8f5e9; color: #2e7d32; }
+.badge-listo-envio   { background: #fff3e0; color: #bf360c; }
+.badge-enviado       { background: #ede7f6; color: #4527a0; }
+.badge-entregado     { background: #e0f2f1; color: #00695c; }
+.badge-cancelado     { background: #fce4ec; color: #c62828; }
+.badge-pendiente     { background: #f5f5f5; color: #616161; }
+.badge-activo        { background: #e8f5e9; color: #2e7d32; }
+.badge-inactivo      { background: #fce4ec; color: #c62828; }
 
 /* Toggle buttons en tabla de productos admin */
 .btn-toggle {

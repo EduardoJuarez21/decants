@@ -2,21 +2,29 @@ package mx.decants.controller;
 
 import mx.decants.entity.Cupon;
 import mx.decants.entity.Pedido;
+import mx.decants.entity.Producto;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.CuponService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/aura-gestion")
 public class AdminController {
+
+    @Value("${google.maps.api-key:}")
+    private String mapsApiKey;
 
     private final PedidoService pedidoService;
     private final ProductoService productoService;
@@ -48,7 +56,21 @@ public class AdminController {
     }
 
     @GetMapping("/pedidos/nuevo")
-    public String nuevoPedidoForm() {
+    public String nuevoPedidoForm(Model model) {
+        List<Map<String, Object>> prods = productoService.listarTodos().stream()
+            .filter(Producto::isActivo)
+            .map(p -> {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("id", p.getId());
+                m.put("nombre", p.getNombre());
+                m.put("marca", p.getMarca());
+                m.put("precio", p.getPrecio());
+                m.put("precio5ml", p.getPrecio5ml());
+                return m;
+            })
+            .collect(Collectors.toList());
+        model.addAttribute("productosJson", prods);
+        model.addAttribute("mapsApiKey", mapsApiKey);
         return "admin/pedido-nuevo";
     }
 
@@ -59,12 +81,33 @@ public class AdminController {
                                       @RequestParam String productos,
                                       @RequestParam Integer total,
                                       @RequestParam(required = false) String direccion,
+                                      @RequestParam(required = false) String latitud,
+                                      @RequestParam(required = false) String longitud,
                                       @RequestParam(required = false) String comentarios,
                                       @RequestParam(defaultValue = "CONFIRMADO") String estado,
                                       RedirectAttributes ra) {
-        Pedido p = pedidoService.crearPedidoManual(nombre, telefono, email, productos, total, direccion, comentarios, estado);
+        Pedido p = pedidoService.crearPedidoManual(nombre, telefono, email, productos, total,
+                                                    direccion, latitud, longitud, comentarios, estado);
         ra.addFlashAttribute("mensaje", "Pedido #" + p.getId() + " registrado correctamente.");
         return "redirect:/aura-gestion/pedidos";
+    }
+
+    @PostMapping("/pedidos/{id}/guia")
+    public String actualizarGuia(@PathVariable Long id,
+                                 @RequestParam(required = false) String guia,
+                                 RedirectAttributes ra) {
+        pedidoService.actualizarGuia(id, guia);
+        ra.addFlashAttribute("mensaje", "Número de guía actualizado.");
+        return "redirect:/aura-gestion/pedidos/" + id;
+    }
+
+    @PostMapping("/pedidos/{id}/estado")
+    public String cambiarEstado(@PathVariable Long id,
+                                @RequestParam String estado,
+                                RedirectAttributes ra) {
+        pedidoService.cambiarEstado(id, estado);
+        ra.addFlashAttribute("mensaje", "Estado actualizado correctamente.");
+        return "redirect:/aura-gestion/pedidos/" + id;
     }
 
     @GetMapping("/pedidos/{id}")

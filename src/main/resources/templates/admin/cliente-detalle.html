@@ -98,13 +98,14 @@
                         <td th:text="${p.totalPagado != null ? '$' + p.totalPagado + ' MXN' : '—'}"></td>
                         <td>
                             <span th:switch="${p.estadoPedido.name()}">
-                                <span th:case="'NUEVO'"           class="badge badge-nuevo">Nuevo</span>
-                                <span th:case="'EN_REVISION'"     class="badge badge-revision">En revisión</span>
-                                <span th:case="'CONFIRMADO'"      class="badge badge-confirmado">Confirmado</span>
-                                <span th:case="'CANCELADO'"       class="badge badge-cancelado">Cancelado</span>
-                                <span th:case="'ENTREGADO'"       class="badge badge-entregado">Entregado</span>
-                                <span th:case="'PENDIENTE_PAGO'"  class="badge">Pendiente pago</span>
-                                <span th:case="*"                 class="badge" th:text="${p.estadoPedido.etiqueta}"></span>
+                                <span th:case="'CREADO'"           class="badge badge-creado">Creado</span>
+                                <span th:case="'CONFIRMADO'"       class="badge badge-confirmado">Confirmado</span>
+                                <span th:case="'LISTO_PARA_ENVIO'" class="badge badge-listo-envio">Listo para envío</span>
+                                <span th:case="'ENVIADO'"          class="badge badge-enviado">Enviado</span>
+                                <span th:case="'ENTREGADO'"        class="badge badge-entregado">Entregado</span>
+                                <span th:case="'CANCELADO'"        class="badge badge-cancelado">Cancelado</span>
+                                <span th:case="'PENDIENTE_PAGO'"   class="badge badge-pendiente">Pendiente de pago</span>
+                                <span th:case="*"                  class="badge" th:text="${p.estadoPedido.etiqueta}"></span>
                             </span>
                         </td>
                         <td th:text="${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>

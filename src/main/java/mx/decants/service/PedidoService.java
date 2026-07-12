@@ -245,8 +245,8 @@ public class PedidoService {
 
     public Pedido crearPedidoManual(String nombre, String telefono, String email,
                                      String productosDesc, Integer total,
-                                     String direccion, String comentarios,
-                                     String estadoStr) {
+                                     String direccion, String latitud, String longitud,
+                                     String comentarios, String estadoStr) {
         Pedido pedido = new Pedido();
         pedido.setNombreCliente(nombre.trim());
         pedido.setTelefono(telefono.trim());
@@ -256,12 +256,21 @@ public class PedidoService {
         pedido.setProductosSeleccionados(productosDesc != null ? productosDesc.trim() : "");
         pedido.setTotalPagado(total);
         pedido.setDireccion(direccion != null && !direccion.isBlank() ? direccion.trim() : null);
+        if (latitud != null && !latitud.isBlank()) {
+            try { pedido.setLatitud(Double.parseDouble(latitud)); } catch (NumberFormatException ignored) {}
+        }
+        if (longitud != null && !longitud.isBlank()) {
+            try { pedido.setLongitud(Double.parseDouble(longitud)); } catch (NumberFormatException ignored) {}
+        }
         pedido.setComentarios(comentarios != null && !comentarios.isBlank() ? comentarios.trim() : null);
         pedido.setEntorno("manual");
         EstadoPedido estado = switch (estadoStr) {
-            case "ENTREGADO"   -> EstadoPedido.ENTREGADO;
-            case "EN_REVISION" -> EstadoPedido.EN_REVISION;
-            default            -> EstadoPedido.CONFIRMADO;
+            case "CONFIRMADO"       -> EstadoPedido.CONFIRMADO;
+            case "LISTO_PARA_ENVIO" -> EstadoPedido.LISTO_PARA_ENVIO;
+            case "ENVIADO"          -> EstadoPedido.ENVIADO;
+            case "ENTREGADO"        -> EstadoPedido.ENTREGADO;
+            case "CANCELADO"        -> EstadoPedido.CANCELADO;
+            default                 -> EstadoPedido.CREADO;
         };
         pedido.setEstadoPedido(estado);
 
@@ -270,11 +279,35 @@ public class PedidoService {
         cliente.setNombre(nombre.trim());
         if (email != null && !email.isBlank()) cliente.setEmail(email.trim());
         if (direccion != null && !direccion.isBlank()) cliente.setUltimaDireccion(direccion.trim());
+        if (latitud != null && !latitud.isBlank()) {
+            try { cliente.setLatitud(Double.parseDouble(latitud)); } catch (NumberFormatException ignored) {}
+        }
+        if (longitud != null && !longitud.isBlank()) {
+            try { cliente.setLongitud(Double.parseDouble(longitud)); } catch (NumberFormatException ignored) {}
+        }
         pedido.setCliente(clienteRepository.save(cliente));
 
         Pedido saved = pedidoRepository.save(pedido);
         log.info("Pedido manual #{} creado — cliente: {}, total: ${} MXN", saved.getId(), nombre, total);
         return saved;
+    }
+
+    public void actualizarGuia(Long id, String guia) {
+        pedidoRepository.findById(id).ifPresent(p -> {
+            p.setNumeroGuia(guia != null && !guia.isBlank() ? guia.trim() : null);
+            pedidoRepository.save(p);
+            log.info("Pedido #{} → guía: {}", id, guia);
+        });
+    }
+
+    public void cambiarEstado(Long id, String estadoStr) {
+        pedidoRepository.findById(id).ifPresent(p -> {
+            try {
+                p.setEstadoPedido(EstadoPedido.valueOf(estadoStr));
+                pedidoRepository.save(p);
+                log.info("Pedido #{} → estado: {}", id, estadoStr);
+            } catch (IllegalArgumentException ignored) {}
+        });
     }
 
     @Transactional(readOnly = true)

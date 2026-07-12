@@ -65,6 +65,9 @@ public class Pedido {
 
     private Double longitud;
 
+    @Column(length = 100)
+    private String numeroGuia;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoPedido estadoPedido = EstadoPedido.NUEVO;
@@ -150,6 +153,9 @@ public class Pedido {
 
     public Double getLongitud() { return longitud; }
     public void setLongitud(Double longitud) { this.longitud = longitud; }
+
+    public String getNumeroGuia() { return numeroGuia; }
+    public void setNumeroGuia(String numeroGuia) { this.numeroGuia = numeroGuia; }
 
     public EstadoPedido getEstadoPedido() { return estadoPedido; }
     public void setEstadoPedido(EstadoPedido estadoPedido) { this.estadoPedido = estadoPedido; }

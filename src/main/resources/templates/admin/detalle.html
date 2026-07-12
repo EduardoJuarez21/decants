@@ -30,12 +30,14 @@
             <h2>Información del pedido</h2>
             <!-- Badge de estado -->
             <span th:switch="${pedido.estadoPedido.name()}">
-                <span th:case="'NUEVO'"       class="badge badge-nuevo">Nuevo</span>
-                <span th:case="'EN_REVISION'" class="badge badge-revision">En revisión</span>
-                <span th:case="'CONFIRMADO'"  class="badge badge-confirmado">Confirmado</span>
-                <span th:case="'CANCELADO'"   class="badge badge-cancelado">Cancelado</span>
-                <span th:case="'ENTREGADO'"   class="badge badge-entregado">Entregado</span>
-                <span th:case="*"             class="badge" th:text="${pedido.estadoPedido.etiqueta}"></span>
+                <span th:case="'CREADO'"          class="badge badge-creado">Creado</span>
+                <span th:case="'CONFIRMADO'"      class="badge badge-confirmado">Confirmado</span>
+                <span th:case="'LISTO_PARA_ENVIO'" class="badge badge-listo-envio">Listo para envío</span>
+                <span th:case="'ENVIADO'"         class="badge badge-enviado">Enviado</span>
+                <span th:case="'ENTREGADO'"       class="badge badge-entregado">Entregado</span>
+                <span th:case="'CANCELADO'"       class="badge badge-cancelado">Cancelado</span>
+                <span th:case="'PENDIENTE_PAGO'"  class="badge badge-pendiente">Pendiente de pago</span>
+                <span th:case="*"                 class="badge" th:text="${pedido.estadoPedido.etiqueta}"></span>
             </span>
         </div>
 
@@ -60,21 +62,6 @@
             <div class="detail-field">
                 <span class="field-label">Cantidad</span>
                 <span class="field-value" th:text="${pedido.cantidad} + ' pieza(s)'"></span>
-            </div>
-            <div class="detail-field">
-                <span class="field-label">Color preferido</span>
-                <span class="field-value"
-                      th:text="${pedido.colorPreferido != null and !#strings.isEmpty(pedido.colorPreferido)} ? ${pedido.colorPreferido} : '—'"></span>
-            </div>
-            <div class="detail-field">
-                <span class="field-label">Texto personalizado</span>
-                <span class="field-value"
-                      th:text="${pedido.textoPersonalizado != null and !#strings.isEmpty(pedido.textoPersonalizado)} ? ${pedido.textoPersonalizado} : '—'"></span>
-            </div>
-            <div class="detail-field">
-                <span class="field-label">Fecha del evento</span>
-                <span class="field-value"
-                      th:text="${pedido.fechaEvento != null} ? ${#temporals.format(pedido.fechaEvento, 'dd/MM/yyyy')} : '—'"></span>
             </div>
             <!-- Items del pedido -->
             <div class="detail-field full-width" th:if="${not #lists.isEmpty(pedido.items)}">
@@ -130,6 +117,18 @@
                 </span>
             </div>
 
+            <div class="detail-field"
+                 th:classappend="${pedido.numeroGuia != null and !#strings.isEmpty(pedido.numeroGuia)} ? '' : 'full-width'">
+                <span class="field-label">Número de guía</span>
+                <span class="field-value">
+                    <span th:if="${pedido.numeroGuia != null and !#strings.isEmpty(pedido.numeroGuia)}"
+                          th:text="${pedido.numeroGuia}"
+                          style="font-weight:700; font-family:monospace; letter-spacing:0.5px; color:#1a1a1a;"></span>
+                    <span th:unless="${pedido.numeroGuia != null and !#strings.isEmpty(pedido.numeroGuia)}"
+                          style="color:var(--muted);">Sin asignar</span>
+                </span>
+            </div>
+
             <div class="detail-field full-width">
                 <span class="field-label">Comentarios</span>
                 <span class="field-value"
@@ -167,8 +166,61 @@
         </div>
     </div>
 
+    <!-- Cambiar estado -->
+    <div class="admin-card" style="margin-top:1.25rem; max-width:420px;">
+        <div class="admin-card-header" style="padding:0.9rem 1.25rem;">
+            <h2 style="font-size:0.95rem;">Cambiar estado del pedido</h2>
+        </div>
+        <form th:action="@{/aura-gestion/pedidos/{id}/estado(id=${pedido.id})}" method="post"
+              style="padding:1rem 1.25rem; display:flex; gap:0.75rem; align-items:flex-end;">
+            <div style="flex:1; display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.73rem; font-weight:600; color:#444;">Nuevo estado</label>
+                <select name="estado"
+                        style="padding:0.55rem 0.8rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                               font-size:0.85rem; font-family:inherit; background:#fff; outline:none; cursor:pointer;">
+                    <option value="CREADO"           th:selected="${pedido.estadoPedido.name() == 'CREADO'}">Creado</option>
+                    <option value="CONFIRMADO"       th:selected="${pedido.estadoPedido.name() == 'CONFIRMADO'}">Confirmado</option>
+                    <option value="LISTO_PARA_ENVIO" th:selected="${pedido.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
+                    <option value="ENVIADO"          th:selected="${pedido.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
+                    <option value="ENTREGADO"        th:selected="${pedido.estadoPedido.name() == 'ENTREGADO'}">Entregado</option>
+                    <option value="CANCELADO"        th:selected="${pedido.estadoPedido.name() == 'CANCELADO'}">Cancelado</option>
+                </select>
+            </div>
+            <button type="submit"
+                    style="padding:0.55rem 1.1rem; background:#1a1a1a; color:#fff; border:none;
+                           border-radius:8px; font-size:0.83rem; font-family:inherit; cursor:pointer; font-weight:600;
+                           white-space:nowrap;">
+                Guardar
+            </button>
+        </form>
+    </div>
+
+    <!-- Número de guía -->
+    <div class="admin-card" style="margin-top:1rem; max-width:420px;">
+        <div class="admin-card-header" style="padding:0.9rem 1.25rem;">
+            <h2 style="font-size:0.95rem;">Número de guía de envío</h2>
+        </div>
+        <form th:action="@{/aura-gestion/pedidos/{id}/guia(id=${pedido.id})}" method="post"
+              style="padding:1rem 1.25rem; display:flex; gap:0.75rem; align-items:flex-end;">
+            <div style="flex:1; display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.73rem; font-weight:600; color:#444;">Guía</label>
+                <input type="text" name="guia"
+                       th:value="${pedido.numeroGuia}"
+                       placeholder="Ej. 1Z999AA10123456784"
+                       style="padding:0.55rem 0.8rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                              font-size:0.85rem; font-family:monospace; outline:none; width:100%; box-sizing:border-box;">
+            </div>
+            <button type="submit"
+                    style="padding:0.55rem 1.1rem; background:#1a1a1a; color:#fff; border:none;
+                           border-radius:8px; font-size:0.83rem; font-family:inherit; cursor:pointer; font-weight:600;
+                           white-space:nowrap;">
+                Guardar
+            </button>
+        </form>
+    </div>
+
     <!-- Acciones rápidas -->
-    <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+    <div style="margin-top: 1.25rem; display: flex; gap: 1rem; flex-wrap: wrap;">
         <a th:href="'https://wa.me/52' + ${#strings.replace(pedido.telefono, ' ', '')}"
            target="_blank"
            class="btn btn-whatsapp btn-sm">
