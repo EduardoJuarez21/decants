@@ -34,6 +34,12 @@
         <li><a href="#nicho-arabe">Nicho Árabe</a></li>
         <li style="display:none;"><a href="#paquetes">Paquetes</a></li>
         <li><a href="#contacto">Contacto</a></li>
+        <li class="nav-search-item">
+            <div class="nav-search-wrap">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="buscadorProductos" type="search" placeholder="Buscar fragancia…" oninput="buscarProductos()" autocomplete="off">
+            </div>
+        </li>
         <li>
             <button class="cart-nav-btn" onclick="openCart()" aria-label="Ver carrito">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
@@ -80,18 +86,10 @@
             <p class="section-subtitle">Casas de diseñador y firmas de lujo. Lo mejor del perfume occidental.</p>
         </div>
 
-        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:2.75rem; flex-wrap:wrap;">
-            <div class="filter-tabs" style="margin-top:0; margin-bottom:0; flex-shrink:0;">
-                <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-designer')">Todos</button>
-                <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-designer')">Hombre</button>
-                <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-designer')">Mujer</button>
-            </div>
-            <input id="buscadorProductos" type="search"
-                   placeholder="&#128269; Buscar…"
-                   oninput="buscarProductos()"
-                   style="flex:1 1 160px; min-width:0; padding:0.55rem 1rem; border:1.5px solid #e0e0e0;
-                          border-radius:50px; font-size:0.85rem; font-family:inherit;
-                          outline:none; background:#fff; transition:border-color 0.2s;">
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-designer')">Todos</button>
+            <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-designer')">Hombre</button>
+            <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-designer')">Mujer</button>
         </div>
         <p id="buscarSinResultados" style="display:none; text-align:center;
            color:var(--muted); margin-top:-2rem; margin-bottom:1.5rem; font-size:0.88rem;">
@@ -864,6 +862,10 @@
     function buscarProductos() {
         var q = document.getElementById('buscadorProductos').value.toLowerCase().trim();
         var total = 0;
+
+        if (q) {
+            document.getElementById('productos').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
 
         document.querySelectorAll('#grid-designer .product-card, #grid-arabe .product-card').forEach(function(card) {
             var nombre = card.querySelector('h3')  ? card.querySelector('h3').textContent.toLowerCase()  : '';

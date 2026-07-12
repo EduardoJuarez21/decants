@@ -102,8 +102,37 @@ section      { padding: 6rem 2rem; }
   font-weight: 700;
 }
 .navbar-nav {
-  display: flex; list-style: none; gap: 2.2rem;
+  display: flex; list-style: none; gap: 2.2rem; align-items: center;
 }
+.nav-search-item { list-style: none; }
+.nav-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50px;
+  padding: 0.35rem 0.85rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+.nav-search-wrap:focus-within {
+  background: rgba(255,255,255,0.14);
+  border-color: var(--gold);
+}
+.nav-search-wrap svg { color: rgba(255,255,255,0.5); flex-shrink: 0; }
+.nav-search-wrap input {
+  background: none;
+  border: none;
+  outline: none;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.78rem;
+  font-family: inherit;
+  width: 150px;
+  transition: width 0.3s;
+}
+.nav-search-wrap input::placeholder { color: rgba(255,255,255,0.4); }
+.nav-search-wrap input:focus { width: 200px; }
+.nav-search-wrap input::-webkit-search-cancel-button { cursor: pointer; }
 .navbar-nav a {
   color: rgba(255,255,255,0.8);
   font-size: 0.8rem;
@@ -1135,6 +1164,9 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   }
   .navbar-nav.open { display: flex; }
   .navbar-toggle { display: flex; }
+  .nav-search-item { width: 100%; }
+  .nav-search-wrap { width: 100%; background: rgba(255,255,255,0.06); }
+  .nav-search-wrap input { width: 100% !important; }
 
   .hero { min-height: auto; padding: 5rem 1.5rem 4rem; }
   .hero-deco { display: none; }
