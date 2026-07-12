@@ -223,6 +223,47 @@ section      { padding: 6rem 2rem; }
 .btn-sm { padding: 0.6rem 1.4rem; font-size: 0.82rem; }
 .btn-group { display: flex; flex-wrap: wrap; gap: 1rem; }
 
+/* ── Section controls (filtros + buscador) ──────────────────── */
+.section-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.75rem;
+}
+.section-controls .filter-tabs { margin-bottom: 0; flex-shrink: 0; }
+.section-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(0,0,0,0.06);
+  border: 1.5px solid transparent;
+  border-radius: 50px;
+  padding: 0.45rem 1rem;
+  transition: border-color 0.2s, background 0.2s;
+  flex: 1;
+  min-width: 160px;
+}
+.section-search-wrap:focus-within {
+  border-color: var(--gold);
+  background: #fff;
+}
+.section-search-wrap svg { color: var(--muted); flex-shrink: 0; }
+.section-search-wrap input {
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 0.83rem;
+  font-family: inherit;
+  color: var(--dark);
+  width: 100%;
+}
+.section-search-wrap input::placeholder { color: var(--muted); }
+@media (max-width: 640px) {
+  .section-controls { flex-direction: column; align-items: flex-start; }
+  .section-search-wrap { width: 100%; }
+}
+
 /* ── Filter Tabs ────────────────────────────────────────────── */
 .filter-tabs {
   display: flex;
@@ -239,6 +280,7 @@ section      { padding: 6rem 2rem; }
 }
 .filter-tab {
   padding: 0.55rem 1.4rem;
+  white-space: nowrap;
   border-radius: 50px;
   border: none;
   white-space: nowrap;
@@ -1167,6 +1209,8 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   .nav-search-item { width: 100%; }
   .nav-search-wrap { width: 100%; background: rgba(255,255,255,0.06); }
   .nav-search-wrap input { width: 100% !important; }
+
+  .filter-tab { padding: 0.5rem 0.9rem; font-size: 0.78rem; }
 
   .hero { min-height: auto; padding: 5rem 1.5rem 4rem; }
   .hero-deco { display: none; }

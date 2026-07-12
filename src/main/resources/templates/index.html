@@ -86,14 +86,20 @@
             <p class="section-subtitle">Casas de diseñador y firmas de lujo. Lo mejor del perfume occidental.</p>
         </div>
 
-        <div class="filter-tabs" id="filtros-designer">
-            <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-designer')">Todos</button>
-            <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-designer')">Hombre</button>
-            <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-designer')">Mujer</button>
+        <div class="section-controls" id="filtros-designer">
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-designer')">Todos</button>
+                <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-designer')">Hombre</button>
+                <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-designer')">Mujer</button>
+            </div>
+            <div class="section-search-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="buscadorDesigner" type="search" placeholder="Buscar en Alta Perfumería…" oninput="buscarSeccion('buscadorDesigner','grid-designer','sinResultadosDesigner')" autocomplete="off">
+            </div>
         </div>
-        <p id="buscarSinResultados" style="display:none; text-align:center;
-           color:var(--muted); margin-top:-2rem; margin-bottom:1.5rem; font-size:0.88rem;">
-           Sin resultados para esa búsqueda.
+        <p id="sinResultadosDesigner" style="display:none; text-align:center;
+           color:var(--muted); margin-bottom:1.5rem; font-size:0.88rem;">
+           Sin resultados en Alta Perfumería.
         </p>
 
         <div class="products-grid" id="grid-designer">
@@ -162,13 +168,23 @@
             <h2 class="section-title">Nicho Árabe</h2>
             <p class="section-subtitle">Fragancias orientales de alta concentración. Intensas, duraderas y únicas.</p>
 
-            <div class="filter-tabs">
-                <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-arabe')">Todos</button>
-                <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-arabe')">Hombre</button>
-                <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-arabe')">Mujer</button>
-                <button class="filter-tab" onclick="filterProducts(this,'unisex','grid-arabe')">Unisex</button>
+            <div class="section-controls">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-arabe')">Todos</button>
+                    <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-arabe')">Hombre</button>
+                    <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-arabe')">Mujer</button>
+                    <button class="filter-tab" onclick="filterProducts(this,'unisex','grid-arabe')">Unisex</button>
+                </div>
+                <div class="section-search-wrap">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input id="buscadorArabe" type="search" placeholder="Buscar en Nicho Árabe…" oninput="buscarSeccion('buscadorArabe','grid-arabe','sinResultadosArabe')" autocomplete="off">
+                </div>
             </div>
         </div>
+        <p id="sinResultadosArabe" style="display:none; text-align:center;
+           color:var(--muted); margin-bottom:1.5rem; font-size:0.88rem;">
+           Sin resultados en Nicho Árabe.
+        </p>
 
         <div class="products-grid" id="grid-arabe">
 
@@ -859,8 +875,28 @@
     updateProductButtons();
 
     /* ── Buscador de productos ── */
+    function buscarSeccion(inputId, gridId, sinResultadosId) {
+        var q = document.getElementById(inputId).value.toLowerCase().trim();
+        var total = 0;
+        document.querySelectorAll('#' + gridId + ' .product-card').forEach(function(card) {
+            var nombre = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
+            var marca  = card.querySelector('.product-brand') ? card.querySelector('.product-brand').textContent.toLowerCase() : '';
+            var match  = !q || nombre.includes(q) || marca.includes(q);
+            card.style.display = match ? '' : 'none';
+            if (match) total++;
+        });
+        document.getElementById(sinResultadosId).style.display = (!q || total > 0) ? 'none' : 'block';
+    }
+
     function buscarProductos() {
         var q = document.getElementById('buscadorProductos').value.toLowerCase().trim();
+        // Limpiar buscadores de sección al usar el global
+        if (q) {
+            document.getElementById('buscadorDesigner').value = '';
+            document.getElementById('buscadorArabe').value = '';
+            document.getElementById('sinResultadosDesigner').style.display = 'none';
+            document.getElementById('sinResultadosArabe').style.display = 'none';
+        }
         var totalDesigner = 0, totalArabe = 0;
 
         if (q) {
