@@ -17,7 +17,10 @@
 <body>
 
 <nav class="navbar">
-    <a th:href="@{/}" class="navbar-brand">Decants</a>
+    <a th:href="@{/}" class="navbar-brand" style="display:flex; align-items:center; gap:0.5rem;">
+        <img th:src="@{/img/logo-navbar.webp}" alt="Aura Decants logo" style="height:48px; width:auto; object-fit:contain;">
+        Decants
+    </a>
     <ul class="navbar-nav">
         <li><a th:href="@{/}">← Seguir viendo</a></li>
     </ul>
