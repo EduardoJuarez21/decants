@@ -149,5 +149,9 @@
     </div>
 </div>
 
+<script th:if="${pagado}">
+    localStorage.removeItem('decants_cart');
+    localStorage.removeItem('decants_paquete');
+</script>
 </body>
 </html>

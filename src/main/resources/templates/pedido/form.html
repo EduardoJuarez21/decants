@@ -348,8 +348,7 @@
             if (boxMsg) extras += ' — Mensaje: "' + boxMsg + '"';
             document.getElementById('comentariosInput').value = extras;
         }
-        localStorage.removeItem('decants_cart');
-        localStorage.removeItem('decants_paquete');
+        // El carrito se limpia solo al confirmar el pago (confirmacion.html)
     });
 
     // Leer cupón desde URL (?cupon=CODIGO) y poblarlo en el campo oculto
