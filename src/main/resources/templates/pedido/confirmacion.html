@@ -160,6 +160,12 @@
                style="width:100%; justify-content:center;">
                 &#128172; Contactar por WhatsApp
             </a>
+            <a th:if="${pedido != null}"
+               th:href="@{/pedido/seguimiento(id=${pedido.id},tel=${pedido.telefono})}"
+               class="btn"
+               style="color:var(--dark); border:1.5px solid var(--nude); width:100%; justify-content:center;">
+                &#128230; Seguir mi pedido
+            </a>
             <a th:href="@{/}" class="btn"
                style="color:var(--dark); border:1.5px solid var(--nude); width:100%; justify-content:center;">
                 Volver al inicio

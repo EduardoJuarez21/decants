@@ -43,6 +43,7 @@ public class PedidoService {
     private final CuponService cuponService;
     private final ConfiguracionService configuracionService;
     private final TelegramService telegramService;
+    private final EmailService emailService;
     private final ObjectMapper objectMapper;
 
     public PedidoService(PedidoRepository pedidoRepository,
@@ -51,6 +52,7 @@ public class PedidoService {
                          CuponService cuponService,
                          ConfiguracionService configuracionService,
                          TelegramService telegramService,
+                         EmailService emailService,
                          ObjectMapper objectMapper) {
         this.pedidoRepository = pedidoRepository;
         this.productoRepository = productoRepository;
@@ -58,6 +60,7 @@ public class PedidoService {
         this.cuponService = cuponService;
         this.configuracionService = configuracionService;
         this.telegramService = telegramService;
+        this.emailService = emailService;
         this.objectMapper = objectMapper;
     }
 
@@ -110,7 +113,11 @@ public class PedidoService {
         log.info("Pedido #{} creado — cliente: {}, total: ${} MXN, entrega: {}, productos: {}",
                 saved.getId(), dto.getNombreCliente(), saved.getTotalPagado(),
                 esLocal ? "local" : "nacional", saved.getProductosSeleccionados());
-        if (esLocal) telegramService.notificarNuevoPedido(saved);
+        if (esLocal) {
+            descontarStock(items);
+            telegramService.notificarNuevoPedido(saved);
+            emailService.enviarConfirmacion(saved);
+        }
         return saved;
     }
 
@@ -131,6 +138,12 @@ public class PedidoService {
                     int qty = ci.get("qty").asInt(1);
                     String variant = ci.has("variant") ? ci.get("variant").asText() : "10ml";
                     Producto p = productoRepository.findById(productId).orElseThrow();
+                    if (p.getStock() != null && p.getStock() < qty) {
+                        String msg = p.getStock() == 0
+                            ? p.getNombre() + " está agotado"
+                            : p.getNombre() + " solo tiene " + p.getStock() + " unidad(es) disponible(s)";
+                        throw new IllegalArgumentException(msg);
+                    }
                     int price = "5ml".equals(variant) && p.getPrecio5ml() != null
                             ? p.getPrecio5ml() : p.getPrecio();
                     PedidoItem item = new PedidoItem();
@@ -141,6 +154,8 @@ public class PedidoService {
                     item.setPrecioUnitario(price);
                     items.add(item);
                 }
+            } catch (IllegalArgumentException e) {
+                throw e;
             } catch (Exception e) {
                 throw new IllegalArgumentException("Carrito inválido");
             }
@@ -235,6 +250,18 @@ public class PedidoService {
         }
     }
 
+    private void descontarStock(List<PedidoItem> items) {
+        if (items == null) return;
+        for (PedidoItem item : items) {
+            Producto p = item.getProducto();
+            if (p != null && p.getStock() != null) {
+                p.setStock(Math.max(0, p.getStock() - item.getCantidad()));
+                productoRepository.save(p);
+                log.info("Stock producto #{} ({}) → {}", p.getId(), p.getNombre(), p.getStock());
+            }
+        }
+    }
+
     public void actualizarStripeSession(Long pedidoId, String sessionId) {
         Pedido pedido = pedidoRepository.findById(pedidoId).orElseThrow();
         pedido.setStripeSessionId(sessionId);
@@ -254,9 +281,11 @@ public class PedidoService {
         if (pedido.getEstadoPedido() == EstadoPedido.PENDIENTE_PAGO) {
             pedido.setEstadoPedido(EstadoPedido.CONFIRMADO);
             pedidoRepository.save(pedido);
+            descontarStock(pedido.getItems());
             log.info("Pedido #{} CONFIRMADO (pago recibido) — cliente: {}, total: ${} MXN",
                     pedido.getId(), pedido.getNombreCliente(), pedido.getTotalPagado());
             telegramService.notificarNuevoPedido(pedido);
+            emailService.enviarConfirmacion(pedido);
         }
         return pedido;
     }
@@ -352,5 +381,11 @@ public class PedidoService {
     @Transactional(readOnly = true)
     public Optional<Cliente> buscarClientePorTelefono(String telefono) {
         return clienteRepository.findByTelefono(telefono);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Pedido> buscarPorIdYTelefono(Long id, String telefono) {
+        String tel = telefono == null ? "" : telefono.replaceAll("[^0-9]", "");
+        return pedidoRepository.findByIdAndTelefono(id, tel);
     }
 }

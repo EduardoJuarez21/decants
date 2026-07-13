@@ -49,4 +49,11 @@ public class ProductoService {
             productoRepository.save(p);
         });
     }
+
+    public void actualizarStock(Long id, Integer stock) {
+        productoRepository.findById(id).ifPresent(p -> {
+            p.setStock(stock != null && stock >= 0 ? stock : null);
+            productoRepository.save(p);
+        });
+    }
 }

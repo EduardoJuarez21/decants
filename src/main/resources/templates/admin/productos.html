@@ -91,6 +91,7 @@
                         <th>Categoría</th>
                         <th>Género</th>
                         <th>Precio</th>
+                        <th>Stock</th>
                         <th>Estado</th>
                         <th></th>
                     </tr>
@@ -116,6 +117,21 @@
                             <span th:if="${p.precio5ml != null}"
                                   style="font-size:0.75rem; color:var(--muted);"
                                   th:text="| / $${p.precio5ml} (5ml)|"></span>
+                        </td>
+                        <td>
+                            <form th:action="@{/aura-gestion/productos/{id}/stock(id=${p.id})}" method="post"
+                                  style="display:flex; align-items:center; gap:4px; margin:0;">
+                                <input type="number" name="stock"
+                                       th:value="${p.stock}"
+                                       min="0" placeholder="∞"
+                                       style="width:58px; padding:3px 7px; border:1px solid #ddd;
+                                              border-radius:5px; font-size:0.8rem; font-family:inherit; text-align:center;">
+                                <button type="submit"
+                                        style="padding:3px 8px; border:1px solid #ddd; border-radius:5px;
+                                               background:#fff; cursor:pointer; font-size:0.78rem; color:#444;">✓</button>
+                            </form>
+                            <span th:if="${p.stock != null and p.stock == 0}"
+                                  style="font-size:0.7rem; color:#c0392b; font-weight:600; display:block; margin-top:3px;">AGOTADO</span>
                         </td>
                         <td>
                             <span th:if="${p.activo}"  class="badge badge-activo">Activo</span>
@@ -161,7 +177,7 @@
             var nombre    = celdas[1].textContent.toLowerCase();
             var marca     = celdas[2].textContent.toLowerCase();
             var cat       = celdas[3].textContent.toLowerCase();
-            var estadoFila = celdas[6].textContent.toLowerCase().trim();
+            var estadoFila = celdas[7].textContent.toLowerCase().trim();
 
             var okTexto    = !texto     || nombre.includes(texto) || marca.includes(texto);
             var okCat      = !categoria || cat.includes(categoria);

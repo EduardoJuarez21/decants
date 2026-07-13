@@ -54,6 +54,8 @@ public class Producto {
     @Column(nullable = false)
     private Integer orden;
 
+    private Integer stock; // null = ilimitado, 0 = agotado
+
     // --- Getters & Setters ---
 
     public Long getId() { return id; }
@@ -106,4 +108,7 @@ public class Producto {
 
     public Integer getOrden() { return orden; }
     public void setOrden(Integer orden) { this.orden = orden; }
+
+    public Integer getStock() { return stock; }
+    public void setStock(Integer stock) { this.stock = stock; }
 }

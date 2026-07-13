@@ -125,6 +125,22 @@ public class PedidoController {
                 });
     }
 
+    @GetMapping("/seguimiento")
+    public String seguimiento(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String tel,
+            Model model) {
+        model.addAttribute("waNumero", configuracionService.getWhatsappNegocio());
+        if (id != null && tel != null && !tel.isBlank()) {
+            pedidoService.buscarPorIdYTelefono(id, tel)
+                .ifPresentOrElse(
+                    p -> model.addAttribute("pedido", p),
+                    () -> model.addAttribute("noEncontrado", true)
+                );
+        }
+        return "pedido/seguimiento";
+    }
+
     @GetMapping("/confirmacion")
     public String confirmacion(
             @RequestParam(name = "session_id", required = false) String sessionId,

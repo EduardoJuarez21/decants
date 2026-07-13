@@ -148,9 +148,20 @@ public class AdminController {
                                   @RequestParam Integer precio,
                                   @RequestParam(required = false) Integer precio5ml,
                                   @RequestParam(defaultValue = "false") boolean bestSeller,
+                                  @RequestParam(required = false) Integer stock,
                                   RedirectAttributes ra) {
         productoService.actualizar(id, precio, precio5ml, nombre, marca, bestSeller);
+        productoService.actualizarStock(id, stock);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
+        return "redirect:/aura-gestion/productos";
+    }
+
+    @PostMapping("/productos/{id}/stock")
+    public String actualizarStock(@PathVariable Long id,
+                                   @RequestParam(required = false) Integer stock,
+                                   RedirectAttributes ra) {
+        productoService.actualizarStock(id, stock);
+        ra.addFlashAttribute("mensaje", "Stock actualizado.");
         return "redirect:/aura-gestion/productos";
     }
 
@@ -207,6 +218,10 @@ public class AdminController {
         model.addAttribute("waNumero",            configuracionService.getWhatsappNegocio());
         model.addAttribute("telegramToken",       configuracionService.get("telegram_bot_token", ""));
         model.addAttribute("telegramChatId",      configuracionService.get("telegram_chat_id", ""));
+        model.addAttribute("emailUsername",       configuracionService.get("email_username", ""));
+        model.addAttribute("emailSmtpHost",       configuracionService.get("email_smtp_host", "smtp.gmail.com"));
+        model.addAttribute("emailSmtpPort",       configuracionService.get("email_smtp_port", "587"));
+        model.addAttribute("emailFrom",           configuracionService.get("email_from", ""));
         return "admin/configuracion";
     }
 
@@ -245,6 +260,24 @@ public class AdminController {
         configuracionService.set("telegram_bot_token", telegramToken.trim());
         configuracionService.set("telegram_chat_id",   telegramChatId.trim());
         ra.addFlashAttribute("mensaje", "Configuración de Telegram guardada.");
+        return "redirect:/aura-gestion/configuracion";
+    }
+
+    @PostMapping("/configuracion/email")
+    public String guardarEmail(@RequestParam String emailUsername,
+                                @RequestParam String emailPassword,
+                                @RequestParam(required = false) String emailSmtpHost,
+                                @RequestParam(required = false) String emailSmtpPort,
+                                @RequestParam(required = false) String emailFrom,
+                                RedirectAttributes ra) {
+        configuracionService.set("email_username",  emailUsername.trim());
+        if (!emailPassword.isBlank()) {
+            configuracionService.set("email_password", emailPassword.trim());
+        }
+        configuracionService.set("email_smtp_host", emailSmtpHost != null && !emailSmtpHost.isBlank() ? emailSmtpHost.trim() : "smtp.gmail.com");
+        configuracionService.set("email_smtp_port", emailSmtpPort != null && !emailSmtpPort.isBlank() ? emailSmtpPort.trim() : "587");
+        configuracionService.set("email_from",      emailFrom != null ? emailFrom.trim() : "");
+        ra.addFlashAttribute("mensaje", "Configuración de email guardada.");
         return "redirect:/aura-gestion/configuracion";
     }
 }

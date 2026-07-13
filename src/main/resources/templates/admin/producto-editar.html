@@ -75,6 +75,16 @@
                 </div>
             </div>
 
+            <!-- Stock -->
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                    Stock disponible <span style="font-weight:400; color:var(--muted);">(vacío = ilimitado, 0 = agotado)</span>
+                </label>
+                <input type="number" name="stock" th:value="${producto.stock}" min="0" placeholder="∞"
+                       style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                              font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+            </div>
+
             <!-- Best Seller -->
             <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; font-size:0.88rem; color:#444;">
                 <input type="checkbox" name="bestSeller" value="true" th:checked="${producto.bestSeller}"

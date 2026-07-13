@@ -112,7 +112,10 @@
                          th:alt="|Características ${p.nombre}|"
                          class="product-img-hover">
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
-                    <button th:if="${p.precio5ml == null}"
+                    <span th:if="${p.stock != null and p.stock == 0}"
+                          class="badge-bestseller"
+                          style="background:#c0392b; color:#fff; pointer-events:none;">Agotado</span>
+                    <button th:if="${p.precio5ml == null and (p.stock == null or p.stock > 0)}"
                             class="product-add-btn"
                             th:data-id="${p.id}"
                             th:data-name="${p.nombre}"
@@ -130,7 +133,7 @@
                         <span class="stars">★★★★★</span>
                         <span class="rating-num" th:text="|(${p.calificacion})|"></span>
                     </div>
-                    <div th:if="${p.precio5ml != null}" class="size-options">
+                    <div th:if="${p.precio5ml != null and (p.stock == null or p.stock > 0)}" class="size-options">
                         <button class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 5ml|"
@@ -196,7 +199,10 @@
                          th:alt="|Características ${p.nombre}|"
                          class="product-img-hover">
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
-                    <button th:if="${p.precio5ml == null}"
+                    <span th:if="${p.stock != null and p.stock == 0}"
+                          class="badge-bestseller"
+                          style="background:#c0392b; color:#fff; pointer-events:none;">Agotado</span>
+                    <button th:if="${p.precio5ml == null and (p.stock == null or p.stock > 0)}"
                             class="product-add-btn"
                             th:data-id="${p.id}"
                             th:data-name="${p.nombre}"
@@ -214,7 +220,7 @@
                         <span class="stars">★★★★★</span>
                         <span class="rating-num" th:text="|(${p.calificacion})|"></span>
                     </div>
-                    <div th:if="${p.precio5ml != null}" class="size-options">
+                    <div th:if="${p.precio5ml != null and (p.stock == null or p.stock > 0)}" class="size-options">
                         <button class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 5ml|"
@@ -526,6 +532,12 @@
     <div class="container">
         <span class="brand">Decants</span>
         <p>Frascos personalizados que cuentan historias únicas.</p>
+        <p style="margin-top:0.5rem;">
+            <a th:href="@{/pedido/seguimiento}"
+               style="color:rgba(255,255,255,0.55); font-size:0.78rem; text-decoration:none;">
+                &#128230; Rastrear mi pedido
+            </a>
+        </p>
         <p style="margin-top: 0.4rem;">&copy; 2025 Decants MX. Todos los derechos reservados.</p>
     </div>
 </footer>

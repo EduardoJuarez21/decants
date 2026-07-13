@@ -13,4 +13,6 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     List<Pedido> findAllByOrderByFechaCreacionDesc();
 
     Optional<Pedido> findByStripeSessionId(String stripeSessionId);
+
+    Optional<Pedido> findByIdAndTelefono(Long id, String telefono);
 }

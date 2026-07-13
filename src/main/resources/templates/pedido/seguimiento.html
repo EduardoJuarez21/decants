@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento de pedido — Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        .tracking-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 1.5rem 0;
+        }
+        .timeline-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.9rem;
+            position: relative;
+        }
+        .timeline-step:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 32px;
+            width: 2px;
+            height: calc(100% - 4px);
+            background: #e0e0e0;
+            z-index: 0;
+        }
+        .timeline-step.done::before,
+        .timeline-step.active::before {
+            background: var(--gold);
+        }
+        .step-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #e0e0e0;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #ccc;
+            flex-shrink: 0;
+            z-index: 1;
+            position: relative;
+        }
+        .timeline-step.done .step-dot {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #fff;
+        }
+        .timeline-step.active .step-dot {
+            background: #fff;
+            border-color: var(--gold);
+            color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.15);
+        }
+        .timeline-step.cancelled .step-dot {
+            background: #c0392b;
+            border-color: #c0392b;
+            color: #fff;
+        }
+        .step-body {
+            padding: 0.35rem 0 1.1rem;
+        }
+        .step-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #aaa;
+            line-height: 1.4;
+        }
+        .timeline-step.done .step-label,
+        .timeline-step.active .step-label {
+            color: var(--dark);
+        }
+        .timeline-step.cancelled .step-label {
+            color: #c0392b;
+        }
+        .step-sub {
+            font-size: 0.74rem;
+            color: var(--muted);
+            margin-top: 0.15rem;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a th:href="@{/}" class="navbar-brand" style="display:flex; align-items:center; gap:0.5rem;">
+        <img th:src="@{/img/logo-navbar.webp}" alt="Aura Decants logo" style="height:48px; width:auto; object-fit:contain;">
+        Decants
+    </a>
+</nav>
+
+<div class="confirmation-page">
+    <div class="confirmation-card">
+
+        <!-- Icono y título -->
+        <div style="font-size:2rem; margin-bottom:0.5rem;">&#128230;</div>
+        <h1 style="font-size:1.5rem; margin-bottom:0.3rem;">Seguimiento de pedido</h1>
+        <p class="subtitle" style="margin-bottom:1.5rem;">
+            Ingresa tu número de pedido y teléfono para ver el estado.
+        </p>
+
+        <!-- Formulario de búsqueda -->
+        <form th:action="@{/pedido/seguimiento}" method="get"
+              style="display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.5rem;">
+            <div style="display:flex; flex-direction:column; gap:0.25rem; text-align:left;">
+                <label style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted);">
+                    Número de pedido
+                </label>
+                <input type="number" name="id" th:value="${param.id}"
+                       placeholder="Ej: 42" min="1" required
+                       style="padding:0.65rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:10px;
+                              font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.25rem; text-align:left;">
+                <label style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted);">
+                    Teléfono (10 dígitos)
+                </label>
+                <input type="tel" name="tel" th:value="${param.tel}"
+                       placeholder="Ej: 8112345678" required
+                       style="padding:0.65rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:10px;
+                              font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+            </div>
+            <button type="submit"
+                    style="padding:0.7rem 1.5rem; background:#1a1a1a; color:#fff; border:none;
+                           border-radius:10px; font-size:0.9rem; font-family:inherit; cursor:pointer; font-weight:600;">
+                Consultar pedido
+            </button>
+        </form>
+
+        <!-- Pedido no encontrado -->
+        <div th:if="${noEncontrado}"
+             style="background:#fff3f3; border:1px solid #f5c6cb; border-radius:10px;
+                    padding:0.9rem 1.1rem; font-size:0.85rem; color:#c0392b; margin-bottom:1rem;">
+            No encontramos ningún pedido con ese número y teléfono. Verifica los datos e intenta de nuevo.
+        </div>
+
+        <!-- Resultado del pedido -->
+        <div th:if="${pedido != null}">
+
+            <!-- Resumen -->
+            <div class="order-summary">
+
+                <div class="order-summary-item">
+                    <span class="label">Número de pedido</span>
+                    <span class="value order-id" th:text="'#' + ${pedido.id}"></span>
+                </div>
+
+                <div class="order-summary-item">
+                    <span class="label">Nombre</span>
+                    <span class="value" th:text="${pedido.nombreCliente}"></span>
+                </div>
+
+                <div class="order-summary-item" th:if="${pedido.totalPagado != null}">
+                    <span class="label">Total</span>
+                    <span class="value" style="color:var(--gold); font-weight:700;"
+                          th:text="'$' + ${pedido.totalPagado} + ' MXN'"></span>
+                </div>
+
+                <!-- Guía de envío -->
+                <div class="order-summary-item"
+                     th:if="${pedido.numeroGuia != null and !#strings.isEmpty(pedido.numeroGuia)}">
+                    <span class="label">Número de guía</span>
+                    <span class="value" style="font-weight:600; color:var(--dark);"
+                          th:text="${pedido.numeroGuia}"></span>
+                </div>
+
+                <!-- Fragancias -->
+                <div class="order-summary-item"
+                     th:if="${not #lists.isEmpty(pedido.items)}"
+                     style="flex-direction:column; align-items:flex-start; gap:0.5rem;">
+                    <span class="label">Fragancias</span>
+                    <div style="width:100%; display:flex; flex-direction:column; gap:0.3rem;">
+                        <div th:each="item : ${pedido.items}"
+                             style="display:flex; justify-content:space-between; align-items:center;
+                                    font-size:0.82rem; padding:0.18rem 0 0.18rem 0.7rem;
+                                    border-left:2px solid var(--gold);">
+                            <span style="color:var(--dark);">
+                                <span th:text="${item.nombre}"></span>
+                                <span th:if="${item.variante != 'paquete'}"
+                                      style="color:var(--muted); font-size:0.75rem;"
+                                      th:text="' · ' + ${item.variante} + (${item.cantidad > 1} ? ' x' + ${item.cantidad} : '')"></span>
+                            </span>
+                            <span style="color:var(--muted); font-size:0.78rem; margin-left:0.5rem;"
+                                  th:text="'$' + ${item.subtotal}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-summary-item"
+                     th:if="${#lists.isEmpty(pedido.items) and pedido.productosSeleccionados != null and !#strings.isEmpty(pedido.productosSeleccionados)}"
+                     style="flex-direction:column; align-items:flex-start; gap:0.5rem;">
+                    <span class="label">Fragancias</span>
+                    <div style="width:100%; display:flex; flex-direction:column; gap:0.3rem;">
+                        <div th:each="f : ${#strings.arraySplit(pedido.productosSeleccionados, ',')}"
+                             th:text="${#strings.trim(f)}"
+                             style="font-size:0.82rem; color:var(--dark); padding:0.18rem 0 0.18rem 0.7rem;
+                                    border-left:2px solid var(--gold);">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Timeline de estado -->
+            <div th:if="${pedido.estadoPedido.name() != 'CANCELADO'}">
+                <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px;
+                           color:var(--muted); margin:1.25rem 0 0.75rem; text-align:left;">
+                    Estado del pedido
+                </p>
+                <div class="tracking-timeline">
+
+                    <!-- Paso 1: Pedido recibido -->
+                    <div th:with="estados='PENDIENTE_PAGO,CREADO,CONFIRMADO,LISTO_PARA_ENVIO,ENVIADO,ENTREGADO,NUEVO,EN_REVISION'"
+                         th:class="${'timeline-step done'}">
+                        <div class="step-dot">&#10003;</div>
+                        <div class="step-body">
+                            <div class="step-label">Pedido recibido</div>
+                            <div class="step-sub">Tu pedido fue registrado correctamente</div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Confirmado / Pago recibido -->
+                    <div th:with="confirmados=#{'CONFIRMADO','LISTO_PARA_ENVIO','ENVIADO','ENTREGADO','EN_REVISION'}"
+                         th:class="${confirmados.contains(pedido.estadoPedido.name()) ? 'timeline-step done' :
+                                     pedido.estadoPedido.name() == 'PENDIENTE_PAGO' ? 'timeline-step active' : 'timeline-step active'}">
+                        <div class="step-dot"
+                             th:text="${confirmados.contains(pedido.estadoPedido.name()) ? '✓' : '2'}"></div>
+                        <div class="step-body">
+                            <div class="step-label"
+                                 th:text="${pedido.entorno == 'local' ? 'Pedido confirmado' : 'Pago confirmado'}"></div>
+                            <div class="step-sub"
+                                 th:if="${pedido.estadoPedido.name() == 'PENDIENTE_PAGO'}"
+                                 th:text="${pedido.entorno == 'local' ? 'En espera de confirmación' : 'Esperando confirmación de pago'}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 3: En preparación -->
+                    <div th:with="preparados=#{'LISTO_PARA_ENVIO','ENVIADO','ENTREGADO'}"
+                         th:class="${preparados.contains(pedido.estadoPedido.name()) ? 'timeline-step done' :
+                                     pedido.estadoPedido.name() == 'CONFIRMADO' ? 'timeline-step active' : 'timeline-step'}">
+                        <div class="step-dot"
+                             th:text="${preparados.contains(pedido.estadoPedido.name()) ? '✓' : '3'}"></div>
+                        <div class="step-body">
+                            <div class="step-label">En preparación</div>
+                            <div class="step-sub" th:if="${pedido.estadoPedido.name() == 'CONFIRMADO'}">
+                                Estamos preparando tu pedido con cuidado
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 4: Enviado / En camino -->
+                    <div th:with="enviados=#{'ENVIADO','ENTREGADO'}"
+                         th:class="${enviados.contains(pedido.estadoPedido.name()) ? 'timeline-step done' :
+                                     pedido.estadoPedido.name() == 'LISTO_PARA_ENVIO' ? 'timeline-step active' : 'timeline-step'}">
+                        <div class="step-dot"
+                             th:text="${enviados.contains(pedido.estadoPedido.name()) ? '✓' : '4'}"></div>
+                        <div class="step-body">
+                            <div class="step-label"
+                                 th:text="${pedido.entorno == 'local' ? 'En camino a tu domicilio' : 'Enviado'}"></div>
+                            <div class="step-sub"
+                                 th:if="${pedido.estadoPedido.name() == 'LISTO_PARA_ENVIO' and pedido.entorno != 'local'}">
+                                Listo — pronto se asigna guía de envío
+                            </div>
+                            <div class="step-sub"
+                                 th:if="${pedido.estadoPedido.name() == 'ENVIADO' and pedido.numeroGuia != null}">
+                                Guía: <strong th:text="${pedido.numeroGuia}"></strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 5: Entregado -->
+                    <div th:class="${pedido.estadoPedido.name() == 'ENTREGADO' ? 'timeline-step done' : 'timeline-step'}">
+                        <div class="step-dot"
+                             th:text="${pedido.estadoPedido.name() == 'ENTREGADO' ? '✓' : '5'}"></div>
+                        <div class="step-body">
+                            <div class="step-label">Entregado</div>
+                            <div class="step-sub" th:if="${pedido.estadoPedido.name() == 'ENTREGADO'}">
+                                ¡Tu pedido llegó a su destino!
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cancelado -->
+            <div th:if="${pedido.estadoPedido.name() == 'CANCELADO'}"
+                 style="background:#fff3f3; border:1px solid #f5c6cb; border-radius:10px;
+                        padding:0.9rem 1.1rem; font-size:0.85rem; color:#c0392b; margin:1.25rem 0; text-align:left;">
+                <strong>Pedido cancelado.</strong> Si tienes dudas, contáctanos por WhatsApp.
+            </div>
+
+            <!-- Botones -->
+            <div class="btn-group" style="justify-content:center; flex-direction:column; align-items:center; gap:0.9rem; margin-top:1.25rem;">
+                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero consultar sobre mi pedido #' + pedido.id + ' a nombre de ' + pedido.nombreCliente + '.')}"
+                   target="_blank"
+                   class="btn btn-whatsapp"
+                   style="width:100%; justify-content:center;">
+                    &#128172; Contactar por WhatsApp
+                </a>
+                <a th:href="@{/}" class="btn"
+                   style="color:var(--dark); border:1.5px solid var(--nude); width:100%; justify-content:center;">
+                    Volver al inicio
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Sin búsqueda aún -->
+        <div th:if="${pedido == null and !noEncontrado}"
+             style="text-align:center; padding:0.5rem 0 1rem;">
+            <a th:href="@{/}" class="btn"
+               style="color:var(--dark); border:1.5px solid var(--nude); justify-content:center;">
+                Volver al inicio
+            </a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -46,6 +46,104 @@
         <span th:text="${mensaje}"></span>
     </div>
 
+    <!-- Email -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>Email de confirmación</h2>
+        </div>
+        <div style="padding:1.75rem 2rem;">
+            <p style="font-size:0.85rem; color:#555; margin-bottom:1.25rem;">
+                Envía un email de confirmación al cliente cuando su pedido es confirmado.
+                Si el cliente no proporcionó email, el envío se omite silenciosamente.
+            </p>
+
+            <div style="background:#f0f7ff; border-left:4px solid #2196f3; border-radius:6px;
+                        padding:0.9rem 1.1rem; margin-bottom:1.5rem; font-size:0.82rem; color:#1a3a5c; line-height:1.7;">
+                <strong>Gmail (recomendado):</strong><br>
+                1. Activa la verificación en 2 pasos en tu cuenta Google.<br>
+                2. Ve a <strong>Seguridad → Contraseñas de aplicaciones</strong> y genera una para "Correo".<br>
+                3. Usa esa contraseña de 16 caracteres (no la de tu cuenta) en el campo <em>Contraseña</em>.
+            </div>
+
+            <form th:action="@{/aura-gestion/configuracion/email}" method="post">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem;">
+                    <div>
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                            Usuario SMTP (email remitente)
+                        </label>
+                        <input type="email" name="emailUsername" th:value="${emailUsername}"
+                               placeholder="tu@gmail.com"
+                               style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                      border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.85rem;
+                                      font-family:inherit; outline:none;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                            Contraseña de aplicación
+                            <span style="font-weight:400; color:#999;">(vacío = sin cambios)</span>
+                        </label>
+                        <input type="password" name="emailPassword"
+                               placeholder="••••••••••••••••"
+                               style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                      border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.85rem;
+                                      font-family:inherit; outline:none;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                            Servidor SMTP
+                        </label>
+                        <input type="text" name="emailSmtpHost" th:value="${emailSmtpHost}"
+                               placeholder="smtp.gmail.com"
+                               style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                      border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.85rem;
+                                      font-family:monospace; outline:none;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                            Puerto SMTP
+                        </label>
+                        <input type="number" name="emailSmtpPort" th:value="${emailSmtpPort}"
+                               placeholder="587"
+                               style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                      border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.85rem;
+                                      font-family:monospace; outline:none;">
+                    </div>
+                </div>
+                <div style="margin-bottom:1.25rem;">
+                    <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                  text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                        Nombre del remitente <span style="font-weight:400; color:#999;">(opcional)</span>
+                    </label>
+                    <input type="text" name="emailFrom" th:value="${emailFrom}"
+                           placeholder="Aura Decants MX &lt;tu@gmail.com&gt;"
+                           style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                  border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.85rem;
+                                  font-family:inherit; outline:none;">
+                </div>
+                <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+                    <button type="submit"
+                            style="padding:0.65rem 1.5rem; background:#1a1a1a; color:#fff; border:none;
+                                   border-radius:8px; font-size:0.85rem; font-family:inherit;
+                                   cursor:pointer; font-weight:600;">
+                        Guardar configuración
+                    </button>
+                    <span th:if="${emailUsername != null and !#strings.isEmpty(emailUsername)}"
+                          style="font-size:0.8rem; color:#2e7d32; font-weight:600;">
+                        ✓ Email configurado — <span th:text="${emailUsername}"></span>
+                    </span>
+                    <span th:unless="${emailUsername != null and !#strings.isEmpty(emailUsername)}"
+                          style="font-size:0.8rem; color:#999;">
+                        Sin configurar — los emails están desactivados
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Telegram -->
     <div class="admin-card" style="margin-bottom:1.5rem;">
         <div class="admin-card-header">
