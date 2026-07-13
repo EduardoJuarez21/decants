@@ -1524,6 +1524,14 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 .wa-fab svg { width: 28px; height: 28px; fill: #fff; }
 @media (max-width: 768px) {
   .coupon-side { display: none; }
-  .wa-fab { bottom: 1rem; right: 1rem; width: 46px; height: 46px; }
-  .wa-fab svg { width: 24px; height: 24px; }
+  .wa-fab { display: none; }
+  .mobile-wa-btn {
+    flex: 0 0 48px;
+    background: #25D366;
+    border-color: #25D366;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    padding: 0;
+  }
+  .mobile-wa-btn:active { background: #1da851; }
 }
