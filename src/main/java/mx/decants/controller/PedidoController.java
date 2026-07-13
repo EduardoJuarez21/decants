@@ -5,6 +5,7 @@ import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
 import mx.decants.dto.PedidoDTO;
 import mx.decants.entity.Pedido;
+import mx.decants.service.ConfiguracionService;
 import mx.decants.service.CuponService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.StripeService;
@@ -30,11 +31,14 @@ public class PedidoController {
     private final PedidoService pedidoService;
     private final StripeService stripeService;
     private final CuponService cuponService;
+    private final ConfiguracionService configuracionService;
 
-    public PedidoController(PedidoService pedidoService, StripeService stripeService, CuponService cuponService) {
+    public PedidoController(PedidoService pedidoService, StripeService stripeService,
+                             CuponService cuponService, ConfiguracionService configuracionService) {
         this.pedidoService = pedidoService;
         this.stripeService = stripeService;
         this.cuponService = cuponService;
+        this.configuracionService = configuracionService;
     }
 
     @ModelAttribute("googleMapsKey")
@@ -125,6 +129,8 @@ public class PedidoController {
     public String confirmacion(
             @RequestParam(name = "session_id", required = false) String sessionId,
             Model model) {
+
+        model.addAttribute("waNumero", configuracionService.getWhatsappNegocio());
 
         if (sessionId != null) {
             try {

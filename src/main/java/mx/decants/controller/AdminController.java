@@ -204,6 +204,9 @@ public class AdminController {
         model.addAttribute("costoEnvio",        configuracionService.getCostoEnvio());
         model.addAttribute("umbralEnvioGratis", configuracionService.getUmbralEnvioGratis());
         model.addAttribute("textoEnvioLocal",   configuracionService.getTextoEnvioLocal());
+        model.addAttribute("waNumero",            configuracionService.getWhatsappNegocio());
+        model.addAttribute("telegramToken",       configuracionService.get("telegram_bot_token", ""));
+        model.addAttribute("telegramChatId",      configuracionService.get("telegram_chat_id", ""));
         return "admin/configuracion";
     }
 
@@ -225,6 +228,23 @@ public class AdminController {
         configuracionService.set("envio_umbral_gratis", String.valueOf(umbralGratis));
         configuracionService.set("envio_texto_local",   textoEnvioLocal.trim());
         ra.addFlashAttribute("mensaje", "Configuración de envío actualizada.");
+        return "redirect:/aura-gestion/configuracion";
+    }
+
+    @PostMapping("/configuracion/whatsapp")
+    public String guardarWhatsapp(@RequestParam String waNumero, RedirectAttributes ra) {
+        configuracionService.set("whatsapp_negocio", waNumero.trim().replaceAll("[^0-9]", ""));
+        ra.addFlashAttribute("mensaje", "Número de WhatsApp actualizado.");
+        return "redirect:/aura-gestion/configuracion";
+    }
+
+    @PostMapping("/configuracion/telegram")
+    public String guardarTelegram(@RequestParam String telegramToken,
+                                   @RequestParam String telegramChatId,
+                                   RedirectAttributes ra) {
+        configuracionService.set("telegram_bot_token", telegramToken.trim());
+        configuracionService.set("telegram_chat_id",   telegramChatId.trim());
+        ra.addFlashAttribute("mensaje", "Configuración de Telegram guardada.");
         return "redirect:/aura-gestion/configuracion";
     }
 }

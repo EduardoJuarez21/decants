@@ -147,14 +147,14 @@
         <!-- Botones -->
         <div class="btn-group" style="justify-content:center; flex-direction:column; align-items:center; gap:0.9rem;">
             <a th:if="${pedido != null}"
-               th:href="${'https://wa.me/525631555401?text=' + #uris.escapeQueryParam('Hola! Acabo de realizar el pedido #' + pedido.id + ' a nombre de ' + pedido.nombreCliente + '.')}"
+               th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Acabo de realizar el pedido #' + pedido.id + ' a nombre de ' + pedido.nombreCliente + '.')}"
                target="_blank"
                class="btn btn-whatsapp"
                style="width:100%; justify-content:center;">
                 &#128172; Confirmar por WhatsApp
             </a>
             <a th:unless="${pedido != null}"
-               href="https://wa.me/525631555401"
+               th:href="'https://wa.me/' + ${waNumero}"
                target="_blank"
                class="btn btn-whatsapp"
                style="width:100%; justify-content:center;">

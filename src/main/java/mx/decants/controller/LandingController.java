@@ -24,6 +24,7 @@ public class LandingController {
         model.addAttribute("costoEnvio",           configuracionService.getCostoEnvio());
         model.addAttribute("umbralEnvioGratis",    configuracionService.getUmbralEnvioGratis());
         model.addAttribute("textoEnvioLocal",      configuracionService.getTextoEnvioLocal());
+        model.addAttribute("waNumero",             configuracionService.getWhatsappNegocio());
         return "index";
     }
 }

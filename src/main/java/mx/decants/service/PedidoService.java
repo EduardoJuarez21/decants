@@ -42,6 +42,7 @@ public class PedidoService {
     private final ClienteRepository clienteRepository;
     private final CuponService cuponService;
     private final ConfiguracionService configuracionService;
+    private final TelegramService telegramService;
     private final ObjectMapper objectMapper;
 
     public PedidoService(PedidoRepository pedidoRepository,
@@ -49,12 +50,14 @@ public class PedidoService {
                          ClienteRepository clienteRepository,
                          CuponService cuponService,
                          ConfiguracionService configuracionService,
+                         TelegramService telegramService,
                          ObjectMapper objectMapper) {
         this.pedidoRepository = pedidoRepository;
         this.productoRepository = productoRepository;
         this.clienteRepository = clienteRepository;
         this.cuponService = cuponService;
         this.configuracionService = configuracionService;
+        this.telegramService = telegramService;
         this.objectMapper = objectMapper;
     }
 
@@ -107,6 +110,7 @@ public class PedidoService {
         log.info("Pedido #{} creado — cliente: {}, total: ${} MXN, entrega: {}, productos: {}",
                 saved.getId(), dto.getNombreCliente(), saved.getTotalPagado(),
                 esLocal ? "local" : "nacional", saved.getProductosSeleccionados());
+        if (esLocal) telegramService.notificarNuevoPedido(saved);
         return saved;
     }
 
@@ -252,6 +256,7 @@ public class PedidoService {
             pedidoRepository.save(pedido);
             log.info("Pedido #{} CONFIRMADO (pago recibido) — cliente: {}, total: ${} MXN",
                     pedido.getId(), pedido.getNombreCliente(), pedido.getTotalPagado());
+            telegramService.notificarNuevoPedido(pedido);
         }
         return pedido;
     }
@@ -302,6 +307,7 @@ public class PedidoService {
 
         Pedido saved = pedidoRepository.save(pedido);
         log.info("Pedido manual #{} creado — cliente: {}, total: ${} MXN", saved.getId(), nombre, total);
+        telegramService.notificarNuevoPedido(saved);
         return saved;
     }
 

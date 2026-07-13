@@ -421,7 +421,7 @@
             <h2 class="section-title">¿Listo para crear algo especial?</h2>
             <p>Cuéntanos qué tienes en mente. Te respondemos en menos de 24 horas.</p>
             <div class="btn-group" style="justify-content: center;">
-                <a href="https://wa.me/525631555401" target="_blank" class="btn btn-whatsapp">&#128172; Cotizar por WhatsApp</a>
+                <a th:href="'https://wa.me/' + ${waNumero}" target="_blank" class="btn btn-whatsapp">&#128172; Cotizar por WhatsApp</a>
                 <a th:href="@{/pedido/nuevo}" class="btn btn-outline">Realizar pedido online</a>
             </div>
             <br>
@@ -544,7 +544,7 @@
 </div>
 
 <!-- Botón flotante WhatsApp -->
-<a href="https://wa.me/525631555401?text=Hola%2C%20me%20interesan%20sus%20decants%20de%20perfume.%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" rel="noopener" class="wa-fab" aria-label="Contactar por WhatsApp">
+<a th:href="'https://wa.me/' + ${waNumero} + '?text=Hola%2C%20me%20interesan%20sus%20decants%20de%20perfume.%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F'" target="_blank" rel="noopener" class="wa-fab" aria-label="Contactar por WhatsApp">
     <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
         <path d="M16 0C7.163 0 0 7.163 0 16c0 2.824.738 5.476 2.027 7.775L0 32l8.476-2.004A15.938 15.938 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.77-1.852l-.485-.29-5.03 1.189 1.215-4.9-.317-.503A13.267 13.267 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.952c-.398-.199-2.355-1.162-2.72-1.295-.365-.133-.631-.199-.897.2-.266.398-1.03 1.294-1.263 1.56-.232.266-.465.3-.863.1-.398-.2-1.681-.62-3.202-1.977-1.184-1.057-1.983-2.362-2.216-2.76-.232-.399-.025-.614.174-.812.179-.178.398-.465.597-.697.2-.233.266-.399.399-.665.132-.266.066-.498-.033-.697-.1-.2-.897-2.163-1.23-2.962-.323-.778-.652-.672-.897-.684l-.764-.013c-.266 0-.697.1-1.063.498-.365.399-1.395 1.362-1.395 3.324s1.428 3.856 1.628 4.122c.199.265 2.81 4.29 6.81 6.018.952.411 1.695.657 2.274.84.955.304 1.824.261 2.511.158.766-.114 2.355-.963 2.688-1.893.332-.93.332-1.727.232-1.893-.099-.166-.365-.266-.763-.465z"/>
     </svg>

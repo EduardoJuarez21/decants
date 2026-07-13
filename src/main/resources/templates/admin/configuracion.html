@@ -46,6 +46,97 @@
         <span th:text="${mensaje}"></span>
     </div>
 
+    <!-- Telegram -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>Notificaciones Telegram</h2>
+        </div>
+        <div style="padding:1.75rem 2rem;">
+            <p style="font-size:0.85rem; color:#555; margin-bottom:1.25rem;">
+                Recibe un mensaje en Telegram cada vez que llegue un pedido nuevo.
+            </p>
+
+            <!-- Instrucciones -->
+            <div style="background:#f0f7ff; border-left:4px solid #2196f3; border-radius:6px;
+                        padding:0.9rem 1.1rem; margin-bottom:1.5rem; font-size:0.82rem; color:#1a3a5c; line-height:1.7;">
+                <strong>Cómo configurarlo:</strong><br>
+                1. Abre Telegram y busca <code>@BotFather</code> → escribe <code>/newbot</code> → copia el <strong>token</strong>.<br>
+                2. Escríbele un mensaje a tu bot.<br>
+                3. Abre en el navegador: <code>https://api.telegram.org/bot<em>TOKEN</em>/getUpdates</code> → copia el <strong>chat id</strong> del campo <code>message.chat.id</code>.
+            </div>
+
+            <form th:action="@{/aura-gestion/configuracion/telegram}" method="post">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.25rem;">
+                    <div>
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                            Bot Token
+                        </label>
+                        <input type="text" name="telegramToken" th:value="${telegramToken}"
+                               placeholder="123456789:ABCdef..."
+                               style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                      border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.82rem;
+                                      font-family:monospace; outline:none;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                            Chat ID
+                        </label>
+                        <input type="text" name="telegramChatId" th:value="${telegramChatId}"
+                               placeholder="123456789"
+                               style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                      border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.82rem;
+                                      font-family:monospace; outline:none;">
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+                    <button type="submit"
+                            style="padding:0.65rem 1.5rem; background:#1a1a1a; color:#fff; border:none;
+                                   border-radius:8px; font-size:0.85rem; font-family:inherit;
+                                   cursor:pointer; font-weight:600;">
+                        Guardar configuración
+                    </button>
+                    <span th:if="${telegramToken != null and !#strings.isEmpty(telegramToken)}"
+                          style="font-size:0.8rem; color:#2e7d32; font-weight:600;">
+                        ✓ Telegram configurado
+                    </span>
+                    <span th:unless="${telegramToken != null and !#strings.isEmpty(telegramToken)}"
+                          style="font-size:0.8rem; color:#999;">
+                        Sin configurar — las notificaciones están desactivadas
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- WhatsApp -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>WhatsApp de negocio</h2>
+        </div>
+        <div style="padding:1.75rem 2rem;">
+            <p style="font-size:0.85rem; color:#555; margin-bottom:1.25rem;">
+                Número que aparece en los botones de WhatsApp del sitio y en la confirmación de pedidos.
+                Incluye código de país sin el <code>+</code> (ej. <code>525631555401</code>).
+            </p>
+            <form th:action="@{/aura-gestion/configuracion/whatsapp}" method="post"
+                  style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                <input type="text" name="waNumero" th:value="${waNumero}"
+                       placeholder="525631555401" required
+                       style="flex:1; min-width:200px; padding:0.6rem 0.9rem;
+                              border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.9rem;
+                              font-family:monospace; outline:none;">
+                <button type="submit"
+                        style="padding:0.65rem 1.5rem; background:#25d366; color:#fff; border:none;
+                               border-radius:8px; font-size:0.85rem; font-family:inherit;
+                               cursor:pointer; font-weight:600; white-space:nowrap;">
+                    &#128172; Guardar número
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Envío -->
     <div class="admin-card" style="margin-bottom:1.5rem;">
         <div class="admin-card-header">

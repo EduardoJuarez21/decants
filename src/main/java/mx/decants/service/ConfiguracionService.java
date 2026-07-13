@@ -52,4 +52,9 @@ public class ConfiguracionService {
     public String getTextoEnvioLocal() {
         return get("envio_texto_local", "Entregas personales en el Área Metropolitana de Monterrey");
     }
+
+    @Transactional(readOnly = true)
+    public String getWhatsappNegocio() {
+        return get("whatsapp_negocio", "525631555401");
+    }
 }
