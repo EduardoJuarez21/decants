@@ -441,12 +441,7 @@
 
 <!-- Mobile sticky CTA bar -->
 <div id="mobileCta" class="mobile-bottom-cta">
-    <button id="mobileCartBtn" class="mobile-cta-btn" onclick="openCart()" style="display:none;">
-        Ver carrito (<span id="mobileCartCount">0</span>)
-    </button>
-    <a th:href="@{/pedido/nuevo}" id="mobileProceedBtn" class="mobile-cta-btn gold">
-        Armar mi pedido →
-    </a>
+    <button id="mobileProceedBtn" class="mobile-cta-btn gold">Ver fragancias</button>
 </div>
 
 <!-- Package progress banner (fixed bottom) -->
@@ -987,21 +982,20 @@
 
     /* ── Mobile CTA bar ── */
     (function() {
-        var cta      = document.getElementById('mobileCta');
-        var cartBtn  = document.getElementById('mobileCartBtn');
+        var cta        = document.getElementById('mobileCta');
         var proceedBtn = document.getElementById('mobileProceedBtn');
-        var countEl  = document.getElementById('mobileCartCount');
         if (!cta) return;
 
         function updateMobileCta() {
             var n = getCount();
             if (n > 0) {
-                cartBtn.style.display = 'block';
-                countEl.textContent = n;
-                proceedBtn.style.flex = '1.4';
+                proceedBtn.textContent = 'Ver carrito (' + n + ') →';
+                proceedBtn.onclick = function() { openCart(); };
             } else {
-                cartBtn.style.display = 'none';
-                proceedBtn.style.flex = '1';
+                proceedBtn.textContent = 'Ver fragancias';
+                proceedBtn.onclick = function() {
+                    document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
+                };
             }
         }
 
