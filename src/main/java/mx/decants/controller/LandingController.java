@@ -23,6 +23,7 @@ public class LandingController {
         model.addAttribute("productosArabe",       productoService.activosPorCategoria("nicho-arabe"));
         model.addAttribute("costoEnvio",           configuracionService.getCostoEnvio());
         model.addAttribute("umbralEnvioGratis",    configuracionService.getUmbralEnvioGratis());
+        model.addAttribute("textoEnvioLocal",      configuracionService.getTextoEnvioLocal());
         return "index";
     }
 }

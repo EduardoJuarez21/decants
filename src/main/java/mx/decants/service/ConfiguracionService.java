@@ -47,4 +47,9 @@ public class ConfiguracionService {
         try { return Integer.parseInt(get("envio_umbral_gratis", "1299")); }
         catch (NumberFormatException e) { return 1299; }
     }
+
+    @Transactional(readOnly = true)
+    public String getTextoEnvioLocal() {
+        return get("envio_texto_local", "Entregas personales en el Área Metropolitana de Monterrey");
+    }
 }

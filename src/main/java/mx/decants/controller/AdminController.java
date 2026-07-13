@@ -203,6 +203,7 @@ public class AdminController {
         model.addAttribute("stripeModo",        configuracionService.getStripeModo());
         model.addAttribute("costoEnvio",        configuracionService.getCostoEnvio());
         model.addAttribute("umbralEnvioGratis", configuracionService.getUmbralEnvioGratis());
+        model.addAttribute("textoEnvioLocal",   configuracionService.getTextoEnvioLocal());
         return "admin/configuracion";
     }
 
@@ -218,9 +219,11 @@ public class AdminController {
     @PostMapping("/configuracion/envio")
     public String guardarEnvioConfig(@RequestParam int costoEnvio,
                                       @RequestParam int umbralGratis,
+                                      @RequestParam String textoEnvioLocal,
                                       RedirectAttributes ra) {
         configuracionService.set("envio_costo",         String.valueOf(costoEnvio));
         configuracionService.set("envio_umbral_gratis", String.valueOf(umbralGratis));
+        configuracionService.set("envio_texto_local",   textoEnvioLocal.trim());
         ra.addFlashAttribute("mensaje", "Configuración de envío actualizada.");
         return "redirect:/aura-gestion/configuracion";
     }

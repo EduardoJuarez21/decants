@@ -14,7 +14,7 @@
 
 <!-- Barra de envío gratis -->
 <div class="promo-bar">
-    &#128666; Envío gratis a toda la República en pedidos desde $999 &nbsp;·&nbsp; &#128338; Entregas personales en el Área Metropolitana de Monterrey
+    &#128666; Envío gratis a toda la República en pedidos desde $<span th:text="${umbralEnvioGratis}">1299</span> &nbsp;·&nbsp; &#128338; <span th:text="${textoEnvioLocal}">Entregas personales en el Área Metropolitana de Monterrey</span>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -476,9 +476,9 @@
             <span id="cuponDescLabel">Descuento</span>
             <strong id="cuponDescMonto" style="color:#2e7d32;"></strong>
         </div>
-        <div id="envioRow" class="cart-total-row" style="display:none;">
+        <div id="envioRow" class="cart-total-row" style="display:none; font-size:0.78rem;">
             <span>Envío</span>
-            <strong id="cartEnvio"></strong>
+            <strong id="cartEnvio" style="font-size:0.88rem;"></strong>
         </div>
         <div class="cart-total-row cart-total-final">
             <span>Total</span>

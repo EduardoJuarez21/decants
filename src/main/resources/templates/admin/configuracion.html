@@ -78,6 +78,20 @@
                                       font-family:inherit; outline:none;">
                     </div>
                 </div>
+                <div style="margin-bottom:1.5rem;">
+                    <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                  text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                        Texto de barra promocional (segundo ítem)
+                    </label>
+                    <input type="text" name="textoEnvioLocal" th:value="${textoEnvioLocal}" required
+                           style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                  border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.9rem;
+                                  font-family:inherit; outline:none;">
+                    <p style="font-size:0.75rem; color:#888; margin:0.35rem 0 0;">
+                        Aparece en la barra superior: "🚚 Envío gratis desde $X · 🕘 <em th:text="${textoEnvioLocal}"></em>"
+                    </p>
+                </div>
+
                 <div style="background:#f8f9fa; border-radius:8px; padding:0.9rem 1.1rem; margin-bottom:1.5rem;
                             font-size:0.82rem; color:#555; border-left:4px solid #c9a96e;">
                     Con la configuración actual: envío <strong>$<span th:text="${costoEnvio}"></span> MXN</strong>
