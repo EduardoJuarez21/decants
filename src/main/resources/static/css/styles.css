@@ -1321,23 +1321,8 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   }
 }
 
-/* ── Filtros sticky en mobile ── */
+/* Filtros: posición estática (no sticky) */
 .product-section-wrap { overflow: visible; }
-@media (max-width: 768px) {
-  .product-section-wrap .section-controls {
-    position: sticky;
-    top: 68px;
-    z-index: 200;
-    background: var(--beige);
-    padding-top: 0.6rem;
-    padding-bottom: 0.5rem;
-    margin-left: -1.5rem;
-    margin-right: -1.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
-  }
-}
 
 /* ── Mobile CTA bar ── */
 .mobile-bottom-cta { display: none; }
