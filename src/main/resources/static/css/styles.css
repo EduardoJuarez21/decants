@@ -1201,15 +1201,33 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 @media (max-width: 768px) {
   .navbar { position: relative; padding: 1rem 1.5rem; }
   .navbar-nav {
-    display: none; position: absolute;
+    display: flex; position: absolute;
     top: 100%; left: 0; right: 0;
-    background: rgba(26,26,26,0.98);
+    background: rgba(22,22,22,0.98);
+    backdrop-filter: blur(14px);
     flex-direction: column;
     padding: 1.5rem 2rem; gap: 1.25rem;
     border-top: 1px solid rgba(201,169,110,0.2);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.28);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: opacity 0.26s ease, transform 0.26s ease, visibility 0.26s;
   }
-  .navbar-nav.open { display: flex; }
+  .navbar-nav.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
   .navbar-toggle { display: flex; }
+
+  /* Hamburguesa → X */
+  .navbar-toggle span { transition: transform 0.26s ease, opacity 0.2s ease; }
+  .navbar-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .navbar-toggle.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .navbar-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
   .nav-search-item { width: 100%; }
   .nav-search-wrap { width: 100%; background: rgba(255,255,255,0.06); }
   .nav-search-wrap input { width: 100% !important; }
