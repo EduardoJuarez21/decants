@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Admin | Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 640px) { .metric-grid { grid-template-columns: 1fr; } }
+        .metric-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #ececec;
+        }
+        .metric-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #999;
+            margin-bottom: 0.4rem;
+        }
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.1;
+        }
+        .metric-sub {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 0.25rem;
+        }
+        .metric-value.gold { color: #c9a96e; }
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        @media (max-width: 768px) { .dash-grid { grid-template-columns: 1fr; } }
+        .estado-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1.25rem 1.75rem;
+        }
+        .estado-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border: 1.5px solid #ececec;
+            background: #fafafa;
+            color: #444;
+        }
+        .estado-chip .count {
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 10px;
+            padding: 1px 7px;
+            font-size: 0.72rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-page">
+
+    <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
+        <h1>Panel de administración</h1>
+        <div style="display:flex; align-items:center; gap:1.5rem;">
+            <span class="admin-brand">Decants</span>
+            <form th:action="@{/aura-gestion/logout}" method="post" style="margin:0;">
+                <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Nav admin -->
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+        <a th:href="@{/aura-gestion/dashboard}"    class="admin-link" style="font-weight:700;">Dashboard</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/pedidos}"      class="admin-link">Pedidos</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/clientes}"     class="admin-link">Clientes</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/productos}"    class="admin-link">Catálogo</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/cupones}"      class="admin-link">Cupones</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/configuracion}" class="admin-link">Configuración</a>
+    </div>
+
+    <!-- Métricas de ventas -->
+    <div class="metric-grid">
+        <div class="metric-card">
+            <div class="metric-label">Ventas hoy</div>
+            <div class="metric-value gold" th:text="'$' + ${ventasHoy}"></div>
+            <div class="metric-sub" th:text="${pedidosHoy} + ' pedido(s)'"></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Últimos 7 días</div>
+            <div class="metric-value gold" th:text="'$' + ${ventasSemana}"></div>
+            <div class="metric-sub" th:text="${pedidosSemana} + ' pedido(s)'"></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Últimos 30 días</div>
+            <div class="metric-value gold" th:text="'$' + ${ventasMes}"></div>
+            <div class="metric-sub" th:text="${pedidosMes} + ' pedido(s)'"></div>
+        </div>
+    </div>
+
+    <!-- Pedidos por estado -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>Pedidos por estado</h2>
+            <span style="font-size:0.8rem; color:var(--muted);"
+                  th:text="'Total: ' + ${totalPedidos}"></span>
+        </div>
+        <div class="estado-chips">
+            <div th:each="entry : ${porEstado}" class="estado-chip">
+                <span th:text="${entry.key}"></span>
+                <span class="count" th:text="${entry.value}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid: últimos pedidos + top productos -->
+    <div class="dash-grid">
+
+        <!-- Últimos pedidos -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2>Últimos pedidos</h2>
+                <a th:href="@{/aura-gestion/pedidos}" class="admin-link" style="font-size:0.78rem;">Ver todos →</a>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${ultimosPedidos}">
+                            <td>
+                                <a th:href="@{/aura-gestion/pedidos/{id}(id=${p.id})}"
+                                   class="admin-link" th:text="'#' + ${p.id}"></a>
+                            </td>
+                            <td>
+                                <span th:text="${p.nombreCliente}" style="font-size:0.85rem;"></span>
+                                <br>
+                                <span th:text="${p.fechaCreacion != null ? #temporals.format(p.fechaCreacion,'dd/MM/yy') : ''}"
+                                      style="font-size:0.72rem; color:var(--muted);"></span>
+                            </td>
+                            <td style="font-weight:600; white-space:nowrap;"
+                                th:text="'$' + ${p.totalPagado}"></td>
+                            <td>
+                                <span th:text="${p.estadoPedido.etiqueta}"
+                                      style="font-size:0.75rem; padding:2px 8px; border-radius:4px; background:#f0f0f0; white-space:nowrap;"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Top productos -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2>Productos más vendidos</h2>
+            </div>
+            <div style="padding:1rem 1.75rem; display:flex; flex-direction:column; gap:0.75rem;">
+                <div th:if="${topProductos.isEmpty()}"
+                     style="color:var(--muted); font-size:0.85rem; padding:0.5rem 0;">
+                    Sin datos aún.
+                </div>
+                <div th:each="row, i : ${topProductos}"
+                     style="display:flex; align-items:center; gap:0.75rem;">
+                    <span th:text="${i.index + 1}"
+                          style="width:22px; height:22px; background:#1a1a1a; color:#c9a96e;
+                                 border-radius:50%; display:flex; align-items:center; justify-content:center;
+                                 font-size:0.7rem; font-weight:700; flex-shrink:0;"></span>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-size:0.85rem; font-weight:600; color:#1a1a1a;
+                                    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+                             th:text="${row[0]}"></div>
+                    </div>
+                    <span style="font-size:0.78rem; color:var(--muted); white-space:nowrap;"
+                          th:text="${row[1]} + ' uds.'"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -28,14 +28,16 @@
     </div>
 
     <!-- Nav admin -->
-    <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-        <a th:href="@{/aura-gestion/pedidos}"   class="admin-link" style="font-weight:700;">Pedidos</a>
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+        <a th:href="@{/aura-gestion/dashboard}"    class="admin-link">Dashboard</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/aura-gestion/clientes}"  class="admin-link">Clientes</a>
+        <a th:href="@{/aura-gestion/pedidos}"      class="admin-link" style="font-weight:700;">Pedidos</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/aura-gestion/productos}" class="admin-link">Catálogo</a>
+        <a th:href="@{/aura-gestion/clientes}"     class="admin-link">Clientes</a>
         <span style="color:#ccc;">|</span>
-        <a th:href="@{/aura-gestion/cupones}"   class="admin-link">Cupones</a>
+        <a th:href="@{/aura-gestion/productos}"    class="admin-link">Catálogo</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/cupones}"      class="admin-link">Cupones</a>
         <span style="color:#ccc;">|</span>
         <a th:href="@{/aura-gestion/configuracion}" class="admin-link">Configuración</a>
     </div>
@@ -49,11 +51,19 @@
     <div class="admin-card">
         <div class="admin-card-header">
             <h2>Todos los pedidos</h2>
+            <div style="display:flex; gap:0.6rem; align-items:center;">
+                <a th:href="@{/aura-gestion/pedidos/exportar}"
+                   style="padding:0.4rem 0.9rem; background:#f5f5f5; color:#444; border-radius:7px;
+                          font-size:0.78rem; font-weight:600; text-decoration:none; border:1px solid #ddd;
+                          white-space:nowrap;">
+                    &#8595; Exportar CSV
+                </a>
             <a th:href="@{/aura-gestion/pedidos/nuevo}"
                style="padding:0.45rem 1rem; background:#1a1a1a; color:#fff; border-radius:7px;
                       font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap;">
                 + Registrar venta
             </a>
+            </div>
         </div>
 
         <!-- Buscador + Actualizar -->

@@ -27,7 +27,9 @@
     </div>
 
     <!-- Nav admin -->
-    <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+        <a th:href="@{/aura-gestion/dashboard}" class="admin-link">Dashboard</a>
+        <span style="color:#ccc;">|</span>
         <a th:href="@{/aura-gestion/pedidos}"   class="admin-link">Pedidos</a>
         <span style="color:#ccc;">|</span>
         <a th:href="@{/aura-gestion/clientes}"  class="admin-link">Clientes</a>

@@ -10,6 +10,7 @@ import mx.decants.entity.PedidoItem;
 import mx.decants.entity.Producto;
 import mx.decants.entity.Cupon;
 import mx.decants.repository.ClienteRepository;
+import mx.decants.repository.PedidoItemRepository;
 import mx.decants.repository.PedidoRepository;
 import mx.decants.repository.ProductoRepository;
 import org.slf4j.Logger;
@@ -17,11 +18,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.PageRequest;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,6 +46,7 @@ public class PedidoService {
     );
 
     private final PedidoRepository pedidoRepository;
+    private final PedidoItemRepository pedidoItemRepository;
     private final ProductoRepository productoRepository;
     private final ClienteRepository clienteRepository;
     private final CuponService cuponService;
@@ -47,6 +56,7 @@ public class PedidoService {
     private final ObjectMapper objectMapper;
 
     public PedidoService(PedidoRepository pedidoRepository,
+                         PedidoItemRepository pedidoItemRepository,
                          ProductoRepository productoRepository,
                          ClienteRepository clienteRepository,
                          CuponService cuponService,
@@ -55,6 +65,7 @@ public class PedidoService {
                          EmailService emailService,
                          ObjectMapper objectMapper) {
         this.pedidoRepository = pedidoRepository;
+        this.pedidoItemRepository = pedidoItemRepository;
         this.productoRepository = productoRepository;
         this.clienteRepository = clienteRepository;
         this.cuponService = cuponService;
@@ -387,5 +398,98 @@ public class PedidoService {
     public Optional<Pedido> buscarPorIdYTelefono(Long id, String telefono) {
         String tel = telefono == null ? "" : telefono.replaceAll("[^0-9]", "");
         return pedidoRepository.findByIdAndTelefono(id, tel);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> obtenerDashboard() {
+        List<Pedido> todos = pedidoRepository.findAllByOrderByFechaCreacionDesc();
+
+        Set<EstadoPedido> validos = Set.of(
+            EstadoPedido.CREADO, EstadoPedido.CONFIRMADO,
+            EstadoPedido.LISTO_PARA_ENVIO, EstadoPedido.ENVIADO, EstadoPedido.ENTREGADO
+        );
+
+        LocalDateTime hoy    = LocalDate.now().atStartOfDay();
+        LocalDateTime semana = LocalDate.now().minusDays(7).atStartOfDay();
+        LocalDateTime mes    = LocalDate.now().minusDays(30).atStartOfDay();
+
+        List<Pedido> validosList = todos.stream().filter(p -> validos.contains(p.getEstadoPedido())).toList();
+
+        int ventasHoy    = sumarVentas(validosList, hoy);
+        int ventasSemana = sumarVentas(validosList, semana);
+        int ventasMes    = sumarVentas(validosList, mes);
+        long pedidosHoy    = contarDespuesDe(todos, hoy);
+        long pedidosSemana = contarDespuesDe(todos, semana);
+        long pedidosMes    = contarDespuesDe(todos, mes);
+
+        Map<String, Long> porEstado = todos.stream()
+            .collect(Collectors.groupingBy(p -> p.getEstadoPedido().getEtiqueta(), Collectors.counting()));
+
+        List<Object[]> topProductos = pedidoItemRepository.findTopProductos(PageRequest.of(0, 5));
+
+        Map<String, Object> stats = new LinkedHashMap<>();
+        stats.put("ventasHoy",      ventasHoy);
+        stats.put("ventasSemana",   ventasSemana);
+        stats.put("ventasMes",      ventasMes);
+        stats.put("pedidosHoy",     pedidosHoy);
+        stats.put("pedidosSemana",  pedidosSemana);
+        stats.put("pedidosMes",     pedidosMes);
+        stats.put("totalPedidos",   todos.size());
+        stats.put("porEstado",      porEstado);
+        stats.put("topProductos",   topProductos);
+        stats.put("ultimosPedidos", todos.stream().limit(10).toList());
+        return stats;
+    }
+
+    private int sumarVentas(List<Pedido> pedidos, LocalDateTime desde) {
+        return pedidos.stream()
+            .filter(p -> p.getFechaCreacion() != null && p.getFechaCreacion().isAfter(desde))
+            .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
+            .sum();
+    }
+
+    private long contarDespuesDe(List<Pedido> pedidos, LocalDateTime desde) {
+        return pedidos.stream()
+            .filter(p -> p.getFechaCreacion() != null && p.getFechaCreacion().isAfter(desde))
+            .count();
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] exportarCsv() {
+        List<Pedido> pedidos = pedidoRepository.findAllByOrderByFechaCreacionDesc();
+        StringBuilder sb = new StringBuilder();
+        sb.append("#,Fecha,Cliente,Teléfono,Email,Productos,Total MXN,Estado,Tipo,Guía,Cupón,Dirección\n");
+        for (Pedido p : pedidos) {
+            sb.append(csv(p.getId()))
+              .append(",").append(csv(p.getFechaCreacion() != null ? p.getFechaCreacion().toLocalDate().toString() : ""))
+              .append(",").append(csv(p.getNombreCliente()))
+              .append(",").append(csv(p.getTelefono()))
+              .append(",").append(csv(p.getEmail()))
+              .append(",").append(csv(p.getProductosSeleccionados()))
+              .append(",").append(csv(p.getTotalPagado()))
+              .append(",").append(csv(p.getEstadoPedido().getEtiqueta()))
+              .append(",").append(csv(tipoEntrega(p.getEntorno())))
+              .append(",").append(csv(p.getNumeroGuia()))
+              .append(",").append(csv(p.getCodigoCuponAplicado()))
+              .append(",").append(csv(p.getDireccion()))
+              .append("\n");
+        }
+        return sb.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    private String csv(Object val) {
+        if (val == null) return "";
+        String s = val.toString().replace("\"", "\"\"");
+        return s.contains(",") || s.contains("\"") || s.contains("\n") ? "\"" + s + "\"" : s;
+    }
+
+    private String tipoEntrega(String entorno) {
+        if (entorno == null) return "Nacional";
+        return switch (entorno) {
+            case "local"  -> "Local MTY";
+            case "manual" -> "Manual";
+            case "test"   -> "Nacional (TEST)";
+            default       -> "Nacional";
+        };
     }
 }

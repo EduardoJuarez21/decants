@@ -8,11 +8,15 @@ import mx.decants.service.CuponService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +48,27 @@ public class AdminController {
     @GetMapping("/login")
     public String login() {
         return "admin/login";
+    }
+
+    // ── Dashboard ─────────────────────────────────────────────────────────────
+
+    @GetMapping({"", "/", "/dashboard"})
+    public String dashboard(Model model) {
+        Map<String, Object> stats = pedidoService.obtenerDashboard();
+        stats.forEach(model::addAttribute);
+        return "admin/dashboard";
+    }
+
+    // ── Export CSV ────────────────────────────────────────────────────────────
+
+    @GetMapping("/pedidos/exportar")
+    public ResponseEntity<byte[]> exportarCsv() {
+        byte[] csv = pedidoService.exportarCsv();
+        String filename = "pedidos-" + LocalDate.now() + ".csv";
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+            .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
+            .body(csv);
     }
 
     // ── Pedidos ──────────────────────────────────────────────────────────────
