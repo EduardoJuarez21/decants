@@ -1304,8 +1304,9 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 }
 
 /* ── Filtros sticky en mobile ── */
+.product-section-wrap { overflow: visible; }
 @media (max-width: 768px) {
-  .section-controls {
+  .product-section-wrap .section-controls {
     position: sticky;
     top: 68px;
     z-index: 200;

@@ -86,6 +86,7 @@
             <p class="section-subtitle">Casas de diseñador y firmas de lujo. Lo mejor del perfume occidental.</p>
         </div>
 
+        <div class="product-section-wrap">
         <div class="section-controls" id="filtros-designer">
             <div class="filter-tabs">
                 <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-designer')">Todos</button>
@@ -161,6 +162,7 @@
             </div>
 
         </div>
+        </div><!-- /product-section-wrap designer -->
 
         <!-- ── Divisor ──────────────────────────────────────── -->
         <div class="coleccion-divider" id="divider-colecciones"></div>
@@ -170,18 +172,19 @@
             <div class="gold-line"></div>
             <h2 class="section-title">Nicho Árabe</h2>
             <p class="section-subtitle">Fragancias orientales de alta concentración. Intensas, duraderas y únicas.</p>
+        </div>
 
-            <div class="section-controls">
-                <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-arabe')">Todos</button>
-                    <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-arabe')">Hombre</button>
-                    <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-arabe')">Mujer</button>
-                    <button class="filter-tab" onclick="filterProducts(this,'unisex','grid-arabe')">Unisex</button>
-                </div>
-                <div class="section-search-wrap">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <input id="buscadorArabe" type="search" placeholder="Buscar en Nicho Árabe…" oninput="buscarSeccion('buscadorArabe','grid-arabe','sinResultadosArabe')" autocomplete="off">
-                </div>
+        <div class="product-section-wrap">
+        <div class="section-controls">
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-arabe')">Todos</button>
+                <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-arabe')">Hombre</button>
+                <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-arabe')">Mujer</button>
+                <button class="filter-tab" onclick="filterProducts(this,'unisex','grid-arabe')">Unisex</button>
+            </div>
+            <div class="section-search-wrap">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="buscadorArabe" type="search" placeholder="Buscar en Nicho Árabe…" oninput="buscarSeccion('buscadorArabe','grid-arabe','sinResultadosArabe')" autocomplete="off">
             </div>
         </div>
         <p id="sinResultadosArabe" style="display:none; text-align:center;
@@ -248,7 +251,7 @@
             </div>
 
         </div>
-
+        </div><!-- /product-section-wrap arabe -->
 
     </div>
 </section>
