@@ -106,11 +106,11 @@
 
             <div class="product-card" th:each="p : ${productosDesigner}" th:data-filter="${p.genero}">
                 <div th:class="|product-image-area ${p.claseCss}${p.imagenCaracteristicas != null ? ' has-hover-img' : ''}|">
-                    <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img">
+                    <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img" loading="lazy" decoding="async">
                     <img th:if="${p.imagenCaracteristicas != null}"
                          th:src="@{${p.imagenCaracteristicas}}"
                          th:alt="|Características ${p.nombre}|"
-                         class="product-img-hover">
+                         class="product-img-hover" loading="lazy" decoding="async">
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
                     <span th:if="${p.stock != null and p.stock == 0}"
                           class="badge-bestseller"
@@ -193,11 +193,11 @@
 
             <div class="product-card" th:each="p : ${productosArabe}" th:data-filter="${p.genero}">
                 <div th:class="|product-image-area ${p.claseCss}${p.imagenCaracteristicas != null ? ' has-hover-img' : ''}|">
-                    <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img">
+                    <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img" loading="lazy" decoding="async">
                     <img th:if="${p.imagenCaracteristicas != null}"
                          th:src="@{${p.imagenCaracteristicas}}"
                          th:alt="|Características ${p.nombre}|"
-                         class="product-img-hover">
+                         class="product-img-hover" loading="lazy" decoding="async">
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
                     <span th:if="${p.stock != null and p.stock == 0}"
                           class="badge-bestseller"
@@ -438,6 +438,16 @@
     </div>
 </section>
 
+
+<!-- Mobile sticky CTA bar -->
+<div id="mobileCta" class="mobile-bottom-cta">
+    <button id="mobileCartBtn" class="mobile-cta-btn" onclick="openCart()" style="display:none;">
+        Ver carrito (<span id="mobileCartCount">0</span>)
+    </button>
+    <a th:href="@{/pedido/nuevo}" id="mobileProceedBtn" class="mobile-cta-btn gold">
+        Armar mi pedido →
+    </a>
+</div>
 
 <!-- Package progress banner (fixed bottom) -->
 <div class="pkg-banner" id="pkgBanner" style="display:none!important;">
@@ -974,6 +984,48 @@
     renderCart();
     updatePkgBanner();
     updateProductButtons();
+
+    /* ── Mobile CTA bar ── */
+    (function() {
+        var cta      = document.getElementById('mobileCta');
+        var cartBtn  = document.getElementById('mobileCartBtn');
+        var proceedBtn = document.getElementById('mobileProceedBtn');
+        var countEl  = document.getElementById('mobileCartCount');
+        if (!cta) return;
+
+        function updateMobileCta() {
+            var n = getCount();
+            if (n > 0) {
+                cartBtn.style.display = 'block';
+                countEl.textContent = n;
+                proceedBtn.style.flex = '1.4';
+            } else {
+                cartBtn.style.display = 'none';
+                proceedBtn.style.flex = '1';
+            }
+        }
+
+        var origRenderCart = renderCart;
+        renderCart = function() {
+            origRenderCart();
+            updateMobileCta();
+        };
+        updateMobileCta();
+
+        var heroGroup = document.querySelector('.hero .btn-group');
+        var footer    = document.querySelector('footer');
+
+        if (heroGroup) {
+            new IntersectionObserver(function(entries) {
+                cta.classList.toggle('visible', !entries[0].isIntersecting);
+            }, { threshold: 0 }).observe(heroGroup);
+        }
+        if (footer) {
+            new IntersectionObserver(function(entries) {
+                if (entries[0].isIntersecting) cta.classList.remove('visible');
+            }, { threshold: 0.3 }).observe(footer);
+        }
+    })();
 
     /* ── Buscador de productos ── */
     function buscarSeccion(inputId, gridId, sinResultadosId) {

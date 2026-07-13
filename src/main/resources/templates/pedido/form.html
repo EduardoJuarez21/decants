@@ -80,6 +80,7 @@
                            pattern="[0-9]{10}"
                            maxlength="10"
                            inputmode="numeric"
+                           autocomplete="tel"
                            required />
                     <span class="field-error" id="telefonoError" style="display:none;">Ingresa tu número de 10 dígitos.</span>
                     <span class="field-error"
@@ -94,6 +95,8 @@
                            th:field="*{nombreCliente}"
                            th:class="${#fields.hasErrors('nombreCliente')} ? 'form-control is-invalid' : 'form-control'"
                            placeholder="Tu nombre completo"
+                           autocomplete="name"
+                           autocapitalize="words"
                            required />
                     <span class="field-error" id="nombreError" style="display:none;">Ingresa tu nombre completo.</span>
                     <span class="field-error"
@@ -107,7 +110,10 @@
                            id="email"
                            th:field="*{email}"
                            th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'"
-                           placeholder="tu@correo.com" />
+                           placeholder="tu@correo.com"
+                           autocomplete="email"
+                           autocapitalize="none"
+                           inputmode="email" />
                     <span class="field-error"
                           th:if="${#fields.hasErrors('email')}"
                           th:errors="*{email}"></span>
