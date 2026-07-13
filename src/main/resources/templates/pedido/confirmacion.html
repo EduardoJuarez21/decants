@@ -24,11 +24,15 @@
 
         <div class="check-circle">&#10003;</div>
 
-        <h1 th:text="${pagado} ? '¡Pago recibido!' : '¡Pedido registrado!'">¡Pago recibido!</h1>
+        <h1 th:text="${pagado} ? '¡Pago recibido!' : (${entregaLocal} ? '¡Pedido recibido!' : '¡Pedido registrado!')">¡Pago recibido!</h1>
         <p class="subtitle" th:if="${pagado}">
             Tu pago fue procesado con éxito. En breve te contactamos por WhatsApp para coordinar tu envío.
         </p>
-        <p class="subtitle" th:unless="${pagado}">
+        <p class="subtitle" th:if="${entregaLocal}">
+            Recibimos tu pedido. Te contactaremos por WhatsApp para coordinar la entrega en tu domicilio.
+            <strong>El pago es contra entrega.</strong>
+        </p>
+        <p class="subtitle" th:unless="${pagado or entregaLocal}">
             Recibimos tu solicitud. Te contactaremos pronto para confirmar los detalles.
         </p>
 
@@ -108,7 +112,23 @@
             <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); margin-bottom:0.75rem;">
                 ¿Qué sigue?
             </p>
-            <div style="display:flex; flex-direction:column; gap:0.6rem;">
+            <!-- Pasos entrega local -->
+            <div th:if="${entregaLocal}" style="display:flex; flex-direction:column; gap:0.6rem;">
+                <div style="display:flex; align-items:flex-start; gap:0.75rem; font-size:0.83rem; color:var(--dark);">
+                    <span style="background:var(--gold); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; flex-shrink:0;">1</span>
+                    Te contactamos por WhatsApp para confirmar el horario de entrega en tu domicilio.
+                </div>
+                <div style="display:flex; align-items:flex-start; gap:0.75rem; font-size:0.83rem; color:var(--dark);">
+                    <span style="background:var(--gold); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; flex-shrink:0;">2</span>
+                    Preparamos tu pedido con los mejores cuidados.
+                </div>
+                <div style="display:flex; align-items:flex-start; gap:0.75rem; font-size:0.83rem; color:var(--dark);">
+                    <span style="background:var(--gold); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; flex-shrink:0;">3</span>
+                    Entregamos en tu domicilio y <strong>realizas el pago al recibir</strong> (efectivo o transferencia).
+                </div>
+            </div>
+            <!-- Pasos envío nacional -->
+            <div th:unless="${entregaLocal}" style="display:flex; flex-direction:column; gap:0.6rem;">
                 <div style="display:flex; align-items:flex-start; gap:0.75rem; font-size:0.83rem; color:var(--dark);">
                     <span style="background:var(--gold); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; flex-shrink:0;">1</span>
                     Te contactamos por WhatsApp para confirmar tu dirección y tiempo de entrega.
@@ -149,9 +169,10 @@
     </div>
 </div>
 
-<script th:if="${pagado}">
+<script th:if="${pagado or entregaLocal}">
     localStorage.removeItem('decants_cart');
     localStorage.removeItem('decants_paquete');
+    localStorage.removeItem('decants_entrega');
 </script>
 </body>
 </html>

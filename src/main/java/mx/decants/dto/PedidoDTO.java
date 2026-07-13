@@ -52,6 +52,8 @@ public class PedidoDTO {
 
     private String codigoCupon;
 
+    private String tipoEntrega; // "nacional" | "local"
+
     // --- Getters & Setters ---
 
     public String getNombreCliente() { return nombreCliente; }
@@ -101,4 +103,7 @@ public class PedidoDTO {
 
     public String getCodigoCupon() { return codigoCupon; }
     public void setCodigoCupon(String codigoCupon) { this.codigoCupon = codigoCupon; }
+
+    public String getTipoEntrega() { return tipoEntrega; }
+    public void setTipoEntrega(String tipoEntrega) { this.tipoEntrega = tipoEntrega; }
 }

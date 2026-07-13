@@ -459,6 +459,24 @@
             <span>Subtotal</span>
             <strong id="cartSubtotal">$0.00</strong>
         </div>
+        <!-- Selector tipo de entrega -->
+        <div id="entregaSelectorCart" style="display:none; flex-direction:column; gap:0.4rem;">
+            <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted);">¿Cómo recibes tu pedido?</span>
+            <div style="display:flex; gap:0.5rem;">
+                <button id="btnNacional" onclick="setEntrega('nacional')"
+                        style="flex:1; padding:0.45rem 0.5rem; border-radius:8px; font-size:0.76rem; font-weight:600;
+                               font-family:inherit; cursor:pointer; border:1.5px solid #1a1a1a;
+                               background:#1a1a1a; color:#fff; transition:all .15s;">
+                    📦 Envío nacional
+                </button>
+                <button id="btnLocal" onclick="setEntrega('local')"
+                        style="flex:1; padding:0.45rem 0.5rem; border-radius:8px; font-size:0.76rem; font-weight:600;
+                               font-family:inherit; cursor:pointer; border:1.5px solid #e0e0e0;
+                               background:#fff; color:#555; transition:all .15s;">
+                    🏠 Entrega local (MTY)
+                </button>
+            </div>
+        </div>
         <!-- Cupón -->
         <div class="cart-cupon-section">
             <div class="cart-cupon-row" id="cuponInputRow">
@@ -642,6 +660,28 @@
     var COSTO_ENVIO         = /*[[${costoEnvio}]]*/ 159;
     var UMBRAL_ENVIO_GRATIS = /*[[${umbralEnvioGratis}]]*/ 1299;
 
+    /* ── Delivery type ── */
+    var tipoEntrega = localStorage.getItem('decants_entrega') || 'nacional';
+
+    function setEntrega(tipo) {
+        tipoEntrega = tipo;
+        localStorage.setItem('decants_entrega', tipo);
+        renderCart();
+    }
+
+    function updateEntregaButtons() {
+        var btnN = document.getElementById('btnNacional');
+        var btnL = document.getElementById('btnLocal');
+        if (!btnN || !btnL) return;
+        if (tipoEntrega === 'local') {
+            btnL.style.background = '#1a1a1a'; btnL.style.color = '#fff'; btnL.style.borderColor = '#1a1a1a';
+            btnN.style.background = '#fff';    btnN.style.color = '#555'; btnN.style.borderColor = '#e0e0e0';
+        } else {
+            btnN.style.background = '#1a1a1a'; btnN.style.color = '#fff'; btnN.style.borderColor = '#1a1a1a';
+            btnL.style.background = '#fff';    btnL.style.color = '#555'; btnL.style.borderColor = '#e0e0e0';
+        }
+    }
+
     /* ── Shopping Cart ── */
     var cart = JSON.parse(localStorage.getItem('decants_cart') || '[]');
 
@@ -769,6 +809,11 @@
 
         footerEl.style.display = 'flex';
 
+        // Selector de tipo de entrega (solo para items individuales, no paquetes)
+        var entregaSelector = document.getElementById('entregaSelectorCart');
+        if (entregaSelector) entregaSelector.style.display = activePackage ? 'none' : 'flex';
+        updateEntregaButtons();
+
         // Sincronizar UI del cupón con el estado real
         document.getElementById('cuponInputRow').style.display   = cuponAplicado ? 'none' : 'flex';
         document.getElementById('cuponAplicadoRow').style.display = cuponAplicado ? 'flex' : 'none';
@@ -782,17 +827,33 @@
         var envioEl  = document.getElementById('cartEnvio');
         var costoEnvio = 0;
         if (!activePackage) {
-            costoEnvio = subtotal >= UMBRAL_ENVIO_GRATIS ? 0 : COSTO_ENVIO;
-            envioRow.style.display = '';
-            if (costoEnvio === 0) {
-                envioEl.textContent = 'GRATIS';
+            var esLocal = tipoEntrega === 'local';
+            if (esLocal) {
+                costoEnvio = 0;
+                envioRow.style.display = '';
+                envioEl.textContent = 'GRATIS (entrega local)';
                 envioEl.style.color = '#2e7d32';
             } else {
-                envioEl.textContent = '$' + costoEnvio.toFixed(2);
-                envioEl.style.color = '';
+                costoEnvio = subtotal >= UMBRAL_ENVIO_GRATIS ? 0 : COSTO_ENVIO;
+                envioRow.style.display = '';
+                if (costoEnvio === 0) {
+                    envioEl.textContent = 'GRATIS';
+                    envioEl.style.color = '#2e7d32';
+                } else {
+                    envioEl.textContent = '$' + costoEnvio.toFixed(2);
+                    envioEl.style.color = '';
+                }
             }
         } else {
             envioRow.style.display = 'none';
+        }
+
+        // Helper: construye URL de checkout con params
+        function buildCheckoutUrl(base) {
+            var params = [];
+            if (!activePackage && tipoEntrega === 'local') params.push('entrega=local');
+            if (cuponAplicado && !activePackage) params.push('cupon=' + encodeURIComponent(cuponAplicado.codigo));
+            return base + (params.length ? '?' + params.join('&') : '');
         }
 
         // Descuento cupón (solo si no hay paquete activo)
@@ -808,12 +869,12 @@
             if (checkoutBtn) {
                 var base = checkoutBtn.getAttribute('data-base') || checkoutBtn.href;
                 checkoutBtn.setAttribute('data-base', base);
-                checkoutBtn.href = base + '?cupon=' + encodeURIComponent(cuponAplicado.codigo);
+                checkoutBtn.href = buildCheckoutUrl(base);
             }
             if (pkgBtn) {
                 var pkgBase = pkgBtn.getAttribute('data-base') || pkgBtn.href;
                 pkgBtn.setAttribute('data-base', pkgBase);
-                pkgBtn.href = pkgBase + '?cupon=' + encodeURIComponent(cuponAplicado.codigo);
+                pkgBtn.href = buildCheckoutUrl(pkgBase);
             }
         } else {
             descRow.style.display = 'none';
@@ -821,12 +882,14 @@
                 ? '$' + subtotal.toFixed(2) + ' (precio del paquete)'
                 : '$' + (subtotal + costoEnvio).toFixed(2);
             if (checkoutBtn) {
-                var base = checkoutBtn.getAttribute('data-base');
-                if (base) checkoutBtn.href = base;
+                var base = checkoutBtn.getAttribute('data-base') || checkoutBtn.href;
+                checkoutBtn.setAttribute('data-base', base);
+                checkoutBtn.href = buildCheckoutUrl(base);
             }
             if (pkgBtn) {
-                var pkgBase = pkgBtn.getAttribute('data-base');
-                if (pkgBase) pkgBtn.href = pkgBase;
+                var pkgBase = pkgBtn.getAttribute('data-base') || pkgBtn.href;
+                pkgBtn.setAttribute('data-base', pkgBase);
+                pkgBtn.href = buildCheckoutUrl(pkgBase);
             }
         }
 

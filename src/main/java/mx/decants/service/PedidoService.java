@@ -59,7 +59,10 @@ public class PedidoService {
     }
 
     public Pedido crearPedido(PedidoDTO dto) {
-        int total = calcularTotal(dto.getCartItemsJson(), dto.getPackageType());
+        boolean esLocal = "local".equalsIgnoreCase(dto.getTipoEntrega());
+        int subtotal = calcularSubtotal(dto.getCartItemsJson(), dto.getPackageType());
+        int envio    = esLocal ? 0 : calcularEnvio(subtotal);
+        int total    = subtotal + envio;
 
         Pedido pedido = new Pedido();
         pedido.setNombreCliente(dto.getNombreCliente());
@@ -76,7 +79,6 @@ public class PedidoService {
         pedido.setItems(items);
         pedido.setProductosSeleccionados(buildResumen(items));
 
-        int totalFinal = total;
         if (dto.getCodigoCupon() != null && !dto.getCodigoCupon().isBlank()) {
             cuponService.validar(dto.getCodigoCupon()).ifPresent(cupon -> {
                 int descuento = Math.round(total * cupon.getDescuentoPorcentaje() / 100f);
@@ -93,12 +95,18 @@ public class PedidoService {
         if (dto.getLongitud() != null && !dto.getLongitud().isBlank()) {
             try { pedido.setLongitud(Double.parseDouble(dto.getLongitud())); } catch (NumberFormatException ignored) {}
         }
-        pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
-        pedido.setEntorno(configuracionService.getStripeModo());
+        if (esLocal) {
+            pedido.setEstadoPedido(EstadoPedido.CREADO);
+            pedido.setEntorno("local");
+        } else {
+            pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
+            pedido.setEntorno(configuracionService.getStripeModo());
+        }
         pedido.setCliente(encontrarOCrearCliente(dto));
         Pedido saved = pedidoRepository.save(pedido);
-        log.info("Pedido #{} creado — cliente: {}, total: ${} MXN, productos: {}",
-                saved.getId(), dto.getNombreCliente(), saved.getTotalPagado(), saved.getProductosSeleccionados());
+        log.info("Pedido #{} creado — cliente: {}, total: ${} MXN, entrega: {}, productos: {}",
+                saved.getId(), dto.getNombreCliente(), saved.getTotalPagado(),
+                esLocal ? "local" : "nacional", saved.getProductosSeleccionados());
         return saved;
     }
 
@@ -179,13 +187,13 @@ public class PedidoService {
         return subtotal >= umbral ? 0 : configuracionService.getCostoEnvio();
     }
 
-    private int calcularTotal(String cartItemsJson, String packageType) {
+    private int calcularSubtotal(String cartItemsJson, String packageType) {
         if (packageType != null && !packageType.isBlank()) {
             Integer pkgPrice = PACKAGE_PRICES.get(packageType);
             if (pkgPrice == null) {
                 throw new IllegalArgumentException("Paquete inválido: " + packageType);
             }
-            return pkgPrice + calcularEnvio(pkgPrice);
+            return pkgPrice;
         }
 
         if (cartItemsJson == null || cartItemsJson.isBlank()) {
@@ -215,7 +223,7 @@ public class PedidoService {
             if (total <= 0) {
                 throw new IllegalArgumentException("Total inválido");
             }
-            return total + calcularEnvio(total);
+            return total;
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {

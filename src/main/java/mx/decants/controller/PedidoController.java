@@ -50,11 +50,11 @@ public class PedidoController {
     @GetMapping("/nuevo")
     public String mostrarFormulario(
             Model model,
-            @RequestParam(value = "producto", required = false) String producto) {
+            @RequestParam(value = "producto", required = false) String producto,
+            @RequestParam(value = "entrega", required = false, defaultValue = "nacional") String entrega) {
         PedidoDTO dto = new PedidoDTO();
-        if (producto != null) {
-            dto.setTipoProducto(producto);
-        }
+        if (producto != null) dto.setTipoProducto(producto);
+        dto.setTipoEntrega("local".equals(entrega) ? "local" : "nacional");
         model.addAttribute("pedidoDTO", dto);
         return "pedido/form";
     }
@@ -75,6 +75,14 @@ public class PedidoController {
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", "Carrito inválido. Regresa y vuelve a seleccionar tus productos.");
             return "redirect:/pedido/nuevo";
+        }
+
+        // Entrega local: sin Stripe, pago contra entrega
+        if ("local".equalsIgnoreCase(dto.getTipoEntrega())) {
+            redirectAttributes.addFlashAttribute("pedido", pedido);
+            redirectAttributes.addFlashAttribute("pagado", false);
+            redirectAttributes.addFlashAttribute("entregaLocal", true);
+            return "redirect:/pedido/confirmacion";
         }
 
         try {

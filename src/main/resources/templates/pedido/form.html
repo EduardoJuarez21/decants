@@ -178,8 +178,19 @@
                 <!-- Cupón: se llena automáticamente desde el carrito vía ?cupon= en la URL -->
                 <input type="hidden" th:field="*{codigoCupon}" id="codigoCuponHidden">
 
+                <!-- Tipo de entrega -->
+                <input type="hidden" th:field="*{tipoEntrega}" id="tipoEntregaInput">
+
+                <!-- Aviso entrega local -->
+                <div id="entregaLocalNotice" class="full-width" style="display:none;
+                     background:#e8f5e9; border:1px solid #a5d6a7; border-radius:10px;
+                     padding:0.9rem 1.1rem; font-size:0.84rem; color:#1b5e20; line-height:1.6;">
+                    &#127968; <strong>Entrega personal en Monterrey</strong><br>
+                    Sin costo de envío. <strong>El pago se realiza al momento de la entrega (contra entrega).</strong>
+                </div>
+
                 <div class="form-submit" id="submitSection" style="display:none;">
-                    <button type="submit" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1rem;">
+                    <button type="submit" id="submitBtn" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1rem;">
                         Enviar pedido
                     </button>
                 </div>
@@ -351,12 +362,19 @@
         // El carrito se limpia solo al confirmar el pago (confirmacion.html)
     });
 
-    // Leer cupón desde URL (?cupon=CODIGO) y poblarlo en el campo oculto
+    // Leer parámetros de URL
     (function() {
         var params = new URLSearchParams(window.location.search);
         var cupon = params.get('cupon');
         if (cupon) {
             document.getElementById('codigoCuponHidden').value = cupon.toUpperCase();
+        }
+        var entrega = params.get('entrega') || localStorage.getItem('decants_entrega') || 'nacional';
+        if (entrega === 'local') {
+            document.getElementById('tipoEntregaInput').value = 'local';
+            document.getElementById('entregaLocalNotice').style.display = 'block';
+            var btn = document.getElementById('submitBtn');
+            if (btn) btn.textContent = 'Confirmar pedido (pago contra entrega)';
         }
     })();
 
