@@ -1,5 +1,7 @@
 package mx.decants.controller;
 
+import mx.decants.entity.Cupon;
+import mx.decants.repository.CuponRepository;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.ProductoService;
 import org.springframework.stereotype.Controller;
@@ -11,10 +13,14 @@ public class LandingController {
 
     private final ProductoService productoService;
     private final ConfiguracionService configuracionService;
+    private final CuponRepository cuponRepository;
 
-    public LandingController(ProductoService productoService, ConfiguracionService configuracionService) {
+    public LandingController(ProductoService productoService,
+                             ConfiguracionService configuracionService,
+                             CuponRepository cuponRepository) {
         this.productoService = productoService;
         this.configuracionService = configuracionService;
+        this.cuponRepository = cuponRepository;
     }
 
     @GetMapping("/")
@@ -25,6 +31,12 @@ public class LandingController {
         model.addAttribute("umbralEnvioGratis",    configuracionService.getUmbralEnvioGratis());
         model.addAttribute("textoEnvioLocal",      configuracionService.getTextoEnvioLocal());
         model.addAttribute("waNumero",             configuracionService.getWhatsappNegocio());
+
+        cuponRepository.findAllByOrderByIdDesc().stream()
+            .filter(Cupon::isActivo)
+            .findFirst()
+            .ifPresent(c -> model.addAttribute("cuponActivo", c));
+
         return "index";
     }
 }

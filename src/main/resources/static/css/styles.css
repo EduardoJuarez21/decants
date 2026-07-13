@@ -1535,3 +1535,42 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   }
   .mobile-wa-btn:active { background: #1da851; }
 }
+
+/* ── Banner de cupón activo (solo mobile) ── */
+.mobile-cupon-banner {
+  display: none;
+}
+@media (max-width: 768px) {
+  .mobile-cupon-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: fixed;
+    bottom: 68px;
+    left: 0;
+    right: 0;
+    z-index: 840;
+    background: linear-gradient(90deg, #1a4a2a 0%, #22a44a 100%);
+    color: #fff;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.82rem;
+    line-height: 1.3;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.18);
+  }
+  .mobile-cupon-banner .mobile-cupon-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .mobile-cupon-banner .mobile-cupon-text {
+    flex: 1;
+  }
+  .mobile-cupon-banner strong {
+    letter-spacing: 0.02em;
+    font-weight: 700;
+  }
+}
+/* Cuando existe el banner, sube la barra CTA y añade padding al body */
+@media (max-width: 768px) {
+  body:has(.mobile-cupon-banner) { padding-bottom: calc(68px + 38px); }
+  body:has(.mobile-cupon-banner) .mobile-bottom-cta { bottom: 38px; }
+}

@@ -442,6 +442,16 @@
 </section>
 
 
+<!-- Mobile coupon banner (only when there is an active coupon) -->
+<div th:if="${cuponActivo != null}" class="mobile-cupon-banner">
+    <span class="mobile-cupon-icon">🏷️</span>
+    <span class="mobile-cupon-text">Usa el código
+        <strong th:text="${cuponActivo.codigo}">CODIGO</strong>
+        y ahorra
+        <strong th:text="${cuponActivo.descuentoPorcentaje + '%'}">10%</strong>
+    </span>
+</div>
+
 <!-- Mobile sticky CTA bar -->
 <div id="mobileCta" class="mobile-bottom-cta">
     <button id="mobileSearchToggle" class="mobile-cta-btn mobile-search-toggle" onclick="toggleMobileSearch()" aria-label="Buscar">
