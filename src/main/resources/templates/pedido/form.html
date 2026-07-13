@@ -114,6 +114,7 @@
                 </div>
 
                 <!-- ── DIRECCIÓN DE ENTREGA ──────────────────────────── -->
+                <div id="addressSection">
                 <div class="form-section-title" style="margin-top:0.5rem;">Dirección de entrega</div>
                 <div class="form-divider"></div>
 
@@ -145,6 +146,7 @@
                 <input type="hidden" th:field="*{direccion}" id="direccionInput">
                 <input type="hidden" th:field="*{latitud}"   id="latitudInput">
                 <input type="hidden" th:field="*{longitud}"  id="longitudInput">
+                </div><!-- /addressSection -->
 
                 <!-- Opciones de caja — solo paquete regalo -->
                 <div id="boxSection" class="form-group full-width" style="display:none;">
@@ -335,9 +337,9 @@
             telEl.classList.remove('is-invalid');
         }
 
-        // Dirección
+        // Dirección (solo requerida en envío nacional)
         var addrErr = document.getElementById('addressError');
-        if (!dir) {
+        if (!_esLocal && !dir) {
             addrErr.style.display = 'block';
             if (!primerError) primerError = document.getElementById('addressSearch');
             valid = false;
@@ -363,6 +365,7 @@
     });
 
     // Leer parámetros de URL
+    var _esLocal = false;
     (function() {
         var params = new URLSearchParams(window.location.search);
         var cupon = params.get('cupon');
@@ -371,10 +374,14 @@
         }
         var entrega = params.get('entrega') || localStorage.getItem('decants_entrega') || 'nacional';
         if (entrega === 'local') {
+            _esLocal = true;
             document.getElementById('tipoEntregaInput').value = 'local';
             document.getElementById('entregaLocalNotice').style.display = 'block';
             var btn = document.getElementById('submitBtn');
             if (btn) btn.textContent = 'Confirmar pedido (pago contra entrega)';
+            // Ocultar toda la sección de dirección
+            var addrSection = document.getElementById('addressSection');
+            if (addrSection) addrSection.style.display = 'none';
         }
     })();
 

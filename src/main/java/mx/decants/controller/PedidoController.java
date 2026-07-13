@@ -69,6 +69,13 @@ public class PedidoController {
             return "pedido/form";
         }
 
+        // Dirección obligatoria solo para envío nacional
+        boolean esLocal = "local".equalsIgnoreCase(dto.getTipoEntrega());
+        if (!esLocal && (dto.getDireccion() == null || dto.getDireccion().isBlank())) {
+            result.rejectValue("direccion", "NotBlank", "La dirección de entrega es obligatoria");
+            return "pedido/form";
+        }
+
         Pedido pedido;
         try {
             pedido = pedidoService.crearPedido(dto);

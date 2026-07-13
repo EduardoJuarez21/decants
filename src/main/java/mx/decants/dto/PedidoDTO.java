@@ -43,7 +43,6 @@ public class PedidoDTO {
 
     private String packageType;
 
-    @NotBlank(message = "La dirección de entrega es obligatoria")
     private String direccion;
 
     private String latitud;
