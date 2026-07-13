@@ -1,107 +1,100 @@
 package mx.decants.service;
 
-import jakarta.mail.internet.MimeMessage;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mx.decants.entity.Pedido;
 import mx.decants.entity.PedidoItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmailService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailService.class);
+    private static final HttpClient HTTP = HttpClient.newHttpClient();
+    private static final String RESEND_API = "https://api.resend.com/emails";
 
     @Value("${app.base-url:https://auradecants.mx}")
     private String baseUrl;
 
     private final ConfiguracionService configuracionService;
+    private final ObjectMapper objectMapper;
 
-    public EmailService(ConfiguracionService configuracionService) {
+    public EmailService(ConfiguracionService configuracionService, ObjectMapper objectMapper) {
         this.configuracionService = configuracionService;
-    }
-
-    public void enviarNotificacionEnvio(Pedido pedido) {
-        String username = configuracionService.get("email_username", "");
-        String password = configuracionService.get("email_password", "");
-        if (username.isBlank() || password.isBlank()) return;
-        if (pedido.getEmail() == null || pedido.getEmail().isBlank()) return;
-
-        CompletableFuture.runAsync(() -> {
-            try {
-                String host   = configuracionService.get("email_smtp_host", "smtp.gmail.com");
-                int    port   = Integer.parseInt(configuracionService.get("email_smtp_port", "587"));
-                String from   = configuracionService.get("email_from", username);
-                String waNum  = configuracionService.getWhatsappNegocio();
-
-                JavaMailSenderImpl sender = new JavaMailSenderImpl();
-                sender.setHost(host);
-                sender.setPort(port);
-                sender.setUsername(username);
-                sender.setPassword(password);
-                Properties props = sender.getJavaMailProperties();
-                props.put("mail.transport.protocol", "smtp");
-                props.put("mail.smtp.auth", "true");
-                props.put("mail.smtp.starttls.enable", "true");
-                props.put("mail.smtp.starttls.required", "true");
-
-                MimeMessage msg = sender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
-                helper.setFrom(from, "Aura Decants MX");
-                helper.setTo(pedido.getEmail());
-                helper.setSubject("Tu pedido #" + pedido.getId() + " está en camino — Aura Decants MX");
-                helper.setText(buildEnvioHtml(pedido, waNum), true);
-
-                sender.send(msg);
-                log.info("Email de envío notificado → {} (pedido #{})", pedido.getEmail(), pedido.getId());
-            } catch (Exception e) {
-                log.warn("Error enviando email de envío (pedido #{}): {}", pedido.getId(), e.getMessage());
-            }
-        });
+        this.objectMapper = objectMapper;
     }
 
     public void enviarConfirmacion(Pedido pedido) {
-        String username = configuracionService.get("email_username", "");
-        String password = configuracionService.get("email_password", "");
-        if (username.isBlank() || password.isBlank()) return;
+        String apiKey = configuracionService.get("email_password", "");
+        if (apiKey.isBlank()) return;
         if (pedido.getEmail() == null || pedido.getEmail().isBlank()) return;
 
+        String from    = from();
+        String waNum   = configuracionService.getWhatsappNegocio();
+        String subject = "Tu pedido #" + pedido.getId() + " fue confirmado — Aura Decants MX";
+
+        enviarAsync(apiKey, from, pedido.getEmail(), subject, buildHtml(pedido, waNum), pedido.getId(), "confirmación");
+    }
+
+    public void enviarNotificacionEnvio(Pedido pedido) {
+        String apiKey = configuracionService.get("email_password", "");
+        if (apiKey.isBlank()) return;
+        if (pedido.getEmail() == null || pedido.getEmail().isBlank()) return;
+
+        String from    = from();
+        String waNum   = configuracionService.getWhatsappNegocio();
+        String subject = "Tu pedido #" + pedido.getId() + " está en camino — Aura Decants MX";
+
+        enviarAsync(apiKey, from, pedido.getEmail(), subject, buildEnvioHtml(pedido, waNum), pedido.getId(), "envío");
+    }
+
+    private String from() {
+        String f = configuracionService.get("email_from", "");
+        return f.isBlank() ? "Aura Decants MX <noreply@auradecantsmx.com>" : f;
+    }
+
+    private void enviarAsync(String apiKey, String from, String to,
+                             String subject, String html, Long pedidoId, String tipo) {
         CompletableFuture.runAsync(() -> {
             try {
-                String host   = configuracionService.get("email_smtp_host", "smtp.gmail.com");
-                int    port   = Integer.parseInt(configuracionService.get("email_smtp_port", "587"));
-                String from   = configuracionService.get("email_from", username);
-                String waNum  = configuracionService.getWhatsappNegocio();
+                String body = objectMapper.writeValueAsString(Map.of(
+                    "from",    from,
+                    "to",      List.of(to),
+                    "subject", subject,
+                    "html",    html
+                ));
+                HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(RESEND_API))
+                    .header("Authorization", "Bearer " + apiKey)
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(body))
+                    .build();
 
-                JavaMailSenderImpl sender = new JavaMailSenderImpl();
-                sender.setHost(host);
-                sender.setPort(port);
-                sender.setUsername(username);
-                sender.setPassword(password);
-                Properties props = sender.getJavaMailProperties();
-                props.put("mail.transport.protocol", "smtp");
-                props.put("mail.smtp.auth", "true");
-                props.put("mail.smtp.starttls.enable", "true");
-                props.put("mail.smtp.starttls.required", "true");
-
-                MimeMessage msg = sender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
-                helper.setFrom(from, "Aura Decants MX");
-                helper.setTo(pedido.getEmail());
-                helper.setSubject("Tu pedido #" + pedido.getId() + " fue confirmado — Aura Decants MX");
-                helper.setText(buildHtml(pedido, waNum), true);
-
-                sender.send(msg);
-                log.info("Email de confirmación enviado → {} (pedido #{})", pedido.getEmail(), pedido.getId());
+                HTTP.sendAsync(req, HttpResponse.BodyHandlers.ofString())
+                    .thenAccept(resp -> {
+                        if (resp.statusCode() == 200 || resp.statusCode() == 201) {
+                            log.info("Email de {} enviado → {} (pedido #{})", tipo, to, pedidoId);
+                        } else {
+                            log.warn("Resend respondió {} para email de {} (pedido #{}): {}",
+                                     resp.statusCode(), tipo, pedidoId, resp.body());
+                        }
+                    })
+                    .exceptionally(ex -> {
+                        log.warn("Error enviando email de {} (pedido #{}): {}", tipo, pedidoId, ex.getMessage());
+                        return null;
+                    });
             } catch (Exception e) {
-                log.warn("Error enviando email de confirmación (pedido #{}): {}", pedido.getId(), e.getMessage());
+                log.warn("Error preparando email de {} (pedido #{}): {}", tipo, pedidoId, e.getMessage());
             }
         });
     }
@@ -111,7 +104,6 @@ public class EmailService {
                              + "&tel=" + encode(pedido.getTelefono());
         String waUrl = "https://wa.me/" + waNum + "?text="
                        + encode("Hola! Quiero consultar el envío de mi pedido #" + pedido.getId() + ".");
-
         boolean tieneGuia = pedido.getNumeroGuia() != null && !pedido.getNumeroGuia().isBlank();
 
         StringBuilder sb = new StringBuilder();
@@ -179,15 +171,11 @@ public class EmailService {
           .append("<table width='100%' cellpadding='0' cellspacing='0' style='background:#f5f5f5;padding:32px 16px;'>")
           .append("<tr><td align='center'>")
           .append("<table width='100%' style='max-width:560px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.07);'>")
-
-          // Header
           .append("<tr><td style='background:#1a1a1a;padding:28px 32px;text-align:center;'>")
           .append("<p style='margin:0;color:#c9a96e;font-size:1.5rem;font-weight:700;letter-spacing:1px;'>Aura Decants MX</p>")
           .append("<p style='margin:6px 0 0;color:rgba(255,255,255,0.6);font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;'>")
           .append("Frascos personalizados premium</p>")
           .append("</td></tr>")
-
-          // Check + title
           .append("<tr><td style='padding:32px 32px 16px;text-align:center;'>")
           .append("<div style='width:56px;height:56px;background:#1a1a1a;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;'>")
           .append("<span style='color:#c9a96e;font-size:1.6rem;'>&#10003;</span></div>")
@@ -199,8 +187,6 @@ public class EmailService {
               ? "Recibimos tu pedido. Nos contactamos por WhatsApp para coordinar la entrega. <strong>El pago es contra entrega.</strong>"
               : "Tu pago fue procesado con éxito. En breve te contactamos para coordinar el envío.")
           .append("</p></td></tr>")
-
-          // Order summary box
           .append("<tr><td style='padding:0 32px 24px;'>")
           .append("<table width='100%' style='background:#fafaf8;border-radius:10px;border:1px solid #ececec;'>")
           .append("<tr><td style='padding:16px 20px;border-bottom:1px solid #ececec;'>")
@@ -212,7 +198,6 @@ public class EmailService {
           .append("<p style='margin:4px 0 0;font-size:0.92rem;color:#1a1a1a;font-weight:600;'>").append(esc(pedido.getNombreCliente())).append("</p>")
           .append("</td></tr>");
 
-        // Items
         List<PedidoItem> items = pedido.getItems();
         if (items != null && !items.isEmpty()) {
             sb.append("<tr><td style='padding:16px 20px;border-bottom:1px solid #ececec;'>")
@@ -237,33 +222,26 @@ public class EmailService {
               .append("</td></tr>");
         }
 
-        // Total
         sb.append("<tr><td style='padding:16px 20px;'>")
           .append("<span style='font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#999;'>Total")
           .append(esLocal ? " (contra entrega)" : " pagado").append("</span>")
           .append("<p style='margin:4px 0 0;font-size:1.1rem;font-weight:700;color:#1a1a1a;'>$")
           .append(pedido.getTotalPagado()).append(" MXN</p>")
           .append("</td></tr>")
-          .append("</table></td></tr>");
-
-        // Tracking button
-        sb.append("<tr><td style='padding:8px 32px 24px;text-align:center;'>")
+          .append("</table></td></tr>")
+          .append("<tr><td style='padding:8px 32px 24px;text-align:center;'>")
           .append("<a href='").append(trackingUrl).append("' ")
           .append("style='display:inline-block;padding:12px 28px;background:#1a1a1a;color:#fff;text-decoration:none;")
           .append("border-radius:8px;font-size:0.88rem;font-weight:600;'>")
           .append("&#128230; Seguir mi pedido</a>")
-          .append("</td></tr>");
-
-        // WhatsApp link
-        sb.append("<tr><td style='padding:0 32px 32px;text-align:center;'>")
+          .append("</td></tr>")
+          .append("<tr><td style='padding:0 32px 32px;text-align:center;'>")
           .append("<a href='").append(waUrl).append("' ")
           .append("style='display:inline-block;padding:11px 28px;background:#25d366;color:#fff;text-decoration:none;")
           .append("border-radius:8px;font-size:0.88rem;font-weight:600;'>")
           .append("&#128172; Contáctanos por WhatsApp</a>")
-          .append("</td></tr>");
-
-        // Footer
-        sb.append("<tr><td style='background:#f8f8f8;border-top:1px solid #ececec;padding:20px 32px;text-align:center;'>")
+          .append("</td></tr>")
+          .append("<tr><td style='background:#f8f8f8;border-top:1px solid #ececec;padding:20px 32px;text-align:center;'>")
           .append("<p style='margin:0;font-size:0.75rem;color:#aaa;'>")
           .append("&copy; 2025 Aura Decants MX &nbsp;·&nbsp; Frascos personalizados premium</p>")
           .append("</td></tr>")
@@ -279,10 +257,6 @@ public class EmailService {
 
     private static String encode(String s) {
         if (s == null) return "";
-        try {
-            return java.net.URLEncoder.encode(s, "UTF-8");
-        } catch (Exception e) {
-            return s;
-        }
+        try { return java.net.URLEncoder.encode(s, "UTF-8"); } catch (Exception e) { return s; }
     }
 }
