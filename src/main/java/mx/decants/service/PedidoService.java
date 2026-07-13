@@ -263,12 +263,16 @@ public class PedidoService {
 
     private void descontarStock(List<PedidoItem> items) {
         if (items == null) return;
+        int umbralAlerta = 2;
         for (PedidoItem item : items) {
             Producto p = item.getProducto();
             if (p != null && p.getStock() != null) {
                 p.setStock(Math.max(0, p.getStock() - item.getCantidad()));
                 productoRepository.save(p);
                 log.info("Stock producto #{} ({}) → {}", p.getId(), p.getNombre(), p.getStock());
+                if (p.getStock() <= umbralAlerta) {
+                    telegramService.notificarStockBajo(p.getNombre(), p.getStock());
+                }
             }
         }
     }
@@ -362,9 +366,13 @@ public class PedidoService {
     public void cambiarEstado(Long id, String estadoStr) {
         pedidoRepository.findById(id).ifPresent(p -> {
             try {
-                p.setEstadoPedido(EstadoPedido.valueOf(estadoStr));
+                EstadoPedido nuevoEstado = EstadoPedido.valueOf(estadoStr);
+                p.setEstadoPedido(nuevoEstado);
                 pedidoRepository.save(p);
                 log.info("Pedido #{} → estado: {}", id, estadoStr);
+                if (nuevoEstado == EstadoPedido.ENVIADO) {
+                    emailService.enviarNotificacionEnvio(p);
+                }
             } catch (IllegalArgumentException ignored) {}
         });
     }

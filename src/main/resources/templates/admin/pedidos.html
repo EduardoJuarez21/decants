@@ -66,13 +66,34 @@
             </div>
         </div>
 
-        <!-- Buscador + Actualizar -->
-        <div style="padding:0.75rem 1.25rem; border-bottom:1px solid #f0ede8; display:flex; gap:0.75rem;">
+        <!-- Filtros -->
+        <div style="padding:0.75rem 1.25rem; border-bottom:1px solid #f0ede8; display:flex; gap:0.6rem; flex-wrap:wrap;">
             <input type="text" id="buscadorPedidos"
                    placeholder="Buscar por nombre, teléfono, # pedido o guía…"
-                   oninput="filtrarPedidos(this.value)"
-                   style="flex:1; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
+                   oninput="aplicarFiltros()"
+                   style="flex:1; min-width:180px; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
                           border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
+            <select id="filtroEstado" onchange="aplicarFiltros()"
+                    style="padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                           font-size:0.82rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
+                <option value="">Todos los estados</option>
+                <option value="Creado">Creado</option>
+                <option value="Pendiente de pago">Pendiente de pago</option>
+                <option value="Confirmado">Confirmado</option>
+                <option value="Listo para envío">Listo para envío</option>
+                <option value="Enviado">Enviado</option>
+                <option value="Entregado">Entregado</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+            <select id="filtroTipo" onchange="aplicarFiltros()"
+                    style="padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                           font-size:0.82rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
+                <option value="">Todos los tipos</option>
+                <option value="LIVE">Nacional (Live)</option>
+                <option value="LOCAL">Local MTY</option>
+                <option value="TEST">Test</option>
+                <option value="MANUAL">Manual</option>
+            </select>
             <a th:href="@{/aura-gestion/pedidos}"
                style="padding:0.55rem 1rem; background:#f5f5f5; color:#444; border-radius:8px;
                       font-size:0.83rem; font-weight:600; text-decoration:none; white-space:nowrap;
@@ -88,6 +109,8 @@
         </div>
 
         <!-- Con pedidos -->
+        <div id="contadorResultados" style="padding:0.4rem 1.25rem; font-size:0.78rem; color:var(--muted); border-bottom:1px solid #f0ede8;"></div>
+
         <div th:unless="${#lists.isEmpty(pedidos)}" style="overflow-x: auto;">
             <table class="admin-table" id="tablaPedidos">
                 <thead>
@@ -165,6 +188,12 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Paginación -->
+        <div id="paginacion"
+             style="display:flex; align-items:center; justify-content:center; gap:0.4rem;
+                    padding:1rem 1.25rem; border-top:1px solid #f0ede8; flex-wrap:wrap;">
+        </div>
     </div>
 
     <!-- Vínculo a la landing -->
@@ -175,17 +204,75 @@
 </div>
 
 <script>
-function filtrarPedidos(q) {
-    q = q.trim().toLowerCase();
-    var filas = document.querySelectorAll('#tablaPedidos tbody tr');
-    filas.forEach(function(fila) {
-        var id     = fila.cells[0].textContent.toLowerCase();
-        var nombre = fila.cells[1].textContent.toLowerCase();
-        var tel    = fila.cells[2].textContent.toLowerCase();
-        var guia   = fila.cells[8].textContent.toLowerCase();
-        fila.style.display = (!q || id.includes(q) || nombre.includes(q) || tel.includes(q) || guia.includes(q)) ? '' : 'none';
+var POR_PAGINA = 25;
+var paginaActual = 1;
+var filasFiltradas = [];
+
+function aplicarFiltros() {
+    paginaActual = 1;
+    var q       = (document.getElementById('buscadorPedidos').value || '').trim().toLowerCase();
+    var estado  = (document.getElementById('filtroEstado').value || '').toLowerCase();
+    var tipo    = (document.getElementById('filtroTipo').value || '').toLowerCase();
+    var filas   = Array.from(document.querySelectorAll('#tablaPedidos tbody tr'));
+
+    filasFiltradas = filas.filter(function(fila) {
+        var id      = fila.cells[0].textContent.toLowerCase();
+        var nombre  = fila.cells[1].textContent.toLowerCase();
+        var tel     = fila.cells[2].textContent.toLowerCase();
+        var entorno = fila.cells[6].textContent.toLowerCase();
+        var estadoF = fila.cells[7].textContent.toLowerCase();
+        var guia    = fila.cells[8].textContent.toLowerCase();
+
+        var okQ      = !q     || id.includes(q) || nombre.includes(q) || tel.includes(q) || guia.includes(q);
+        var okEstado = !estado || estadoF.includes(estado);
+        var okTipo   = !tipo  || entorno.includes(tipo);
+        return okQ && okEstado && okTipo;
     });
+
+    filas.forEach(function(f) { f.style.display = 'none'; });
+    renderPagina();
 }
+
+function renderPagina() {
+    var total   = filasFiltradas.length;
+    var paginas = Math.max(1, Math.ceil(total / POR_PAGINA));
+    if (paginaActual > paginas) paginaActual = paginas;
+    var desde = (paginaActual - 1) * POR_PAGINA;
+    var hasta = Math.min(desde + POR_PAGINA, total);
+
+    filasFiltradas.forEach(function(f, i) {
+        f.style.display = (i >= desde && i < hasta) ? '' : 'none';
+    });
+
+    var contador = document.getElementById('contadorResultados');
+    if (contador) contador.textContent = total + ' resultado(s) — mostrando ' + (desde + 1) + '–' + hasta;
+
+    var pag = document.getElementById('paginacion');
+    pag.innerHTML = '';
+    if (paginas <= 1) return;
+
+    function btn(label, page, disabled, active) {
+        var b = document.createElement('button');
+        b.textContent = label;
+        b.disabled = disabled;
+        b.style.cssText = 'padding:5px 12px; border-radius:6px; border:1.5px solid ' +
+            (active ? '#1a1a1a' : '#e0e0e0') + '; background:' + (active ? '#1a1a1a' : '#fff') +
+            '; color:' + (active ? '#fff' : '#444') + '; font-size:0.8rem; cursor:' + (disabled ? 'default' : 'pointer') +
+            '; font-family:inherit; font-weight:600;';
+        if (!disabled) b.onclick = function() { paginaActual = page; renderPagina(); };
+        return b;
+    }
+
+    pag.appendChild(btn('‹ Ant', paginaActual - 1, paginaActual === 1, false));
+    var inicio = Math.max(1, paginaActual - 2);
+    var fin    = Math.min(paginas, paginaActual + 2);
+    for (var i = inicio; i <= fin; i++) {
+        pag.appendChild(btn(i, i, false, i === paginaActual));
+    }
+    pag.appendChild(btn('Sig ›', paginaActual + 1, paginaActual === paginas, false));
+}
+
+document.addEventListener('DOMContentLoaded', function() { aplicarFiltros(); });
 </script>
 </body>
 </html>

@@ -59,6 +59,16 @@ public class TelegramService {
         enviar(token, chatId, texto);
     }
 
+    public void notificarStockBajo(String nombreProducto, int stock) {
+        String token  = configuracionService.get("telegram_bot_token", "");
+        String chatId = configuracionService.get("telegram_chat_id", "");
+        if (token.isBlank() || chatId.isBlank()) return;
+        String texto = stock == 0
+            ? "🚨 <b>Stock agotado</b>: " + nombreProducto
+            : "⚠️ <b>Stock bajo</b>: " + nombreProducto + " — solo quedan <b>" + stock + "</b> unidad(es)";
+        enviar(token, chatId, texto);
+    }
+
     private void enviar(String token, String chatId, String texto) {
         try {
             String body = objectMapper.writeValueAsString(Map.of(

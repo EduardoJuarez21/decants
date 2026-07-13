@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no encontrada — Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar">
+    <a th:href="@{/}" class="navbar-brand" style="display:flex; align-items:center; gap:0.5rem;">
+        <img th:src="@{/img/logo-navbar.webp}" alt="Aura Decants" style="height:48px; width:auto; object-fit:contain;">
+        Decants
+    </a>
+</nav>
+<div class="confirmation-page">
+    <div class="confirmation-card" style="text-align:center;">
+        <p style="font-size:4rem; font-weight:700; color:#e0e0e0; margin:0; line-height:1;">404</p>
+        <h1 style="font-size:1.4rem; margin:0.5rem 0 0.75rem;">Página no encontrada</h1>
+        <p class="subtitle" style="margin-bottom:1.5rem;">
+            La página que buscas no existe o fue movida.
+        </p>
+        <a th:href="@{/}" class="btn" style="color:var(--dark); border:1.5px solid var(--nude); justify-content:center;">
+            Volver al inicio
+        </a>
+    </div>
+</div>
+</body>
+</html>
