@@ -174,13 +174,18 @@ public class PedidoService {
         return clienteRepository.save(cliente);
     }
 
+    private int calcularEnvio(int subtotal) {
+        int umbral = configuracionService.getUmbralEnvioGratis();
+        return subtotal >= umbral ? 0 : configuracionService.getCostoEnvio();
+    }
+
     private int calcularTotal(String cartItemsJson, String packageType) {
         if (packageType != null && !packageType.isBlank()) {
             Integer pkgPrice = PACKAGE_PRICES.get(packageType);
             if (pkgPrice == null) {
                 throw new IllegalArgumentException("Paquete inválido: " + packageType);
             }
-            return pkgPrice;
+            return pkgPrice + calcularEnvio(pkgPrice);
         }
 
         if (cartItemsJson == null || cartItemsJson.isBlank()) {
@@ -210,7 +215,7 @@ public class PedidoService {
             if (total <= 0) {
                 throw new IllegalArgumentException("Total inválido");
             }
-            return total;
+            return total + calcularEnvio(total);
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {

@@ -476,6 +476,10 @@
             <span id="cuponDescLabel">Descuento</span>
             <strong id="cuponDescMonto" style="color:#2e7d32;"></strong>
         </div>
+        <div id="envioRow" class="cart-total-row" style="display:none;">
+            <span>Envío</span>
+            <strong id="cartEnvio"></strong>
+        </div>
         <div class="cart-total-row cart-total-final">
             <span>Total</span>
             <strong id="cartTotal">$0.00</strong>
@@ -634,6 +638,10 @@
         }
     }
 
+    /* ── Shipping config (from server) ── */
+    var COSTO_ENVIO         = /*[[${costoEnvio}]]*/ 159;
+    var UMBRAL_ENVIO_GRATIS = /*[[${umbralEnvioGratis}]]*/ 1299;
+
     /* ── Shopping Cart ── */
     var cart = JSON.parse(localStorage.getItem('decants_cart') || '[]');
 
@@ -769,12 +777,30 @@
         var subtotal = activePackage ? activePackage.price : getTotal();
         document.getElementById('cartSubtotal').textContent = '$' + subtotal.toFixed(2);
 
+        // Envío
+        var envioRow = document.getElementById('envioRow');
+        var envioEl  = document.getElementById('cartEnvio');
+        var costoEnvio = 0;
+        if (!activePackage) {
+            costoEnvio = subtotal >= UMBRAL_ENVIO_GRATIS ? 0 : COSTO_ENVIO;
+            envioRow.style.display = '';
+            if (costoEnvio === 0) {
+                envioEl.textContent = 'GRATIS';
+                envioEl.style.color = '#2e7d32';
+            } else {
+                envioEl.textContent = '$' + costoEnvio.toFixed(2);
+                envioEl.style.color = '';
+            }
+        } else {
+            envioRow.style.display = 'none';
+        }
+
         // Descuento cupón (solo si no hay paquete activo)
         var descRow = document.getElementById('cuponDescRow');
         var pkgBtn  = document.getElementById('pkgProceedBtn');
         if (cuponAplicado && !activePackage) {
             var ahorro = Math.round(subtotal * cuponAplicado.descuento / 100);
-            var totalFinal = subtotal - ahorro;
+            var totalFinal = subtotal + costoEnvio - ahorro;
             descRow.style.display = '';
             document.getElementById('cuponDescLabel').textContent = 'Descuento (' + cuponAplicado.descuento + '%)';
             document.getElementById('cuponDescMonto').textContent = '-$' + ahorro.toFixed(2);
@@ -793,7 +819,7 @@
             descRow.style.display = 'none';
             document.getElementById('cartTotal').textContent = activePackage
                 ? '$' + subtotal.toFixed(2) + ' (precio del paquete)'
-                : '$' + subtotal.toFixed(2);
+                : '$' + (subtotal + costoEnvio).toFixed(2);
             if (checkoutBtn) {
                 var base = checkoutBtn.getAttribute('data-base');
                 if (base) checkoutBtn.href = base;

@@ -35,4 +35,16 @@ public class ConfiguracionService {
     public void setStripeModo(String modo) {
         set("stripe_modo", modo);
     }
+
+    @Transactional(readOnly = true)
+    public int getCostoEnvio() {
+        try { return Integer.parseInt(get("envio_costo", "159")); }
+        catch (NumberFormatException e) { return 159; }
+    }
+
+    @Transactional(readOnly = true)
+    public int getUmbralEnvioGratis() {
+        try { return Integer.parseInt(get("envio_umbral_gratis", "1299")); }
+        catch (NumberFormatException e) { return 1299; }
+    }
 }

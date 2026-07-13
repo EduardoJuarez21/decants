@@ -46,6 +46,53 @@
         <span th:text="${mensaje}"></span>
     </div>
 
+    <!-- Envío -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>Costos de envío</h2>
+        </div>
+        <div style="padding:1.75rem 2rem;">
+            <p style="font-size:0.85rem; color:#555; margin-bottom:1.5rem;">
+                El envío estándar se cobra en todos los pedidos excepto cuando el subtotal supera el umbral de envío gratis.
+            </p>
+            <form th:action="@{/aura-gestion/configuracion/envio}" method="post">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+                    <div>
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                            Costo de envío estándar (MXN)
+                        </label>
+                        <input type="number" name="costoEnvio" th:value="${costoEnvio}" min="0" required
+                               style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                      border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.9rem;
+                                      font-family:inherit; outline:none;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                      text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                            Subtotal mínimo para envío gratis (MXN)
+                        </label>
+                        <input type="number" name="umbralGratis" th:value="${umbralEnvioGratis}" min="0" required
+                               style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                      border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.9rem;
+                                      font-family:inherit; outline:none;">
+                    </div>
+                </div>
+                <div style="background:#f8f9fa; border-radius:8px; padding:0.9rem 1.1rem; margin-bottom:1.5rem;
+                            font-size:0.82rem; color:#555; border-left:4px solid #c9a96e;">
+                    Con la configuración actual: envío <strong>$<span th:text="${costoEnvio}"></span> MXN</strong>
+                    — gratis al superar <strong>$<span th:text="${umbralEnvioGratis}"></span> MXN</strong> en productos.
+                </div>
+                <button type="submit"
+                        style="padding:0.65rem 1.5rem; background:#1a1a1a; color:#fff; border:none;
+                               border-radius:8px; font-size:0.85rem; font-family:inherit;
+                               cursor:pointer; font-weight:600;">
+                    Guardar cambios
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Stripe entorno -->
     <div class="admin-card">
         <div class="admin-card-header">

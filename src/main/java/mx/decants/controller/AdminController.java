@@ -200,7 +200,9 @@ public class AdminController {
 
     @GetMapping("/configuracion")
     public String configuracion(Model model) {
-        model.addAttribute("stripeModo", configuracionService.getStripeModo());
+        model.addAttribute("stripeModo",        configuracionService.getStripeModo());
+        model.addAttribute("costoEnvio",        configuracionService.getCostoEnvio());
+        model.addAttribute("umbralEnvioGratis", configuracionService.getUmbralEnvioGratis());
         return "admin/configuracion";
     }
 
@@ -210,6 +212,16 @@ public class AdminController {
             configuracionService.setStripeModo(modo);
             ra.addFlashAttribute("mensaje", "Modo Stripe cambiado a: " + modo.toUpperCase());
         }
+        return "redirect:/aura-gestion/configuracion";
+    }
+
+    @PostMapping("/configuracion/envio")
+    public String guardarEnvioConfig(@RequestParam int costoEnvio,
+                                      @RequestParam int umbralGratis,
+                                      RedirectAttributes ra) {
+        configuracionService.set("envio_costo",         String.valueOf(costoEnvio));
+        configuracionService.set("envio_umbral_gratis", String.valueOf(umbralGratis));
+        ra.addFlashAttribute("mensaje", "Configuración de envío actualizada.");
         return "redirect:/aura-gestion/configuracion";
     }
 }
