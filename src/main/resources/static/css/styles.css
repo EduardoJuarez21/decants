@@ -1362,6 +1362,29 @@ textarea.form-control { resize: vertical; min-height: 96px; }
     border-color: var(--gold);
     box-shadow: 0 2px 12px rgba(201,169,110,0.35);
   }
+  .mobile-search-toggle {
+    flex: 0 0 48px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+  }
+  .mobile-search-input {
+    flex: 1;
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 0.82rem 1rem;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    min-width: 0;
+  }
+  .mobile-search-input::placeholder { color: rgba(255,255,255,0.45); }
+  .mobile-search-input::-webkit-search-cancel-button { display: none; }
+
+  /* WA FAB sube cuando la barra CTA está visible */
+  .wa-fab { transition: bottom 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+  #mobileCta.visible ~ .wa-fab { bottom: calc(1rem + 70px); }
 }
 
 @media (max-width: 640px) {
