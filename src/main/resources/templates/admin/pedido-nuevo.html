@@ -401,7 +401,7 @@ document.addEventListener('click', function(e) {
     function initMaps() {
         var inputEl = document.getElementById('direccion');
         var placeEl = new google.maps.places.PlaceAutocompleteElement({
-            componentRestrictions: { country: 'mx' },
+            includedRegionCodes: ['mx'],
         });
         placeEl.style.cssText = 'display:block; width:100%;';
         inputEl.parentNode.insertBefore(placeEl, inputEl);

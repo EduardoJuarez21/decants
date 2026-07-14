@@ -416,7 +416,7 @@
 
         var inputEl = document.getElementById('addressSearch');
         var placeEl = new google.maps.places.PlaceAutocompleteElement({
-            componentRestrictions: { country: 'mx' },
+            includedRegionCodes: ['mx'],
         });
         placeEl.id = 'addressSearch';
         placeEl.className = inputEl.className;
