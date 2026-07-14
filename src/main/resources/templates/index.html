@@ -254,6 +254,10 @@
         </div>
         </div><!-- /product-section-wrap arabe -->
 
+        <p id="buscarSinResultados" style="display:none; text-align:center; color:var(--muted); padding:2rem 0; font-size:0.9rem;">
+            Sin resultados para tu búsqueda.
+        </p>
+
     </div>
 </section>
 
@@ -1031,7 +1035,8 @@
         document.getElementById('filtros-designer').style.display   = (show || totalDesigner > 0) ? '' : 'none';
         document.getElementById('nicho-arabe').style.display        = (show || totalArabe > 0)    ? '' : 'none';
         document.getElementById('divider-colecciones').style.display = (show || (totalDesigner > 0 && totalArabe > 0)) ? '' : 'none';
-        document.getElementById('buscarSinResultados').style.display = (!q || totalDesigner + totalArabe > 0) ? 'none' : 'block';
+        var noRes = document.getElementById('buscarSinResultados');
+        if (noRes) noRes.style.display = (!q || totalDesigner + totalArabe > 0) ? 'none' : 'block';
     }
 
     /* ── Lightbox características ── */
