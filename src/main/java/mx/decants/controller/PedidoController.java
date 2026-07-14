@@ -131,6 +131,7 @@ public class PedidoController {
             @RequestParam(required = false) String tel,
             Model model) {
         model.addAttribute("waNumero", configuracionService.getWhatsappNegocio());
+        model.addAttribute("noEncontrado", false);
         if (id != null && tel != null && !tel.isBlank()) {
             pedidoService.buscarPorIdYTelefono(id, tel)
                 .ifPresentOrElse(
