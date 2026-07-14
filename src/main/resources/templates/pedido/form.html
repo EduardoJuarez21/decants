@@ -405,38 +405,39 @@
             zoom: 11,
             mapTypeControl: false,
             streetViewControl: false,
-            fullscreenControl: false
+            fullscreenControl: false,
+            mapId: 'DEMO_MAP_ID'
         });
         _geocoder = new google.maps.Geocoder();
-        _marker = new google.maps.Marker({
-            map: _map,
-            draggable: true,
-            animation: google.maps.Animation.DROP
+        _marker = new google.maps.marker.AdvancedMarkerElement({
+            map: null,
+            gmpDraggable: true,
         });
 
-        var input = document.getElementById('addressSearch');
-        var autocomplete = new google.maps.places.Autocomplete(input, {
+        var inputEl = document.getElementById('addressSearch');
+        var placeEl = new google.maps.places.PlaceAutocompleteElement({
             componentRestrictions: { country: 'mx' },
-            fields: ['formatted_address', 'geometry']
         });
+        placeEl.id = 'addressSearch';
+        placeEl.className = inputEl.className;
+        inputEl.parentNode.replaceChild(placeEl, inputEl);
 
-        autocomplete.addListener('place_changed', function() {
-            var place = autocomplete.getPlace();
-            if (!place.geometry || !place.geometry.location) return;
-            var pos = place.geometry.location;
-            _map.setCenter(pos);
+        placeEl.addEventListener('gmp-placeselect', async function({ place }) {
+            await place.fetchFields({ fields: ['formattedAddress', 'location'] });
+            var loc = place.location;
+            _map.setCenter(loc);
             _map.setZoom(17);
-            _marker.setPosition(pos);
-            setAddress(place.formatted_address, pos.lat(), pos.lng());
+            _marker.map = _map;
+            _marker.position = loc;
+            setAddress(place.formattedAddress, loc.lat(), loc.lng());
             document.getElementById('mapContainer').style.display = 'block';
         });
 
-        _marker.addListener('dragend', function() {
-            var pos = _marker.getPosition();
-            _geocoder.geocode({ location: pos }, function(results, status) {
+        _marker.addListener('dragend', function(event) {
+            var latLng = event.latLng;
+            _geocoder.geocode({ location: latLng }, function(results, status) {
                 var addr = (status === 'OK' && results[0]) ? results[0].formatted_address : null;
-                if (addr) document.getElementById('addressSearch').value = addr;
-                setAddress(addr, pos.lat(), pos.lng());
+                setAddress(addr, latLng.lat(), latLng.lng());
             });
         });
 
@@ -458,7 +459,7 @@
 
     if (_gmKey) {
         var _s = document.createElement('script');
-        _s.src = 'https://maps.googleapis.com/maps/api/js?key=' + _gmKey + '&libraries=places&callback=initMap&loading=async';
+        _s.src = 'https://maps.googleapis.com/maps/api/js?key=' + _gmKey + '&libraries=places,marker&loading=async&callback=initMap';
         _s.async = true;
         _s.defer = true;
         document.head.appendChild(_s);
