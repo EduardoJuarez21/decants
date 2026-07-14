@@ -34,6 +34,7 @@
         <li><a href="#nicho-arabe">Nicho Árabe</a></li>
         <li style="display:none;"><a href="#paquetes">Paquetes</a></li>
         <li><a href="#contacto">Contacto</a></li>
+        <li><a th:href="@{/pedido/seguimiento}">Rastrear pedido</a></li>
         <li class="nav-search-item">
             <div class="nav-search-wrap">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -341,84 +342,6 @@
     </div>
 </section>
 
-<section id="personalizacion"></section>
-
-<section id="galeria"></section>
-
-<!-- ═══════════════════════════════════════════════════════════
-     TESTIMONIOS
-════════════════════════════════════════════════════════════ -->
-<section class="testimonios-section bg-beige section-center">
-    <div class="container">
-        <div class="gold-line"></div>
-        <h2 class="section-title">Lo que dicen nuestros clientes</h2>
-        <p class="section-subtitle">Más de 200 pedidos enviados a toda la República.</p>
-
-        <div class="testimonios-grid">
-
-            <div class="testimonio-card">
-                <div class="testimonio-stars">★★★★★</div>
-                <p class="testimonio-texto">"Pedí el Sauvage de Dior y llegó perfectamente sellado, con su etiqueta muy bonita. Huele igualito al original de la tienda. Ya pedí dos más para regalar."</p>
-                <div class="testimonio-autor">
-                    <div class="testimonio-avatar">CM</div>
-                    <div>
-                        <span class="testimonio-nombre">Carlos M.</span>
-                        <span class="testimonio-ciudad">Monterrey, NL</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testimonio-card">
-                <div class="testimonio-stars">★★★★★</div>
-                <p class="testimonio-texto">"Me encantó el Black Opium, nunca había comprado decants y la verdad superó mis expectativas. El atomizador es de muy buena calidad y la presentación es preciosa."</p>
-                <div class="testimonio-autor">
-                    <div class="testimonio-avatar">FL</div>
-                    <div>
-                        <span class="testimonio-nombre">Fernanda L.</span>
-                        <span class="testimonio-ciudad">Guadalajara, JAL</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testimonio-card">
-                <div class="testimonio-stars">★★★★★</div>
-                <p class="testimonio-texto">"Compré el Coco Mademoiselle y el Good Girl. Los dos llegaron en menos de 4 días y el empaque es muy elegante. Definitivamente vuelvo a pedir."</p>
-                <div class="testimonio-autor">
-                    <div class="testimonio-avatar">SR</div>
-                    <div>
-                        <span class="testimonio-nombre">Sofía R.</span>
-                        <span class="testimonio-ciudad">Ciudad de México</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testimonio-card">
-                <div class="testimonio-stars">★★★★★</div>
-                <p class="testimonio-texto">"El Hawas es increíble, mucha duración y proyección. Gracias a los decants pude probarlo antes de comprar el frasco completo. 100% recomendado."</p>
-                <div class="testimonio-autor">
-                    <div class="testimonio-avatar">RA</div>
-                    <div>
-                        <span class="testimonio-nombre">Roberto A.</span>
-                        <span class="testimonio-ciudad">Saltillo, COAH</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testimonio-card">
-                <div class="testimonio-stars">★★★★★</div>
-                <p class="testimonio-texto">"Pedí el Yara Moi y el Amber Oud, los dos son una locura de ricos. Me los entregaron personalmente aquí en Monterrey al siguiente día. Excelente servicio."</p>
-                <div class="testimonio-autor">
-                    <div class="testimonio-avatar">VG</div>
-                    <div>
-                        <span class="testimonio-nombre">Valentina G.</span>
-                        <span class="testimonio-ciudad">San Pedro, NL</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
 
 <!-- ═══════════════════════════════════════════════════════════
      CONTACTO
@@ -1055,19 +978,7 @@
             }
         };
 
-        var heroGroup = document.querySelector('.hero .btn-group');
-        var footer    = document.querySelector('footer');
-
-        if (heroGroup) {
-            new IntersectionObserver(function(entries) {
-                cta.classList.toggle('visible', !entries[0].isIntersecting);
-            }, { threshold: 0 }).observe(heroGroup);
-        }
-        if (footer) {
-            new IntersectionObserver(function(entries) {
-                if (entries[0].isIntersecting) cta.classList.remove('visible');
-            }, { threshold: 0.3 }).observe(footer);
-        }
+        cta.classList.add('visible');
     })();
 
     /* ── Buscador de productos ── */
