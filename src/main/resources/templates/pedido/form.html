@@ -414,22 +414,21 @@
             gmpDraggable: true,
         });
 
-        var inputEl = document.getElementById('addressSearch');
-        var placeEl = new google.maps.places.PlaceAutocompleteElement({
-            includedRegionCodes: ['mx'],
+        var input = document.getElementById('addressSearch');
+        var autocomplete = new google.maps.places.Autocomplete(input, {
+            componentRestrictions: { country: 'mx' },
+            fields: ['formatted_address', 'geometry']
         });
-        placeEl.id = 'addressSearch';
-        placeEl.className = inputEl.className;
-        inputEl.parentNode.replaceChild(placeEl, inputEl);
 
-        placeEl.addEventListener('gmp-placeselect', async function({ place }) {
-            await place.fetchFields({ fields: ['formattedAddress', 'location'] });
-            var loc = place.location;
-            _map.setCenter(loc);
+        autocomplete.addListener('place_changed', function() {
+            var place = autocomplete.getPlace();
+            if (!place.geometry || !place.geometry.location) return;
+            var pos = place.geometry.location;
+            _map.setCenter(pos);
             _map.setZoom(17);
             _marker.map = _map;
-            _marker.position = loc;
-            setAddress(place.formattedAddress, loc.lat(), loc.lng());
+            _marker.position = pos;
+            setAddress(place.formatted_address, pos.lat(), pos.lng());
             document.getElementById('mapContainer').style.display = 'block';
         });
 

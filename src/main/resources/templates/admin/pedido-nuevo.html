@@ -399,21 +399,18 @@ document.addEventListener('click', function(e) {
 <th:block th:if="${mapsApiKey != null and !#strings.isEmpty(mapsApiKey)}">
     <script>
     function initMaps() {
-        var inputEl = document.getElementById('direccion');
-        var placeEl = new google.maps.places.PlaceAutocompleteElement({
-            includedRegionCodes: ['mx'],
+        var input = document.getElementById('direccion');
+        var ac = new google.maps.places.Autocomplete(input, {
+            componentRestrictions: { country: 'mx' },
+            fields: ['formatted_address', 'geometry']
         });
-        placeEl.style.cssText = 'display:block; width:100%;';
-        inputEl.parentNode.insertBefore(placeEl, inputEl);
-        inputEl.style.display = 'none';
-
-        placeEl.addEventListener('gmp-placeselect', async function({ place }) {
-            await place.fetchFields({ fields: ['formattedAddress', 'location'] });
-            if (place.location) {
-                document.getElementById('latitud').value  = place.location.lat();
-                document.getElementById('longitud').value = place.location.lng();
+        ac.addListener('place_changed', function() {
+            var place = ac.getPlace();
+            if (place.geometry && place.geometry.location) {
+                document.getElementById('latitud').value  = place.geometry.location.lat();
+                document.getElementById('longitud').value = place.geometry.location.lng();
             }
-            if (place.formattedAddress) inputEl.value = place.formattedAddress;
+            if (place.formatted_address) input.value = place.formatted_address;
         });
     }
     </script>
