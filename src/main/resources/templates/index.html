@@ -442,16 +442,6 @@
 </section>
 
 
-<!-- Mobile coupon banner (only when there is an active coupon) -->
-<div th:if="${cuponActivo != null}" class="mobile-cupon-banner">
-    <span class="mobile-cupon-icon">🏷️</span>
-    <span class="mobile-cupon-text">Usa el código
-        <strong th:text="${cuponActivo.codigo}">CODIGO</strong>
-        y ahorra
-        <strong th:text="${cuponActivo.descuentoPorcentaje + '%'}">10%</strong>
-    </span>
-</div>
-
 <!-- Mobile sticky CTA bar -->
 <div id="mobileCta" class="mobile-bottom-cta">
     <button id="mobileSearchToggle" class="mobile-cta-btn mobile-search-toggle" onclick="toggleMobileSearch()" aria-label="Buscar">
@@ -575,13 +565,13 @@
 </footer>
 
 <!-- Cupón flotante lateral -->
-<div class="coupon-side" id="couponSide">
+<div th:if="${cuponActivo != null}" class="coupon-side" id="couponSide">
     <div class="coupon-body">
-        <span class="coupon-pct">10%</span>
+        <span class="coupon-pct" th:text="${cuponActivo.descuentoPorcentaje + '%'}">10%</span>
         <span class="coupon-off">de descuento</span>
         <hr class="coupon-divider">
         <span class="coupon-label">Código</span>
-        <span class="coupon-code" id="couponCode" onclick="copiarCupon()">AURADECANTS10</span>
+        <span class="coupon-code" id="couponCode" onclick="copiarCupon()" th:text="${cuponActivo.codigo}">CODIGO</span>
         <span class="coupon-copy-hint" id="couponHint">Toca para copiar</span>
     </div>
     <div class="coupon-tab" onclick="toggleCupon()" title="Ver descuento" style="cursor:pointer;">Descuento</div>
@@ -601,7 +591,8 @@
     }
 
     function copiarCupon() {
-        navigator.clipboard.writeText('AURADECANTS10').then(function() {
+        var codigo = document.getElementById('couponCode').textContent.trim();
+        navigator.clipboard.writeText(codigo).then(function() {
             var hint = document.getElementById('couponHint');
             var code = document.getElementById('couponCode');
             hint.textContent = '¡Copiado!';

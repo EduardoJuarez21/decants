@@ -1496,7 +1496,7 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   margin-top: -0.1rem;
 }
 @media (max-width: 768px) {
-  .coupon-side { top: auto; bottom: 5rem; transform: none; }
+  .coupon-side { top: auto; bottom: calc(68px + 0.6rem); transform: none; }
   .coupon-pct { font-size: 1.1rem; }
 }
 
@@ -1523,7 +1523,6 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 }
 .wa-fab svg { width: 28px; height: 28px; fill: #fff; }
 @media (max-width: 768px) {
-  .coupon-side { display: none; }
   .wa-fab { display: none; }
   .mobile-wa-btn {
     flex: 0 0 48px;
@@ -1534,43 +1533,4 @@ textarea.form-control { resize: vertical; min-height: 96px; }
     padding: 0;
   }
   .mobile-wa-btn:active { background: #1da851; }
-}
-
-/* ── Banner de cupón activo (solo mobile) ── */
-.mobile-cupon-banner {
-  display: none;
-}
-@media (max-width: 768px) {
-  .mobile-cupon-banner {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    position: fixed;
-    bottom: 68px;
-    left: 0;
-    right: 0;
-    z-index: 840;
-    background: linear-gradient(90deg, #1a4a2a 0%, #22a44a 100%);
-    color: #fff;
-    padding: 0.55rem 1.1rem;
-    font-size: 0.82rem;
-    line-height: 1.3;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.18);
-  }
-  .mobile-cupon-banner .mobile-cupon-icon {
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-  .mobile-cupon-banner .mobile-cupon-text {
-    flex: 1;
-  }
-  .mobile-cupon-banner strong {
-    letter-spacing: 0.02em;
-    font-weight: 700;
-  }
-}
-/* Cuando existe el banner, sube la barra CTA y añade padding al body */
-@media (max-width: 768px) {
-  body:has(.mobile-cupon-banner) { padding-bottom: calc(68px + 38px); }
-  body:has(.mobile-cupon-banner) .mobile-bottom-cta { bottom: 38px; }
 }
