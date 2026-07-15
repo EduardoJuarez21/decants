@@ -14,7 +14,7 @@ import java.util.List;
 @Transactional
 public class ProductoService {
 
-    private static final int PAGE_SIZE = 12;
+    private static final int PAGE_SIZE = 10;
 
     private final ProductoRepository productoRepository;
 
