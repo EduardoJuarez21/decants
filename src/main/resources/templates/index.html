@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura Decants MX — Frascos personalizados premium</title>
+    <title>Decants de perfumes originales en México | Aura Decants</title>
     <link rel="icon" type="image/png" th:href="@{/favicon.png}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +23,7 @@
 <nav class="navbar">
     <a href="#inicio" class="navbar-brand" style="display:flex; align-items:center; gap:0.5rem;">
         <img th:src="@{/img/logo-navbar.webp}" alt="Aura Decants logo" style="height:48px; width:auto; object-fit:contain;">
-        Decants
+        Aura Decants
     </a>
     <button class="navbar-toggle" onclick="toggleNav()" aria-label="Abrir menú">
         <span></span><span></span><span></span>
@@ -56,14 +56,14 @@
 <section id="inicio" class="hero">
     <div class="container">
         <div class="hero-content">
-            <span class="hero-label fade-up fade-up-1">Perfumer&iacute;a &amp; Personalizaci&oacute;n</span>
+            <span class="hero-label fade-up fade-up-1">Perfumes 100% originales &amp; Personalizaci&oacute;n</span>
             <h1 class="fade-up fade-up-2">
-                Detalles personalizados<br>
-                que se sienten <em>exclusivos</em>
+                Perfumes originales en<br>
+                <em>decants premium</em> de 5 y 10 ml
             </h1>
             <p class="hero-sub fade-up fade-up-3">
-                Decants de 5 y 10 ml desde $90. Atomizador y etiqueta personalizada incluidos.<br>
-                Envío a toda la República.
+                Prueba tu próxima fragancia sin comprar la botella completa.<br>
+                Personalización incluida y envíos a todo México.
             </p>
             <div class="btn-group fade-up fade-up-4">
                 <a href="#productos" class="btn btn-primary">Ver fragancias</a>
@@ -73,6 +73,23 @@
     </div>
     <div class="hero-deco"></div>
 </section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     BENEFITS STRIP
+════════════════════════════════════════════════════════════ -->
+<div class="benefits-strip">
+    <div class="container">
+        <ul class="benefits-list">
+            <li><span class="benefit-check">✓</span> Perfumes 100% originales</li>
+            <li><span class="benefit-check">✓</span> Extraídos directamente de la botella original</li>
+            <li><span class="benefit-check">✓</span> 5 ml ≈ 80–90 atomizaciones</li>
+            <li><span class="benefit-check">✓</span> 10 ml ≈ 160–180 atomizaciones</li>
+            <li><span class="benefit-check">✓</span> Frasco de cristal con atomizador</li>
+            <li><span class="benefit-check">✓</span> Etiqueta personalizada incluida</li>
+            <li><span class="benefit-check">✓</span> Envíos con guía a todo México</li>
+        </ul>
+    </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════════
      PRODUCTOS
@@ -131,10 +148,6 @@
                     <h3 th:text="${p.nombre}"></h3>
                     <p class="product-family" th:text="${p.familia}"></p>
                     <p class="product-notes" th:text="${p.notas}"></p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num" th:text="|(${p.calificacion})|"></span>
-                    </div>
                     <div th:if="${p.precio5ml != null and (p.stock == null or p.stock > 0)}" class="size-options">
                         <button class="size-btn"
                                 th:data-id="${p.id}"
@@ -154,6 +167,8 @@
                             <span class="size-label">10 ml</span>
                             <span class="size-price" th:text="|$${p.precio}|"></span>
                         </button>
+                        <p th:if="${p.precio5ml * 2 > p.precio}" class="size-savings"
+                           th:text="|Ahorra $${p.precio5ml * 2 - p.precio} eligiendo 10 ml|"></p>
                     </div>
                     <p th:unless="${p.precio5ml != null}" class="product-price-tag">
                         <span class="desde">Decant 10 ml</span>
@@ -235,10 +250,6 @@
                     <h3 th:text="${p.nombre}"></h3>
                     <p class="product-family" th:text="${p.familia}"></p>
                     <p class="product-notes" th:text="${p.notas}"></p>
-                    <div class="star-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-num" th:text="|(${p.calificacion})|"></span>
-                    </div>
                     <div th:if="${p.precio5ml != null and (p.stock == null or p.stock > 0)}" class="size-options">
                         <button class="size-btn"
                                 th:data-id="${p.id}"
@@ -258,6 +269,8 @@
                             <span class="size-label">10 ml</span>
                             <span class="size-price" th:text="|$${p.precio}|"></span>
                         </button>
+                        <p th:if="${p.precio5ml * 2 > p.precio}" class="size-savings"
+                           th:text="|Ahorra $${p.precio5ml * 2 - p.precio} eligiendo 10 ml|"></p>
                     </div>
                     <p th:unless="${p.precio5ml != null}" class="product-price-tag">
                         <span class="desde">Decant 10 ml</span>
@@ -440,6 +453,7 @@
     </div>
     <div class="cart-items" id="cartItems"></div>
     <div class="cart-footer" id="cartFooter" style="display:none;">
+        <div id="envioProgress" class="envio-progress" style="display:none;"></div>
         <div class="cart-total-row">
             <span>Subtotal</span>
             <strong id="cartSubtotal">$0.00</strong>
@@ -491,7 +505,7 @@
         <a th:href="@{/pedido/nuevo}" class="btn btn-primary cart-checkout-btn" id="cartCheckoutBtn" style="width:100%; justify-content:center;">
             Proceder con mi pedido &rarr;
         </a>
-        <p class="cart-footer-note">Te confirmamos precio y envío por WhatsApp</p>
+        <p class="cart-footer-note">Total estimado. El envío corresponde a cobertura estándar. Te contactamos si tu CP es zona extendida.</p>
     </div>
 </div>
 
@@ -509,15 +523,15 @@
 ════════════════════════════════════════════════════════════ -->
 <footer>
     <div class="container">
-        <span class="brand">Decants</span>
-        <p>Frascos personalizados que cuentan historias únicas.</p>
+        <span class="brand">Aura Decants</span>
+        <p>Perfumes originales en decants de 5 y 10 ml.</p>
         <p style="margin-top:0.5rem;">
             <a th:href="@{/pedido/seguimiento}"
                style="color:rgba(255,255,255,0.55); font-size:0.78rem; text-decoration:none;">
                 &#128230; Rastrear mi pedido
             </a>
         </p>
-        <p style="margin-top: 0.4rem;">&copy; 2025 Decants MX. Todos los derechos reservados.</p>
+        <p style="margin-top: 0.4rem;">&copy; 2026 Aura Decants. Todos los derechos reservados.</p>
     </div>
 </footer>
 
@@ -802,6 +816,25 @@
         var pkgWarning   = footerEl.querySelector('.cart-pkg-warning');
 
         footerEl.style.display = 'flex';
+
+        // Barra de progreso hacia envío gratis
+        var envioProgressEl = document.getElementById('envioProgress');
+        if (!activePackage && tipoEntrega !== 'local') {
+            var subtotalActual = getTotal();
+            var faltante = UMBRAL_ENVIO_GRATIS - subtotalActual;
+            if (faltante > 0) {
+                var pct = Math.min((subtotalActual / UMBRAL_ENVIO_GRATIS) * 100, 100).toFixed(1);
+                envioProgressEl.style.display = '';
+                envioProgressEl.innerHTML =
+                    '<div class="envio-progress-bar"><div class="envio-progress-fill" style="width:' + pct + '%"></div></div>' +
+                    '<p class="envio-progress-text">Te faltan <strong>$' + faltante.toFixed(0) + '</strong> para obtener <strong>envío gratis</strong></p>';
+            } else {
+                envioProgressEl.style.display = '';
+                envioProgressEl.innerHTML = '<p class="envio-progress-text envio-libre">¡Ya tienes envío gratis!</p>';
+            }
+        } else {
+            envioProgressEl.style.display = 'none';
+        }
 
         // Selector de tipo de entrega (solo para items individuales, no paquetes)
         var entregaSelector = document.getElementById('entregaSelectorCart');
