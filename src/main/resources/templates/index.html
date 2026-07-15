@@ -84,7 +84,6 @@
             <li><span class="benefit-check">✓</span> Extraídos directamente de la botella original</li>
             <li><span class="benefit-check">✓</span> 5 ml ≈ 80–90 atomizaciones</li>
             <li><span class="benefit-check">✓</span> 10 ml ≈ 160–180 atomizaciones</li>
-            <li><span class="benefit-check">✓</span> Frasco de cristal con atomizador</li>
             <li><span class="benefit-check">✓</span> Etiqueta personalizada incluida</li>
             <li><span class="benefit-check">✓</span> Envíos con guía a todo México</li>
         </ul>
@@ -507,7 +506,6 @@
         <a th:href="@{/pedido/nuevo}" class="btn btn-primary cart-checkout-btn" id="cartCheckoutBtn">
             Proceder con mi pedido &rarr;
         </a>
-        <p class="cart-footer-note">Total estimado · Envío por cobertura estándar · Te contactamos si tu CP es zona extendida</p>
     </div>
 </div>
 
@@ -1007,12 +1005,20 @@
         document.getElementById('cartDrawer').classList.add('open');
         document.getElementById('cartOverlay').classList.add('open');
         document.body.style.overflow = 'hidden';
+        var mc = document.getElementById('mobileCta');
+        if (mc) mc.style.display = 'none';
+        var cs = document.getElementById('couponSide');
+        if (cs) cs.style.display = 'none';
     }
 
     function closeCart() {
         document.getElementById('cartDrawer').classList.remove('open');
         document.getElementById('cartOverlay').classList.remove('open');
         document.body.style.overflow = '';
+        var mc = document.getElementById('mobileCta');
+        if (mc) mc.style.display = '';
+        var cs = document.getElementById('couponSide');
+        if (cs) cs.style.display = '';
     }
 
     function showToast(name) {
