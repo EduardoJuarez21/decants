@@ -770,11 +770,26 @@
                 return r.json();
             })
             .then(function(data) {
-                cuponAplicado = { codigo: codigo, descuento: data.descuento, descripcion: data.descripcion };
+                if (data.montoMinimo && getTotal() < data.montoMinimo) {
+                    cuponAplicado = null;
+                    msgEl.textContent = 'Compra mínima de $' + data.montoMinimo + ' para usar este cupón.';
+                    msgEl.className = 'cupon-msg cupon-error';
+                    msgEl.style.display = 'block';
+                    return;
+                }
+                cuponAplicado = {
+                    codigo:         codigo,
+                    descuento:      data.descuento,
+                    descripcion:    data.descripcion,
+                    montoMinimo:    data.montoMinimo  || null,
+                    descuentoMaximo: data.descuentoMaximo || null
+                };
                 document.getElementById('cuponInputRow').style.display = 'none';
                 var aplicadoRow = document.getElementById('cuponAplicadoRow');
                 aplicadoRow.style.display = 'flex';
-                document.getElementById('cuponLabel').textContent = codigo + ' · ' + data.descuento + '% off';
+                var labelTxt = codigo + ' · ' + data.descuento + '% off';
+                if (data.descuentoMaximo) labelTxt += ' (máx $' + data.descuentoMaximo + ')';
+                document.getElementById('cuponLabel').textContent = labelTxt;
                 msgEl.style.display = 'none';
                 renderCart();
             })
@@ -888,6 +903,9 @@
         var pkgBtn  = document.getElementById('pkgProceedBtn');
         if (cuponAplicado && !activePackage) {
             var ahorro = Math.round(subtotal * cuponAplicado.descuento / 100);
+            if (cuponAplicado.descuentoMaximo && ahorro > cuponAplicado.descuentoMaximo) {
+                ahorro = cuponAplicado.descuentoMaximo;
+            }
             var totalFinal = subtotal + costoEnvio - ahorro;
             descRow.style.display = '';
             document.getElementById('cuponDescLabel').textContent = 'Descuento (' + cuponAplicado.descuento + '%)';

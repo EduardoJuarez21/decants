@@ -18,6 +18,10 @@ public class Cupon {
     @Column(nullable = false)
     private Integer descuentoPorcentaje;
 
+    private Integer montoMinimo;     // null = sin compra mínima
+
+    private Integer descuentoMaximo; // null = sin tope de descuento
+
     private boolean activo = true;
 
     public Long getId() { return id; }
@@ -31,6 +35,12 @@ public class Cupon {
 
     public Integer getDescuentoPorcentaje() { return descuentoPorcentaje; }
     public void setDescuentoPorcentaje(Integer descuentoPorcentaje) { this.descuentoPorcentaje = descuentoPorcentaje; }
+
+    public Integer getMontoMinimo() { return montoMinimo; }
+    public void setMontoMinimo(Integer montoMinimo) { this.montoMinimo = montoMinimo; }
+
+    public Integer getDescuentoMaximo() { return descuentoMaximo; }
+    public void setDescuentoMaximo(Integer descuentoMaximo) { this.descuentoMaximo = descuentoMaximo; }
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }

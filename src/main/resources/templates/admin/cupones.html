@@ -64,6 +64,18 @@
                        style="width:100%; box-sizing:border-box; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
                               border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
             </div>
+            <div style="display:flex; flex-direction:column; gap:0.3rem; min-width:100px; max-width:120px;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">Mínimo $</label>
+                <input th:field="*{montoMinimo}" type="number" min="0" placeholder="499 (opcional)"
+                       style="width:100%; box-sizing:border-box; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
+                              border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.3rem; min-width:100px; max-width:120px;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">Tope desc. $</label>
+                <input th:field="*{descuentoMaximo}" type="number" min="0" placeholder="100 (opcional)"
+                       style="width:100%; box-sizing:border-box; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
+                              border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
+            </div>
             <button type="submit"
                     style="padding:0.6rem 1.4rem; background:#1a1a1a; color:#fff; border:none;
                            border-radius:8px; font-size:0.85rem; font-family:inherit; cursor:pointer;
@@ -97,6 +109,8 @@
                         <th>Código</th>
                         <th>Descripción</th>
                         <th>Descuento</th>
+                        <th>Mínimo</th>
+                        <th>Tope</th>
                         <th>Estado</th>
                         <th></th>
                     </tr>
@@ -107,6 +121,8 @@
                         <td><strong th:text="${c.codigo}" style="font-family:monospace; letter-spacing:0.5px;"></strong></td>
                         <td th:text="${c.descripcion}"></td>
                         <td><strong th:text="|${c.descuentoPorcentaje}%|" style="color:#2e7d32;"></strong></td>
+                        <td th:text="${c.montoMinimo != null ? '$' + c.montoMinimo : '—'}" style="color:var(--muted);"></td>
+                        <td th:text="${c.descuentoMaximo != null ? '$' + c.descuentoMaximo : '—'}" style="color:var(--muted);"></td>
                         <td>
                             <span th:if="${c.activo}"  class="badge badge-activo">Activo</span>
                             <span th:unless="${c.activo}" class="badge badge-inactivo">Inactivo</span>
