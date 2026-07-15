@@ -167,8 +167,6 @@
                             <span class="size-label">10 ml</span>
                             <span class="size-price" th:text="|$${p.precio}|"></span>
                         </button>
-                        <p th:if="${p.precio5ml * 2 > p.precio}" class="size-savings"
-                           th:text="|Ahorra $${p.precio5ml * 2 - p.precio} eligiendo 10 ml|"></p>
                     </div>
                     <p th:unless="${p.precio5ml != null}" class="product-price-tag">
                         <span class="desde">Decant 10 ml</span>
@@ -269,8 +267,6 @@
                             <span class="size-label">10 ml</span>
                             <span class="size-price" th:text="|$${p.precio}|"></span>
                         </button>
-                        <p th:if="${p.precio5ml * 2 > p.precio}" class="size-savings"
-                           th:text="|Ahorra $${p.precio5ml * 2 - p.precio} eligiendo 10 ml|"></p>
                     </div>
                     <p th:unless="${p.precio5ml != null}" class="product-price-tag">
                         <span class="desde">Decant 10 ml</span>
@@ -451,34 +447,26 @@
         <h3>Tu carrito</h3>
         <button class="cart-close" onclick="closeCart()">✕</button>
     </div>
+
+    <!-- Products list (scrollable) -->
     <div class="cart-items" id="cartItems"></div>
-    <div class="cart-footer" id="cartFooter" style="display:none;">
-        <div id="envioProgress" class="envio-progress" style="display:none;"></div>
-        <div class="cart-total-row">
-            <span>Subtotal</span>
-            <strong id="cartSubtotal">$0.00</strong>
-        </div>
-        <!-- Selector tipo de entrega -->
-        <div id="entregaSelectorCart" style="display:none; flex-direction:column; gap:0.4rem;">
-            <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted);">¿Cómo recibes tu pedido?</span>
-            <div style="display:flex; gap:0.5rem;">
-                <button id="btnNacional" onclick="setEntrega('nacional')"
-                        style="flex:1; padding:0.45rem 0.5rem; border-radius:8px; font-size:0.76rem; font-weight:600;
-                               font-family:inherit; cursor:pointer; border:1.5px solid #1a1a1a;
-                               background:#1a1a1a; color:#fff; transition:all .15s;">
-                    📦 Envío nacional
-                </button>
-                <button id="btnLocal" onclick="setEntrega('local')"
-                        style="flex:1; padding:0.45rem 0.5rem; border-radius:8px; font-size:0.76rem; font-weight:600;
-                               font-family:inherit; cursor:pointer; border:1.5px solid #e0e0e0;
-                               background:#fff; color:#555; transition:all .15s;">
-                    🏠 Entrega local (MTY)
-                </button>
+
+    <!-- Summary zone (fixed bottom) -->
+    <div class="cart-summary" id="cartFooter" style="display:none;">
+
+        <!-- Delivery pills -->
+        <div id="entregaSelectorCart" style="display:none;">
+            <p class="cart-section-label">¿Cómo lo recibes?</p>
+            <div class="delivery-pills">
+                <button id="btnNacional" class="delivery-pill" onclick="setEntrega('nacional')">📦 Envío nacional</button>
+                <button id="btnLocal"    class="delivery-pill" onclick="setEntrega('local')">🏠 Entrega local</button>
             </div>
         </div>
-        <!-- Cupón -->
+
+        <!-- Coupon — collapsible -->
         <div class="cart-cupon-section">
-            <div class="cart-cupon-row" id="cuponInputRow">
+            <button class="cupon-toggle-btn" id="cuponToggleBtn" onclick="toggleCuponInput()">¿Tienes código de descuento? ›</button>
+            <div class="cart-cupon-row" id="cuponInputRow" style="display:none;">
                 <input type="text" id="cuponInput" placeholder="Código de descuento"
                        class="cupon-input" oninput="this.value=this.value.toUpperCase()">
                 <button class="cupon-apply-btn" onclick="aplicarCupon()">Aplicar</button>
@@ -489,23 +477,37 @@
             </div>
             <p id="cuponMsg" class="cupon-msg" style="display:none;"></p>
         </div>
-        <div id="cuponDescRow" class="cart-total-row" style="display:none; color:#2e7d32;">
-            <span id="cuponDescLabel">Descuento</span>
-            <strong id="cuponDescMonto" style="color:#2e7d32;"></strong>
+
+        <!-- Envío gratis progress -->
+        <div id="envioProgress" class="envio-progress" style="display:none;"></div>
+
+        <!-- Totals rows -->
+        <div class="cart-totals">
+            <div class="cart-total-row">
+                <span>Subtotal</span>
+                <span id="cartSubtotal">$0.00</span>
+            </div>
+            <div id="cuponDescRow" class="cart-total-row cart-discount-row" style="display:none;">
+                <span id="cuponDescLabel">Descuento</span>
+                <span id="cuponDescMonto"></span>
+            </div>
+            <div id="envioRow" class="cart-total-row" style="display:none;">
+                <span>Envío</span>
+                <span id="cartEnvio"></span>
+            </div>
         </div>
-        <div id="envioRow" class="cart-total-row" style="display:none; font-size:0.78rem;">
-            <span>Envío</span>
-            <strong id="cartEnvio" style="font-size:0.88rem;"></strong>
-        </div>
-        <div class="cart-total-row cart-total-final">
+
+        <!-- Big total -->
+        <div class="cart-total-final">
             <span>Total</span>
             <strong id="cartTotal">$0.00</strong>
         </div>
-        <p class="cart-pkg-warning" style="display:none; text-align:center; font-size:0.82rem; color:var(--gold); font-weight:600; background:rgba(201,169,110,0.1); padding:0.65rem 1rem; border-radius:8px; margin:0;"></p>
-        <a th:href="@{/pedido/nuevo}" class="btn btn-primary cart-checkout-btn" id="cartCheckoutBtn" style="width:100%; justify-content:center;">
+
+        <p class="cart-pkg-warning" style="display:none;"></p>
+        <a th:href="@{/pedido/nuevo}" class="btn btn-primary cart-checkout-btn" id="cartCheckoutBtn">
             Proceder con mi pedido &rarr;
         </a>
-        <p class="cart-footer-note">Total estimado. El envío corresponde a cobertura estándar. Te contactamos si tu CP es zona extendida.</p>
+        <p class="cart-footer-note">Total estimado · Envío por cobertura estándar · Te contactamos si tu CP es zona extendida</p>
     </div>
 </div>
 
@@ -681,13 +683,8 @@
         var btnN = document.getElementById('btnNacional');
         var btnL = document.getElementById('btnLocal');
         if (!btnN || !btnL) return;
-        if (tipoEntrega === 'local') {
-            btnL.style.background = '#1a1a1a'; btnL.style.color = '#fff'; btnL.style.borderColor = '#1a1a1a';
-            btnN.style.background = '#fff';    btnN.style.color = '#555'; btnN.style.borderColor = '#e0e0e0';
-        } else {
-            btnN.style.background = '#1a1a1a'; btnN.style.color = '#fff'; btnN.style.borderColor = '#1a1a1a';
-            btnL.style.background = '#fff';    btnL.style.color = '#555'; btnL.style.borderColor = '#e0e0e0';
-        }
+        btnN.classList.toggle('active', tipoEntrega !== 'local');
+        btnL.classList.toggle('active', tipoEntrega === 'local');
     }
 
     /* ── Shopping Cart ── */
@@ -750,6 +747,15 @@
     }
 
     var cuponAplicado = null;
+    var cuponExpanded = false;
+
+    function toggleCuponInput() {
+        cuponExpanded = !cuponExpanded;
+        var row = document.getElementById('cuponInputRow');
+        var btn = document.getElementById('cuponToggleBtn');
+        row.style.display = cuponExpanded ? 'flex' : 'none';
+        if (btn) btn.textContent = cuponExpanded ? '✕ Cancelar' : '¿Tienes código de descuento? ›';
+    }
 
     function getTotal() {
         return cart.reduce(function(s, i) { return s + i.price * i.qty; }, 0);
@@ -784,6 +790,7 @@
                     montoMinimo:    data.montoMinimo  || null,
                     descuentoMaximo: data.descuentoMaximo || null
                 };
+                cuponExpanded = false;
                 document.getElementById('cuponInputRow').style.display = 'none';
                 var aplicadoRow = document.getElementById('cuponAplicadoRow');
                 aplicadoRow.style.display = 'flex';
@@ -804,10 +811,13 @@
 
     function quitarCupon() {
         cuponAplicado = null;
+        cuponExpanded = false;
         document.getElementById('cuponInput').value = '';
-        document.getElementById('cuponInputRow').style.display = 'flex';
+        document.getElementById('cuponInputRow').style.display = 'none';
         document.getElementById('cuponAplicadoRow').style.display = 'none';
         document.getElementById('cuponMsg').style.display = 'none';
+        var tb = document.getElementById('cuponToggleBtn');
+        if (tb) { tb.style.display = ''; tb.textContent = '¿Tienes código de descuento? ›'; }
         renderCart();
     }
 
@@ -853,12 +863,20 @@
 
         // Selector de tipo de entrega (solo para items individuales, no paquetes)
         var entregaSelector = document.getElementById('entregaSelectorCart');
-        if (entregaSelector) entregaSelector.style.display = activePackage ? 'none' : 'flex';
+        if (entregaSelector) entregaSelector.style.display = activePackage ? 'none' : 'block';
         updateEntregaButtons();
 
         // Sincronizar UI del cupón con el estado real
-        document.getElementById('cuponInputRow').style.display   = cuponAplicado ? 'none' : 'flex';
-        document.getElementById('cuponAplicadoRow').style.display = cuponAplicado ? 'flex' : 'none';
+        var cuponToggleBtn = document.getElementById('cuponToggleBtn');
+        if (cuponAplicado) {
+            if (cuponToggleBtn) cuponToggleBtn.style.display = 'none';
+            document.getElementById('cuponInputRow').style.display = 'none';
+            document.getElementById('cuponAplicadoRow').style.display = 'flex';
+        } else {
+            if (cuponToggleBtn) { cuponToggleBtn.style.display = ''; cuponToggleBtn.textContent = cuponExpanded ? '✕ Cancelar' : '¿Tienes código de descuento? ›'; }
+            document.getElementById('cuponInputRow').style.display = cuponExpanded ? 'flex' : 'none';
+            document.getElementById('cuponAplicadoRow').style.display = 'none';
+        }
 
         // Subtotal
         var subtotal = activePackage ? activePackage.price : getTotal();
