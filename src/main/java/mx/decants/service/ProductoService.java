@@ -2,6 +2,9 @@ package mx.decants.service;
 
 import mx.decants.entity.Producto;
 import mx.decants.repository.ProductoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +13,8 @@ import java.util.List;
 @Service
 @Transactional
 public class ProductoService {
+
+    private static final int PAGE_SIZE = 12;
 
     private final ProductoRepository productoRepository;
 
@@ -20,6 +25,19 @@ public class ProductoService {
     @Transactional(readOnly = true)
     public List<Producto> activosPorCategoria(String categoria) {
         return productoRepository.findByCategoriaAndActivoTrueOrderByNombreAsc(categoria);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Producto> activosPorCategoriaPaginados(String categoria, String genero, int page) {
+        var pageable = PageRequest.of(Math.max(page, 0), PAGE_SIZE, Sort.by("orden", "nombre"));
+        if (genero == null || genero.isBlank() || "todos".equals(genero)) {
+            return productoRepository.findByCategoriaAndActivoTrue(categoria, pageable);
+        }
+        if ("mujer".equals(genero)) {
+            return productoRepository.findByCategoriaAndGeneroInAndActivoTrue(
+                    categoria, List.of("mujer", "unisex"), pageable);
+        }
+        return productoRepository.findByCategoriaAndGeneroAndActivoTrue(categoria, genero, pageable);
     }
 
     @Transactional(readOnly = true)

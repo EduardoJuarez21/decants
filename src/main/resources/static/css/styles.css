@@ -1534,3 +1534,40 @@ textarea.form-control { resize: vertical; min-height: 96px; }
   }
   .mobile-wa-btn:active { background: #1da851; }
 }
+
+/* ── Paginación ── */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 1.5rem 0 0.5rem;
+  flex-wrap: wrap;
+}
+.page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 0.6rem;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  background: #fff;
+  color: var(--black);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.page-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.page-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+  font-weight: 700;
+  pointer-events: none;
+}

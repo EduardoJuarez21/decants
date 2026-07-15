@@ -90,9 +90,9 @@
         <div class="product-section-wrap">
         <div class="section-controls" id="filtros-designer">
             <div class="filter-tabs">
-                <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-designer')">Todos</button>
-                <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-designer')">Hombre</button>
-                <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-designer')">Mujer</button>
+                <a th:href="@{/(df='todos', dp=0, ap=${ap}, af=${af})}" th:classappend="${df == 'todos'} ? ' active' : ''" class="filter-tab">Todos</a>
+                <a th:href="@{/(df='hombre', dp=0, ap=${ap}, af=${af})}" th:classappend="${df == 'hombre'} ? ' active' : ''" class="filter-tab">Hombre</a>
+                <a th:href="@{/(df='mujer', dp=0, ap=${ap}, af=${af})}" th:classappend="${df == 'mujer'} ? ' active' : ''" class="filter-tab">Mujer</a>
             </div>
             <div class="section-search-wrap">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -163,6 +163,21 @@
             </div>
 
         </div>
+
+        <!-- Paginación Alta Perfumería -->
+        <div class="pagination-controls" th:if="${designerPage.totalPages > 1}">
+            <a th:if="${!designerPage.first}"
+               th:href="@{/(dp=${dp - 1}, df=${df}, ap=${ap}, af=${af})}#alta-perfumeria"
+               class="page-btn">‹</a>
+            <a th:each="i : ${#numbers.sequence(0, designerPage.totalPages - 1)}"
+               th:href="@{/(dp=${i}, df=${df}, ap=${ap}, af=${af})}#alta-perfumeria"
+               th:class="${i == dp} ? 'page-btn active' : 'page-btn'"
+               th:text="${i + 1}"></a>
+            <a th:if="${!designerPage.last}"
+               th:href="@{/(dp=${dp + 1}, df=${df}, ap=${ap}, af=${af})}#alta-perfumeria"
+               class="page-btn">›</a>
+        </div>
+
         </div><!-- /product-section-wrap designer -->
 
         <!-- ── Divisor ──────────────────────────────────────── -->
@@ -178,10 +193,10 @@
         <div class="product-section-wrap">
         <div class="section-controls">
             <div class="filter-tabs">
-                <button class="filter-tab active" onclick="filterProducts(this,'todos','grid-arabe')">Todos</button>
-                <button class="filter-tab" onclick="filterProducts(this,'hombre','grid-arabe')">Hombre</button>
-                <button class="filter-tab" onclick="filterProducts(this,'mujer','grid-arabe')">Mujer</button>
-                <button class="filter-tab" onclick="filterProducts(this,'unisex','grid-arabe')">Unisex</button>
+                <a th:href="@{/(af='todos', ap=0, dp=${dp}, df=${df})}" th:classappend="${af == 'todos'} ? ' active' : ''" class="filter-tab">Todos</a>
+                <a th:href="@{/(af='hombre', ap=0, dp=${dp}, df=${df})}" th:classappend="${af == 'hombre'} ? ' active' : ''" class="filter-tab">Hombre</a>
+                <a th:href="@{/(af='mujer', ap=0, dp=${dp}, df=${df})}" th:classappend="${af == 'mujer'} ? ' active' : ''" class="filter-tab">Mujer</a>
+                <a th:href="@{/(af='unisex', ap=0, dp=${dp}, df=${df})}" th:classappend="${af == 'unisex'} ? ' active' : ''" class="filter-tab">Unisex</a>
             </div>
             <div class="section-search-wrap">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -252,6 +267,21 @@
             </div>
 
         </div>
+
+        <!-- Paginación Nicho Árabe -->
+        <div class="pagination-controls" th:if="${arabePage.totalPages > 1}">
+            <a th:if="${!arabePage.first}"
+               th:href="@{/(ap=${ap - 1}, af=${af}, dp=${dp}, df=${df})}#nicho-arabe"
+               class="page-btn">‹</a>
+            <a th:each="i : ${#numbers.sequence(0, arabePage.totalPages - 1)}"
+               th:href="@{/(ap=${i}, af=${af}, dp=${dp}, df=${df})}#nicho-arabe"
+               th:class="${i == ap} ? 'page-btn active' : 'page-btn'"
+               th:text="${i + 1}"></a>
+            <a th:if="${!arabePage.last}"
+               th:href="@{/(ap=${ap + 1}, af=${af}, dp=${dp}, df=${df})}#nicho-arabe"
+               class="page-btn">›</a>
+        </div>
+
         </div><!-- /product-section-wrap arabe -->
 
         <p id="buscarSinResultados" style="display:none; text-align:center; color:var(--muted); padding:2rem 0; font-size:0.9rem;">
