@@ -39,6 +39,7 @@ public class PedidoDTO {
 
     private String productosSeleccionados;
 
+    @Size(max = 5000, message = "Carrito inválido")
     private String cartItemsJson;
 
     private String packageType;

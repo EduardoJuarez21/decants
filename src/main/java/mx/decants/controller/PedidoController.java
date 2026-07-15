@@ -6,20 +6,16 @@ import jakarta.validation.Valid;
 import mx.decants.dto.PedidoDTO;
 import mx.decants.entity.Pedido;
 import mx.decants.service.ConfiguracionService;
-import mx.decants.service.CuponService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.StripeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Map;
 
 @Controller
 @RequestMapping("/pedido")
@@ -30,14 +26,12 @@ public class PedidoController {
 
     private final PedidoService pedidoService;
     private final StripeService stripeService;
-    private final CuponService cuponService;
     private final ConfiguracionService configuracionService;
 
     public PedidoController(PedidoService pedidoService, StripeService stripeService,
-                             CuponService cuponService, ConfiguracionService configuracionService) {
+                             ConfiguracionService configuracionService) {
         this.pedidoService = pedidoService;
         this.stripeService = stripeService;
-        this.cuponService = cuponService;
         this.configuracionService = configuracionService;
     }
 
@@ -105,24 +99,6 @@ public class PedidoController {
             redirectAttributes.addFlashAttribute("error", "Error al procesar el pago. Inténtalo de nuevo.");
             return "redirect:/pedido/nuevo";
         }
-    }
-
-    @GetMapping("/cupon")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> validarCupon(@RequestParam String codigo) {
-        return cuponService.validar(codigo)
-                .map(c -> {
-                    Map<String, Object> res = new java.util.HashMap<>();
-                    res.put("valido", true);
-                    res.put("descuento", c.getDescuentoPorcentaje());
-                    res.put("descripcion", c.getDescripcion() != null ? c.getDescripcion() : "");
-                    return ResponseEntity.<Map<String, Object>>ok(res);
-                })
-                .orElseGet(() -> {
-                    Map<String, Object> res = new java.util.HashMap<>();
-                    res.put("valido", false);
-                    return ResponseEntity.<Map<String, Object>>ok(res);
-                });
     }
 
     @GetMapping("/seguimiento")

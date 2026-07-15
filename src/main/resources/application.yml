@@ -39,6 +39,11 @@ server:
   address: 0.0.0.0
   servlet:
     context-path: ${SERVER_SERVLET_CONTEXT_PATH:/}
+    session:
+      cookie:
+        secure: true
+        http-only: true
+        same-site: strict
   tomcat:
     accesslog:
       enabled: true
