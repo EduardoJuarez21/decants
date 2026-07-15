@@ -37,6 +37,7 @@ google:
 server:
   port: ${PORT:8080}
   address: 0.0.0.0
+  forward-headers-strategy: native
   servlet:
     context-path: ${SERVER_SERVLET_CONTEXT_PATH:/}
     session:
