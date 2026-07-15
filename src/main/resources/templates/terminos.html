@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos y Condiciones | Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        .terminos-page {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem 6rem;
+        }
+        .terminos-page h1 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--black);
+            margin-bottom: 0.4rem;
+        }
+        .terminos-page .fecha {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 3rem;
+            display: block;
+        }
+        .terminos-page h2 {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--black);
+            margin: 2.5rem 0 0.6rem;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px solid var(--nude);
+        }
+        .terminos-page p, .terminos-page li {
+            font-size: 0.9rem;
+            color: #444;
+            line-height: 1.8;
+        }
+        .terminos-page ul {
+            padding-left: 1.25rem;
+            margin: 0.5rem 0;
+        }
+        .terminos-page a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .terminos-page a:hover { text-decoration: underline; }
+        .terminos-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 2.5rem;
+        }
+        .terminos-back:hover { color: var(--dark); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <a th:href="@{/}" class="brand">Aura Decants</a>
+    </div>
+</nav>
+
+<div class="terminos-page">
+
+    <a th:href="@{/}" class="terminos-back">&#8592; Volver al inicio</a>
+
+    <h1>Términos y Condiciones</h1>
+    <span class="fecha">Última actualización: julio de 2026</span>
+
+    <p>Al realizar una compra en <strong>Aura Decants</strong> (en adelante "nosotros" o "la tienda"),
+    aceptas los presentes Términos y Condiciones. Te pedimos leerlos antes de efectuar cualquier pedido.</p>
+
+    <h2>1. Identidad del vendedor</h2>
+    <p>Aura Decants es un negocio de venta de decants de perfume que opera bajo el nombre comercial
+    <strong>Aura Decants</strong>, con sede en Monterrey, Nuevo León, México.<br>
+    Contacto: <a href="mailto:auradecantsmxmty@gmail.com">auradecantsmxmty@gmail.com</a></p>
+
+    <h2>2. Descripción del producto</h2>
+    <p>Ofrecemos decants de perfumes 100% originales en presentaciones de 5 ml y 10 ml.
+    Un decant es una fracción extraída directamente de la botella original del fabricante,
+    envasada en un frasco de cristal con atomizador.</p>
+    <ul>
+        <li>Los productos son fragancias originales de sus respectivas marcas; no somos distribuidores oficiales ni tenemos afiliación con ellas.</li>
+        <li>La etiqueta personalizada es parte del servicio y no implica relación comercial con la marca del perfume.</li>
+        <li>Las fotografías son ilustrativas; el producto entregado es el decant, no la botella original.</li>
+    </ul>
+
+    <h2>3. Precios y pagos</h2>
+    <p>Todos los precios están expresados en pesos mexicanos (MXN) e incluyen IVA cuando aplique.</p>
+    <ul>
+        <li>Los precios pueden cambiar sin previo aviso; el precio que aplica es el vigente al momento de confirmar el pedido.</li>
+        <li>Para envíos nacionales, el pago se procesa a través de <strong>Stripe</strong>, plataforma segura con certificación PCI DSS.</li>
+        <li>Para entregas locales en el Área Metropolitana de Monterrey, el pago es contra entrega.</li>
+        <li>Los cupones de descuento son de uso personal, intransferibles y no acumulables entre sí.</li>
+    </ul>
+
+    <h2>4. Envíos y entregas</h2>
+    <ul>
+        <li><strong>Nacional:</strong> enviamos a toda la República Mexicana mediante paquetería con número de guía. El tiempo estimado de entrega es de 3 a 7 días hábiles.</li>
+        <li><strong>Local (MTY):</strong> entregas personales gratuitas en el Área Metropolitana de Monterrey. Coordinamos fecha y punto de entrega por WhatsApp.</li>
+        <li>El costo de envío nacional se calcula al momento del pedido y puede ser gratuito a partir de un monto mínimo definido en la tienda.</li>
+        <li>Nos reservamos el derecho de contactarte si tu código postal corresponde a una zona extendida con costo adicional.</li>
+        <li>Los tiempos de entrega son estimados y pueden variar por causas ajenas a nosotros (paquetería, días festivos, etc.).</li>
+    </ul>
+
+    <h2>5. Cambios y devoluciones</h2>
+    <p>Por la naturaleza de los productos (artículos de uso personal), <strong>no se aceptan devoluciones</strong>
+    una vez que el producto ha sido entregado y abierto, salvo en los siguientes casos:</p>
+    <ul>
+        <li><strong>Producto dañado en tránsito:</strong> si el decant llega roto, derramado o en condiciones distintas a las descritas, tienes <strong>48 horas</strong> a partir de la recepción para notificarnos con evidencia fotográfica a <a href="mailto:auradecantsmxmty@gmail.com">auradecantsmxmty@gmail.com</a> o por WhatsApp.</li>
+        <li><strong>Error nuestro:</strong> si recibiste un producto distinto al que pediste, lo corregimos sin costo adicional.</li>
+    </ul>
+    <p>En los casos anteriores, el procedimiento puede ser el reenvío del producto correcto o un crédito a tu favor, a nuestra elección y previa evaluación del caso.</p>
+
+    <h2>6. Cancelaciones</h2>
+    <p>Puedes solicitar la cancelación de tu pedido dentro de las primeras <strong>2 horas</strong> de haberlo realizado,
+    siempre que aún no haya sido preparado. Pasado ese tiempo o una vez que el pedido esté en camino, no es posible cancelar.</p>
+
+    <h2>7. Privacidad de datos</h2>
+    <p>Los datos personales que proporcionas (nombre, teléfono, correo, dirección) se usan exclusivamente para
+    procesar y entregar tu pedido, y para enviarte información relacionada con el mismo.
+    No los compartimos con terceros salvo con la paquetería para efectos de entrega.
+    Tus datos son tratados conforme a la
+    <strong>Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP)</strong>.</p>
+    <p>Para ejercer tus derechos ARCO (Acceso, Rectificación, Cancelación u Oposición) escríbenos a
+    <a href="mailto:auradecantsmxmty@gmail.com">auradecantsmxmty@gmail.com</a>.</p>
+
+    <h2>8. Propiedad intelectual</h2>
+    <p>Los nombres, marcas y logotipos de los perfumes que ofrecemos pertenecen a sus respectivos titulares.
+    Su mención en esta tienda es únicamente para identificar el contenido de los decants y no implica ninguna
+    asociación, patrocinio ni respaldo de dichas marcas.</p>
+
+    <h2>9. Limitación de responsabilidad</h2>
+    <p>Aura Decants no se hace responsable por reacciones alérgicas o sensibilidades individuales a los productos.
+    Si tienes piel sensible, te recomendamos realizar una prueba en pequeña área antes de aplicar.</p>
+
+    <h2>10. Modificaciones</h2>
+    <p>Nos reservamos el derecho de actualizar estos Términos y Condiciones en cualquier momento.
+    Los cambios entran en vigor al momento de su publicación en esta página.
+    El uso continuado de la tienda implica la aceptación de los términos vigentes.</p>
+
+    <h2>11. Jurisdicción</h2>
+    <p>Estos Términos se rigen por las leyes vigentes en los <strong>Estados Unidos Mexicanos</strong>.
+    Para cualquier controversia, las partes se someten a los tribunales competentes de
+    <strong>Monterrey, Nuevo León</strong>, renunciando a cualquier otro fuero que pudiera corresponderles.</p>
+
+</div>
+
+<footer>
+    <div class="container">
+        <span class="brand">Aura Decants</span>
+        <p>Perfumes originales en decants de 5 y 10 ml.</p>
+        <p style="margin-top:0.5rem;">
+            <a th:href="@{/pedido/seguimiento}"
+               style="color:rgba(255,255,255,0.55); font-size:0.78rem; text-decoration:none;">
+                &#128230; Rastrear mi pedido
+            </a>
+            &nbsp;&nbsp;
+            <a th:href="@{/terminos}"
+               style="color:rgba(255,255,255,0.55); font-size:0.78rem; text-decoration:none;">
+                Términos y Condiciones
+            </a>
+        </p>
+        <p style="margin-top:0.4rem;">&copy; 2026 Aura Decants. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+</body>
+</html>

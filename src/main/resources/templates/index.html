@@ -103,7 +103,7 @@
             <p class="section-subtitle">Casas de diseñador y firmas de lujo. Lo mejor del perfume occidental.</p>
         </div>
 
-        <div class="product-section-wrap">
+        <div class="product-section-wrap" id="alta-cuerpo">
         <div class="section-controls" id="filtros-designer">
             <div class="filter-tabs">
                 <a th:href="@{/(df='todos', dp=0, ap=${ap}, af=${af})}" th:classappend="${df == 'todos'} ? ' active' : ''" class="filter-tab">Todos</a>
@@ -202,7 +202,7 @@
             <p class="section-subtitle">Fragancias orientales de alta concentración. Intensas, duraderas y únicas.</p>
         </div>
 
-        <div class="product-section-wrap">
+        <div class="product-section-wrap" id="arabe-cuerpo">
         <div class="section-controls">
             <div class="filter-tabs">
                 <a th:href="@{/(af='todos', ap=0, dp=${dp}, df=${df})}" th:classappend="${af == 'todos'} ? ' active' : ''" class="filter-tab">Todos</a>
@@ -529,6 +529,11 @@
             <a th:href="@{/pedido/seguimiento}"
                style="color:rgba(255,255,255,0.55); font-size:0.78rem; text-decoration:none;">
                 &#128230; Rastrear mi pedido
+            </a>
+            &nbsp;&nbsp;·&nbsp;&nbsp;
+            <a th:href="@{/terminos}"
+               style="color:rgba(255,255,255,0.55); font-size:0.78rem; text-decoration:none;">
+                Términos y Condiciones
             </a>
         </p>
         <p style="margin-top: 0.4rem;">&copy; 2026 Aura Decants. Todos los derechos reservados.</p>
@@ -1031,6 +1036,44 @@
     renderCart();
     updatePkgBanner();
     updateProductButtons();
+
+    /* ── AJAX section navigation (filters + pagination without reload) ── */
+    function loadSection(href, cuerpoId, scrollToId) {
+        var cleanHref = href.split('#')[0] || '/';
+        fetch(cleanHref)
+            .then(function(r) { return r.text(); })
+            .then(function(html) {
+                var doc = new DOMParser().parseFromString(html, 'text/html');
+                var newEl = doc.getElementById(cuerpoId);
+                if (!newEl) return;
+                document.getElementById(cuerpoId).innerHTML = newEl.innerHTML;
+                history.pushState(null, '', cleanHref);
+                updateProductButtons();
+                if (scrollToId) {
+                    var anchor = document.getElementById(scrollToId);
+                    if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            })
+            .catch(function(){});
+    }
+
+    (function() {
+        var sections = [
+            { id: 'alta-cuerpo', anchor: 'alta-perfumeria' },
+            { id: 'arabe-cuerpo', anchor: 'nicho-arabe' }
+        ];
+        sections.forEach(function(s) {
+            var el = document.getElementById(s.id);
+            if (!el) return;
+            el.addEventListener('click', function(e) {
+                var link = e.target.closest('a.filter-tab, a.page-btn');
+                if (!link) return;
+                e.preventDefault();
+                var isPage = link.classList.contains('page-btn');
+                loadSection(link.getAttribute('href'), s.id, isPage ? s.anchor : null);
+            });
+        });
+    })();
 
     /* ── Mobile CTA bar ── */
     (function() {

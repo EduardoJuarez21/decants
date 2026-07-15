@@ -98,7 +98,11 @@ public class PedidoService {
 
         if (dto.getCodigoCupon() != null && !dto.getCodigoCupon().isBlank()) {
             cuponService.validar(dto.getCodigoCupon()).ifPresent(cupon -> {
-                int descuento = Math.round(total * cupon.getDescuentoPorcentaje() / 100f);
+                if (cupon.getMontoMinimo() != null && subtotal < cupon.getMontoMinimo()) return;
+                int descuento = Math.round(subtotal * cupon.getDescuentoPorcentaje() / 100f);
+                if (cupon.getDescuentoMaximo() != null && descuento > cupon.getDescuentoMaximo()) {
+                    descuento = cupon.getDescuentoMaximo();
+                }
                 pedido.setCodigoCuponAplicado(cupon.getCodigo());
                 pedido.setDescuentoAplicado(descuento);
             });

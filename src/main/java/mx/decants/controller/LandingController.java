@@ -58,4 +58,9 @@ public class LandingController {
 
         return "index";
     }
+
+    @GetMapping("/terminos")
+    public String terminos() {
+        return "terminos";
+    }
 }
