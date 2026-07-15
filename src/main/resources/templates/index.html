@@ -167,14 +167,14 @@
         <!-- Paginación Alta Perfumería -->
         <div class="pagination-controls" th:if="${designerPage.totalPages > 1}">
             <a th:if="${!designerPage.first}"
-               th:href="@{/(dp=${dp - 1}, df=${df}, ap=${ap}, af=${af})}#alta-perfumeria"
+               th:href="|/?dp=${dp - 1}&df=${df}&ap=${ap}&af=${af}#alta-perfumeria|"
                class="page-btn">‹</a>
             <a th:each="i : ${#numbers.sequence(0, designerPage.totalPages - 1)}"
-               th:href="@{/(dp=${i}, df=${df}, ap=${ap}, af=${af})}#alta-perfumeria"
+               th:href="|/?dp=${i}&df=${df}&ap=${ap}&af=${af}#alta-perfumeria|"
                th:class="${i == dp} ? 'page-btn active' : 'page-btn'"
                th:text="${i + 1}"></a>
             <a th:if="${!designerPage.last}"
-               th:href="@{/(dp=${dp + 1}, df=${df}, ap=${ap}, af=${af})}#alta-perfumeria"
+               th:href="|/?dp=${dp + 1}&df=${df}&ap=${ap}&af=${af}#alta-perfumeria|"
                class="page-btn">›</a>
         </div>
 
@@ -271,14 +271,14 @@
         <!-- Paginación Nicho Árabe -->
         <div class="pagination-controls" th:if="${arabePage.totalPages > 1}">
             <a th:if="${!arabePage.first}"
-               th:href="@{/(ap=${ap - 1}, af=${af}, dp=${dp}, df=${df})}#nicho-arabe"
+               th:href="|/?ap=${ap - 1}&af=${af}&dp=${dp}&df=${df}#nicho-arabe|"
                class="page-btn">‹</a>
             <a th:each="i : ${#numbers.sequence(0, arabePage.totalPages - 1)}"
-               th:href="@{/(ap=${i}, af=${af}, dp=${dp}, df=${df})}#nicho-arabe"
+               th:href="|/?ap=${i}&af=${af}&dp=${dp}&df=${df}#nicho-arabe|"
                th:class="${i == ap} ? 'page-btn active' : 'page-btn'"
                th:text="${i + 1}"></a>
             <a th:if="${!arabePage.last}"
-               th:href="@{/(ap=${ap + 1}, af=${af}, dp=${dp}, df=${df})}#nicho-arabe"
+               th:href="|/?ap=${ap + 1}&af=${af}&dp=${dp}&df=${df}#nicho-arabe|"
                class="page-btn">›</a>
         </div>
 
