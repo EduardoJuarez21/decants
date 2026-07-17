@@ -100,6 +100,7 @@ public class AdminController {
                 m.put("marca", p.getMarca());
                 m.put("precio", p.getPrecio());
                 m.put("precio5ml", p.getPrecio5ml());
+                m.put("precio3ml", p.getPrecio3ml());
                 return m;
             })
             .collect(Collectors.toList());
