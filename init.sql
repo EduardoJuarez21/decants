@@ -15,8 +15,12 @@ CREATE TABLE IF NOT EXISTS pedidos (
     comentarios      VARCHAR(500),
     estado_pedido    VARCHAR(50)   NOT NULL DEFAULT 'NUEVO',
     fecha_creacion   TIMESTAMP     NOT NULL,
-    fecha_actualizacion TIMESTAMP  NOT NULL
+    fecha_actualizacion TIMESTAMP  NOT NULL,
+    codigo_publico   VARCHAR(15)   UNIQUE
 );
+
+-- Índice para búsqueda pública de pedidos
+CREATE INDEX IF NOT EXISTS idx_pedidos_codigo_publico ON pedidos (codigo_publico);
 
 -- Índice para consultas frecuentes por estado
 CREATE INDEX IF NOT EXISTS idx_pedidos_estado ON pedidos (estado_pedido);

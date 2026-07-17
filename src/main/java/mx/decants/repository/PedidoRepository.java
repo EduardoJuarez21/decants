@@ -14,5 +14,5 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     Optional<Pedido> findByStripeSessionId(String stripeSessionId);
 
-    Optional<Pedido> findByIdAndTelefono(Long id, String telefono);
+    Optional<Pedido> findByCodigoPublicoAndTelefono(String codigoPublico, String telefono);
 }

@@ -14,15 +14,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RateLimitFilter extends OncePerRequestFilter {
 
     // POST /pedido/crear: máx 5 pedidos por IP cada 10 minutos
-    private static final int  PEDIDO_MAX       = 5;
-    private static final long PEDIDO_WINDOW_MS = 10 * 60 * 1000L;
+    private static final int  PEDIDO_MAX          = 5;
+    private static final long PEDIDO_WINDOW_MS    = 10 * 60 * 1000L;
 
     // GET /api/cupones/validar: máx 30 peticiones por IP cada 5 minutos
-    private static final int  CUPON_MAX        = 30;
-    private static final long CUPON_WINDOW_MS  = 5 * 60 * 1000L;
+    private static final int  CUPON_MAX           = 30;
+    private static final long CUPON_WINDOW_MS     = 5 * 60 * 1000L;
 
-    private final ConcurrentHashMap<String, Bucket> pedidoBuckets = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Bucket> cuponBuckets  = new ConcurrentHashMap<>();
+    // GET /pedido/seguimiento: máx 20 consultas por IP cada 5 minutos
+    private static final int  SEGUIMIENTO_MAX     = 20;
+    private static final long SEGUIMIENTO_WINDOW_MS = 5 * 60 * 1000L;
+
+    private final ConcurrentHashMap<String, Bucket> pedidoBuckets      = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Bucket> cuponBuckets       = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Bucket> seguimientoBuckets = new ConcurrentHashMap<>();
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
@@ -38,6 +43,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
             limited = isLimited(ip, pedidoBuckets, PEDIDO_MAX, PEDIDO_WINDOW_MS);
         } else if ("GET".equalsIgnoreCase(method) && path.startsWith("/api/cupones/validar")) {
             limited = isLimited(ip, cuponBuckets, CUPON_MAX, CUPON_WINDOW_MS);
+        } else if ("GET".equalsIgnoreCase(method) && "/pedido/seguimiento".equals(path)) {
+            limited = isLimited(ip, seguimientoBuckets, SEGUIMIENTO_MAX, SEGUIMIENTO_WINDOW_MS);
         }
 
         if (limited) {
@@ -57,7 +64,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private String getClientIp(HttpServletRequest request) {
         String forwarded = request.getHeader("X-Forwarded-For");
         if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
+            // Usar la última IP: la añade el proxy (Nginx), el cliente no puede falsificarla
+            String[] parts = forwarded.split(",");
+            return parts[parts.length - 1].trim();
         }
         return request.getRemoteAddr();
     }

@@ -41,7 +41,8 @@ public class EmailService {
 
         String from    = from();
         String waNum   = configuracionService.getWhatsappNegocio();
-        String subject = "Tu pedido #" + pedido.getId() + " fue confirmado — Aura Decants MX";
+        String ref     = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId());
+        String subject = "Tu pedido " + ref + " fue confirmado — Aura Decants MX";
 
         enviarAsync(apiKey, from, pedido.getEmail(), subject, buildHtml(pedido, waNum), pedido.getId(), "confirmación");
     }
@@ -53,7 +54,8 @@ public class EmailService {
 
         String from    = from();
         String waNum   = configuracionService.getWhatsappNegocio();
-        String subject = "Tu pedido #" + pedido.getId() + " está en camino — Aura Decants MX";
+        String ref     = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId());
+        String subject = "Tu pedido " + ref + " está en camino — Aura Decants MX";
 
         enviarAsync(apiKey, from, pedido.getEmail(), subject, buildEnvioHtml(pedido, waNum), pedido.getId(), "envío");
     }
@@ -100,10 +102,10 @@ public class EmailService {
     }
 
     private String buildEnvioHtml(Pedido pedido, String waNum) {
-        String trackingUrl = baseUrl + "/pedido/seguimiento?id=" + pedido.getId()
-                             + "&tel=" + encode(pedido.getTelefono());
+        String codigo = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId());
+        String trackingUrl = baseUrl + "/pedido/seguimiento?codigo=" + encode(pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : "");
         String waUrl = "https://wa.me/" + waNum + "?text="
-                       + encode("Hola! Quiero consultar el envío de mi pedido #" + pedido.getId() + ".");
+                       + encode("Hola! Quiero consultar el envío de mi pedido " + codigo + ".");
         boolean tieneGuia = pedido.getNumeroGuia() != null && !pedido.getNumeroGuia().isBlank();
 
         StringBuilder sb = new StringBuilder();
@@ -122,13 +124,13 @@ public class EmailService {
           .append("<h1 style='margin:0;font-size:1.3rem;color:#1a1a1a;font-weight:700;'>¡Tu pedido está en camino!</h1>")
           .append("<p style='margin:8px 0 0;color:#777;font-size:0.88rem;'>")
           .append("Hola <strong>").append(esc(pedido.getNombreCliente())).append("</strong>, ")
-          .append("tu pedido <strong>#").append(pedido.getId()).append("</strong> ha sido enviado.")
+          .append("tu pedido <strong>").append(esc(codigo)).append("</strong> ha sido enviado.")
           .append("</p></td></tr>")
           .append("<tr><td style='padding:0 32px 24px;'>")
           .append("<table width='100%' style='background:#fafaf8;border-radius:10px;border:1px solid #ececec;'>")
           .append("<tr><td style='padding:16px 20px;").append(tieneGuia ? "border-bottom:1px solid #ececec;" : "").append("'>")
           .append("<span style='font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#999;'>Pedido</span>")
-          .append("<p style='margin:4px 0 0;font-size:1.1rem;font-weight:700;color:#c9a96e;'>#").append(pedido.getId()).append("</p>")
+          .append("<p style='margin:4px 0 0;font-size:1.1rem;font-weight:700;color:#c9a96e;'>").append(esc(codigo)).append("</p>")
           .append("</td></tr>");
         if (tieneGuia) {
             sb.append("<tr><td style='padding:16px 20px;'>")
@@ -157,10 +159,10 @@ public class EmailService {
 
     private String buildHtml(Pedido pedido, String waNum) {
         boolean esLocal = "local".equalsIgnoreCase(pedido.getEntorno());
-        String trackingUrl = baseUrl + "/pedido/seguimiento?id=" + pedido.getId()
-                             + "&tel=" + encode(pedido.getTelefono());
+        String codigo = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId());
+        String trackingUrl = baseUrl + "/pedido/seguimiento?codigo=" + encode(pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : "");
         String waUrl = "https://wa.me/" + waNum + "?text="
-                       + encode("Hola! Quiero consultar sobre mi pedido #" + pedido.getId()
+                       + encode("Hola! Quiero consultar sobre mi pedido " + codigo
                                 + " a nombre de " + pedido.getNombreCliente() + ".");
 
         StringBuilder sb = new StringBuilder();
@@ -190,8 +192,8 @@ public class EmailService {
           .append("<tr><td style='padding:0 32px 24px;'>")
           .append("<table width='100%' style='background:#fafaf8;border-radius:10px;border:1px solid #ececec;'>")
           .append("<tr><td style='padding:16px 20px;border-bottom:1px solid #ececec;'>")
-          .append("<span style='font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#999;'>Número de pedido</span>")
-          .append("<p style='margin:4px 0 0;font-size:1.2rem;font-weight:700;color:#c9a96e;'>#").append(pedido.getId()).append("</p>")
+          .append("<span style='font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#999;'>Código de pedido</span>")
+          .append("<p style='margin:4px 0 0;font-size:1.2rem;font-weight:700;color:#c9a96e;'>").append(esc(codigo)).append("</p>")
           .append("</td></tr>")
           .append("<tr><td style='padding:16px 20px;border-bottom:1px solid #ececec;'>")
           .append("<span style='font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#999;'>Cliente</span>")

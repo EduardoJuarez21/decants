@@ -115,12 +115,13 @@
               style="display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.5rem;">
             <div style="display:flex; flex-direction:column; gap:0.25rem; text-align:left;">
                 <label style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted);">
-                    Número de pedido
+                    Código de pedido
                 </label>
-                <input type="number" name="id" th:value="${param.id}"
-                       placeholder="Ej: 42" min="1" required
+                <input type="text" name="codigo" th:value="${param.codigo}"
+                       placeholder="Ej: AURA-8F3K7Q2M" required
                        style="padding:0.65rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:10px;
-                              font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                              font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;
+                              text-transform:uppercase; letter-spacing:1px;">
             </div>
             <div style="display:flex; flex-direction:column; gap:0.25rem; text-align:left;">
                 <label style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted);">
@@ -152,8 +153,8 @@
             <div class="order-summary">
 
                 <div class="order-summary-item">
-                    <span class="label">Número de pedido</span>
-                    <span class="value order-id" th:text="'#' + ${pedido.id}"></span>
+                    <span class="label">Código de pedido</span>
+                    <span class="value order-id" th:text="${pedido.codigoPublico != null} ? ${pedido.codigoPublico} : ('#' + ${pedido.id})"></span>
                 </div>
 
                 <div class="order-summary-item">
@@ -302,7 +303,7 @@
 
             <!-- Botones -->
             <div class="btn-group" style="justify-content:center; flex-direction:column; align-items:center; gap:0.9rem; margin-top:1.25rem;">
-                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero consultar sobre mi pedido #' + pedido.id + ' a nombre de ' + pedido.nombreCliente + '.')}"
+                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero consultar sobre mi pedido ' + (pedido.codigoPublico != null ? pedido.codigoPublico : ('#' + pedido.id)) + ' a nombre de ' + pedido.nombreCliente + '.')}"
                    target="_blank"
                    class="btn btn-whatsapp"
                    style="width:100%; justify-content:center;">

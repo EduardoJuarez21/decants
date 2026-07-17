@@ -406,10 +406,16 @@ public class PedidoService {
         return clienteRepository.findByTelefono(telefono);
     }
 
+    private static final java.util.regex.Pattern CODIGO_PATTERN =
+        java.util.regex.Pattern.compile("^AURA-[A-Z0-9]{8}$");
+
     @Transactional(readOnly = true)
-    public Optional<Pedido> buscarPorIdYTelefono(Long id, String telefono) {
+    public Optional<Pedido> buscarPorCodigoYTelefono(String codigo, String telefono) {
+        if (codigo == null || codigo.isBlank()) return Optional.empty();
+        String codigoNorm = codigo.toUpperCase().trim();
+        if (!CODIGO_PATTERN.matcher(codigoNorm).matches()) return Optional.empty();
         String tel = telefono == null ? "" : telefono.replaceAll("[^0-9]", "");
-        return pedidoRepository.findByIdAndTelefono(id, tel);
+        return pedidoRepository.findByCodigoPublicoAndTelefono(codigoNorm, tel);
     }
 
     @Transactional(readOnly = true)

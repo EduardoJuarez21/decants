@@ -1,6 +1,7 @@
 package mx.decants.entity;
 
 import jakarta.persistence.*;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,9 +11,14 @@ import java.util.List;
 @Table(name = "pedidos")
 public class Pedido {
 
+    private static final String CODIGO_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true, length = 15)
+    private String codigoPublico;
 
     @Column(nullable = false)
     private String nombreCliente;
@@ -82,6 +88,14 @@ public class Pedido {
     protected void onCreate() {
         fechaCreacion = LocalDateTime.now();
         fechaActualizacion = LocalDateTime.now();
+        if (codigoPublico == null) codigoPublico = generarCodigo();
+    }
+
+    private static String generarCodigo() {
+        SecureRandom rnd = new SecureRandom();
+        StringBuilder sb = new StringBuilder("AURA-");
+        for (int i = 0; i < 8; i++) sb.append(CODIGO_CHARS.charAt(rnd.nextInt(CODIGO_CHARS.length())));
+        return sb.toString();
     }
 
     @PreUpdate
@@ -93,6 +107,9 @@ public class Pedido {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getCodigoPublico() { return codigoPublico; }
+    public void setCodigoPublico(String codigoPublico) { this.codigoPublico = codigoPublico; }
 
     public String getNombreCliente() { return nombreCliente; }
     public void setNombreCliente(String nombreCliente) { this.nombreCliente = nombreCliente; }

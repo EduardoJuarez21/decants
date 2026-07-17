@@ -41,14 +41,16 @@ public class TelegramService {
         String productos = pedido.getProductosSeleccionados() != null
             ? pedido.getProductosSeleccionados() : "—";
 
+        String codigo = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("—");
         String texto = String.format(
-            "🛒 <b>Nuevo pedido #%d</b>\n\n" +
+            "🛒 <b>Nuevo pedido #%d</b> · <code>%s</code>\n\n" +
             "👤 <b>%s</b>\n" +
             "📱 %s\n" +
             "📦 %s\n" +
             "💰 <b>$%d MXN</b>\n" +
             "%s",
             pedido.getId(),
+            codigo,
             pedido.getNombreCliente(),
             pedido.getTelefono(),
             productos,

@@ -40,8 +40,8 @@
         <div class="order-summary" th:if="${pedido != null}">
 
             <div class="order-summary-item">
-                <span class="label">Número de pedido</span>
-                <span class="value order-id" th:text="'#' + ${pedido.id}"></span>
+                <span class="label">Código de pedido</span>
+                <span class="value order-id" th:text="${pedido.codigoPublico != null} ? ${pedido.codigoPublico} : ('#' + ${pedido.id})"></span>
             </div>
 
             <div class="order-summary-item">
@@ -147,7 +147,7 @@
         <!-- Botones -->
         <div class="btn-group" style="justify-content:center; flex-direction:column; align-items:center; gap:0.9rem;">
             <a th:if="${pedido != null}"
-               th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Acabo de realizar el pedido #' + pedido.id + ' a nombre de ' + pedido.nombreCliente + '.')}"
+               th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Acabo de realizar el pedido ' + (pedido.codigoPublico != null ? pedido.codigoPublico : ('#' + pedido.id)) + ' a nombre de ' + pedido.nombreCliente + '.')}"
                target="_blank"
                class="btn btn-whatsapp"
                style="width:100%; justify-content:center;">
@@ -161,7 +161,7 @@
                 &#128172; Contactar por WhatsApp
             </a>
             <a th:if="${pedido != null}"
-               th:href="@{/pedido/seguimiento(id=${pedido.id},tel=${pedido.telefono})}"
+               th:href="@{/pedido/seguimiento(codigo=${pedido.codigoPublico})}"
                class="btn"
                style="color:var(--dark); border:1.5px solid var(--nude); width:100%; justify-content:center;">
                 &#128230; Seguir mi pedido

@@ -103,13 +103,13 @@ public class PedidoController {
 
     @GetMapping("/seguimiento")
     public String seguimiento(
-            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String codigo,
             @RequestParam(required = false) String tel,
             Model model) {
         model.addAttribute("waNumero", configuracionService.getWhatsappNegocio());
         model.addAttribute("noEncontrado", false);
-        if (id != null && tel != null && !tel.isBlank()) {
-            pedidoService.buscarPorIdYTelefono(id, tel)
+        if (codigo != null && !codigo.isBlank() && tel != null && !tel.isBlank()) {
+            pedidoService.buscarPorCodigoYTelefono(codigo, tel)
                 .ifPresentOrElse(
                     p -> model.addAttribute("pedido", p),
                     () -> model.addAttribute("noEncontrado", true)
