@@ -23,7 +23,7 @@ public class EmailService {
     private static final HttpClient HTTP = HttpClient.newHttpClient();
     private static final String RESEND_API = "https://api.resend.com/emails";
 
-    @Value("${app.base-url:https://auradecants.mx}")
+    @Value("${app.base-url:https://auradecantsmx.com}")
     private String baseUrl;
 
     private final ConfiguracionService configuracionService;
