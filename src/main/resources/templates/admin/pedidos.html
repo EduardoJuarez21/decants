@@ -69,7 +69,7 @@
         <!-- Filtros -->
         <div style="padding:0.75rem 1.25rem; border-bottom:1px solid #f0ede8; display:flex; gap:0.6rem; flex-wrap:wrap;">
             <input type="text" id="buscadorPedidos"
-                   placeholder="Buscar por nombre, teléfono, # pedido o guía…"
+                   placeholder="Buscar por nombre, teléfono, # pedido, código AURA o guía…"
                    oninput="aplicarFiltros()"
                    style="flex:1; min-width:180px; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
                           border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
@@ -116,6 +116,7 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Código</th>
                         <th>Nombre</th>
                         <th>Teléfono</th>
                         <th>Producto</th>
@@ -131,6 +132,8 @@
                 <tbody>
                     <tr th:each="p : ${pedidos}">
                         <td th:text="${p.id}"></td>
+                        <td style="font-family:monospace; font-size:0.75rem; color:var(--muted);"
+                            th:text="${p.codigoPublico != null ? p.codigoPublico : '—'}"></td>
                         <td th:text="${p.nombreCliente}"></td>
                         <td th:text="${p.telefono}"></td>
                         <td th:text="${p.tipoProducto}"></td>
@@ -217,13 +220,14 @@ function aplicarFiltros() {
 
     filasFiltradas = filas.filter(function(fila) {
         var id      = fila.cells[0].textContent.toLowerCase();
-        var nombre  = fila.cells[1].textContent.toLowerCase();
-        var tel     = fila.cells[2].textContent.toLowerCase();
-        var entorno = fila.cells[6].textContent.toLowerCase();
-        var estadoF = fila.cells[7].textContent.toLowerCase();
-        var guia    = fila.cells[8].textContent.toLowerCase();
+        var codigo  = fila.cells[1].textContent.toLowerCase();
+        var nombre  = fila.cells[2].textContent.toLowerCase();
+        var tel     = fila.cells[3].textContent.toLowerCase();
+        var entorno = fila.cells[7].textContent.toLowerCase();
+        var estadoF = fila.cells[8].textContent.toLowerCase();
+        var guia    = fila.cells[9].textContent.toLowerCase();
 
-        var okQ      = !q     || id.includes(q) || nombre.includes(q) || tel.includes(q) || guia.includes(q);
+        var okQ      = !q     || id.includes(q) || codigo.includes(q) || nombre.includes(q) || tel.includes(q) || guia.includes(q);
         var okEstado = !estado || estadoF.includes(estado);
         var okTipo   = !tipo  || entorno.includes(tipo);
         return okQ && okEstado && okTipo;

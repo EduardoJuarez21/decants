@@ -140,7 +140,13 @@
 <div class="admin-page">
 
     <div class="admin-header">
-        <h1>Pedido <span th:text="'#' + ${pedido.id}" style="color:var(--gold);"></span></h1>
+        <h1>
+            Pedido <span th:text="'#' + ${pedido.id}" style="color:var(--gold);"></span>
+            <span th:if="${pedido.codigoPublico != null}"
+                  style="font-size:0.75rem; font-family:monospace; font-weight:400;
+                         color:rgba(255,255,255,0.5); margin-left:0.5rem;"
+                  th:text="${pedido.codigoPublico}"></span>
+        </h1>
         <span class="admin-brand">Aura Decants</span>
     </div>
 
