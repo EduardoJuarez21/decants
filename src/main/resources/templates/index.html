@@ -1334,6 +1334,7 @@
                 document.getElementById(cuerpoId).innerHTML = newEl.innerHTML;
                 history.pushState(null, '', cleanHref);
                 updateProductButtons();
+                bindLightbox(document.getElementById(cuerpoId));
                 if (scrollToId) {
                     var anchor = document.getElementById(scrollToId);
                     if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1473,17 +1474,22 @@
     }
 
     /* ── Lightbox características ── */
-    document.querySelectorAll('.product-image-area.has-hover-img').forEach(function(area) {
-        area.addEventListener('click', function(e) {
-            if (e.target.classList.contains('product-add-btn') || e.target.closest('.product-add-btn')) return;
-            var hoverImg = area.querySelector('.product-img-hover');
-            if (!hoverImg) return;
-            document.getElementById('lbImg').src = hoverImg.src;
-            document.getElementById('lbImg').alt = hoverImg.alt;
-            document.getElementById('lbOverlay').classList.add('open');
-            document.body.style.overflow = 'hidden';
+    function bindLightbox(scope) {
+        (scope || document).querySelectorAll('.product-image-area.has-hover-img').forEach(function(area) {
+            if (area._lbBound) return;
+            area._lbBound = true;
+            area.addEventListener('click', function(e) {
+                if (e.target.classList.contains('product-add-btn') || e.target.closest('.product-add-btn')) return;
+                var hoverImg = area.querySelector('.product-img-hover');
+                if (!hoverImg) return;
+                document.getElementById('lbImg').src = hoverImg.src;
+                document.getElementById('lbImg').alt = hoverImg.alt;
+                document.getElementById('lbOverlay').classList.add('open');
+                document.body.style.overflow = 'hidden';
+            });
         });
-    });
+    }
+    bindLightbox();
 
     function closeLightbox() {
         document.getElementById('lbOverlay').classList.remove('open');
