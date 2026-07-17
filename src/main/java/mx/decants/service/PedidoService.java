@@ -109,7 +109,11 @@ public class PedidoService {
         }
         int descuento = pedido.getDescuentoAplicado() != null ? pedido.getDescuentoAplicado() : 0;
         pedido.setTotalPagado(total - descuento);
-        pedido.setDireccion(dto.getDireccion());
+        if (esLocal && dto.getCodigoPostal() != null) {
+            pedido.setDireccion("CP " + dto.getCodigoPostal());
+        } else {
+            pedido.setDireccion(dto.getDireccion());
+        }
         if (dto.getLatitud() != null && !dto.getLatitud().isBlank()) {
             try { pedido.setLatitud(Double.parseDouble(dto.getLatitud())); } catch (NumberFormatException ignored) {}
         }

@@ -54,6 +54,9 @@ public class PedidoDTO {
 
     private String tipoEntrega; // "nacional" | "local"
 
+    @Pattern(regexp = "^[0-9]{5}$", message = "El código postal debe tener 5 dígitos")
+    private String codigoPostal;
+
     // --- Getters & Setters ---
 
     public String getNombreCliente() { return nombreCliente; }
@@ -106,4 +109,7 @@ public class PedidoDTO {
 
     public String getTipoEntrega() { return tipoEntrega; }
     public void setTipoEntrega(String tipoEntrega) { this.tipoEntrega = tipoEntrega; }
+
+    public String getCodigoPostal() { return codigoPostal; }
+    public void setCodigoPostal(String codigoPostal) { this.codigoPostal = codigoPostal; }
 }

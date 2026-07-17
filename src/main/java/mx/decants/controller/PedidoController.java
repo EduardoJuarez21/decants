@@ -67,11 +67,26 @@ public class PedidoController {
             return "pedido/form";
         }
 
-        // Dirección obligatoria solo para envío nacional
         boolean esLocal = "local".equalsIgnoreCase(dto.getTipoEntrega());
+
+        // Dirección obligatoria solo para envío nacional
         if (!esLocal && (dto.getDireccion() == null || dto.getDireccion().isBlank())) {
             result.rejectValue("direccion", "NotBlank", "La dirección de entrega es obligatoria");
             return "pedido/form";
+        }
+
+        // CP obligatorio y de Nuevo León solo para entrega local
+        if (esLocal) {
+            String cp = dto.getCodigoPostal();
+            if (cp == null || !cp.matches("^[0-9]{5}$")) {
+                result.rejectValue("codigoPostal", "Pattern", "Ingresa un código postal válido de 5 dígitos");
+                return "pedido/form";
+            }
+            int cpNum = Integer.parseInt(cp);
+            if (cpNum < 64000 || cpNum > 67999) {
+                result.rejectValue("codigoPostal", "Range", "La entrega local solo está disponible en Nuevo León (CP 64000–67999)");
+                return "pedido/form";
+            }
         }
 
         Pedido pedido;

@@ -193,8 +193,26 @@
                 <div id="entregaLocalNotice" class="full-width" style="display:none;
                      background:#e8f5e9; border:1px solid #a5d6a7; border-radius:10px;
                      padding:0.9rem 1.1rem; font-size:0.84rem; color:#1b5e20; line-height:1.6;">
-                    &#127968; <strong>Entrega personal en Monterrey</strong><br>
+                    &#127968; <strong>Entrega personal en Nuevo León</strong><br>
                     Sin costo de envío. <strong>El pago se realiza al momento de la entrega (contra entrega).</strong>
+                </div>
+
+                <!-- CP para entrega local -->
+                <div id="cpLocalSection" class="form-group full-width" style="display:none;">
+                    <label for="codigoPostal">Código postal <span class="required">*</span>
+                        <span style="font-size:0.75rem; color:var(--muted); font-weight:400;">(solo Nuevo León)</span>
+                    </label>
+                    <input type="text" id="codigoPostal" th:field="*{codigoPostal}"
+                           inputmode="numeric" maxlength="5" pattern="[0-9]{5}"
+                           placeholder="Ej: 64000"
+                           th:class="${#fields.hasErrors('codigoPostal')} ? 'form-control is-invalid' : 'form-control'"
+                           style="max-width:180px;">
+                    <span class="field-error" id="cpError" style="display:none;">
+                        Solo hacemos entregas en Nuevo León (CP 64000–67999).
+                    </span>
+                    <span class="field-error"
+                          th:if="${#fields.hasErrors('codigoPostal')}"
+                          th:errors="*{codigoPostal}"></span>
                 </div>
 
                 <div class="form-submit" id="submitSection" style="display:none;">
@@ -353,6 +371,23 @@
             addrErr.style.display = 'none';
         }
 
+        // CP de Nuevo León (solo para entrega local)
+        if (_esLocal) {
+            var cpInput = document.getElementById('codigoPostal');
+            var cpErr   = document.getElementById('cpError');
+            var cpVal   = cpInput ? cpInput.value.trim() : '';
+            var cpNum   = parseInt(cpVal, 10);
+            if (!/^[0-9]{5}$/.test(cpVal) || cpNum < 64000 || cpNum > 67999) {
+                cpErr.style.display = 'block';
+                cpInput.classList.add('is-invalid');
+                if (!primerError) primerError = cpInput;
+                valid = false;
+            } else {
+                cpErr.style.display = 'none';
+                cpInput.classList.remove('is-invalid');
+            }
+        }
+
         if (!valid) {
             e.preventDefault();
             primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -383,9 +418,10 @@
             _esLocal = true;
             document.getElementById('tipoEntregaInput').value = 'local';
             document.getElementById('entregaLocalNotice').style.display = 'block';
+            document.getElementById('cpLocalSection').style.display = 'block';
             var btn = document.getElementById('submitBtn');
             if (btn) btn.textContent = 'Confirmar pedido (pago contra entrega)';
-            // Ocultar toda la sección de dirección
+            // Ocultar sección de dirección nacional
             var addrSection = document.getElementById('addressSection');
             if (addrSection) addrSection.style.display = 'none';
         }
