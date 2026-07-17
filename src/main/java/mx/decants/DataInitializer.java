@@ -1,6 +1,8 @@
 package mx.decants;
 
+import mx.decants.entity.Kit;
 import mx.decants.entity.Producto;
+import mx.decants.repository.KitRepository;
 import mx.decants.repository.ProductoRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -9,13 +11,16 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
     private final ProductoRepository repo;
+    private final KitRepository kitRepo;
 
-    public DataInitializer(ProductoRepository repo) {
+    public DataInitializer(ProductoRepository repo, KitRepository kitRepo) {
         this.repo = repo;
+        this.kitRepo = kitRepo;
     }
 
     @Override
     public void run(String... args) {
+        seedKits();
         if (repo.existsByCategoria("alta-perfumeria")) return;
 
         // ── Alta Perfumería ──────────────────────────────────────────────────
@@ -210,6 +215,34 @@ public class DataInitializer implements CommandLineRunner {
                 "Oriental Dulce · Unisex", "Vainilla · Ámbar · Cuero · Madera · Almizcle",
                 "/img/arabe/raghba.webp", "/img/arabe/car-raghba.webp",
                 "pi-raghba", 999, null, 4.7, false, false, 15));
+    }
+
+    private void seedKits() {
+        if (kitRepo.existsBySlug("discovery-esencial")) return;
+
+        kitRepo.save(k("discovery-esencial",    "Discovery Esencial",         279, false,  1));
+        kitRepo.save(k("coleccion-esencial",     "Colección Esencial",         449, false,  2));
+        kitRepo.save(k("travel-set-esencial",    "Travel Set Esencial",        499, false,  3));
+        kitRepo.save(k("kit-arabe",              "Kit Árabe",                  279, false,  4));
+        kitRepo.save(k("kit-oficina",            "Kit Oficina",                499, true,   5));
+        kitRepo.save(k("kit-dulce",              "Kit Dulce",                  429, true,   6));
+        kitRepo.save(k("kit-elegante",           "Kit Elegante",               649, true,   7));
+        kitRepo.save(k("kit-para-citas",         "Kit Para Citas",             499, true,   8));
+        kitRepo.save(k("discovery-premium",      "Discovery Premium",          599, true,   9));
+        kitRepo.save(k("regalo-personalizado",   "Regalo Personalizado",       449, true,  10));
+        kitRepo.save(k("aura-box-mensual",       "Aura Box Mensual",          null, false, 11));
+        kitRepo.save(k("caja-regalo-premium",    "Caja de Regalo Premium",     699, true,  12));
+    }
+
+    private Kit k(String slug, String nombre, Integer precio, boolean desde, int orden) {
+        Kit kit = new Kit();
+        kit.setSlug(slug);
+        kit.setNombre(nombre);
+        kit.setPrecio(precio);
+        kit.setPrecioDesde(desde);
+        kit.setActivo(true);
+        kit.setOrden(orden);
+        return kit;
     }
 
     private Producto p(String nombre, String marca, String categoria, String genero,

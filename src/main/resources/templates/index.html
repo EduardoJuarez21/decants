@@ -393,8 +393,11 @@
                         <span class="frag-chip">Khamrah</span>
                         <span class="frag-chip">Yara</span>
                     </div>
-                    <div class="kit-precio">$279</div>
-                    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero pedir el Kit Discovery Esencial ($279) — 3 decants de 5 ml de fragancias árabes.')}"
+                    <div class="kit-precio" th:with="k=${kitsMap['discovery-esencial']}">
+                        <span th:if="${k != null and k.precio != null}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
+                    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero pedir el Kit Discovery Esencial — 3 decants de 5 ml de fragancias árabes.')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Pedir por WhatsApp</a>
                 </div>
 
@@ -416,8 +419,11 @@
                         <span class="frag-chip frag-chip-dark">Yara</span>
                         <span class="frag-chip frag-chip-dark">Asad</span>
                     </div>
-                    <div class="kit-precio">$449</div>
-                    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero pedir la Colección Esencial ($449) — 5 decants de 5 ml de fragancias árabes.')}"
+                    <div class="kit-precio" th:with="k=${kitsMap['coleccion-esencial']}">
+                        <span th:if="${k != null and k.precio != null}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
+                    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero pedir la Colección Esencial — 5 decants de 5 ml de fragancias árabes.')}"
                        target="_blank" class="btn btn-primary btn-sm kit-btn">&#128172; Pedir por WhatsApp</a>
                 </div>
 
@@ -436,8 +442,11 @@
                         <span class="frag-chip">Khamrah</span>
                         <span class="frag-chip">Asad</span>
                     </div>
-                    <div class="kit-precio">$499</div>
-                    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero pedir el Travel Set Esencial ($499) — 3 decants de 10 ml de fragancias árabes.')}"
+                    <div class="kit-precio" th:with="k=${kitsMap['travel-set-esencial']}">
+                        <span th:if="${k != null and k.precio != null}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
+                    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero pedir el Travel Set Esencial — 3 decants de 10 ml de fragancias árabes.')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Pedir por WhatsApp</a>
                 </div>
 
@@ -466,7 +475,11 @@
                         <span class="frag-chip">Sauvage</span>
                         <span class="frag-chip">Light Blue</span>
                     </div>
-                    <div class="kit-precio">Desde $349</div>
+                    <div class="kit-precio" th:with="k=${kitsMap['kit-oficina']}">
+                        <span th:if="${k != null and k.precio != null and k.precioDesde}" th:text="|Desde $${k.precio}|"></span>
+                        <span th:if="${k != null and k.precio != null and !k.precioDesde}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
                     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el Kit Oficina (Acqua di Giò, Sauvage, Light Blue) — 3 decants de 5 ml. ¿Cuál es el precio?')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Cotizar</a>
                 </div>
@@ -485,7 +498,11 @@
                         <span class="frag-chip">Cloud</span>
                         <span class="frag-chip">Black Opium</span>
                     </div>
-                    <div class="kit-precio">Desde $349</div>
+                    <div class="kit-precio" th:with="k=${kitsMap['kit-dulce']}">
+                        <span th:if="${k != null and k.precio != null and k.precioDesde}" th:text="|Desde $${k.precio}|"></span>
+                        <span th:if="${k != null and k.precio != null and !k.precioDesde}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
                     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el Kit Dulce (Khamrah, Cloud, Black Opium) — 3 decants de 5 ml. ¿Cuál es el precio?')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Cotizar</a>
                 </div>
@@ -504,8 +521,11 @@
                         <span class="frag-chip">Club de Nuit</span>
                         <span class="frag-chip">Khamrah</span>
                     </div>
-                    <div class="kit-precio">$279</div>
-                    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero pedir el Kit Árabe ($279) — 3 decants de 5 ml: Asad, Club de Nuit, Khamrah.')}"
+                    <div class="kit-precio" th:with="k=${kitsMap['kit-arabe']}">
+                        <span th:if="${k != null and k.precio != null}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
+                    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero pedir el Kit Árabe — 3 decants de 5 ml: Asad, Club de Nuit, Khamrah.')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Pedir por WhatsApp</a>
                 </div>
 
@@ -523,7 +543,11 @@
                         <span class="frag-chip">Sauvage</span>
                         <span class="frag-chip">+ 1 elegante</span>
                     </div>
-                    <div class="kit-precio">Desde $399</div>
+                    <div class="kit-precio" th:with="k=${kitsMap['kit-elegante']}">
+                        <span th:if="${k != null and k.precio != null and k.precioDesde}" th:text="|Desde $${k.precio}|"></span>
+                        <span th:if="${k != null and k.precio != null and !k.precioDesde}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
                     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el Kit Elegante (Ombré Leather, Sauvage + 1 más) — 3 decants de 5 ml. ¿Cuál es el precio?')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Cotizar</a>
                 </div>
@@ -541,7 +565,11 @@
                         <span class="frag-chip">Le Male</span>
                         <span class="frag-chip">+ 2 seductoras</span>
                     </div>
-                    <div class="kit-precio">Desde $349</div>
+                    <div class="kit-precio" th:with="k=${kitsMap['kit-para-citas']}">
+                        <span th:if="${k != null and k.precio != null and k.precioDesde}" th:text="|Desde $${k.precio}|"></span>
+                        <span th:if="${k != null and k.precio != null and !k.precioDesde}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
                     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el Kit Para Citas (Le Male + 2 fragancias seductoras) — 3 decants de 5 ml. ¿Cuál es el precio?')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Cotizar</a>
                 </div>
@@ -567,7 +595,11 @@
                         <li>Libre elección del catálogo premium</li>
                         <li>Etiqueta y empaque incluidos</li>
                     </ul>
-                    <div class="kit-precio">Desde $599</div>
+                    <div class="kit-precio" th:with="k=${kitsMap['discovery-premium']}">
+                        <span th:if="${k != null and k.precio != null and k.precioDesde}" th:text="|Desde $${k.precio}|"></span>
+                        <span th:if="${k != null and k.precio != null and !k.precioDesde}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
                     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el Discovery Premium — 3 decants de 5 ml de alta perfumería. ¿Me pueden cotizar?')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Cotizar</a>
                 </div>
@@ -583,7 +615,11 @@
                         <li>Mensaje personalizado incluido</li>
                         <li>Ideal para cumpleaños o aniversarios</li>
                     </ul>
-                    <div class="kit-precio">Desde $349</div>
+                    <div class="kit-precio" th:with="k=${kitsMap['regalo-personalizado']}">
+                        <span th:if="${k != null and k.precio != null and k.precioDesde}" th:text="|Desde $${k.precio}|"></span>
+                        <span th:if="${k != null and k.precio != null and !k.precioDesde}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
                     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero armar un Regalo Personalizado — 3 decants de 5 ml con caja y mensaje. ¿Me ayudan a elegir?')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Cotizar</a>
                 </div>
@@ -599,7 +635,11 @@
                         <li>Curaduría personalizada</li>
                         <li>Empaque exclusivo Aura</li>
                     </ul>
-                    <div class="kit-precio">Consultar precio</div>
+                    <div class="kit-precio" th:with="k=${kitsMap['aura-box-mensual']}">
+                        <span th:if="${k != null and k.precio != null and k.precioDesde}" th:text="|Desde $${k.precio}|"></span>
+                        <span th:if="${k != null and k.precio != null and !k.precioDesde}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
                     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa la Aura Box Mensual. ¿Cómo funciona y cuál es el precio?')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Más información</a>
                 </div>
@@ -614,7 +654,11 @@
                         <li>Caja de alta gama lista para regalar</li>
                         <li>Tarjeta y mensaje personalizados</li>
                     </ul>
-                    <div class="kit-precio">Desde $549</div>
+                    <div class="kit-precio" th:with="k=${kitsMap['caja-regalo-premium']}">
+                        <span th:if="${k != null and k.precio != null and k.precioDesde}" th:text="|Desde $${k.precio}|"></span>
+                        <span th:if="${k != null and k.precio != null and !k.precioDesde}" th:text="|$${k.precio}|"></span>
+                        <span th:if="${k == null or k.precio == null}">Consultar precio</span>
+                    </div>
                     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quiero armar una Caja de Regalo Premium con perfumes originales. ¿Me pueden asesorar?')}"
                        target="_blank" class="btn btn-whatsapp btn-sm kit-btn">&#128172; Cotizar</a>
                 </div>

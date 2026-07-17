@@ -1,15 +1,19 @@
 package mx.decants.controller;
 
 import mx.decants.entity.Cupon;
+import mx.decants.entity.Kit;
 import mx.decants.repository.CuponRepository;
+import mx.decants.repository.KitRepository;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.VisitaService;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class LandingController {
@@ -17,15 +21,18 @@ public class LandingController {
     private final ProductoService productoService;
     private final ConfiguracionService configuracionService;
     private final CuponRepository cuponRepository;
+    private final KitRepository kitRepository;
     private final VisitaService visitaService;
 
     public LandingController(ProductoService productoService,
                              ConfiguracionService configuracionService,
                              CuponRepository cuponRepository,
+                             KitRepository kitRepository,
                              VisitaService visitaService) {
         this.productoService = productoService;
         this.configuracionService = configuracionService;
         this.cuponRepository = cuponRepository;
+        this.kitRepository = kitRepository;
         this.visitaService = visitaService;
     }
 
@@ -57,6 +64,10 @@ public class LandingController {
         model.addAttribute("umbralEnvioGratis", configuracionService.getUmbralEnvioGratis());
         model.addAttribute("textoEnvioLocal",   configuracionService.getTextoEnvioLocal());
         model.addAttribute("waNumero",          configuracionService.getWhatsappNegocio());
+
+        Map<String, Kit> kitsMap = kitRepository.findAllByOrderByOrdenAsc().stream()
+                .collect(Collectors.toMap(Kit::getSlug, k -> k));
+        model.addAttribute("kitsMap", kitsMap);
 
         cuponRepository.findAllByOrderByIdDesc().stream()
             .filter(Cupon::isActivo)
