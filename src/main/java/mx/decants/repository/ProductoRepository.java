@@ -15,6 +15,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     List<Producto> findAllByOrderByCategoriaAscOrdenAsc();
 
+    List<Producto> findByActivoTrueOrderByCategoriaAscOrdenAsc();
+
     boolean existsByCategoria(String categoria);
 
     Page<Producto> findByCategoriaAndActivoTrue(String categoria, Pageable pageable);

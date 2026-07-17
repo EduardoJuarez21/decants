@@ -66,6 +66,13 @@ public class LandingController {
         return "index";
     }
 
+    @GetMapping("/catalogo")
+    public String catalogo(Model model) {
+        model.addAttribute("productos", productoService.activosTodos());
+        model.addAttribute("waNumero",  configuracionService.getWhatsappNegocio());
+        return "catalogo";
+    }
+
     @GetMapping("/terminos")
     public String terminos() {
         return "terminos";

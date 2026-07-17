@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de fragancias — Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+
+    <!-- Open Graph (preview en WhatsApp, Instagram, etc.) -->
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://auradecantsmx.com/catalogo">
+    <meta property="og:title"       content="Catálogo Aura Decants MX 🌸">
+    <meta property="og:description" content="Decants de perfumes originales. Alta Perfumería y Nicho Árabe. Envío a toda la República o entrega en Monterrey.">
+    <meta property="og:image"       content="https://auradecantsmx.com/img/logo-navbar.webp">
+    <meta name="twitter:card"       content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        body { background: #faf8f5; }
+
+        .cat-header {
+            background: #1a1a1a;
+            padding: 1.5rem 1.25rem 1.25rem;
+            text-align: center;
+        }
+        .cat-header img { height: 52px; width: auto; object-fit: contain; }
+        .cat-header p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0.4rem 0 0;
+        }
+
+        .cat-section-label {
+            text-align: center;
+            padding: 2rem 1rem 0.5rem;
+        }
+        .cat-section-label .gold-line {
+            width: 40px; height: 2px;
+            background: var(--gold);
+            margin: 0 auto 0.75rem;
+        }
+        .cat-section-label h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #1a1a1a;
+            margin: 0 0 0.25rem;
+        }
+        .cat-section-label p {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+            padding: 1.25rem 1rem 0.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        @media (min-width: 480px) {
+            .cat-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+        }
+
+        .cat-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #ececec;
+            display: flex;
+            flex-direction: column;
+        }
+        .cat-card-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
+        }
+        .cat-card-body {
+            padding: 0.75rem 0.85rem 0.85rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .cat-card-brand {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--muted);
+        }
+        .cat-card-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            line-height: 1.3;
+        }
+        .cat-card-family {
+            font-size: 0.72rem;
+            color: var(--muted);
+            font-style: italic;
+        }
+        .cat-card-price {
+            margin-top: auto;
+            padding-top: 0.5rem;
+            display: flex;
+            gap: 0.4rem;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+        .cat-price-tag {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            background: #f5f0e8;
+            border-radius: 6px;
+            padding: 0.15rem 0.45rem;
+        }
+        .cat-price-label {
+            font-size: 0.62rem;
+            color: var(--muted);
+        }
+        .cat-badge {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 0.12rem 0.45rem;
+            border-radius: 4px;
+            margin-bottom: 0.25rem;
+            align-self: flex-start;
+        }
+        .cat-badge.bs  { background: var(--gold); color: #fff; }
+        .cat-badge.out { background: #c0392b; color: #fff; }
+
+        .cat-footer {
+            max-width: 900px;
+            margin: 2rem auto 0;
+            padding: 1.5rem 1rem 2.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .cat-footer p {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin: 0;
+        }
+        .cat-wa-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #25d366;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.75rem 1.75rem;
+            border-radius: 50px;
+        }
+        .cat-site-link {
+            font-size: 0.78rem;
+            color: var(--muted);
+            text-decoration: none;
+        }
+        .cat-site-link:hover { color: var(--gold); }
+
+        .cat-divider {
+            border: none;
+            border-top: 1px solid #e8e0d4;
+            max-width: 900px;
+            margin: 0.5rem auto;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="cat-header">
+    <img th:src="@{/img/logo-navbar.webp}" alt="Aura Decants MX">
+    <p>Catálogo de fragancias</p>
+</div>
+
+<!-- Alta Perfumería -->
+<div class="cat-section-label">
+    <div class="gold-line"></div>
+    <h2>Alta Perfumería</h2>
+    <p>Versiones originales de las mejores casas del mundo</p>
+</div>
+
+<div class="cat-grid">
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'alta-perfumeria'}">
+        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" loading="lazy">
+        <div class="cat-card-body">
+            <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
+            <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
+            <span class="cat-card-brand" th:text="${p.marca}"></span>
+            <span class="cat-card-name"  th:text="${p.nombre}"></span>
+            <span class="cat-card-family" th:text="${p.familia}"></span>
+            <div class="cat-card-price">
+                <span th:if="${p.precio5ml != null}">
+                    <span class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span class="cat-price-label">5 ml</span>
+                    <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                    <span class="cat-price-label">10 ml</span>
+                </span>
+                <span th:unless="${p.precio5ml != null}">
+                    <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                    <span class="cat-price-label">10 ml</span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="cat-divider">
+
+<!-- Nicho Árabe -->
+<div class="cat-section-label">
+    <div class="gold-line"></div>
+    <h2>Nicho Árabe</h2>
+    <p>Fragancias orientales de alta concentración</p>
+</div>
+
+<div class="cat-grid">
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'nicho-arabe'}">
+        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" loading="lazy">
+        <div class="cat-card-body">
+            <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
+            <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
+            <span class="cat-card-brand" th:text="${p.marca}"></span>
+            <span class="cat-card-name"  th:text="${p.nombre}"></span>
+            <span class="cat-card-family" th:text="${p.familia}"></span>
+            <div class="cat-card-price">
+                <span th:if="${p.precio5ml != null}">
+                    <span class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span class="cat-price-label">5 ml</span>
+                    <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                    <span class="cat-price-label">10 ml</span>
+                </span>
+                <span th:unless="${p.precio5ml != null}">
+                    <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                    <span class="cat-price-label">10 ml</span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="cat-footer">
+    <p>¿Te interesa alguna fragancia? Escríbenos y te ayudamos a elegir.</p>
+    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Vi el catálogo de Aura Decants y me interesa hacer un pedido.')}"
+       class="cat-wa-btn" target="_blank">
+        &#128172; Pedir por WhatsApp
+    </a>
+    <a href="https://auradecantsmx.com" class="cat-site-link">
+        Ver tienda completa → auradecantsmx.com
+    </a>
+</div>
+
+</body>
+</html>

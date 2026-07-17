@@ -45,6 +45,11 @@ public class ProductoService {
         return productoRepository.findAllByOrderByCategoriaAscOrdenAsc();
     }
 
+    @Transactional(readOnly = true)
+    public List<Producto> activosTodos() {
+        return productoRepository.findByActivoTrueOrderByCategoriaAscOrdenAsc();
+    }
+
     public void toggleActivo(Long id) {
         productoRepository.findById(id).ifPresent(p -> {
             p.setActivo(!p.isActivo());
