@@ -4,6 +4,7 @@ import mx.decants.entity.Cupon;
 import mx.decants.repository.CuponRepository;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.ProductoService;
+import mx.decants.service.VisitaService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +17,16 @@ public class LandingController {
     private final ProductoService productoService;
     private final ConfiguracionService configuracionService;
     private final CuponRepository cuponRepository;
+    private final VisitaService visitaService;
 
     public LandingController(ProductoService productoService,
                              ConfiguracionService configuracionService,
-                             CuponRepository cuponRepository) {
+                             CuponRepository cuponRepository,
+                             VisitaService visitaService) {
         this.productoService = productoService;
         this.configuracionService = configuracionService;
         this.cuponRepository = cuponRepository;
+        this.visitaService = visitaService;
     }
 
     @GetMapping("/")
@@ -31,7 +35,10 @@ public class LandingController {
             @RequestParam(defaultValue = "todos") String df,
             @RequestParam(defaultValue = "0")     int    ap,
             @RequestParam(defaultValue = "todos") String af,
+            @RequestParam(value = "ref", required = false) String ref,
             Model model) {
+
+        visitaService.registrar(ref);
 
         var designer = productoService.activosPorCategoriaPaginados("alta-perfumeria", df, dp);
         var arabe    = productoService.activosPorCategoriaPaginados("nicho-arabe",    af, ap);

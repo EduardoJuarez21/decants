@@ -126,6 +126,57 @@
         </div>
     </div>
 
+    <!-- Métricas de visitas -->
+    <div class="metric-grid" style="margin-bottom:1.5rem;">
+        <div class="metric-card">
+            <div class="metric-label">Visitas hoy</div>
+            <div class="metric-value" th:text="${visitasHoy}">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Visitas 7 días</div>
+            <div class="metric-value" th:text="${visitasSemana}">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Visitas 30 días</div>
+            <div class="metric-value" th:text="${visitasMes}">0</div>
+        </div>
+    </div>
+
+    <!-- Visitas por fuente -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>Visitas por origen</h2>
+            <span style="font-size:0.78rem; color:var(--muted);">Últimos 7 días</span>
+        </div>
+        <div style="padding:1.25rem 1.75rem;">
+            <div th:if="${porFuenteSemana.isEmpty()}"
+                 style="color:var(--muted); font-size:0.85rem;">Sin datos aún.</div>
+            <div th:each="entry : ${porFuenteSemana}"
+                 style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.6rem;">
+                <!-- Icono por fuente -->
+                <span th:switch="${entry.key}"
+                      style="font-size:1rem; width:22px; text-align:center;">
+                    <span th:case="'qr'">&#x1F4F7;</span>
+                    <span th:case="'instagram'">&#x1F4F8;</span>
+                    <span th:case="'whatsapp'">&#x1F4AC;</span>
+                    <span th:case="'facebook'">&#x1F4CB;</span>
+                    <span th:case="'tiktok'">&#x1F3B5;</span>
+                    <span th:case="*">&#x1F310;</span>
+                </span>
+                <!-- Nombre -->
+                <span style="font-size:0.85rem; font-weight:600; min-width:90px; text-transform:capitalize;"
+                      th:text="${entry.key}"></span>
+                <!-- Barra -->
+                <div style="flex:1; background:#f0ede8; border-radius:6px; height:8px; overflow:hidden;">
+                    <div th:style="'width:' + ${#maps.containsKey(porFuenteSemana, entry.key) ? (entry.value * 100 / visitasSemana) : 0} + '%; background:var(--gold); height:100%; border-radius:6px;'"></div>
+                </div>
+                <!-- Número -->
+                <span style="font-size:0.85rem; font-weight:700; color:#1a1a1a; min-width:32px; text-align:right;"
+                      th:text="${entry.value}"></span>
+            </div>
+        </div>
+    </div>
+
     <!-- Pedidos por estado -->
     <div class="admin-card" style="margin-bottom:1.5rem;">
         <div class="admin-card-header">

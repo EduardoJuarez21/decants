@@ -7,6 +7,7 @@ import mx.decants.service.ConfiguracionService;
 import mx.decants.service.CuponService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
+import mx.decants.service.VisitaService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -34,13 +35,16 @@ public class AdminController {
     private final ProductoService productoService;
     private final CuponService cuponService;
     private final ConfiguracionService configuracionService;
+    private final VisitaService visitaService;
 
     public AdminController(PedidoService pedidoService, ProductoService productoService,
-                           CuponService cuponService, ConfiguracionService configuracionService) {
+                           CuponService cuponService, ConfiguracionService configuracionService,
+                           VisitaService visitaService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
         this.cuponService = cuponService;
         this.configuracionService = configuracionService;
+        this.visitaService = visitaService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────────
@@ -56,6 +60,7 @@ public class AdminController {
     public String dashboard(Model model) {
         Map<String, Object> stats = pedidoService.obtenerDashboard();
         stats.forEach(model::addAttribute);
+        visitaService.obtenerStats().forEach(model::addAttribute);
         return "admin/dashboard";
     }
 
