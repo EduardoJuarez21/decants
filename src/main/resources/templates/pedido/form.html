@@ -211,6 +211,9 @@
                     <span class="field-error" id="cpError" style="display:none;">
                         Solo entregamos en el área metropolitana de Monterrey.
                     </span>
+                    <span id="cpOk" style="display:none; font-size:0.8rem; color:#2e7d32; font-weight:600; margin-top:0.25rem;">
+                        ✓ ¡Hacemos entregas en tu zona!
+                    </span>
                     <span class="field-error"
                           th:if="${#fields.hasErrors('codigoPostal')}"
                           th:errors="*{codigoPostal}"></span>
@@ -406,19 +409,26 @@
     }
 
     function validarCP(input) {
-        var val    = input.value.trim();
-        var cpErr  = document.getElementById('cpError');
+        var val   = input.value.trim();
+        var cpErr = document.getElementById('cpError');
+        var cpOk  = document.getElementById('cpOk');
         if (val.length < 5) {
             cpErr.style.display = 'none';
+            cpOk.style.display  = 'none';
             input.classList.remove('is-invalid');
+            input.style.borderColor = '';
             return;
         }
         if (esCpValido(val)) {
-            cpErr.style.display = 'none';
+            cpErr.style.display     = 'none';
+            cpOk.style.display      = 'block';
             input.classList.remove('is-invalid');
+            input.style.borderColor = '#2e7d32';
         } else {
-            cpErr.style.display = 'block';
+            cpErr.style.display     = 'block';
+            cpOk.style.display      = 'none';
             input.classList.add('is-invalid');
+            input.style.borderColor = '';
         }
     }
 
