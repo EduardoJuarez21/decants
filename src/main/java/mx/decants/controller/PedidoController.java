@@ -84,7 +84,7 @@ public class PedidoController {
             }
             int cpNum = Integer.parseInt(cp);
             if (cpNum < 64000 || cpNum > 67999) {
-                result.rejectValue("codigoPostal", "Range", "La entrega local solo está disponible en Nuevo León (CP 64000–67999)");
+                result.rejectValue("codigoPostal", "Range", "Solo entregamos en el área metropolitana de Monterrey.");
                 return "pedido/form";
             }
         }
