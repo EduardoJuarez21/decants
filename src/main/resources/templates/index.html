@@ -96,6 +96,7 @@
         <li><a href="#alta-perfumeria">Alta Perfumería</a></li>
         <li><a href="#nicho-arabe">Nicho Árabe</a></li>
         <li style="display:none;"><a href="#paquetes">Kits</a></li>
+        <li><a href="#faq">FAQ</a></li>
         <li><a href="#contacto">Contacto</a></li>
         <li><a th:href="@{/pedido/seguimiento}">Rastrear pedido</a></li>
         <li class="nav-search-item">
@@ -684,6 +685,112 @@
             </div>
         </div>
 
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PREGUNTAS FRECUENTES
+════════════════════════════════════════════════════════════ -->
+<section id="faq" class="section-center bg-beige">
+    <div class="container">
+        <div class="gold-line"></div>
+        <h2 class="section-title">Preguntas frecuentes</h2>
+        <p class="section-subtitle">Todo lo que necesitas saber antes de tu primer decant.</p>
+
+        <div class="faq-list">
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Qué es un decant?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Un decant es una fracción extraída directamente de la botella original de un perfume de lujo, envasada en un frasco de cristal con atomizador. Te permite probar una fragancia premium sin necesidad de comprar la botella completa.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Los perfumes son 100% originales?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Sí. Trabajamos exclusivamente con botellas originales de sus respectivas marcas. No vendemos réplicas, imitaciones ni fragancias inspiradas. Cada decant proviene directamente del frasco del fabricante.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Qué presentaciones manejan?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Ofrecemos decants de 3 ml, 5 ml y 10 ml según la fragancia. El de 3 ml es ideal para probar, el de 5 ml para llevar de viaje y el de 10 ml para uso diario prolongado. Consulta cada producto para ver las opciones disponibles.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Cómo hago un pedido?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Puedes agregar fragancias al carrito y completar tu pedido directamente en la página, o escribirnos por WhatsApp para que te ayudemos a elegir. Respondemos en menos de 24 horas.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Envían a toda la República Mexicana?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Sí, enviamos a toda la República vía paquetería. También tenemos entrega local en Monterrey. El costo de envío se muestra al momento del pedido y aplica envío gratis a partir de cierto monto.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Cuánto tarda en llegar mi pedido?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Procesamos en 1-2 días hábiles. La entrega vía paquetería toma entre 3 y 7 días hábiles dependiendo de tu ubicación. Para entrega local en Monterrey podemos coordinar en menos tiempo.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Los decants incluyen etiqueta personalizada?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Sí, todos incluyen etiqueta con el nombre de la fragancia y la marca. Si necesitas un diseño especial o mensaje para regalo, escríbenos y lo personalizamos sin costo adicional.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Aceptan devoluciones?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Por la naturaleza del producto no aceptamos devoluciones una vez enviado el pedido. Si hubo un error de nuestra parte o el producto llegó dañado, lo resolvemos de inmediato. Consulta nuestros <a href="/terminos">términos y condiciones</a> para más detalle.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    ¿Qué métodos de pago aceptan?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Aceptamos tarjeta de crédito y débito (Visa, Mastercard, American Express) a través de nuestra tienda online. También puedes pagar por transferencia bancaria o efectivo coordinando con nosotros por WhatsApp.
+                </div>
+            </div>
+
+        </div>
     </div>
 </section>
 
@@ -1549,6 +1656,14 @@
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeLightbox();
     });
+
+    /* ── FAQ accordion ── */
+    function toggleFaq(btn) {
+        var item = btn.closest('.faq-item');
+        var isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(function(el) { el.classList.remove('open'); });
+        if (!isOpen) item.classList.add('open');
+    }
 </script>
 </body>
 </html>
