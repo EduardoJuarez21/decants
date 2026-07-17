@@ -5,9 +5,11 @@ import mx.decants.entity.Pedido;
 import mx.decants.entity.Producto;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.CuponService;
+import mx.decants.service.ImagenService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.VisitaService;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -36,15 +38,17 @@ public class AdminController {
     private final CuponService cuponService;
     private final ConfiguracionService configuracionService;
     private final VisitaService visitaService;
+    private final ImagenService imagenService;
 
     public AdminController(PedidoService pedidoService, ProductoService productoService,
                            CuponService cuponService, ConfiguracionService configuracionService,
-                           VisitaService visitaService) {
+                           VisitaService visitaService, ImagenService imagenService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
         this.cuponService = cuponService;
         this.configuracionService = configuracionService;
         this.visitaService = visitaService;
+        this.imagenService = imagenService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────────
@@ -158,6 +162,53 @@ public class AdminController {
         return "admin/productos";
     }
 
+    @GetMapping("/productos/nuevo")
+    public String nuevoProductoForm(Model model) {
+        int siguienteOrden = productoService.listarTodos().stream()
+            .mapToInt(p -> p.getOrden() != null ? p.getOrden() : 0)
+            .max().orElse(0) + 1;
+        model.addAttribute("siguienteOrden", siguienteOrden);
+        return "admin/producto-nuevo";
+    }
+
+    @PostMapping("/productos/nuevo")
+    public String crearProducto(@RequestParam String nombre,
+                                @RequestParam String marca,
+                                @RequestParam String categoria,
+                                @RequestParam String genero,
+                                @RequestParam(required = false) String familia,
+                                @RequestParam(required = false) String notas,
+                                @RequestParam Integer precio,
+                                @RequestParam(required = false) Integer precio5ml,
+                                @RequestParam(defaultValue = "false") boolean bestSeller,
+                                @RequestParam int orden,
+                                @RequestParam("imagenPrincipal") MultipartFile imagenPrincipal,
+                                @RequestParam(value = "imagenCaracteristicas", required = false) MultipartFile imagenCaracteristicas,
+                                RedirectAttributes ra) {
+        try {
+            String slug = nombre.trim().toLowerCase()
+                .replaceAll("[áàäâã]", "a").replaceAll("[éèëê]", "e")
+                .replaceAll("[íìïî]", "i").replaceAll("[óòöôõ]", "o")
+                .replaceAll("[úùüû]", "u").replaceAll("[ñ]", "n")
+                .replaceAll("[^a-z0-9]+", "-").replaceAll("^-|-$", "");
+
+            String pathPrincipal = imagenService.guardarYConvertir(imagenPrincipal, categoria, genero, slug);
+            String pathCar = null;
+            if (imagenCaracteristicas != null && !imagenCaracteristicas.isEmpty()) {
+                pathCar = imagenService.guardarYConvertir(imagenCaracteristicas, categoria, genero, "car-" + slug);
+            }
+
+            productoService.crear(nombre, marca, categoria, genero,
+                familia, notas, precio, precio5ml, bestSeller, pathPrincipal, pathCar, orden);
+
+            ra.addFlashAttribute("mensaje", "Producto \"" + nombre + "\" creado correctamente.");
+            return "redirect:/aura-gestion/productos";
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Error al crear el producto: " + e.getMessage());
+            return "redirect:/aura-gestion/productos/nuevo";
+        }
+    }
+
     @PostMapping("/productos/{id}/toggle")
     public String toggleProducto(@PathVariable Long id) {
         productoService.toggleActivo(id);
@@ -177,10 +228,11 @@ public class AdminController {
                                   @RequestParam String marca,
                                   @RequestParam Integer precio,
                                   @RequestParam(required = false) Integer precio5ml,
+                                  @RequestParam(required = false) Integer precio3ml,
                                   @RequestParam(defaultValue = "false") boolean bestSeller,
                                   @RequestParam(required = false) Integer stock,
                                   RedirectAttributes ra) {
-        productoService.actualizar(id, precio, precio5ml, nombre, marca, bestSeller);
+        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller);
         productoService.actualizarStock(id, stock);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
         return "redirect:/aura-gestion/productos";

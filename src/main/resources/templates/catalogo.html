@@ -208,16 +208,16 @@
             <span class="cat-card-name"  th:text="${p.nombre}"></span>
             <span class="cat-card-family" th:text="${p.familia}"></span>
             <div class="cat-card-price">
+                <span th:if="${p.precio3ml != null}">
+                    <span class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span class="cat-price-label">3 ml</span>
+                </span>
                 <span th:if="${p.precio5ml != null}">
                     <span class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
                     <span class="cat-price-label">5 ml</span>
-                    <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
-                    <span class="cat-price-label">10 ml</span>
                 </span>
-                <span th:unless="${p.precio5ml != null}">
-                    <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
-                    <span class="cat-price-label">10 ml</span>
-                </span>
+                <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span class="cat-price-label">10 ml</span>
             </div>
         </div>
     </div>
@@ -242,16 +242,16 @@
             <span class="cat-card-name"  th:text="${p.nombre}"></span>
             <span class="cat-card-family" th:text="${p.familia}"></span>
             <div class="cat-card-price">
+                <span th:if="${p.precio3ml != null}">
+                    <span class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span class="cat-price-label">3 ml</span>
+                </span>
                 <span th:if="${p.precio5ml != null}">
                     <span class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
                     <span class="cat-price-label">5 ml</span>
-                    <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
-                    <span class="cat-price-label">10 ml</span>
                 </span>
-                <span th:unless="${p.precio5ml != null}">
-                    <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
-                    <span class="cat-price-label">10 ml</span>
-                </span>
+                <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span class="cat-price-label">10 ml</span>
             </div>
         </div>
     </div>

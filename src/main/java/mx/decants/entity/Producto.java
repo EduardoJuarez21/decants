@@ -41,6 +41,8 @@ public class Producto {
 
     private Integer precio5ml;       // null si no tiene presentación 5 ml
 
+    private Integer precio3ml;       // null si no tiene presentación 3 ml
+
     @Column(nullable = false)
     private Double calificacion;
 
@@ -93,6 +95,9 @@ public class Producto {
 
     public Integer getPrecio5ml() { return precio5ml; }
     public void setPrecio5ml(Integer precio5ml) { this.precio5ml = precio5ml; }
+
+    public Integer getPrecio3ml() { return precio3ml; }
+    public void setPrecio3ml(Integer precio3ml) { this.precio3ml = precio3ml; }
 
     public Double getCalificacion() { return calificacion; }
     public void setCalificacion(Double calificacion) { this.calificacion = calificacion; }

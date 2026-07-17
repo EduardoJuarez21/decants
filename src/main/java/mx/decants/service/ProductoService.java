@@ -62,12 +62,13 @@ public class ProductoService {
         return productoRepository.findById(id);
     }
 
-    public void actualizar(Long id, Integer precio, Integer precio5ml, String nombre, String marca, boolean bestSeller) {
+    public void actualizar(Long id, Integer precio, Integer precio5ml, Integer precio3ml, String nombre, String marca, boolean bestSeller) {
         productoRepository.findById(id).ifPresent(p -> {
             if (nombre != null && !nombre.isBlank()) p.setNombre(nombre.trim());
             if (marca  != null && !marca.isBlank())  p.setMarca(marca.trim());
             if (precio != null && precio > 0)         p.setPrecio(precio);
             p.setPrecio5ml(precio5ml != null && precio5ml > 0 ? precio5ml : null);
+            p.setPrecio3ml(precio3ml != null && precio3ml > 0 ? precio3ml : null);
             p.setBestSeller(bestSeller);
             productoRepository.save(p);
         });
@@ -78,5 +79,37 @@ public class ProductoService {
             p.setStock(stock != null && stock >= 0 ? stock : null);
             productoRepository.save(p);
         });
+    }
+
+    public Producto crear(String nombre, String marca, String categoria, String genero,
+                          String familia, String notas, Integer precio, Integer precio5ml,
+                          boolean bestSeller, String imagenPrincipal, String imagenCaracteristicas, int orden) {
+        Producto p = new Producto();
+        p.setNombre(nombre.trim());
+        p.setMarca(marca.trim());
+        p.setCategoria(categoria);
+        p.setGenero(genero);
+        p.setFamilia(familia != null && !familia.isBlank() ? familia.trim() : "");
+        p.setNotas(notas != null && !notas.isBlank() ? notas.trim() : "");
+        p.setPrecio(precio);
+        p.setPrecio5ml(precio5ml != null && precio5ml > 0 ? precio5ml : null);
+        p.setPrecio3ml(null);
+        p.setBestSeller(bestSeller);
+        p.setImagenPrincipal(imagenPrincipal);
+        p.setImagenCaracteristicas(imagenCaracteristicas);
+        p.setClaseCss("pi-" + slugificar(nombre.trim()));
+        p.setCalificacion(4.8);
+        p.setSoloItem(false);
+        p.setActivo(true);
+        p.setOrden(orden);
+        return productoRepository.save(p);
+    }
+
+    private static String slugificar(String texto) {
+        return texto.toLowerCase()
+            .replaceAll("[áàäâã]", "a").replaceAll("[éèëê]", "e")
+            .replaceAll("[íìïî]", "i").replaceAll("[óòöôõ]", "o")
+            .replaceAll("[úùüû]", "u").replaceAll("[ñ]", "n")
+            .replaceAll("[^a-z0-9]+", "-").replaceAll("^-|-$", "");
     }
 }
