@@ -800,7 +800,10 @@
 <!-- Lightbox características -->
 <div class="lb-overlay" id="lbOverlay" onclick="closeLightbox()">
     <button class="lb-close" onclick="closeLightbox()">✕</button>
-    <img class="lb-img" id="lbImg" src="" alt="">
+    <div class="lb-content" onclick="event.stopPropagation()">
+        <img class="lb-img" id="lbImg" src="" alt="">
+        <div class="lb-thumbs" id="lbThumbs" style="display:none;"></div>
+    </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -1474,18 +1477,47 @@
     }
 
     /* ── Lightbox características ── */
+    function openLightbox(imgs, startIdx) {
+        var lbImg    = document.getElementById('lbImg');
+        var lbThumbs = document.getElementById('lbThumbs');
+
+        lbImg.src = imgs[startIdx].src;
+        lbImg.alt = imgs[startIdx].alt;
+
+        lbThumbs.innerHTML = '';
+        if (imgs.length > 1) {
+            lbThumbs.style.display = 'flex';
+            imgs.forEach(function(img, i) {
+                var t = document.createElement('img');
+                t.src = img.src;
+                t.alt = img.alt;
+                t.className = 'lb-thumb' + (i === startIdx ? ' active' : '');
+                t.addEventListener('click', function() {
+                    lbImg.src = img.src;
+                    lbImg.alt = img.alt;
+                    lbThumbs.querySelectorAll('.lb-thumb').forEach(function(el) { el.classList.remove('active'); });
+                    t.classList.add('active');
+                });
+                lbThumbs.appendChild(t);
+            });
+        } else {
+            lbThumbs.style.display = 'none';
+        }
+
+        document.getElementById('lbOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
     function bindLightbox(scope) {
-        (scope || document).querySelectorAll('.product-image-area.has-hover-img').forEach(function(area) {
+        (scope || document).querySelectorAll('.product-image-area').forEach(function(area) {
             if (area._lbBound) return;
             area._lbBound = true;
             area.addEventListener('click', function(e) {
                 if (e.target.classList.contains('product-add-btn') || e.target.closest('.product-add-btn')) return;
+                var mainImg  = area.querySelector('.product-img');
+                if (!mainImg) return;
                 var hoverImg = area.querySelector('.product-img-hover');
-                if (!hoverImg) return;
-                document.getElementById('lbImg').src = hoverImg.src;
-                document.getElementById('lbImg').alt = hoverImg.alt;
-                document.getElementById('lbOverlay').classList.add('open');
-                document.body.style.overflow = 'hidden';
+                openLightbox(hoverImg ? [mainImg, hoverImg] : [mainImg], 0);
             });
         });
     }
