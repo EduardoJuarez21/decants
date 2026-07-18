@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,33 @@ public class VisitaService {
         stats.put("porFuenteHoy",    porFuente(hoy));
         stats.put("porFuenteSemana", porFuente(semana));
         return stats;
+    }
+
+    public Map<String, Object> obtenerGrafica(int dias) {
+        LocalDateTime desde = LocalDate.now().minusDays(dias - 1).atStartOfDay();
+        List<Object[]> rows = visitaRepository.visitasPorDia(desde);
+
+        Map<LocalDate, Long> porDia = new LinkedHashMap<>();
+        for (int i = dias - 1; i >= 0; i--) {
+            porDia.put(LocalDate.now().minusDays(i), 0L);
+        }
+        for (Object[] row : rows) {
+            LocalDate dia = ((java.sql.Date) row[0]).toLocalDate();
+            porDia.put(dia, ((Number) row[1]).longValue());
+        }
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM");
+        List<String> etiquetas = new ArrayList<>();
+        List<Long> valores     = new ArrayList<>();
+        for (Map.Entry<LocalDate, Long> e : porDia.entrySet()) {
+            etiquetas.add(e.getKey().format(fmt));
+            valores.add(e.getValue());
+        }
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("etiquetas", etiquetas);
+        result.put("valores",   valores);
+        return result;
     }
 
     private Map<String, Long> porFuente(LocalDateTime desde) {

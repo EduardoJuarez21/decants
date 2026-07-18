@@ -316,6 +316,15 @@ public class AdminController {
         return "redirect:/aura-gestion/resenas";
     }
 
+    // ── Visitas ───────────────────────────────────────────────────────────────
+
+    @GetMapping("/visitas")
+    public String visitas(Model model) {
+        visitaService.obtenerStats().forEach(model::addAttribute);
+        visitaService.obtenerGrafica(30).forEach(model::addAttribute);
+        return "admin/visitas";
+    }
+
     // ── Configuración ─────────────────────────────────────────────────────────
 
     @GetMapping("/configuracion")

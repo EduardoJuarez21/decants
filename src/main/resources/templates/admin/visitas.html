@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitas — Admin | Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 640px) { .metric-grid { grid-template-columns: 1fr; } }
+        .metric-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #ececec;
+        }
+        .metric-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #999;
+            margin-bottom: 0.4rem;
+        }
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.1;
+        }
+        .metric-sub {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 0.25rem;
+        }
+        .chart-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #ececec;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .chart-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #999;
+            margin-bottom: 1rem;
+        }
+        .fuente-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 0.88rem;
+        }
+        .fuente-row:last-child { border-bottom: none; }
+        .fuente-nombre { color: #1a1a1a; font-weight: 500; text-transform: capitalize; }
+        .fuente-count  { font-weight: 700; color: #c9a96e; }
+        .fuente-bar-wrap { flex: 1; margin: 0 1rem; background: #f5f5f5; border-radius: 4px; height: 6px; }
+        .fuente-bar { height: 6px; border-radius: 4px; background: #c9a96e; }
+    </style>
+</head>
+<body>
+
+<div class="admin-page">
+
+    <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
+        <h1>Panel de administración</h1>
+        <div style="display:flex; align-items:center; gap:1.5rem;">
+            <span class="admin-brand">Aura Decants</span>
+            <form th:action="@{/aura-gestion/logout}" method="post" style="margin:0;">
+                <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+        <a th:href="@{/aura-gestion/dashboard}"    class="admin-link">Dashboard</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/pedidos}"      class="admin-link">Pedidos</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/clientes}"     class="admin-link">Clientes</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/productos}"    class="admin-link">Catálogo</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/cupones}"      class="admin-link">Cupones</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/resenas}"      class="admin-link">Reseñas</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/visitas}"      class="admin-link" style="font-weight:700;">Visitas</a>
+        <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/configuracion}" class="admin-link">Configuración</a>
+    </div>
+
+    <!-- Métricas resumen -->
+    <div class="metric-grid">
+        <div class="metric-card">
+            <div class="metric-label">Visitas hoy</div>
+            <div class="metric-value" th:text="${visitasHoy}"></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Últimos 7 días</div>
+            <div class="metric-value" th:text="${visitasSemana}"></div>
+            <div class="metric-sub" th:text="${visitasSemana > 0 ? #numbers.formatDecimal(visitasSemana / 7.0, 1, 1) + ' / día' : '—'}"></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Últimos 30 días</div>
+            <div class="metric-value" th:text="${visitasMes}"></div>
+            <div class="metric-sub" th:text="${visitasMes > 0 ? #numbers.formatDecimal(visitasMes / 30.0, 1, 1) + ' / día' : '—'}"></div>
+        </div>
+    </div>
+
+    <!-- Gráfica de los últimos 30 días -->
+    <div class="chart-card">
+        <div class="chart-title">Visitas por día — últimos 30 días</div>
+        <canvas id="graficaVisitas" height="90"></canvas>
+    </div>
+
+    <!-- Fuentes esta semana -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2>Por fuente — hoy</h2>
+            </div>
+            <div style="padding:0.5rem 1.5rem 1rem;">
+                <div th:if="${porFuenteHoy.isEmpty()}"
+                     style="color:var(--muted); font-size:0.85rem; padding:0.5rem 0;">Sin visitas hoy.</div>
+                <div th:each="entry : ${porFuenteHoy}" class="fuente-row">
+                    <span class="fuente-nombre" th:text="${entry.key}"></span>
+                    <div class="fuente-bar-wrap">
+                        <div class="fuente-bar"
+                             th:style="'width:' + (${visitasHoy} > 0 ? ${entry.value * 100 / visitasHoy} : 0) + '%'"></div>
+                    </div>
+                    <span class="fuente-count" th:text="${entry.value}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h2>Por fuente — 7 días</h2>
+            </div>
+            <div style="padding:0.5rem 1.5rem 1rem;">
+                <div th:if="${porFuenteSemana.isEmpty()}"
+                     style="color:var(--muted); font-size:0.85rem; padding:0.5rem 0;">Sin visitas esta semana.</div>
+                <div th:each="entry : ${porFuenteSemana}" class="fuente-row">
+                    <span class="fuente-nombre" th:text="${entry.key}"></span>
+                    <div class="fuente-bar-wrap">
+                        <div class="fuente-bar"
+                             th:style="'width:' + (${visitasSemana} > 0 ? ${entry.value * 100 / visitasSemana} : 0) + '%'"></div>
+                    </div>
+                    <span class="fuente-count" th:text="${entry.value}"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="margin-top:1rem;">
+        <a th:href="@{/}" class="admin-link">&#8592; Ir a la página principal</a>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script th:inline="javascript">
+    const etiquetas = /*[[${etiquetas}]]*/ [];
+    const valores   = /*[[${valores}]]*/ [];
+
+    new Chart(document.getElementById('graficaVisitas'), {
+        type: 'line',
+        data: {
+            labels: etiquetas,
+            datasets: [{
+                label: 'Visitas',
+                data: valores,
+                borderColor: '#c9a96e',
+                backgroundColor: 'rgba(201,169,110,0.12)',
+                borderWidth: 2,
+                pointRadius: 3,
+                pointBackgroundColor: '#c9a96e',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: ctx => ctx[0].label,
+                        label: ctx => ' ' + ctx.parsed.y + ' visitas'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11 }, color: '#aaa',
+                             maxTicksLimit: 10, maxRotation: 0 }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { font: { size: 11 }, color: '#aaa', precision: 0 },
+                    grid: { color: '#f0f0f0' }
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>

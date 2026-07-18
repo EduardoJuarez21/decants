@@ -16,4 +16,7 @@ public interface VisitaRepository extends JpaRepository<Visita, Long> {
     List<Object[]> contarPorFuenteDesde(@Param("desde") LocalDateTime desde);
 
     long countByFechaAfter(LocalDateTime desde);
+
+    @Query(value = "SELECT CAST(fecha AS date) AS dia, COUNT(*) AS total FROM visitas WHERE fecha >= :desde GROUP BY dia ORDER BY dia", nativeQuery = true)
+    List<Object[]> visitasPorDia(@Param("desde") LocalDateTime desde);
 }
