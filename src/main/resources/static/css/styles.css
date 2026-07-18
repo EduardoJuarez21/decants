@@ -780,6 +780,27 @@ section      { padding: 6rem 2rem; }
   .testimonios-grid { grid-template-columns: 1fr; }
 }
 
+/* ── WhatsApp CTA strip ────────────────────────────────────── */
+.wa-strip {
+  background: linear-gradient(135deg, #141414 0%, #1f1507 100%);
+  padding: 3.5rem 2rem;
+  text-align: center;
+}
+.wa-strip h3 {
+  font-family: var(--font-heading);
+  font-size: 1.6rem; font-weight: 600;
+  color: var(--white); margin-bottom: 0.5rem;
+}
+.wa-strip p {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.95rem; margin-bottom: 1.75rem;
+  max-width: 420px; margin-left: auto; margin-right: auto;
+}
+.wa-strip .btn-whatsapp {
+  font-size: 1rem; padding: 0.85rem 2rem;
+  box-shadow: 0 6px 24px rgba(37,211,102,0.3);
+}
+
 /* ── FAQ ───────────────────────────────────────────────────── */
 .faq-list {
   max-width: 700px; margin: 2.5rem auto 0;

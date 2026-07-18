@@ -380,6 +380,16 @@
     </div>
 </section>
 
+<!-- WhatsApp CTA strip -->
+<div class="wa-strip">
+    <h3>¿Tienes dudas sobre alguna fragancia?</h3>
+    <p>Pregunta por tu decant o perfume y te asesoramos al instante.</p>
+    <a th:href="'https://wa.me/' + ${waNumero} + '?text=' + #uris.escapeQueryParam('Hola! Tengo una duda sobre un decant o perfume. ¿Me pueden ayudar?')"
+       target="_blank" rel="noopener" class="btn btn-whatsapp">
+        &#128172; Escríbenos por WhatsApp
+    </a>
+</div>
+
 <!-- ═══════════════════════════════════════════════════════════
      KITS & DISCOVERY SETS
 ════════════════════════════════════════════════════════════ -->
