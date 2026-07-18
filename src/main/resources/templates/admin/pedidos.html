@@ -157,7 +157,7 @@
                         </td>
                         <td>
                             <form th:action="@{/aura-gestion/pedidos/{id}/estado(id=${p.id})}" method="post">
-                                <select name="estado" onchange="this.form.submit()"
+                                <select name="estado" onchange="if(confirm('¿Cambiar el estado del pedido a «' + this.options[this.selectedIndex].text + '»?')) { this.form.submit(); } else { this.value = this.dataset.original; }" th:attr="data-original=${p.estadoPedido.name()}"
                                         style="border:none; border-radius:20px; font-size:0.72rem; font-weight:600;
                                                letter-spacing:0.2px; cursor:pointer; padding:0.28rem 0.6rem;
                                                font-family:inherit; outline:none;"
