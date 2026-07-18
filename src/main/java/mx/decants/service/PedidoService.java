@@ -378,8 +378,11 @@ public class PedidoService {
                 p.setEstadoPedido(nuevoEstado);
                 pedidoRepository.save(p);
                 log.info("Pedido #{} → estado: {}", id, estadoStr);
-                if (nuevoEstado == EstadoPedido.ENVIADO) {
-                    emailService.enviarNotificacionEnvio(p);
+                switch (nuevoEstado) {
+                    case ENVIADO   -> emailService.enviarNotificacionEnvio(p);
+                    case ENTREGADO -> emailService.enviarEntregado(p);
+                    case CANCELADO -> emailService.enviarCancelado(p);
+                    default        -> {}
                 }
             } catch (IllegalArgumentException ignored) {}
         });

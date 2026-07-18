@@ -60,6 +60,32 @@ public class EmailService {
         enviarAsync(apiKey, from, pedido.getEmail(), subject, buildEnvioHtml(pedido, waNum), pedido.getId(), "envío");
     }
 
+    public void enviarEntregado(Pedido pedido) {
+        String apiKey = configuracionService.get("email_password", "");
+        if (apiKey.isBlank()) return;
+        if (pedido.getEmail() == null || pedido.getEmail().isBlank()) return;
+
+        String from  = from();
+        String waNum = configuracionService.getWhatsappNegocio();
+        String ref   = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId());
+        String subject = "Tu pedido " + ref + " fue entregado — Aura Decants MX";
+
+        enviarAsync(apiKey, from, pedido.getEmail(), subject, buildEntregadoHtml(pedido, waNum), pedido.getId(), "entrega");
+    }
+
+    public void enviarCancelado(Pedido pedido) {
+        String apiKey = configuracionService.get("email_password", "");
+        if (apiKey.isBlank()) return;
+        if (pedido.getEmail() == null || pedido.getEmail().isBlank()) return;
+
+        String from  = from();
+        String waNum = configuracionService.getWhatsappNegocio();
+        String ref   = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId());
+        String subject = "Tu pedido " + ref + " fue cancelado — Aura Decants MX";
+
+        enviarAsync(apiKey, from, pedido.getEmail(), subject, buildCanceladoHtml(pedido, waNum), pedido.getId(), "cancelación");
+    }
+
     private String from() {
         String f = configuracionService.get("email_from", "");
         return f.isBlank() ? "Aura Decants MX <noreply@auradecantsmx.com>" : f;
@@ -99,6 +125,91 @@ public class EmailService {
                 log.warn("Error preparando email de {} (pedido #{}): {}", tipo, pedidoId, e.getMessage());
             }
         });
+    }
+
+    private String buildEntregadoHtml(Pedido pedido, String waNum) {
+        String codigo = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId());
+        String waUrl = "https://wa.me/" + waNum + "?text="
+                       + encode("Hola! Quiero dejar una reseña de mi pedido " + codigo + ".");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>")
+          .append("<meta name='viewport' content='width=device-width,initial-scale=1'>")
+          .append("<title>Pedido entregado</title></head>")
+          .append("<body style='margin:0;padding:0;background:#f5f5f5;font-family:Inter,Arial,sans-serif;'>")
+          .append("<table width='100%' cellpadding='0' cellspacing='0' style='background:#f5f5f5;padding:32px 16px;'>")
+          .append("<tr><td align='center'>")
+          .append("<table width='100%' style='max-width:560px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.07);'>")
+          .append("<tr><td style='background:#1a1a1a;padding:28px 32px;text-align:center;'>")
+          .append("<p style='margin:0;color:#c9a96e;font-size:1.5rem;font-weight:700;letter-spacing:1px;'>Aura Decants MX</p>")
+          .append("</td></tr>")
+          .append("<tr><td style='padding:32px 32px 16px;text-align:center;'>")
+          .append("<div style='font-size:2.5rem;margin-bottom:12px;'>&#127881;</div>")
+          .append("<h1 style='margin:0;font-size:1.3rem;color:#1a1a1a;font-weight:700;'>¡Tu pedido fue entregado!</h1>")
+          .append("<p style='margin:8px 0 0;color:#777;font-size:0.88rem;line-height:1.6;'>")
+          .append("Hola <strong>").append(esc(pedido.getNombreCliente())).append("</strong>, ")
+          .append("tu pedido <strong>").append(esc(codigo)).append("</strong> ha sido entregado. ")
+          .append("¡Gracias por confiar en nosotros!</p></td></tr>")
+          .append("<tr><td style='padding:0 32px 24px;'>")
+          .append("<table width='100%' style='background:#fafaf8;border-radius:10px;border:1px solid #ececec;'>")
+          .append("<tr><td style='padding:16px 20px;'>")
+          .append("<span style='font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#999;'>Pedido</span>")
+          .append("<p style='margin:4px 0 0;font-size:1.1rem;font-weight:700;color:#c9a96e;'>").append(esc(codigo)).append("</p>")
+          .append("</td></tr></table></td></tr>")
+          .append("<tr><td style='padding:0 32px 16px;text-align:center;'>")
+          .append("<p style='margin:0;font-size:0.85rem;color:#555;'>¿Todo bien con tu pedido? Cuéntanos tu experiencia.</p>")
+          .append("</td></tr>")
+          .append("<tr><td style='padding:0 32px 32px;text-align:center;'>")
+          .append("<a href='").append(waUrl).append("' ")
+          .append("style='display:inline-block;padding:11px 28px;background:#25d366;color:#fff;text-decoration:none;")
+          .append("border-radius:8px;font-size:0.88rem;font-weight:600;'>")
+          .append("&#128172; Contáctanos por WhatsApp</a></td></tr>")
+          .append("<tr><td style='background:#f8f8f8;border-top:1px solid #ececec;padding:20px 32px;text-align:center;'>")
+          .append("<p style='margin:0;font-size:0.75rem;color:#aaa;'>&copy; 2025 Aura Decants MX</p>")
+          .append("</td></tr></table></td></tr></table></body></html>");
+        return sb.toString();
+    }
+
+    private String buildCanceladoHtml(Pedido pedido, String waNum) {
+        String codigo = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId());
+        String waUrl = "https://wa.me/" + waNum + "?text="
+                       + encode("Hola! Quiero saber por qué se canceló mi pedido " + codigo + ".");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>")
+          .append("<meta name='viewport' content='width=device-width,initial-scale=1'>")
+          .append("<title>Pedido cancelado</title></head>")
+          .append("<body style='margin:0;padding:0;background:#f5f5f5;font-family:Inter,Arial,sans-serif;'>")
+          .append("<table width='100%' cellpadding='0' cellspacing='0' style='background:#f5f5f5;padding:32px 16px;'>")
+          .append("<tr><td align='center'>")
+          .append("<table width='100%' style='max-width:560px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.07);'>")
+          .append("<tr><td style='background:#1a1a1a;padding:28px 32px;text-align:center;'>")
+          .append("<p style='margin:0;color:#c9a96e;font-size:1.5rem;font-weight:700;letter-spacing:1px;'>Aura Decants MX</p>")
+          .append("</td></tr>")
+          .append("<tr><td style='padding:32px 32px 16px;text-align:center;'>")
+          .append("<h1 style='margin:0;font-size:1.3rem;color:#1a1a1a;font-weight:700;'>Tu pedido fue cancelado</h1>")
+          .append("<p style='margin:8px 0 0;color:#777;font-size:0.88rem;line-height:1.6;'>")
+          .append("Hola <strong>").append(esc(pedido.getNombreCliente())).append("</strong>, ")
+          .append("lamentamos informarte que tu pedido <strong>").append(esc(codigo)).append("</strong> fue cancelado.")
+          .append("</p></td></tr>")
+          .append("<tr><td style='padding:0 32px 24px;'>")
+          .append("<table width='100%' style='background:#fafaf8;border-radius:10px;border:1px solid #ececec;'>")
+          .append("<tr><td style='padding:16px 20px;'>")
+          .append("<span style='font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#999;'>Pedido</span>")
+          .append("<p style='margin:4px 0 0;font-size:1.1rem;font-weight:700;color:#1a1a1a;'>").append(esc(codigo)).append("</p>")
+          .append("</td></tr></table></td></tr>")
+          .append("<tr><td style='padding:0 32px 16px;text-align:center;'>")
+          .append("<p style='margin:0;font-size:0.85rem;color:#555;'>¿Tienes dudas? Contáctanos y con gusto te ayudamos.</p>")
+          .append("</td></tr>")
+          .append("<tr><td style='padding:0 32px 32px;text-align:center;'>")
+          .append("<a href='").append(waUrl).append("' ")
+          .append("style='display:inline-block;padding:11px 28px;background:#25d366;color:#fff;text-decoration:none;")
+          .append("border-radius:8px;font-size:0.88rem;font-weight:600;'>")
+          .append("&#128172; Contáctanos por WhatsApp</a></td></tr>")
+          .append("<tr><td style='background:#f8f8f8;border-top:1px solid #ececec;padding:20px 32px;text-align:center;'>")
+          .append("<p style='margin:0;font-size:0.75rem;color:#aaa;'>&copy; 2025 Aura Decants MX</p>")
+          .append("</td></tr></table></td></tr></table></body></html>");
+        return sb.toString();
     }
 
     private String buildEnvioHtml(Pedido pedido, String waNum) {
