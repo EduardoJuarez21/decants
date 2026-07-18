@@ -172,8 +172,8 @@
                                             'badge-creado'}">
                                     <option value="CREADO"          th:selected="${p.estadoPedido.name() == 'CREADO' or p.estadoPedido.name() == 'NUEVO'}">Creado</option>
                                     <option value="CONFIRMADO"      th:selected="${p.estadoPedido.name() == 'CONFIRMADO'}">Confirmado</option>
-                                    <option value="LISTO_PARA_ENVIO" th:selected="${p.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
-                                    <option value="ENVIADO"         th:selected="${p.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
+                                    <option th:if="${p.entorno != 'local'}" value="LISTO_PARA_ENVIO" th:selected="${p.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
+                                    <option th:if="${p.entorno != 'local'}" value="ENVIADO"          th:selected="${p.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
                                     <option value="ENTREGADO"       th:selected="${p.estadoPedido.name() == 'ENTREGADO'}">Entregado</option>
                                     <option value="CANCELADO"       th:selected="${p.estadoPedido.name() == 'CANCELADO'}">Cancelado</option>
                                     <option th:if="${p.estadoPedido.name() == 'PENDIENTE_PAGO'}"

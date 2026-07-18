@@ -375,6 +375,11 @@ public class PedidoService {
         pedidoRepository.findById(id).ifPresent(p -> {
             try {
                 EstadoPedido nuevoEstado = EstadoPedido.valueOf(estadoStr);
+                boolean esLocal = "local".equals(p.getEntorno());
+                if (esLocal && (nuevoEstado == EstadoPedido.LISTO_PARA_ENVIO || nuevoEstado == EstadoPedido.ENVIADO)) {
+                    log.warn("Pedido #{} es local — estado {} no permitido", id, estadoStr);
+                    return;
+                }
                 p.setEstadoPedido(nuevoEstado);
                 pedidoRepository.save(p);
                 log.info("Pedido #{} → estado: {}", id, estadoStr);
