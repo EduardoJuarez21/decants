@@ -379,10 +379,13 @@ public class PedidoService {
                 pedidoRepository.save(p);
                 log.info("Pedido #{} → estado: {}", id, estadoStr);
                 switch (nuevoEstado) {
-                    case ENVIADO   -> emailService.enviarNotificacionEnvio(p);
-                    case ENTREGADO -> emailService.enviarEntregado(p);
-                    case CANCELADO -> emailService.enviarCancelado(p);
-                    default        -> {}
+                    case CREADO           -> emailService.enviarCreado(p);
+                    case CONFIRMADO       -> emailService.enviarConfirmadoPorAdmin(p);
+                    case LISTO_PARA_ENVIO -> emailService.enviarListoParaEnvio(p);
+                    case ENVIADO          -> emailService.enviarNotificacionEnvio(p);
+                    case ENTREGADO        -> emailService.enviarEntregado(p);
+                    case CANCELADO        -> emailService.enviarCancelado(p);
+                    default               -> {}
                 }
             } catch (IllegalArgumentException ignored) {}
         });
