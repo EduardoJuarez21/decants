@@ -8,6 +8,7 @@ import mx.decants.service.CuponService;
 import mx.decants.service.ImagenService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
+import mx.decants.service.ResenaService;
 import mx.decants.service.VisitaService;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,16 +40,19 @@ public class AdminController {
     private final ConfiguracionService configuracionService;
     private final VisitaService visitaService;
     private final ImagenService imagenService;
+    private final ResenaService resenaService;
 
     public AdminController(PedidoService pedidoService, ProductoService productoService,
                            CuponService cuponService, ConfiguracionService configuracionService,
-                           VisitaService visitaService, ImagenService imagenService) {
+                           VisitaService visitaService, ImagenService imagenService,
+                           ResenaService resenaService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
         this.cuponService = cuponService;
         this.configuracionService = configuracionService;
         this.visitaService = visitaService;
         this.imagenService = imagenService;
+        this.resenaService = resenaService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────────
@@ -288,6 +292,28 @@ public class AdminController {
     public String eliminarCupon(@PathVariable Long id) {
         cuponService.eliminar(id);
         return "redirect:/aura-gestion/cupones";
+    }
+
+    // ── Reseñas ───────────────────────────────────────────────────────────────
+
+    @GetMapping("/resenas")
+    public String listarResenas(Model model) {
+        model.addAttribute("resenas", resenaService.listarTodas());
+        return "admin/resenas";
+    }
+
+    @PostMapping("/resenas/{id}/aprobar")
+    public String aprobarResena(@PathVariable Long id, RedirectAttributes ra) {
+        resenaService.aprobar(id);
+        ra.addFlashAttribute("mensaje", "Reseña aprobada y publicada.");
+        return "redirect:/aura-gestion/resenas";
+    }
+
+    @PostMapping("/resenas/{id}/eliminar")
+    public String eliminarResena(@PathVariable Long id, RedirectAttributes ra) {
+        resenaService.eliminar(id);
+        ra.addFlashAttribute("mensaje", "Reseña eliminada.");
+        return "redirect:/aura-gestion/resenas";
     }
 
     // ── Configuración ─────────────────────────────────────────────────────────

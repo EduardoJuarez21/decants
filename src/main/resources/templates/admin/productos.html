@@ -38,6 +38,8 @@
         <span style="color:#ccc;">|</span>
         <a th:href="@{/aura-gestion/cupones}"   class="admin-link">Cupones</a>
         <span style="color:#ccc;">|</span>
+        <a th:href="@{/aura-gestion/resenas}"   class="admin-link">Reseñas</a>
+        <span style="color:#ccc;">|</span>
         <a th:href="@{/aura-gestion/configuracion}" class="admin-link">Configuración</a>
     </div>
 
@@ -49,11 +51,18 @@
     <div class="admin-card">
         <div class="admin-card-header">
             <h2>Catálogo de productos</h2>
-            <span style="font-size:0.8rem; color:var(--muted);">
-                Activos: <strong th:text="${#lists.size(productos.?[activo == true])}"></strong>
-                &nbsp;·&nbsp;
-                Inactivos: <strong th:text="${#lists.size(productos.?[activo == false])}"></strong>
-            </span>
+            <div style="display:flex; align-items:center; gap:1.25rem;">
+                <span style="font-size:0.8rem; color:var(--muted);">
+                    Activos: <strong th:text="${#lists.size(productos.?[activo == true])}"></strong>
+                    &nbsp;·&nbsp;
+                    Inactivos: <strong th:text="${#lists.size(productos.?[activo == false])}"></strong>
+                </span>
+                <a th:href="@{/aura-gestion/productos/nuevo}"
+                   style="padding:0.4rem 0.9rem; background:#1a1a1a; color:#fff; border-radius:7px;
+                          font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap;">
+                    + Nuevo
+                </a>
+            </div>
         </div>
 
         <!-- Filtros -->

@@ -97,6 +97,7 @@
         <li><a href="#nicho-arabe">Nicho Árabe</a></li>
         <li style="display:none;"><a href="#paquetes">Kits</a></li>
         <li><a href="#faq">FAQ</a></li>
+        <li><a href="#resenas">Reseñas</a></li>
         <li><a href="#contacto">Contacto</a></li>
         <li><a th:href="@{/pedido/seguimiento}">Rastrear pedido</a></li>
         <li class="nav-search-item">
@@ -801,6 +802,172 @@
             </div>
 
         </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     RESEÑAS
+════════════════════════════════════════════════════════════ -->
+<section id="resenas" class="section-center bg-beige">
+    <div class="container">
+        <div class="gold-line"></div>
+        <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+        <p class="section-subtitle">Reseñas reales de quienes ya probaron sus primeros decants con nosotros.</p>
+
+        <style>
+            .resenas-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 1.25rem;
+                margin-bottom: 2.5rem;
+            }
+            .resena-card {
+                background: #fff;
+                border-radius: 14px;
+                border: 1px solid #ece8e0;
+                padding: 1.4rem 1.5rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .resena-card-stars { color: var(--gold); font-size: 1rem; letter-spacing: 1px; }
+            .resena-card-texto {
+                font-size: 0.88rem;
+                color: #444;
+                line-height: 1.6;
+                flex: 1;
+            }
+            .resena-card-autor {
+                font-size: 0.78rem;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin-top: 0.25rem;
+            }
+            .resena-form-wrap {
+                background: #fff;
+                border-radius: 14px;
+                border: 1px solid #ece8e0;
+                padding: 1.75rem 2rem;
+                max-width: 560px;
+                margin: 0 auto;
+            }
+            .resena-form-title {
+                font-family: 'Playfair Display', serif;
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #1a1a1a;
+                margin-bottom: 1.1rem;
+            }
+            .resena-form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+            .resena-form-label { font-size: 0.78rem; font-weight: 600; color: #555; }
+            .resena-form-input, .resena-form-textarea {
+                border: 1px solid #e0dbd2;
+                border-radius: 8px;
+                padding: 0.55rem 0.8rem;
+                font-size: 0.88rem;
+                font-family: inherit;
+                color: #1a1a1a;
+                background: #fafaf8;
+                outline: none;
+                transition: border-color 0.2s;
+            }
+            .resena-form-input:focus, .resena-form-textarea:focus { border-color: var(--gold); }
+            .resena-form-textarea { resize: vertical; min-height: 100px; }
+            .star-rating { display: flex; flex-direction: row-reverse; gap: 0.35rem; margin-top: 0.1rem; }
+            .star-rating input { display: none; }
+            .star-rating label {
+                font-size: 1.5rem;
+                color: #ddd;
+                cursor: pointer;
+                transition: color 0.15s;
+                line-height: 1;
+            }
+            .star-rating input:checked ~ label,
+            .star-rating label:hover,
+            .star-rating label:hover ~ label { color: var(--gold); }
+            .resena-ok-msg {
+                background: #e8f5e9; border: 1px solid #a5d6a7;
+                border-radius: 8px; padding: 0.75rem 1rem;
+                font-size: 0.88rem; color: #2e7d32;
+                margin-bottom: 1.25rem; text-align: center;
+            }
+            .resena-err-msg {
+                background: #fdecea; border: 1px solid #f5c6c2;
+                border-radius: 8px; padding: 0.75rem 1rem;
+                font-size: 0.88rem; color: #c0392b;
+                margin-bottom: 1.25rem; text-align: center;
+            }
+            .resenas-empty-msg {
+                text-align: center; color: var(--muted);
+                font-size: 0.88rem; margin-bottom: 2rem;
+            }
+        </style>
+
+        <!-- Flash messages -->
+        <div th:if="${resenaOk}" class="resena-ok-msg">
+            ¡Gracias por tu reseña! La revisaremos y la publicaremos pronto.
+        </div>
+        <div th:if="${resenaError}" class="resena-err-msg" th:text="${resenaError}"></div>
+
+        <!-- Reseñas aprobadas -->
+        <div th:if="${resenas.isEmpty()}" class="resenas-empty-msg">
+            Sé el primero en dejar tu reseña.
+        </div>
+        <div th:if="${!resenas.isEmpty()}" class="resenas-grid">
+            <div class="resena-card" th:each="r : ${resenas}">
+                <div class="resena-card-stars">
+                    <span th:each="i : ${#numbers.sequence(1, r.calificacion)}">★</span><span th:if="${r.calificacion < 5}" th:each="i : ${#numbers.sequence(r.calificacion + 1, 5)}" style="color:#ddd;">★</span>
+                </div>
+                <div class="resena-card-texto" th:text="${r.texto}"></div>
+                <div class="resena-card-autor" th:text="'— ' + ${r.nombre}"></div>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="resena-form-wrap">
+            <div class="resena-form-title">Deja tu reseña</div>
+            <form th:action="@{/resena}" method="post">
+                <!-- Honeypot: oculto para usuarios reales -->
+                <div style="display:none;">
+                    <input type="text" name="telefono" tabindex="-1" autocomplete="off">
+                </div>
+
+                <div class="resena-form-group">
+                    <label class="resena-form-label" for="resNombre">Tu nombre</label>
+                    <input class="resena-form-input" id="resNombre" type="text" name="nombre"
+                           placeholder="Ej. María G." maxlength="100" required>
+                </div>
+
+                <div class="resena-form-group">
+                    <label class="resena-form-label">Calificación</label>
+                    <div class="star-rating">
+                        <input type="radio" name="calificacion" id="s5" value="5" required>
+                        <label for="s5">★</label>
+                        <input type="radio" name="calificacion" id="s4" value="4">
+                        <label for="s4">★</label>
+                        <input type="radio" name="calificacion" id="s3" value="3">
+                        <label for="s3">★</label>
+                        <input type="radio" name="calificacion" id="s2" value="2">
+                        <label for="s2">★</label>
+                        <input type="radio" name="calificacion" id="s1" value="1">
+                        <label for="s1">★</label>
+                    </div>
+                </div>
+
+                <div class="resena-form-group">
+                    <label class="resena-form-label" for="resTexto">Tu experiencia</label>
+                    <textarea class="resena-form-textarea" id="resTexto" name="texto"
+                              placeholder="¿Qué te pareció el producto y el servicio?"
+                              maxlength="1000" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+                    Enviar reseña
+                </button>
+            </form>
+        </div>
+
     </div>
 </section>
 

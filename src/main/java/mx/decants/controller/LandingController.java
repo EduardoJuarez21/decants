@@ -6,6 +6,7 @@ import mx.decants.repository.CuponRepository;
 import mx.decants.repository.KitRepository;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.ProductoService;
+import mx.decants.service.ResenaService;
 import mx.decants.service.VisitaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,17 +24,20 @@ public class LandingController {
     private final CuponRepository cuponRepository;
     private final KitRepository kitRepository;
     private final VisitaService visitaService;
+    private final ResenaService resenaService;
 
     public LandingController(ProductoService productoService,
                              ConfiguracionService configuracionService,
                              CuponRepository cuponRepository,
                              KitRepository kitRepository,
-                             VisitaService visitaService) {
+                             VisitaService visitaService,
+                             ResenaService resenaService) {
         this.productoService = productoService;
         this.configuracionService = configuracionService;
         this.cuponRepository = cuponRepository;
         this.kitRepository = kitRepository;
         this.visitaService = visitaService;
+        this.resenaService = resenaService;
     }
 
     @GetMapping("/")
@@ -64,6 +68,7 @@ public class LandingController {
         model.addAttribute("umbralEnvioGratis", configuracionService.getUmbralEnvioGratis());
         model.addAttribute("textoEnvioLocal",   configuracionService.getTextoEnvioLocal());
         model.addAttribute("waNumero",          configuracionService.getWhatsappNegocio());
+        model.addAttribute("resenas",           resenaService.listarAprobadas());
 
         Map<String, Kit> kitsMap = kitRepository.findAllByOrderByOrdenAsc().stream()
                 .collect(Collectors.toMap(Kit::getSlug, k -> k));
