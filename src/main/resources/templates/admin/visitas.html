@@ -130,45 +130,34 @@
         <canvas id="graficaVisitas" height="90"></canvas>
     </div>
 
-    <!-- Fuentes esta semana -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
-
-        <div class="admin-card">
-            <div class="admin-card-header">
-                <h2>Por fuente — hoy</h2>
-            </div>
-            <div style="padding:0.5rem 1.5rem 1rem;">
-                <div th:if="${porFuenteHoy.isEmpty()}"
-                     style="color:var(--muted); font-size:0.85rem; padding:0.5rem 0;">Sin visitas hoy.</div>
-                <div th:each="entry : ${porFuenteHoy}" class="fuente-row">
-                    <span class="fuente-nombre" th:text="${entry.key}"></span>
-                    <div class="fuente-bar-wrap">
-                        <div class="fuente-bar"
-                             th:style="'width:' + (${visitasHoy} > 0 ? ${entry.value * 100 / visitasHoy} : 0) + '%'"></div>
-                    </div>
-                    <span class="fuente-count" th:text="${entry.value}"></span>
-                </div>
-            </div>
+    <!-- Tabla por día -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>Visitas por día</h2>
+            <span style="font-size:0.78rem; color:var(--muted);">Últimos 30 días</span>
         </div>
-
-        <div class="admin-card">
-            <div class="admin-card-header">
-                <h2>Por fuente — 7 días</h2>
-            </div>
-            <div style="padding:0.5rem 1.5rem 1rem;">
-                <div th:if="${porFuenteSemana.isEmpty()}"
-                     style="color:var(--muted); font-size:0.85rem; padding:0.5rem 0;">Sin visitas esta semana.</div>
-                <div th:each="entry : ${porFuenteSemana}" class="fuente-row">
-                    <span class="fuente-nombre" th:text="${entry.key}"></span>
-                    <div class="fuente-bar-wrap">
-                        <div class="fuente-bar"
-                             th:style="'width:' + (${visitasSemana} > 0 ? ${entry.value * 100 / visitasSemana} : 0) + '%'"></div>
-                    </div>
-                    <span class="fuente-count" th:text="${entry.value}"></span>
-                </div>
-            </div>
+        <div style="overflow-x:auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th style="text-align:right;">Visitas</th>
+                        <th style="width:50%;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="i : ${#numbers.sequence(etiquetas.size() - 1, 0)}">
+                        <td style="font-size:0.85rem; color:#1a1a1a;" th:text="${etiquetas[i]}"></td>
+                        <td style="text-align:right; font-weight:700; color:#c9a96e;" th:text="${valores[i]}"></td>
+                        <td>
+                            <div style="background:#f5f5f5; border-radius:4px; height:6px;">
+                                <div th:style="'width:' + (${visitasMes > 0 ? valores[i] * 100 / (visitasMes / 30 + 1) : 0}) + '%; max-width:100%; height:6px; border-radius:4px; background:#c9a96e;'"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
     </div>
 
     <div style="margin-top:1rem;">
