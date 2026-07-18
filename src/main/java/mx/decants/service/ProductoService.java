@@ -29,7 +29,7 @@ public class ProductoService {
 
     @Transactional(readOnly = true)
     public Page<Producto> activosPorCategoriaPaginados(String categoria, String genero, int page) {
-        var pageable = PageRequest.of(Math.max(page, 0), PAGE_SIZE, Sort.by("orden", "nombre"));
+        var pageable = PageRequest.of(Math.max(page, 0), PAGE_SIZE, Sort.by("nombre"));
         if (genero == null || genero.isBlank() || "todos".equals(genero)) {
             return productoRepository.findByCategoriaAndActivoTrue(categoria, pageable);
         }
