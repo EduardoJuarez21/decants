@@ -500,6 +500,17 @@ section      { padding: 6rem 2rem; }
   font-size: 0.72rem; color: var(--muted);
   margin-bottom: 0.45rem; line-height: 1.55;
 }
+.product-tags {
+  display: flex; flex-wrap: wrap; gap: 0.3rem;
+  margin-bottom: 0.45rem;
+}
+.tag-pill {
+  font-size: 0.64rem; font-weight: 600;
+  color: var(--gold); background: rgba(197,164,107,0.12);
+  border: 1px solid rgba(197,164,107,0.35);
+  border-radius: 20px; padding: 0.16rem 0.55rem;
+  text-transform: uppercase; letter-spacing: 0.4px;
+}
 .star-rating { display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.45rem; }
 .stars { color: #f5a623; font-size: 0.8rem; letter-spacing: 1px; }
 .rating-num { font-size: 0.74rem; color: var(--muted); }

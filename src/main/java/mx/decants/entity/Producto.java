@@ -28,6 +28,8 @@ public class Producto {
     @Column(nullable = false)
     private String notas;
 
+    private String caracteristicas;  // ej. "Dulce · Juvenil · Fresco" — cómo se percibe, no de qué está hecho
+
     @Column(nullable = false)
     private String imagenPrincipal;
 
@@ -80,6 +82,9 @@ public class Producto {
 
     public String getNotas() { return notas; }
     public void setNotas(String notas) { this.notas = notas; }
+
+    public String getCaracteristicas() { return caracteristicas; }
+    public void setCaracteristicas(String caracteristicas) { this.caracteristicas = caracteristicas; }
 
     public String getImagenPrincipal() { return imagenPrincipal; }
     public void setImagenPrincipal(String imagenPrincipal) { this.imagenPrincipal = imagenPrincipal; }

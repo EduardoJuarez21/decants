@@ -183,6 +183,7 @@ public class AdminController {
                                 @RequestParam String genero,
                                 @RequestParam(required = false) String familia,
                                 @RequestParam(required = false) String notas,
+                                @RequestParam(required = false) String caracteristicas,
                                 @RequestParam Integer precio,
                                 @RequestParam(required = false) Integer precio5ml,
                                 @RequestParam(defaultValue = "false") boolean bestSeller,
@@ -204,7 +205,7 @@ public class AdminController {
             }
 
             productoService.crear(nombre, marca, categoria, genero,
-                familia, notas, precio, precio5ml, bestSeller, pathPrincipal, pathCar, orden);
+                familia, notas, caracteristicas, precio, precio5ml, bestSeller, pathPrincipal, pathCar, orden);
 
             ra.addFlashAttribute("mensaje", "Producto \"" + nombre + "\" creado correctamente.");
             return "redirect:/aura-gestion/productos";
@@ -236,8 +237,9 @@ public class AdminController {
                                   @RequestParam(required = false) Integer precio3ml,
                                   @RequestParam(defaultValue = "false") boolean bestSeller,
                                   @RequestParam(required = false) Integer stock,
+                                  @RequestParam(required = false) String caracteristicas,
                                   RedirectAttributes ra) {
-        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller);
+        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas);
         productoService.actualizarStock(id, stock);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
         return "redirect:/aura-gestion/productos";

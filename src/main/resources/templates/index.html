@@ -211,6 +211,9 @@
                     <h3 th:text="${p.nombre}"></h3>
                     <p class="product-family" th:text="${p.familia}"></p>
                     <p class="product-notes" th:text="${p.notas}"></p>
+                    <div class="product-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
+                        <span class="tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
+                    </div>
                     <div th:if="${(p.precio3ml != null or p.precio5ml != null) and (p.stock == null or p.stock > 0)}" class="size-options">
                         <button th:if="${p.precio3ml != null}" class="size-btn"
                                 th:data-id="${p.id}"
@@ -320,6 +323,9 @@
                     <h3 th:text="${p.nombre}"></h3>
                     <p class="product-family" th:text="${p.familia}"></p>
                     <p class="product-notes" th:text="${p.notas}"></p>
+                    <div class="product-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
+                        <span class="tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
+                    </div>
                     <div th:if="${(p.precio3ml != null or p.precio5ml != null) and (p.stock == null or p.stock > 0)}" class="size-options">
                         <button th:if="${p.precio3ml != null}" class="size-btn"
                                 th:data-id="${p.id}"

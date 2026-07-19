@@ -107,6 +107,56 @@
             color: var(--muted);
             font-style: italic;
         }
+        .cat-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.35rem;
+        }
+        .cat-tag-pill {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--gold);
+            background: rgba(197,164,107,0.12);
+            border: 1px solid rgba(197,164,107,0.35);
+            border-radius: 20px;
+            padding: 0.14rem 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .cat-filter-wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            justify-content: center;
+        }
+        .cat-filter-chip {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #444;
+            background: #fff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 0.35rem 0.9rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .cat-filter-chip:hover { border-color: var(--gold); }
+        .cat-filter-chip.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #fff;
+        }
+        .cat-sin-resultados {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.85rem;
+            padding: 1.5rem 1rem 0;
+            display: none;
+        }
         .cat-card-price {
             margin-top: auto;
             padding-top: 0.5rem;
@@ -191,6 +241,14 @@
     <p>Catálogo de fragancias</p>
 </div>
 
+<!-- Filtro por carácter -->
+<div class="cat-filter-wrap" id="catFiltros" th:if="${!tagsDisponibles.isEmpty()}" style="margin: 1.25rem auto 0;">
+    <button type="button" class="cat-filter-chip active" data-tag="todos" onclick="filtrarPorTag('todos', this)">Todos</button>
+    <button type="button" class="cat-filter-chip" th:each="tag : ${tagsDisponibles}"
+            th:text="${tag}" th:attr="data-tag=${tag}" onclick="filtrarPorTag(this.getAttribute('data-tag'), this)"></button>
+</div>
+<p class="cat-sin-resultados" id="catSinResultados">No hay fragancias con ese carácter por ahora.</p>
+
 <!-- Alta Perfumería -->
 <div class="cat-section-label">
     <div class="gold-line"></div>
@@ -199,7 +257,8 @@
 </div>
 
 <div class="cat-grid">
-    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'alta-perfumeria'}">
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'alta-perfumeria'}"
+         th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
         <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" loading="lazy">
         <div class="cat-card-body">
             <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
@@ -207,6 +266,9 @@
             <span class="cat-card-brand" th:text="${p.marca}"></span>
             <span class="cat-card-name"  th:text="${p.nombre}"></span>
             <span class="cat-card-family" th:text="${p.familia}"></span>
+            <div class="cat-card-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
+                <span class="cat-tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
+            </div>
             <div class="cat-card-price">
                 <span th:if="${p.precio3ml != null}">
                     <span class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
@@ -233,7 +295,8 @@
 </div>
 
 <div class="cat-grid">
-    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'nicho-arabe'}">
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'nicho-arabe'}"
+         th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
         <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" loading="lazy">
         <div class="cat-card-body">
             <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
@@ -241,6 +304,9 @@
             <span class="cat-card-brand" th:text="${p.marca}"></span>
             <span class="cat-card-name"  th:text="${p.nombre}"></span>
             <span class="cat-card-family" th:text="${p.familia}"></span>
+            <div class="cat-card-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
+                <span class="cat-tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
+            </div>
             <div class="cat-card-price">
                 <span th:if="${p.precio3ml != null}">
                     <span class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
@@ -268,6 +334,25 @@
         Ver tienda completa → auradecantsmx.com
     </a>
 </div>
+
+<script>
+function filtrarPorTag(tag, chip) {
+    document.querySelectorAll('#catFiltros .cat-filter-chip').forEach(function(c) { c.classList.remove('active'); });
+    chip.classList.add('active');
+
+    var cards = document.querySelectorAll('.cat-card');
+    var visibles = 0;
+
+    cards.forEach(function(card) {
+        var tags = (card.getAttribute('data-tags') || '').split('·').map(function(t) { return t.trim().toLowerCase(); });
+        var mostrar = tag === 'todos' || tags.indexOf(tag.toLowerCase()) !== -1;
+        card.style.display = mostrar ? '' : 'none';
+        if (mostrar) visibles++;
+    });
+
+    document.getElementById('catSinResultados').style.display = visibles === 0 ? 'block' : 'none';
+}
+</script>
 
 </body>
 </html>

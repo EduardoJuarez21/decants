@@ -84,8 +84,20 @@ public class LandingController {
 
     @GetMapping("/catalogo")
     public String catalogo(Model model) {
-        model.addAttribute("productos", productoService.activosTodos());
+        var productos = productoService.activosTodos();
+        model.addAttribute("productos", productos);
         model.addAttribute("waNumero",  configuracionService.getWhatsappNegocio());
+
+        var tags = productos.stream()
+                .filter(p -> p.getCaracteristicas() != null && !p.getCaracteristicas().isBlank())
+                .flatMap(p -> java.util.Arrays.stream(p.getCaracteristicas().split("·")))
+                .map(String::trim)
+                .filter(t -> !t.isEmpty())
+                .distinct()
+                .sorted()
+                .toList();
+        model.addAttribute("tagsDisponibles", tags);
+
         return "catalogo";
     }
 
