@@ -84,6 +84,12 @@ section      { padding: 6rem 2rem; }
   font-weight: 600;
   letter-spacing: 0.3px;
 }
+.promo-bar-link {
+  color: var(--black);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.promo-bar-link:hover { color: #fff; }
 
 /* ── Navbar ────────────────────────────────────────────────── */
 .navbar {

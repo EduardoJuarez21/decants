@@ -78,6 +78,9 @@
 <!-- Barra de envío gratis -->
 <div class="promo-bar">
     &#128666; Envío gratis a toda la República en pedidos desde $<span th:text="${umbralEnvioGratis}">1299</span> &nbsp;·&nbsp; &#128338; <span th:text="${textoEnvioLocal}">Entregas personales gratis en el Área Metropolitana de Monterrey</span>
+    &nbsp;·&nbsp;
+    <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Quisiera solicitar un descuento para mi pedido en Aura Decants.')}"
+       target="_blank" class="promo-bar-link">&#128172; Solicita tu descuento por WhatsApp</a>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
