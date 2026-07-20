@@ -55,6 +55,6 @@ public class ConfiguracionService {
 
     @Transactional(readOnly = true)
     public String getWhatsappNegocio() {
-        return get("whatsapp_negocio", "525631555401");
+        return get("whatsapp_negocio", "528119874977");
     }
 }
