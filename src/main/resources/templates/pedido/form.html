@@ -170,11 +170,12 @@
                             </button>
                         </div>
                     </div>
-                    <div id="mapContainer" style="display:none; width:100%; border-radius:12px; overflow:hidden; margin-bottom:0.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-                        <div id="map"></div>
-                        <div style="padding:0.5rem 0.9rem; background:#fff; font-size:0.73rem; color:var(--muted); border-top:1px solid #eee;">
-                            &#128205; Arrastra el pin para ajustar la ubicación exacta
-                        </div>
+                </div>
+
+                <div id="mapContainer" style="display:none; width:100%; border-radius:12px; overflow:hidden; margin-bottom:0.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.08);" class="full-width">
+                    <div id="map"></div>
+                    <div style="padding:0.5rem 0.9rem; background:#fff; font-size:0.73rem; color:var(--muted); border-top:1px solid #eee;">
+                        &#128205; Arrastra el pin para ajustar la ubicación exacta
                     </div>
                 </div>
 
@@ -493,9 +494,25 @@
 
 <script>
     var _cpData = null;
+    var _usandoFlujoCP = false;
+    var _pendingMapPos = null;
 
     function mostrarDireccionManual() {
         document.getElementById('direccionManualWrap').style.display = 'block';
+        _usandoFlujoCP = false;
+    }
+
+    function mostrarMapaEnPosicion(lat, lng) {
+        if (typeof google === 'undefined' || !_map || !_marker) {
+            _pendingMapPos = { lat: lat, lng: lng };
+            return;
+        }
+        var pos = { lat: lat, lng: lng };
+        _map.setCenter(pos);
+        _map.setZoom(17);
+        _marker.map = _map;
+        _marker.position = pos;
+        document.getElementById('mapContainer').style.display = 'block';
     }
 
     function actualizarDireccionFinal() {
@@ -509,12 +526,15 @@
         var cp = document.getElementById('cpNacionalInput').value.trim();
         var direccion = calle + ', ' + colonia.nombre + ', ' + _cpData.municipio + ', ' + _cpData.estado + ', CP ' + cp;
 
+        _usandoFlujoCP = true;
         document.getElementById('direccionInput').value = direccion;
         document.getElementById('latitudInput').value    = colonia.lat;
         document.getElementById('longitudInput').value   = colonia.lng;
         document.getElementById('addressConfirmText').textContent = direccion;
         document.getElementById('addressConfirmBox').style.display = 'block';
         document.getElementById('addressError').style.display = 'none';
+
+        mostrarMapaEnPosicion(colonia.lat, colonia.lng);
     }
 
     function buscarCP(cp) {
@@ -605,6 +625,7 @@
                 }
                 var place = results[0];
                 var pos = place.geometry.location;
+                _usandoFlujoCP = false;
                 _map.setCenter(pos);
                 _map.setZoom(17);
                 _marker.map = _map;
@@ -621,6 +642,12 @@
 
         _marker.addListener('dragend', function(event) {
             var latLng = event.latLng;
+            if (_usandoFlujoCP) {
+                // Ya tenemos una dirección verificada por CP: solo afinamos el pin, sin pisar el texto.
+                document.getElementById('latitudInput').value  = latLng.lat();
+                document.getElementById('longitudInput').value = latLng.lng();
+                return;
+            }
             _geocoder.geocode({ location: latLng }, function(results, status) {
                 var addr = (status === 'OK' && results[0]) ? results[0].formatted_address : null;
                 setAddress(addr, latLng.lat(), latLng.lng());
@@ -630,6 +657,11 @@
         window.addEventListener('resize', function() {
             google.maps.event.trigger(_map, 'resize');
         });
+
+        if (_pendingMapPos) {
+            mostrarMapaEnPosicion(_pendingMapPos.lat, _pendingMapPos.lng);
+            _pendingMapPos = null;
+        }
     }
 
     function setAddress(addr, lat, lng) {
