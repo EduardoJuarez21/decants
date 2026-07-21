@@ -25,9 +25,14 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private static final int  SEGUIMIENTO_MAX     = 20;
     private static final long SEGUIMIENTO_WINDOW_MS = 5 * 60 * 1000L;
 
+    // GET /api/codigo-postal/*: máx 30 consultas por IP cada 5 minutos
+    private static final int  CP_MAX          = 30;
+    private static final long CP_WINDOW_MS    = 5 * 60 * 1000L;
+
     private final ConcurrentHashMap<String, Bucket> pedidoBuckets      = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Bucket> cuponBuckets       = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Bucket> seguimientoBuckets = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Bucket> cpBuckets          = new ConcurrentHashMap<>();
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
@@ -45,6 +50,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
             limited = isLimited(ip, cuponBuckets, CUPON_MAX, CUPON_WINDOW_MS);
         } else if ("GET".equalsIgnoreCase(method) && "/pedido/seguimiento".equals(path)) {
             limited = isLimited(ip, seguimientoBuckets, SEGUIMIENTO_MAX, SEGUIMIENTO_WINDOW_MS);
+        } else if ("GET".equalsIgnoreCase(method) && path.startsWith("/api/codigo-postal/")) {
+            limited = isLimited(ip, cpBuckets, CP_MAX, CP_WINDOW_MS);
         }
 
         if (limited) {
