@@ -125,74 +125,30 @@
                 <div class="form-divider"></div>
 
                 <div class="form-group full-width">
-                    <label for="cpNacionalInput">Código postal <span class="required">*</span></label>
-                    <input type="text" id="cpNacionalInput" class="form-control" style="max-width:180px;"
-                           inputmode="numeric" maxlength="5" placeholder="Ej: 64000" autocomplete="off">
-                    <span id="cpNacionalLoading" style="display:none; font-size:0.78rem; color:var(--muted);">Buscando…</span>
-                    <span class="field-error" id="cpNacionalError" style="display:none;"></span>
-                </div>
-
-                <p id="ubicacionTexto" class="full-width" style="display:none; font-size:0.85rem; color:var(--dark); margin:-0.5rem 0 0.25rem;"></p>
-
-                <div class="form-group full-width" id="coloniaGroup" style="display:none;">
-                    <label for="coloniaSelect">Colonia <span class="required">*</span></label>
-                    <select id="coloniaSelect" class="form-control"></select>
-                </div>
-
-                <div class="form-group" id="calleGroup" style="display:none;">
-                    <label for="calleInput">Calle <span class="required">*</span></label>
-                    <input type="text" id="calleInput" class="form-control"
-                           placeholder="Ej: Av. Constitución" autocomplete="off">
-                </div>
-
-                <div class="form-group" id="numeroGroup" style="display:none;">
-                    <label for="numeroInput">Número <span class="required">*</span></label>
-                    <input type="text" id="numeroInput" class="form-control"
-                           placeholder="Ej: 123" autocomplete="off">
+                    <label for="addressSearch">Escribe tu dirección completa <span class="required">*</span></label>
+                    <div style="display:flex; gap:0.5rem;">
+                        <input type="text" id="addressSearch" class="form-control"
+                               placeholder="Calle, número, colonia, ciudad..."
+                               autocomplete="off" style="flex:1;">
+                        <button type="button" id="buscarDireccionBtn"
+                                style="padding:0 1.1rem; background:#1a1a1a; color:#fff; border:none;
+                                       border-radius:8px; font-size:0.85rem; font-family:inherit;
+                                       cursor:pointer; font-weight:600; white-space:nowrap;">
+                            Buscar en el mapa
+                        </button>
+                    </div>
+                    <span class="field-error" id="addressError" style="display:none;">
+                        Por favor busca y confirma tu dirección de entrega
+                    </span>
+                    <span class="field-error"
+                          th:if="${#fields.hasErrors('direccion')}"
+                          th:errors="*{direccion}"></span>
                 </div>
 
                 <div id="mapContainer" style="display:none; width:100%; border-radius:12px; overflow:hidden; margin-bottom:0.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.08);" class="full-width">
                     <div id="map"></div>
                     <div style="padding:0.5rem 0.9rem; background:#fff; font-size:0.73rem; color:var(--muted); border-top:1px solid #eee;">
                         &#128205; Arrastra el pin para ajustar la ubicación exacta
-                    </div>
-                </div>
-
-                <div class="full-width" id="buscarBtnWrap" style="display:none; margin-bottom:0.5rem;">
-                    <button type="button" id="buscarEnMapaBtn"
-                            style="padding:0.7rem 1.5rem; background:#1a1a1a; color:#fff; border:none;
-                                   border-radius:8px; font-size:0.88rem; font-family:inherit;
-                                   cursor:pointer; font-weight:600;">
-                        Buscar en el mapa
-                    </button>
-                </div>
-
-                <span class="field-error full-width" id="addressError" style="display:none;">
-                    Por favor completa tu dirección de entrega
-                </span>
-                <span class="field-error full-width"
-                      th:if="${#fields.hasErrors('direccion')}"
-                      th:errors="*{direccion}"></span>
-
-                <p id="cpFallbackLink" style="display:none; font-size:0.8rem;" class="full-width">
-                    <a href="#" onclick="mostrarDireccionManual(); return false;">¿No encontramos tu colonia? Escribe tu dirección completa aquí</a>
-                </p>
-
-                <!-- Dirección manual (respaldo si el código postal no se puede verificar) -->
-                <div id="direccionManualWrap" style="display:none;" class="full-width">
-                    <div class="form-group full-width">
-                        <label for="addressSearch">Escribe tu dirección completa <span class="required">*</span></label>
-                        <div style="display:flex; gap:0.5rem;">
-                            <input type="text" id="addressSearch" class="form-control"
-                                   placeholder="Calle, número, colonia, ciudad..."
-                                   autocomplete="off" style="flex:1;">
-                            <button type="button" id="buscarDireccionBtn"
-                                    style="padding:0 1.1rem; background:#1a1a1a; color:#fff; border:none;
-                                           border-radius:8px; font-size:0.85rem; font-family:inherit;
-                                           cursor:pointer; font-weight:600; white-space:nowrap;">
-                                Buscar en el mapa
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -509,141 +465,6 @@
     initForm();
 </script>
 
-<script>
-    var _cpData = null;
-    var _usandoFlujoCP = false;
-    var _pendingMapPos = null;
-
-    function mostrarDireccionManual() {
-        document.getElementById('direccionManualWrap').style.display = 'block';
-        _usandoFlujoCP = false;
-    }
-
-    function mostrarMapaEnPosicion(lat, lng) {
-        if (typeof google === 'undefined' || !_map || !_marker) {
-            _pendingMapPos = { lat: lat, lng: lng };
-            return;
-        }
-        var pos = { lat: lat, lng: lng };
-        _map.setCenter(pos);
-        _map.setZoom(16);
-        _marker.map = _map;
-        _marker.position = pos;
-        document.getElementById('mapContainer').style.display = 'block';
-    }
-
-    function coloniaSeleccionada() {
-        if (!_cpData) return null;
-        var sel = document.getElementById('coloniaSelect');
-        var idx = parseInt(sel.value, 10);
-        return _cpData.colonias[idx] || null;
-    }
-
-    // Vista previa: mueve el pin al elegir colonia, sin confirmar la dirección todavía
-    function previsualizarColonia() {
-        var colonia = coloniaSeleccionada();
-        if (colonia) mostrarMapaEnPosicion(colonia.lat, colonia.lng);
-        evaluarBotonBuscar();
-    }
-
-    function evaluarBotonBuscar() {
-        var calle   = document.getElementById('calleInput').value.trim();
-        var numero  = document.getElementById('numeroInput').value.trim();
-        var colonia = coloniaSeleccionada();
-        document.getElementById('buscarBtnWrap').style.display = (colonia && calle && numero) ? 'block' : 'none';
-    }
-
-    function confirmarDireccion() {
-        var colonia = coloniaSeleccionada();
-        var calle   = document.getElementById('calleInput').value.trim();
-        var numero  = document.getElementById('numeroInput').value.trim();
-        if (!colonia || !calle || !numero) return;
-
-        var cp = document.getElementById('cpNacionalInput').value.trim();
-        var direccion = calle + ' ' + numero + ', ' + colonia.nombre + ', ' + _cpData.municipio + ', ' + _cpData.estado + ', CP ' + cp;
-
-        _usandoFlujoCP = true;
-        document.getElementById('direccionInput').value = direccion;
-        document.getElementById('latitudInput').value    = colonia.lat;
-        document.getElementById('longitudInput').value   = colonia.lng;
-        document.getElementById('addressConfirmText').textContent = direccion;
-        document.getElementById('addressConfirmBox').style.display = 'block';
-        document.getElementById('addressError').style.display = 'none';
-
-        mostrarMapaEnPosicion(colonia.lat, colonia.lng);
-    }
-
-    function buscarCP(cp) {
-        _cpData = null;
-        document.getElementById('ubicacionTexto').style.display = 'none';
-        document.getElementById('coloniaGroup').style.display = 'none';
-        document.getElementById('calleGroup').style.display   = 'none';
-        document.getElementById('numeroGroup').style.display  = 'none';
-        document.getElementById('buscarBtnWrap').style.display = 'none';
-        document.getElementById('mapContainer').style.display = 'none';
-        document.getElementById('addressConfirmBox').style.display = 'none';
-        document.getElementById('cpFallbackLink').style.display = 'none';
-        document.getElementById('cpNacionalError').style.display = 'none';
-        document.getElementById('cpNacionalLoading').style.display = 'inline';
-
-        fetch('/api/codigo-postal/' + cp)
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                document.getElementById('cpNacionalLoading').style.display = 'none';
-                if (!data.ok) {
-                    document.getElementById('cpNacionalError').textContent = data.error || 'No encontramos ese código postal.';
-                    document.getElementById('cpNacionalError').style.display = 'block';
-                    document.getElementById('cpFallbackLink').style.display = 'block';
-                    return;
-                }
-                _cpData = data;
-                var sel = document.getElementById('coloniaSelect');
-                sel.innerHTML = '';
-                data.colonias.forEach(function(c, i) {
-                    var opt = document.createElement('option');
-                    opt.value = i;
-                    opt.textContent = c.nombre;
-                    sel.appendChild(opt);
-                });
-
-                document.getElementById('ubicacionTexto').textContent = 'Estado: ' + data.estado + '  ·  Municipio: ' + data.municipio;
-                document.getElementById('ubicacionTexto').style.display = 'block';
-                document.getElementById('coloniaGroup').style.display = 'block';
-                document.getElementById('calleGroup').style.display   = 'block';
-                document.getElementById('numeroGroup').style.display  = 'block';
-
-                // Mapa visible desde el inicio, centrado en la primera colonia como referencia
-                mostrarMapaEnPosicion(data.colonias[0].lat, data.colonias[0].lng);
-            })
-            .catch(function() {
-                document.getElementById('cpNacionalLoading').style.display = 'none';
-                document.getElementById('cpNacionalError').textContent = 'No se pudo verificar el código postal, intenta de nuevo.';
-                document.getElementById('cpNacionalError').style.display = 'block';
-                document.getElementById('cpFallbackLink').style.display = 'block';
-            });
-    }
-
-    document.getElementById('cpNacionalInput').addEventListener('input', function() {
-        var val = this.value.replace(/\D/g, '').slice(0, 5);
-        this.value = val;
-        if (val.length === 5) {
-            buscarCP(val);
-        } else {
-            document.getElementById('ubicacionTexto').style.display = 'none';
-            document.getElementById('coloniaGroup').style.display = 'none';
-            document.getElementById('calleGroup').style.display   = 'none';
-            document.getElementById('numeroGroup').style.display  = 'none';
-            document.getElementById('buscarBtnWrap').style.display = 'none';
-            document.getElementById('mapContainer').style.display = 'none';
-        }
-    });
-
-    document.getElementById('coloniaSelect').addEventListener('change', previsualizarColonia);
-    document.getElementById('calleInput').addEventListener('input', evaluarBotonBuscar);
-    document.getElementById('numeroInput').addEventListener('input', evaluarBotonBuscar);
-    document.getElementById('buscarEnMapaBtn').addEventListener('click', confirmarDireccion);
-</script>
-
 <script th:inline="javascript">
     var _gmKey = /*[[${googleMapsKey}]]*/ '';
     var _map, _marker, _geocoder;
@@ -677,7 +498,6 @@
                 }
                 var place = results[0];
                 var pos = place.geometry.location;
-                _usandoFlujoCP = false;
                 _map.setCenter(pos);
                 _map.setZoom(17);
                 _marker.map = _map;
@@ -694,12 +514,6 @@
 
         _marker.addListener('dragend', function(event) {
             var latLng = event.latLng;
-            if (_usandoFlujoCP) {
-                // Ya tenemos una dirección verificada por CP: solo afinamos el pin, sin pisar el texto.
-                document.getElementById('latitudInput').value  = latLng.lat();
-                document.getElementById('longitudInput').value = latLng.lng();
-                return;
-            }
             _geocoder.geocode({ location: latLng }, function(results, status) {
                 var addr = (status === 'OK' && results[0]) ? results[0].formatted_address : null;
                 setAddress(addr, latLng.lat(), latLng.lng());
@@ -709,11 +523,6 @@
         window.addEventListener('resize', function() {
             google.maps.event.trigger(_map, 'resize');
         });
-
-        if (_pendingMapPos) {
-            mostrarMapaEnPosicion(_pendingMapPos.lat, _pendingMapPos.lng);
-            _pendingMapPos = null;
-        }
     }
 
     function setAddress(addr, lat, lng) {
