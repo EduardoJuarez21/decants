@@ -65,6 +65,16 @@
                               font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
             </div>
 
+            <!-- Inspiración / comparación -->
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                    Inspiración <span style="font-weight:400; color:var(--muted);">(opcional, solo certeza alta — ej. "Recuerda a: Creed Aventus")</span>
+                </label>
+                <input type="text" name="inspiracion" th:value="${producto.inspiracion}" placeholder="ej. ADN similar a: Creed Aventus"
+                       style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                              font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+            </div>
+
             <!-- Precios -->
             <div style="display:flex; gap:1rem;">
                 <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">

@@ -517,6 +517,10 @@ section      { padding: 6rem 2rem; }
   border-radius: 20px; padding: 0.16rem 0.55rem;
   text-transform: uppercase; letter-spacing: 0.4px;
 }
+.product-inspiracion {
+  font-size: 0.68rem; color: var(--muted); font-style: italic;
+  margin-bottom: 0.45rem;
+}
 .star-rating { display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.45rem; }
 .stars { color: #f5a623; font-size: 0.8rem; letter-spacing: 1px; }
 .rating-num { font-size: 0.74rem; color: var(--muted); }

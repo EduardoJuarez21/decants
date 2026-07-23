@@ -30,6 +30,8 @@ public class Producto {
 
     private String caracteristicas;  // ej. "Dulce · Juvenil · Fresco" — cómo se percibe, no de qué está hecho
 
+    private String inspiracion;      // ej. "Recuerda a: Creed Aventus" — comparación olfativa, texto libre
+
     @Column(nullable = false)
     private String imagenPrincipal;
 
@@ -85,6 +87,9 @@ public class Producto {
 
     public String getCaracteristicas() { return caracteristicas; }
     public void setCaracteristicas(String caracteristicas) { this.caracteristicas = caracteristicas; }
+
+    public String getInspiracion() { return inspiracion; }
+    public void setInspiracion(String inspiracion) { this.inspiracion = inspiracion; }
 
     public String getImagenPrincipal() { return imagenPrincipal; }
     public void setImagenPrincipal(String imagenPrincipal) { this.imagenPrincipal = imagenPrincipal; }

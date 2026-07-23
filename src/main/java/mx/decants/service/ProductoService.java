@@ -62,7 +62,7 @@ public class ProductoService {
         return productoRepository.findById(id);
     }
 
-    public void actualizar(Long id, Integer precio, Integer precio5ml, Integer precio3ml, String nombre, String marca, boolean bestSeller, String caracteristicas) {
+    public void actualizar(Long id, Integer precio, Integer precio5ml, Integer precio3ml, String nombre, String marca, boolean bestSeller, String caracteristicas, String inspiracion) {
         productoRepository.findById(id).ifPresent(p -> {
             if (nombre != null && !nombre.isBlank()) p.setNombre(nombre.trim());
             if (marca  != null && !marca.isBlank())  p.setMarca(marca.trim());
@@ -71,6 +71,7 @@ public class ProductoService {
             p.setPrecio3ml(precio3ml != null && precio3ml > 0 ? precio3ml : null);
             p.setBestSeller(bestSeller);
             p.setCaracteristicas(caracteristicas != null && !caracteristicas.isBlank() ? caracteristicas.trim() : null);
+            p.setInspiracion(inspiracion != null && !inspiracion.isBlank() ? inspiracion.trim() : null);
             productoRepository.save(p);
         });
     }

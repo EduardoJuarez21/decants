@@ -238,8 +238,9 @@ public class AdminController {
                                   @RequestParam(defaultValue = "false") boolean bestSeller,
                                   @RequestParam(required = false) Integer stock,
                                   @RequestParam(required = false) String caracteristicas,
+                                  @RequestParam(required = false) String inspiracion,
                                   RedirectAttributes ra) {
-        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas);
+        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion);
         productoService.actualizarStock(id, stock);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
         return "redirect:/aura-gestion/productos";

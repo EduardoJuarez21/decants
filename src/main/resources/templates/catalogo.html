@@ -107,6 +107,12 @@
             color: var(--muted);
             font-style: italic;
         }
+        .cat-card-inspiracion {
+            font-size: 0.65rem;
+            color: var(--muted);
+            font-style: italic;
+            margin-top: 0.3rem;
+        }
         .cat-card-tags {
             display: flex;
             flex-wrap: wrap;
@@ -269,6 +275,7 @@
             <div class="cat-card-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
                 <span class="cat-tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
             </div>
+            <p class="cat-card-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
             <div class="cat-card-price">
                 <span th:if="${p.precio3ml != null}">
                     <span class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
@@ -307,6 +314,7 @@
             <div class="cat-card-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
                 <span class="cat-tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
             </div>
+            <p class="cat-card-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
             <div class="cat-card-price">
                 <span th:if="${p.precio3ml != null}">
                     <span class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
