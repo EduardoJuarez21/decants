@@ -45,8 +45,8 @@ public class DataInitializer implements CommandLineRunner {
 
         repo.save(p("Donna Born in Roma", "Valentino", "alta-perfumeria", "mujer",
                 "Floral Gourmand · Mujer", "Jazmín · Vainilla · Vetiver · Iris",
-                "/img/alta-perfumeria/hombre/valentino.webp",
-                "/img/alta-perfumeria/hombre/car-valentino.webp",
+                "/img/alta-perfumeria/mujer/valentino.webp",
+                "/img/alta-perfumeria/mujer/car-valentino.webp",
                 "pi-valentino", 220, null, 4.7, false, false, 4));
 
         repo.save(p("Cloud", "Ariana Grande", "alta-perfumeria", "mujer",
