@@ -326,7 +326,7 @@
 <div class="cat-grid">
     <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'alta-perfumeria'}"
          th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
-        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" loading="lazy">
+        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}">
         <div class="cat-card-body">
             <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
             <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
@@ -372,7 +372,7 @@
 <div class="cat-grid">
     <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'nicho-arabe'}"
          th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
-        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" loading="lazy">
+        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}">
         <div class="cat-card-body">
             <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
             <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
