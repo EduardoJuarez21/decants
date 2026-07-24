@@ -80,8 +80,7 @@
             <select id="filtroEstado" onchange="aplicarFiltros()"
                     style="padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
                            font-size:0.82rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
-                <option value="__no_cancelado__" selected>Activos (sin cancelados)</option>
-                <option value="">Todos los estados</option>
+                <option value="" selected>Todos los estados</option>
                 <option value="Creado">Creado</option>
                 <option value="Pendiente de pago">Pendiente de pago</option>
                 <option value="Confirmado">Confirmado</option>
@@ -233,12 +232,7 @@ function aplicarFiltros() {
         var guia    = fila.cells[9].textContent.toLowerCase();
 
         var okQ      = !q     || id.includes(q) || codigo.includes(q) || nombre.includes(q) || tel.includes(q) || guia.includes(q);
-        var okEstado;
-        if (estado === '__no_cancelado__') {
-            okEstado = !estadoF.includes('cancelado');
-        } else {
-            okEstado = !estado || estadoF.includes(estado);
-        }
+        var okEstado = !estado ? !estadoF.includes('cancelado') : estadoF.includes(estado);
         var okTipo   = !tipo  || entorno.includes(tipo);
         return okQ && okEstado && okTipo;
     });
