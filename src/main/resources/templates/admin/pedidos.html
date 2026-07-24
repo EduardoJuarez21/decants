@@ -72,12 +72,12 @@
 
         <!-- Filtros -->
         <div style="padding:0.75rem 1.25rem; border-bottom:1px solid #f0ede8; display:flex; gap:0.6rem; flex-wrap:wrap;">
-            <input type="text" id="buscadorPedidos"
+            <input type="text" id="buscadorPedidos" autocomplete="off"
                    placeholder="Buscar por nombre, teléfono, # pedido, código AURA o guía…"
                    oninput="aplicarFiltros()"
                    style="flex:1; min-width:180px; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
                           border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
-            <select id="filtroEstado" onchange="aplicarFiltros()"
+            <select id="filtroEstado" onchange="aplicarFiltros()" autocomplete="off"
                     style="padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
                            font-size:0.82rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
                 <option value="" selected>Todos los estados</option>
@@ -89,7 +89,7 @@
                 <option value="Entregado">Entregado</option>
                 <option value="Cancelado">Cancelado</option>
             </select>
-            <select id="filtroTipo" onchange="aplicarFiltros()"
+            <select id="filtroTipo" onchange="aplicarFiltros()" autocomplete="off"
                     style="padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
                            font-size:0.82rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
                 <option value="">Todos los tipos</option>
@@ -228,7 +228,10 @@ function aplicarFiltros() {
         var nombre  = fila.cells[2].textContent.toLowerCase();
         var tel     = fila.cells[3].textContent.toLowerCase();
         var entorno = fila.cells[7].textContent.toLowerCase();
-        var estadoF = fila.cells[8].textContent.toLowerCase();
+        var estadoSelect = fila.cells[8].querySelector('select');
+        var estadoF = estadoSelect
+            ? estadoSelect.options[estadoSelect.selectedIndex].textContent.toLowerCase()
+            : fila.cells[8].textContent.toLowerCase();
         var guia    = fila.cells[9].textContent.toLowerCase();
 
         var okQ      = !q     || id.includes(q) || codigo.includes(q) || nombre.includes(q) || tel.includes(q) || guia.includes(q);
@@ -280,7 +283,14 @@ function renderPagina() {
     pag.appendChild(btn('Sig ›', paginaActual + 1, paginaActual === paginas, false));
 }
 
-document.addEventListener('DOMContentLoaded', function() { aplicarFiltros(); });
+document.addEventListener('DOMContentLoaded', function() {
+    // Algunos navegadores restauran el valor anterior del select al recargar
+    // la pagina sin disparar 'change'. Forzamos el estado por defecto.
+    document.getElementById('buscadorPedidos').value = '';
+    document.getElementById('filtroEstado').value = '';
+    document.getElementById('filtroTipo').value = '';
+    aplicarFiltros();
+});
 </script>
 </body>
 </html>
