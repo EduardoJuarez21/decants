@@ -105,6 +105,7 @@
                         <th>Género</th>
                         <th>Precio</th>
                         <th>Stock</th>
+                        <th>Promo</th>
                         <th>Estado</th>
                         <th></th>
                     </tr>
@@ -130,6 +131,22 @@
                             <span th:if="${p.precio5ml != null}"
                                   style="font-size:0.75rem; color:var(--muted);"
                                   th:text="| / $${p.precio5ml} (5ml)|"></span>
+                        </td>
+                        <td>
+                            <div th:if="${p.descuentoPorcentaje != null}" style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+                                <span th:if="${p.promoActivo}" class="badge" style="background:#fce4ec; color:#c0392b;"
+                                      th:text="|-${p.descuentoPorcentaje}% activa|"></span>
+                                <span th:unless="${p.promoActivo}" class="badge" style="background:#f5f5f5; color:#888;"
+                                      th:text="|-${p.descuentoPorcentaje}% pausada|"></span>
+                                <form th:action="@{/aura-gestion/productos/{id}/toggle-promo(id=${p.id})}" method="post" style="margin:0;">
+                                    <button type="submit"
+                                            th:class="${p.promoActivo ? 'btn-toggle btn-toggle-off' : 'btn-toggle btn-toggle-on'}"
+                                            style="font-size:0.7rem; padding:2px 8px;">
+                                        <span th:text="${p.promoActivo ? 'Pausar' : 'Activar'}"></span>
+                                    </button>
+                                </form>
+                            </div>
+                            <span th:unless="${p.descuentoPorcentaje != null}" style="font-size:0.75rem; color:#ccc;">—</span>
                         </td>
                         <td>
                             <form th:action="@{/aura-gestion/productos/{id}/stock(id=${p.id})}" method="post"
@@ -190,7 +207,7 @@
             var nombre    = celdas[1].textContent.toLowerCase();
             var marca     = celdas[2].textContent.toLowerCase();
             var cat       = celdas[3].textContent.toLowerCase();
-            var estadoFila = celdas[7].textContent.toLowerCase().trim();
+            var estadoFila = celdas[8].textContent.toLowerCase().trim();
 
             var okTexto    = !texto     || nombre.includes(texto) || marca.includes(texto);
             var okCat      = !categoria || cat.includes(categoria);

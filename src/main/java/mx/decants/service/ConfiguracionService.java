@@ -57,4 +57,9 @@ public class ConfiguracionService {
     public String getWhatsappNegocio() {
         return get("whatsapp_negocio", "528119874977");
     }
+
+    @Transactional(readOnly = true)
+    public String getPromoTexto() {
+        return get("promo_texto", "");
+    }
 }

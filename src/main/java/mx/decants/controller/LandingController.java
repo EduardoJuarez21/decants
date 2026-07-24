@@ -86,7 +86,8 @@ public class LandingController {
     public String catalogo(Model model) {
         var productos = productoService.activosTodos();
         model.addAttribute("productos", productos);
-        model.addAttribute("waNumero",  configuracionService.getWhatsappNegocio());
+        model.addAttribute("waNumero",   configuracionService.getWhatsappNegocio());
+        model.addAttribute("promoTexto", configuracionService.getPromoTexto());
 
         var tags = productos.stream()
                 .filter(p -> p.getCaracteristicas() != null && !p.getCaracteristicas().isBlank())

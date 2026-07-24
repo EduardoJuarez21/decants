@@ -237,6 +237,59 @@
             max-width: 900px;
             margin: 0.5rem auto;
         }
+
+        .cat-promo-banner {
+            max-width: 900px;
+            margin: 1rem auto 0;
+            padding: 0.7rem 1.25rem;
+            background: #c0392b;
+            color: #fff;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+
+        .cat-price-old {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--muted);
+            text-decoration: line-through;
+            background: none;
+            padding: 0;
+        }
+        .cat-price-promo {
+            color: #c0392b;
+        }
+        .cat-badge.promo { background: #c0392b; color: #fff; }
+
+        .cat-print-bar {
+            max-width: 900px;
+            margin: 1rem auto 0;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: center;
+        }
+        .cat-print-btn {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #444;
+            background: #fff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 0.5rem 1.1rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .cat-print-btn:hover { border-color: var(--gold); }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: #fff; }
+            .cat-grid { grid-template-columns: repeat(3, 1fr); max-width: 100%; }
+            .cat-card { break-inside: avoid; border-color: #ccc; }
+            .cat-section-break { break-before: page; }
+        }
     </style>
 </head>
 <body>
@@ -247,13 +300,21 @@
     <p>Catálogo de fragancias</p>
 </div>
 
+<!-- Banner de promoción del mes -->
+<p class="cat-promo-banner" th:if="${promoTexto != null and !promoTexto.isBlank()}" th:text="${promoTexto}"></p>
+
+<!-- Descargar / imprimir catálogo -->
+<div class="cat-print-bar no-print">
+    <button type="button" class="cat-print-btn" onclick="window.print()">🖨️ Descargar catálogo (PDF)</button>
+</div>
+
 <!-- Filtro por carácter -->
-<div class="cat-filter-wrap" id="catFiltros" th:if="${!tagsDisponibles.isEmpty()}" style="margin: 1.25rem auto 0;">
+<div class="cat-filter-wrap no-print" id="catFiltros" th:if="${!tagsDisponibles.isEmpty()}" style="margin: 1.25rem auto 0;">
     <button type="button" class="cat-filter-chip active" data-tag="todos" onclick="filtrarPorTag('todos', this)">Todos</button>
     <button type="button" class="cat-filter-chip" th:each="tag : ${tagsDisponibles}"
             th:text="${tag}" th:attr="data-tag=${tag}" onclick="filtrarPorTag(this.getAttribute('data-tag'), this)"></button>
 </div>
-<p class="cat-sin-resultados" id="catSinResultados">No hay fragancias con ese carácter por ahora.</p>
+<p class="cat-sin-resultados no-print" id="catSinResultados">No hay fragancias con ese carácter por ahora.</p>
 
 <!-- Alta Perfumería -->
 <div class="cat-section-label">
@@ -269,6 +330,7 @@
         <div class="cat-card-body">
             <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
             <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
+            <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="cat-badge promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
             <span class="cat-card-brand" th:text="${p.marca}"></span>
             <span class="cat-card-name"  th:text="${p.nombre}"></span>
             <span class="cat-card-family" th:text="${p.familia}"></span>
@@ -278,14 +340,20 @@
             <p class="cat-card-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
             <div class="cat-card-price">
                 <span th:if="${p.precio3ml != null}">
-                    <span class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio3mlConDescuento}|"></span>
                     <span class="cat-price-label">3 ml</span>
                 </span>
                 <span th:if="${p.precio5ml != null}">
-                    <span class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio5mlConDescuento}|"></span>
                     <span class="cat-price-label">5 ml</span>
                 </span>
-                <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-old" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
                 <span class="cat-price-label">10 ml</span>
             </div>
         </div>
@@ -295,7 +363,7 @@
 <hr class="cat-divider">
 
 <!-- Nicho Árabe -->
-<div class="cat-section-label">
+<div class="cat-section-label cat-section-break">
     <div class="gold-line"></div>
     <h2>Nicho Árabe</h2>
     <p>Fragancias orientales de alta concentración</p>
@@ -308,6 +376,7 @@
         <div class="cat-card-body">
             <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
             <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
+            <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="cat-badge promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
             <span class="cat-card-brand" th:text="${p.marca}"></span>
             <span class="cat-card-name"  th:text="${p.nombre}"></span>
             <span class="cat-card-family" th:text="${p.familia}"></span>
@@ -317,14 +386,20 @@
             <p class="cat-card-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
             <div class="cat-card-price">
                 <span th:if="${p.precio3ml != null}">
-                    <span class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio3mlConDescuento}|"></span>
                     <span class="cat-price-label">3 ml</span>
                 </span>
                 <span th:if="${p.precio5ml != null}">
-                    <span class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio5mlConDescuento}|"></span>
                     <span class="cat-price-label">5 ml</span>
                 </span>
-                <span class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-old" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
                 <span class="cat-price-label">10 ml</span>
             </div>
         </div>
@@ -332,7 +407,7 @@
 </div>
 
 <!-- Footer -->
-<div class="cat-footer">
+<div class="cat-footer no-print">
     <p>¿Te interesa alguna fragancia? Escríbenos y te ayudamos a elegir.</p>
     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Vi el catálogo de Aura Decants y me interesa hacer un pedido.')}"
        class="cat-wa-btn" target="_blank">

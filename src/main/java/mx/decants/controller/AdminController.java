@@ -239,10 +239,18 @@ public class AdminController {
                                   @RequestParam(required = false) Integer stock,
                                   @RequestParam(required = false) String caracteristicas,
                                   @RequestParam(required = false) String inspiracion,
+                                  @RequestParam(defaultValue = "false") boolean promoActivo,
+                                  @RequestParam(required = false) Integer descuentoPorcentaje,
                                   RedirectAttributes ra) {
-        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion);
+        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje);
         productoService.actualizarStock(id, stock);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
+        return "redirect:/aura-gestion/productos";
+    }
+
+    @PostMapping("/productos/{id}/toggle-promo")
+    public String togglePromoProducto(@PathVariable Long id) {
+        productoService.togglePromo(id);
         return "redirect:/aura-gestion/productos";
     }
 
@@ -337,6 +345,7 @@ public class AdminController {
         model.addAttribute("umbralEnvioGratis", configuracionService.getUmbralEnvioGratis());
         model.addAttribute("textoEnvioLocal",   configuracionService.getTextoEnvioLocal());
         model.addAttribute("waNumero",            configuracionService.getWhatsappNegocio());
+        model.addAttribute("promoTexto",          configuracionService.getPromoTexto());
         model.addAttribute("telegramToken",       configuracionService.get("telegram_bot_token", ""));
         model.addAttribute("telegramChatId",      configuracionService.get("telegram_chat_id", ""));
         model.addAttribute("emailUsername",       configuracionService.get("email_username", ""));
@@ -364,6 +373,13 @@ public class AdminController {
         configuracionService.set("envio_umbral_gratis", String.valueOf(umbralGratis));
         configuracionService.set("envio_texto_local",   textoEnvioLocal.trim());
         ra.addFlashAttribute("mensaje", "Configuración de envío actualizada.");
+        return "redirect:/aura-gestion/configuracion";
+    }
+
+    @PostMapping("/configuracion/promo")
+    public String guardarPromoTexto(@RequestParam(required = false) String promoTexto, RedirectAttributes ra) {
+        configuracionService.set("promo_texto", promoTexto != null ? promoTexto.trim() : "");
+        ra.addFlashAttribute("mensaje", "Banner de promoción actualizado.");
         return "redirect:/aura-gestion/configuracion";
     }
 

@@ -62,6 +62,11 @@ public class Producto {
 
     private Integer stock; // null = ilimitado, 0 = agotado
 
+    @Column(nullable = false)
+    private boolean promoActivo;
+
+    private Integer descuentoPorcentaje; // 1-99, solo aplica si promoActivo = true
+
     // --- Getters & Setters ---
 
     public Long getId() { return id; }
@@ -126,4 +131,21 @@ public class Producto {
 
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }
+
+    public boolean isPromoActivo() { return promoActivo; }
+    public void setPromoActivo(boolean promoActivo) { this.promoActivo = promoActivo; }
+
+    public Integer getDescuentoPorcentaje() { return descuentoPorcentaje; }
+    public void setDescuentoPorcentaje(Integer descuentoPorcentaje) { this.descuentoPorcentaje = descuentoPorcentaje; }
+
+    // --- Precios con descuento (null si no hay promo activa) ---
+
+    public Integer getPrecioConDescuento() { return conDescuento(precio); }
+    public Integer getPrecio5mlConDescuento() { return conDescuento(precio5ml); }
+    public Integer getPrecio3mlConDescuento() { return conDescuento(precio3ml); }
+
+    private Integer conDescuento(Integer precioBase) {
+        if (!promoActivo || descuentoPorcentaje == null || precioBase == null) return null;
+        return precioBase - (precioBase * descuentoPorcentaje / 100);
+    }
 }

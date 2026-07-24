@@ -214,6 +214,33 @@
         </div>
     </div>
 
+    <!-- Promoción del catálogo -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>Banner de promoción del catálogo</h2>
+        </div>
+        <div style="padding:1.75rem 2rem;">
+            <p style="font-size:0.85rem; color:#555; margin-bottom:1.25rem;">
+                Texto que aparece arriba de <a th:href="@{/catalogo}" target="_blank">/catalogo</a> (la página que compartes por WhatsApp y que también se usa para exportar el PDF del mes).
+                Déjalo vacío para ocultar el banner. Los descuentos por producto se activan en <a th:href="@{/aura-gestion/productos}">Catálogo → Editar producto</a>.
+            </p>
+            <form th:action="@{/aura-gestion/configuracion/promo}" method="post"
+                  style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                <input type="text" name="promoTexto" th:value="${promoTexto}"
+                       placeholder="ej. 🎉 Promociones de agosto — hasta 20% de descuento en productos seleccionados"
+                       style="flex:1; min-width:280px; padding:0.6rem 0.9rem;
+                              border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.9rem;
+                              font-family:inherit; outline:none;">
+                <button type="submit"
+                        style="padding:0.65rem 1.5rem; background:#1a1a1a; color:#fff; border:none;
+                               border-radius:8px; font-size:0.85rem; font-family:inherit;
+                               cursor:pointer; font-weight:600; white-space:nowrap;">
+                    Guardar banner
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- WhatsApp -->
     <div class="admin-card" style="margin-bottom:1.5rem;">
         <div class="admin-card-header">
