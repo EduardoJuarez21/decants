@@ -283,16 +283,84 @@
         }
         .cat-print-btn:hover { border-color: var(--gold); }
 
+        .cat-cover {
+            display: none;
+        }
+
         @media print {
             .no-print { display: none !important; }
             body { background: #fff; }
+            .cat-header { display: none; }
             .cat-grid { grid-template-columns: repeat(3, 1fr); max-width: 100%; }
             .cat-card { break-inside: avoid; border-color: #ccc; }
             .cat-section-break { break-before: page; }
+
+            .cat-cover {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1.25rem;
+                height: 100vh;
+                break-after: page;
+                background: #1a1a1a;
+                text-align: center;
+                padding: 2rem;
+                box-sizing: border-box;
+            }
+            .cat-cover img { height: 90px; width: auto; object-fit: contain; }
+            .cat-cover .gold-line { width: 60px; height: 2px; background: var(--gold); }
+            .cat-cover h1 {
+                font-family: 'Playfair Display', serif;
+                font-size: 2.4rem;
+                color: #fff;
+                margin: 0;
+                letter-spacing: 0.5px;
+            }
+            .cat-cover .cat-cover-mes {
+                font-size: 0.95rem;
+                font-weight: 600;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                color: var(--gold);
+                margin: 0;
+            }
+            .cat-cover .cat-cover-tagline {
+                font-size: 0.85rem;
+                color: rgba(255,255,255,0.55);
+                margin: 0;
+                max-width: 420px;
+            }
+            .cat-cover .cat-cover-promo {
+                margin-top: 0.5rem;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #fff;
+                background: #c0392b;
+                padding: 0.6rem 1.4rem;
+                border-radius: 30px;
+            }
+            .cat-cover .cat-cover-footer {
+                margin-top: 2.5rem;
+                font-size: 0.75rem;
+                color: rgba(255,255,255,0.4);
+                letter-spacing: 0.5px;
+            }
         }
     </style>
 </head>
 <body>
+
+<!-- Portada (solo aparece al imprimir / exportar PDF) -->
+<div class="cat-cover">
+    <img th:src="@{/img/logo-navbar.webp}" alt="Aura Decants MX">
+    <div class="gold-line"></div>
+    <p class="cat-cover-mes" th:text="|${mesActual} ${anioActual}|"></p>
+    <h1>Catálogo de Fragancias</h1>
+    <p class="cat-cover-tagline">Decants de perfumes originales — Alta Perfumería y Nicho Árabe</p>
+    <p class="cat-cover-promo" th:if="${promoTexto != null and !promoTexto.isBlank()}" th:text="${promoTexto}"></p>
+    <p class="cat-cover-footer">auradecantsmx.com</p>
+</div>
 
 <!-- Header -->
 <div class="cat-header">

@@ -13,6 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -88,6 +91,11 @@ public class LandingController {
         model.addAttribute("productos", productos);
         model.addAttribute("waNumero",   configuracionService.getWhatsappNegocio());
         model.addAttribute("promoTexto", configuracionService.getPromoTexto());
+
+        LocalDate hoy = LocalDate.now();
+        String mes = hoy.getMonth().getDisplayName(TextStyle.FULL, new Locale("es", "MX"));
+        model.addAttribute("mesActual",  Character.toUpperCase(mes.charAt(0)) + mes.substring(1));
+        model.addAttribute("anioActual", hoy.getYear());
 
         var tags = productos.stream()
                 .filter(p -> p.getCaracteristicas() != null && !p.getCaracteristicas().isBlank())
