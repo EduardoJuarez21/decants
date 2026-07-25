@@ -319,9 +319,15 @@
             <div class="side-card">
                 <p class="side-card-title">Contacto</p>
                 <div class="side-card-body">
+                    <a th:href="${pedido.waLink}" target="_blank" class="wa-btn">
+                        &#128172; Avisar por WhatsApp
+                    </a>
+                    <p style="font-size:0.72rem; color:var(--muted); margin:0.5rem 0 0; line-height:1.5;">
+                        Abre WhatsApp con un mensaje ya escrito según el estado actual del pedido (<span th:text="${pedido.estadoPedido.etiqueta}"></span>). Solo confirma el envío.
+                    </p>
                     <a th:href="'https://wa.me/52' + ${#strings.replace(pedido.telefono, ' ', '')}"
-                       target="_blank" class="wa-btn">
-                        &#128172; WhatsApp
+                       target="_blank" style="display:block; text-align:center; font-size:0.75rem; color:var(--muted); margin-top:0.6rem; text-decoration:none;">
+                        O abrir el chat sin mensaje
                     </a>
                 </div>
             </div>

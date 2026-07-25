@@ -1,6 +1,8 @@
 package mx.decants.entity;
 
 import jakarta.persistence.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -182,4 +184,33 @@ public class Pedido {
 
     public LocalDateTime getFechaActualizacion() { return fechaActualizacion; }
     public void setFechaActualizacion(LocalDateTime fechaActualizacion) { this.fechaActualizacion = fechaActualizacion; }
+
+    // --- WhatsApp: mensaje y link pre-armados según el estado actual ---
+
+    public String getWaMensaje() {
+        String codigo = codigoPublico != null ? codigoPublico : ("#" + id);
+        String cliente = nombreCliente != null ? nombreCliente : "";
+        return switch (estadoPedido) {
+            case CREADO -> "Hola " + cliente + "! 📬 Recibimos tu pedido " + codigo
+                + ". Estamos revisando los detalles y pronto nos ponemos en contacto contigo. — Aura Decants MX";
+            case CONFIRMADO -> "Hola " + cliente + "! ✅ Tu pedido " + codigo
+                + " fue confirmado. Ya estamos preparando tus fragancias. — Aura Decants MX";
+            case LISTO_PARA_ENVIO -> "Hola " + cliente + "! 📦 Tu pedido " + codigo
+                + " está listo para enviarse. En breve recibirás el número de guía. — Aura Decants MX";
+            case ENVIADO -> "Hola " + cliente + "! 🚚 Tu pedido " + codigo + " está en camino."
+                + (numeroGuia != null && !numeroGuia.isBlank() ? " Número de guía: " + numeroGuia + "." : "")
+                + " — Aura Decants MX";
+            case ENTREGADO -> "Hola " + cliente + "! 🎉 Tu pedido " + codigo
+                + " fue entregado. ¡Gracias por confiar en nosotros! — Aura Decants MX";
+            case CANCELADO -> "Hola " + cliente + ", lamentamos informarte que tu pedido " + codigo
+                + " fue cancelado. Si tienes dudas, contáctanos. — Aura Decants MX";
+            default -> "Hola " + cliente + "! Tenemos una actualización sobre tu pedido " + codigo + ". — Aura Decants MX";
+        };
+    }
+
+    public String getWaLink() {
+        String tel = telefono != null ? telefono.replaceAll("[^0-9]", "") : "";
+        if (tel.length() == 10) tel = "52" + tel;
+        return "https://wa.me/" + tel + "?text=" + URLEncoder.encode(getWaMensaje(), StandardCharsets.UTF_8);
+    }
 }

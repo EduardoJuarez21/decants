@@ -189,8 +189,14 @@
                         <td style="font-family:monospace; font-size:0.78rem;"
                             th:text="${p.numeroGuia != null and !#strings.isEmpty(p.numeroGuia)} ? ${p.numeroGuia} : '—'"></td>
                         <td th:text="${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td>
+                        <td style="display:flex; gap:0.5rem; align-items:center; white-space:nowrap;">
                             <a th:href="@{/aura-gestion/pedidos/{id}(id=${p.id})}" class="admin-link">Ver detalle</a>
+                            <a th:href="${p.waLink}" target="_blank" title="Avisar por WhatsApp"
+                               style="display:inline-flex; align-items:center; justify-content:center;
+                                      width:26px; height:26px; background:#25d366; color:#fff;
+                                      border-radius:50%; text-decoration:none; font-size:0.85rem;">
+                                &#128172;
+                            </a>
                         </td>
                     </tr>
                 </tbody>
