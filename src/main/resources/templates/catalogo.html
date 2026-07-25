@@ -56,6 +56,24 @@
             margin: 0;
         }
 
+        .cat-subsection-label {
+            text-align: center;
+            padding: 1.25rem 1rem 0;
+        }
+        .cat-subsection-label .gold-line-sm {
+            width: 24px; height: 1.5px;
+            background: var(--gold);
+            margin: 0 auto 0.5rem;
+        }
+        .cat-subsection-label h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
+
         .cat-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -391,8 +409,97 @@
     <p>Versiones originales de las mejores casas del mundo</p>
 </div>
 
+<!-- Para Él -->
+<div class="cat-subsection-label" th:if="${not #lists.isEmpty(productos.?[categoria == 'alta-perfumeria' and genero == 'hombre'])}">
+    <div class="gold-line-sm"></div>
+    <h3>Para Él</h3>
+</div>
 <div class="cat-grid">
-    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'alta-perfumeria'}"
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'alta-perfumeria' and p.genero == 'hombre'}"
+         th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
+        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}">
+        <div class="cat-card-body">
+            <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
+            <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
+            <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="cat-badge promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
+            <span class="cat-card-brand" th:text="${p.marca}"></span>
+            <span class="cat-card-name"  th:text="${p.nombre}"></span>
+            <span class="cat-card-family" th:text="${p.familia}"></span>
+            <div class="cat-card-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
+                <span class="cat-tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
+            </div>
+            <p class="cat-card-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
+            <div class="cat-card-price">
+                <span th:if="${p.precio3ml != null}">
+                    <span th:if="${p.precio3mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio3mlConDescuento}|"></span>
+                    <span class="cat-price-label">3 ml</span>
+                </span>
+                <span th:if="${p.precio5ml != null}">
+                    <span th:if="${p.precio5mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio5mlConDescuento}|"></span>
+                    <span class="cat-price-label">5 ml</span>
+                </span>
+                <span th:if="${p.precioConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-old" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
+                <span class="cat-price-label">10 ml</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Para Ella -->
+<div class="cat-subsection-label" th:if="${not #lists.isEmpty(productos.?[categoria == 'alta-perfumeria' and genero == 'mujer'])}">
+    <div class="gold-line-sm"></div>
+    <h3>Para Ella</h3>
+</div>
+<div class="cat-grid">
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'alta-perfumeria' and p.genero == 'mujer'}"
+         th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
+        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}">
+        <div class="cat-card-body">
+            <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
+            <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
+            <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="cat-badge promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
+            <span class="cat-card-brand" th:text="${p.marca}"></span>
+            <span class="cat-card-name"  th:text="${p.nombre}"></span>
+            <span class="cat-card-family" th:text="${p.familia}"></span>
+            <div class="cat-card-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
+                <span class="cat-tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
+            </div>
+            <p class="cat-card-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
+            <div class="cat-card-price">
+                <span th:if="${p.precio3ml != null}">
+                    <span th:if="${p.precio3mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio3mlConDescuento}|"></span>
+                    <span class="cat-price-label">3 ml</span>
+                </span>
+                <span th:if="${p.precio5ml != null}">
+                    <span th:if="${p.precio5mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio5mlConDescuento}|"></span>
+                    <span class="cat-price-label">5 ml</span>
+                </span>
+                <span th:if="${p.precioConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-old" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
+                <span class="cat-price-label">10 ml</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Unisex -->
+<div class="cat-subsection-label" th:if="${not #lists.isEmpty(productos.?[categoria == 'alta-perfumeria' and genero != 'hombre' and genero != 'mujer'])}">
+    <div class="gold-line-sm"></div>
+    <h3>Unisex</h3>
+</div>
+<div class="cat-grid">
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'alta-perfumeria' and p.genero != 'hombre' and p.genero != 'mujer'}"
          th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
         <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}">
         <div class="cat-card-body">
@@ -437,8 +544,97 @@
     <p>Fragancias orientales de alta concentración</p>
 </div>
 
+<!-- Para Él -->
+<div class="cat-subsection-label" th:if="${not #lists.isEmpty(productos.?[categoria == 'nicho-arabe' and genero == 'hombre'])}">
+    <div class="gold-line-sm"></div>
+    <h3>Para Él</h3>
+</div>
 <div class="cat-grid">
-    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'nicho-arabe'}"
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'nicho-arabe' and p.genero == 'hombre'}"
+         th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
+        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}">
+        <div class="cat-card-body">
+            <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
+            <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
+            <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="cat-badge promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
+            <span class="cat-card-brand" th:text="${p.marca}"></span>
+            <span class="cat-card-name"  th:text="${p.nombre}"></span>
+            <span class="cat-card-family" th:text="${p.familia}"></span>
+            <div class="cat-card-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
+                <span class="cat-tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
+            </div>
+            <p class="cat-card-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
+            <div class="cat-card-price">
+                <span th:if="${p.precio3ml != null}">
+                    <span th:if="${p.precio3mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio3mlConDescuento}|"></span>
+                    <span class="cat-price-label">3 ml</span>
+                </span>
+                <span th:if="${p.precio5ml != null}">
+                    <span th:if="${p.precio5mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio5mlConDescuento}|"></span>
+                    <span class="cat-price-label">5 ml</span>
+                </span>
+                <span th:if="${p.precioConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-old" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
+                <span class="cat-price-label">10 ml</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Para Ella -->
+<div class="cat-subsection-label" th:if="${not #lists.isEmpty(productos.?[categoria == 'nicho-arabe' and genero == 'mujer'])}">
+    <div class="gold-line-sm"></div>
+    <h3>Para Ella</h3>
+</div>
+<div class="cat-grid">
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'nicho-arabe' and p.genero == 'mujer'}"
+         th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
+        <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}">
+        <div class="cat-card-body">
+            <span th:if="${p.bestSeller}"              class="cat-badge bs">Best Seller</span>
+            <span th:if="${p.stock != null and p.stock == 0}" class="cat-badge out">Agotado</span>
+            <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="cat-badge promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
+            <span class="cat-card-brand" th:text="${p.marca}"></span>
+            <span class="cat-card-name"  th:text="${p.nombre}"></span>
+            <span class="cat-card-family" th:text="${p.familia}"></span>
+            <div class="cat-card-tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}">
+                <span class="cat-tag-pill" th:each="tag : ${#strings.arraySplit(p.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
+            </div>
+            <p class="cat-card-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
+            <div class="cat-card-price">
+                <span th:if="${p.precio3ml != null}">
+                    <span th:if="${p.precio3mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio3ml}|"></span>
+                    <span th:if="${p.precio3mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio3mlConDescuento}|"></span>
+                    <span class="cat-price-label">3 ml</span>
+                </span>
+                <span th:if="${p.precio5ml != null}">
+                    <span th:if="${p.precio5mlConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-old" th:text="|$${p.precio5ml}|"></span>
+                    <span th:if="${p.precio5mlConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precio5mlConDescuento}|"></span>
+                    <span class="cat-price-label">5 ml</span>
+                </span>
+                <span th:if="${p.precioConDescuento == null}" class="cat-price-tag" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-old" th:text="|$${p.precio}|"></span>
+                <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
+                <span class="cat-price-label">10 ml</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Unisex -->
+<div class="cat-subsection-label" th:if="${not #lists.isEmpty(productos.?[categoria == 'nicho-arabe' and genero != 'hombre' and genero != 'mujer'])}">
+    <div class="gold-line-sm"></div>
+    <h3>Unisex</h3>
+</div>
+<div class="cat-grid">
+    <div class="cat-card" th:each="p : ${productos}" th:if="${p.categoria == 'nicho-arabe' and p.genero != 'hombre' and p.genero != 'mujer'}"
          th:attr="data-tags=${p.caracteristicas != null ? p.caracteristicas : ''}">
         <img class="cat-card-img" th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}">
         <div class="cat-card-body">
