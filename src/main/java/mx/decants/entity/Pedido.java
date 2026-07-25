@@ -191,16 +191,16 @@ public class Pedido {
         String codigo = codigoPublico != null ? codigoPublico : ("#" + id);
         String cliente = nombreCliente != null ? nombreCliente : "";
         return switch (estadoPedido) {
-            case CREADO -> "Hola " + cliente + "! 📬 Recibimos tu pedido " + codigo
+            case CREADO -> "Hola " + cliente + "! Recibimos tu pedido " + codigo
                 + ". Estamos revisando los detalles y pronto nos ponemos en contacto contigo. — Aura Decants MX";
-            case CONFIRMADO -> "Hola " + cliente + "! ✅ Tu pedido " + codigo
+            case CONFIRMADO -> "Hola " + cliente + "! Tu pedido " + codigo
                 + " fue confirmado. Ya estamos preparando tus fragancias. — Aura Decants MX";
-            case LISTO_PARA_ENVIO -> "Hola " + cliente + "! 📦 Tu pedido " + codigo
+            case LISTO_PARA_ENVIO -> "Hola " + cliente + "! Tu pedido " + codigo
                 + " está listo para enviarse. En breve recibirás el número de guía. — Aura Decants MX";
-            case ENVIADO -> "Hola " + cliente + "! 🚚 Tu pedido " + codigo + " está en camino."
+            case ENVIADO -> "Hola " + cliente + "! Tu pedido " + codigo + " está en camino."
                 + (numeroGuia != null && !numeroGuia.isBlank() ? " Número de guía: " + numeroGuia + "." : "")
                 + " — Aura Decants MX";
-            case ENTREGADO -> "Hola " + cliente + "! 🎉 Tu pedido " + codigo
+            case ENTREGADO -> "Hola " + cliente + "! Tu pedido " + codigo
                 + " fue entregado. ¡Gracias por confiar en nosotros! — Aura Decants MX";
             case CANCELADO -> "Hola " + cliente + ", lamentamos informarte que tu pedido " + codigo
                 + " fue cancelado. Si tienes dudas, contáctanos. — Aura Decants MX";
