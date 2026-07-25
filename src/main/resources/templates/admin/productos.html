@@ -79,7 +79,7 @@
                                font-size:0.85rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
                     <option value="">Todas las categorías</option>
                     <option value="Alta Perfumería">Alta Perfumería</option>
-                    <option value="Nicho Árabe">Nicho Árabe</option>
+                    <option value="Perfumería Árabe">Perfumería Árabe</option>
                 </select>
                 <select id="filtroEstado" onchange="filtrarTabla()"
                         style="flex:1; padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
@@ -123,7 +123,7 @@
                         </td>
                         <td th:text="${p.marca}"></td>
                         <td>
-                            <span th:text="${p.categoria == 'alta-perfumeria' ? 'Alta Perfumería' : 'Nicho Árabe'}"></span>
+                            <span th:text="${p.categoria == 'alta-perfumeria' ? 'Alta Perfumería' : 'Perfumería Árabe'}"></span>
                         </td>
                         <td style="text-transform:capitalize;" th:text="${p.genero}"></td>
                         <td>

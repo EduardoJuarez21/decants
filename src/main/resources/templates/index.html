@@ -97,7 +97,7 @@
     <ul class="navbar-nav" id="navMenu">
         <li><a href="#inicio">Inicio</a></li>
         <li><a href="#alta-perfumeria">Alta Perfumería</a></li>
-        <li><a href="#nicho-arabe">Nicho Árabe</a></li>
+        <li><a href="#nicho-arabe">Perfumería Árabe</a></li>
         <li style="display:none;"><a href="#paquetes">Kits</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#resenas">Reseñas</a></li>
@@ -275,10 +275,10 @@
         <!-- ── Divisor ──────────────────────────────────────── -->
         <div class="coleccion-divider" id="divider-colecciones"></div>
 
-        <!-- ── Nicho Árabe ───────────────────────────────────── -->
+        <!-- ── Perfumería Árabe ───────────────────────────────────── -->
         <div id="nicho-arabe">
             <div class="gold-line"></div>
-            <h2 class="section-title">Nicho Árabe</h2>
+            <h2 class="section-title">Perfumería Árabe</h2>
             <p class="section-subtitle">Fragancias orientales de alta concentración. Intensas, duraderas y únicas.</p>
         </div>
 
@@ -292,12 +292,12 @@
             </div>
             <div class="section-search-wrap">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input id="buscadorArabe" type="search" placeholder="Buscar en Nicho Árabe…" oninput="buscarSeccion('buscadorArabe','grid-arabe','sinResultadosArabe')" autocomplete="off">
+                <input id="buscadorArabe" type="search" placeholder="Buscar en Perfumería Árabe…" oninput="buscarSeccion('buscadorArabe','grid-arabe','sinResultadosArabe')" autocomplete="off">
             </div>
         </div>
         <p id="sinResultadosArabe" style="display:none; text-align:center;
            color:var(--muted); margin-bottom:1.5rem; font-size:0.88rem;">
-           Sin resultados en Nicho Árabe.
+           Sin resultados en Perfumería Árabe.
         </p>
 
         <div class="products-grid" id="grid-arabe">
@@ -369,7 +369,7 @@
 
         </div>
 
-        <!-- Paginación Nicho Árabe -->
+        <!-- Paginación Perfumería Árabe -->
         <div class="pagination-controls" th:if="${arabePage.totalPages > 1}">
             <a th:if="${!arabePage.first}"
                th:href="|/?ap=${ap - 1}&af=${af}&dp=${dp}&df=${df}#nicho-arabe|"
@@ -415,7 +415,7 @@
         <div class="kits-group">
             <div class="kits-group-header">
                 <span class="kits-group-title">Esenciales</span>
-                <span class="kits-group-sub">Nicho árabe seleccionado · mejor precio garantizado</span>
+                <span class="kits-group-sub">Perfumería árabe seleccionada · mejor precio garantizado</span>
             </div>
             <div class="kits-grid">
 

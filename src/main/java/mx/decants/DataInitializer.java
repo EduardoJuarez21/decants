@@ -139,7 +139,7 @@ public class DataInitializer implements CommandLineRunner {
                 "/img/alta-perfumeria/hombre/car-acqua-di-gio-parfum.webp",
                 "pi-parfum", 420, 230, 4.8, false, false, 19));
 
-        // ── Nicho Árabe ──────────────────────────────────────────────────────
+        // ── Perfumería Árabe ─────────────────────────────────────────────────
 
         repo.save(p("Club de Nuit Intense Man", "Armaf", "nicho-arabe", "hombre",
                 "Woody Especiado · Hombre", "Limón · Piña · Abedul · Almizclé",
