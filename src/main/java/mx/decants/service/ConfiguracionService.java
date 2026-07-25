@@ -62,4 +62,15 @@ public class ConfiguracionService {
     public String getPromoTexto() {
         return get("promo_texto", "");
     }
+
+    @Transactional(readOnly = true)
+    public double getMarkupDefault() {
+        try { return Double.parseDouble(get("markup_default", "1.8")); }
+        catch (NumberFormatException e) { return 1.8; }
+    }
+
+    @Transactional
+    public void setMarkupDefault(double markup) {
+        set("markup_default", String.valueOf(markup));
+    }
 }

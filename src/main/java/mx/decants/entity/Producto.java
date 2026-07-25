@@ -67,6 +67,12 @@ public class Producto {
 
     private Integer descuentoPorcentaje; // 1-99, solo aplica si promoActivo = true
 
+    private String proveedor;
+
+    private Double costoPorMl;
+
+    private Double markup;   // multiplicador sobre el costo, ej. 1.8 = precio sugerido 80% arriba del costo
+
     // --- Getters & Setters ---
 
     public Long getId() { return id; }
@@ -138,6 +144,15 @@ public class Producto {
     public Integer getDescuentoPorcentaje() { return descuentoPorcentaje; }
     public void setDescuentoPorcentaje(Integer descuentoPorcentaje) { this.descuentoPorcentaje = descuentoPorcentaje; }
 
+    public String getProveedor() { return proveedor; }
+    public void setProveedor(String proveedor) { this.proveedor = proveedor; }
+
+    public Double getCostoPorMl() { return costoPorMl; }
+    public void setCostoPorMl(Double costoPorMl) { this.costoPorMl = costoPorMl; }
+
+    public Double getMarkup() { return markup; }
+    public void setMarkup(Double markup) { this.markup = markup; }
+
     // --- Precios con descuento (null si no hay promo activa) ---
 
     public Integer getPrecioConDescuento() { return conDescuento(precio); }
@@ -147,5 +162,32 @@ public class Producto {
     private Integer conDescuento(Integer precioBase) {
         if (!promoActivo || descuentoPorcentaje == null || precioBase == null) return null;
         return precioBase - (precioBase * descuentoPorcentaje / 100);
+    }
+
+    // --- Costo de producción, margen y precio sugerido (null si falta costoPorMl) ---
+
+    public Double getCostoProduccion10ml() { return costoProduccion(10); }
+    public Double getCostoProduccion5ml()  { return costoProduccion(5); }
+    public Double getCostoProduccion3ml()  { return costoProduccion(3); }
+
+    private Double costoProduccion(int ml) {
+        return costoPorMl != null ? costoPorMl * ml : null;
+    }
+
+    public Double getMargenPorcentaje10ml() { return margenPorcentaje(precio, getCostoProduccion10ml()); }
+    public Double getMargenPorcentaje5ml()  { return margenPorcentaje(precio5ml, getCostoProduccion5ml()); }
+    public Double getMargenPorcentaje3ml()  { return margenPorcentaje(precio3ml, getCostoProduccion3ml()); }
+
+    private static Double margenPorcentaje(Integer precioVenta, Double costo) {
+        if (precioVenta == null || precioVenta == 0 || costo == null) return null;
+        return ((precioVenta - costo) / precioVenta) * 100;
+    }
+
+    public Double getPrecioSugerido10ml() { return precioSugerido(getCostoProduccion10ml()); }
+    public Double getPrecioSugerido5ml()  { return precioSugerido(getCostoProduccion5ml()); }
+    public Double getPrecioSugerido3ml()  { return precioSugerido(getCostoProduccion3ml()); }
+
+    private Double precioSugerido(Double costo) {
+        return (costo != null && markup != null) ? costo * markup : null;
     }
 }

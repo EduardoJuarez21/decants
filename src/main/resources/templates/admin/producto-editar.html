@@ -103,6 +103,55 @@
                 </div>
             </div>
 
+            <!-- Proveedor y costo -->
+            <div style="display:flex; gap:1rem;">
+                <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                        Proveedor <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                    </label>
+                    <input type="text" name="proveedor" th:value="${producto.proveedor}" placeholder="ej. Jorge Perfumes"
+                           style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                  font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                        Costo por ml ($) <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                    </label>
+                    <input type="number" name="costoPorMl" th:value="${producto.costoPorMl}" min="0" step="0.01" placeholder="ej. 5.50"
+                           style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                  font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                        Markup <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                    </label>
+                    <input type="number" name="markup" th:value="${producto.markup}" min="1" step="0.01"
+                           style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                  font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                </div>
+            </div>
+
+            <!-- Resumen de costo y margen -->
+            <div th:if="${producto.costoPorMl != null}"
+                 style="background:#f8f9fa; border-radius:8px; padding:0.9rem 1.1rem; font-size:0.82rem; color:#555;
+                        border-left:4px solid #c9a96e; display:flex; flex-direction:column; gap:0.3rem;">
+                <span>
+                    Costo 10ml: <strong>$<span th:text="${#numbers.formatDecimal(producto.costoProduccion10ml, 1, 2)}"></span></strong>
+                    · Margen: <strong th:text="${#numbers.formatDecimal(producto.margenPorcentaje10ml, 1, 1)} + '%'"></strong>
+                    <th:block th:if="${producto.precioSugerido10ml != null}">
+                        · Precio sugerido: <strong>$<span th:text="${#numbers.formatDecimal(producto.precioSugerido10ml, 1, 0)}"></span></strong>
+                    </th:block>
+                </span>
+                <span th:if="${producto.precio5ml != null}">
+                    Costo 5ml: <strong>$<span th:text="${#numbers.formatDecimal(producto.costoProduccion5ml, 1, 2)}"></span></strong>
+                    · Margen: <strong th:text="${#numbers.formatDecimal(producto.margenPorcentaje5ml, 1, 1)} + '%'"></strong>
+                </span>
+                <span th:if="${producto.precio3ml != null}">
+                    Costo 3ml: <strong>$<span th:text="${#numbers.formatDecimal(producto.costoProduccion3ml, 1, 2)}"></span></strong>
+                    · Margen: <strong th:text="${#numbers.formatDecimal(producto.margenPorcentaje3ml, 1, 1)} + '%'"></strong>
+                </span>
+            </div>
+
             <!-- Stock -->
             <div style="display:flex; flex-direction:column; gap:0.3rem;">
                 <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">

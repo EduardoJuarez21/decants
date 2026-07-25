@@ -173,6 +173,7 @@ public class AdminController {
             .mapToInt(p -> p.getOrden() != null ? p.getOrden() : 0)
             .max().orElse(0) + 1;
         model.addAttribute("siguienteOrden", siguienteOrden);
+        model.addAttribute("markupDefault", configuracionService.getMarkupDefault());
         return "admin/producto-nuevo";
     }
 
@@ -188,6 +189,9 @@ public class AdminController {
                                 @RequestParam(required = false) Integer precio5ml,
                                 @RequestParam(defaultValue = "false") boolean bestSeller,
                                 @RequestParam int orden,
+                                @RequestParam(required = false) String proveedor,
+                                @RequestParam(required = false) Double costoPorMl,
+                                @RequestParam(required = false) Double markup,
                                 @RequestParam("imagenPrincipal") MultipartFile imagenPrincipal,
                                 @RequestParam(value = "imagenCaracteristicas", required = false) MultipartFile imagenCaracteristicas,
                                 RedirectAttributes ra) {
@@ -205,7 +209,8 @@ public class AdminController {
             }
 
             productoService.crear(nombre, marca, categoria, genero,
-                familia, notas, caracteristicas, precio, precio5ml, bestSeller, pathPrincipal, pathCar, orden);
+                familia, notas, caracteristicas, precio, precio5ml, bestSeller, pathPrincipal, pathCar, orden,
+                proveedor, costoPorMl, markup);
 
             ra.addFlashAttribute("mensaje", "Producto \"" + nombre + "\" creado correctamente.");
             return "redirect:/aura-gestion/productos";
@@ -241,8 +246,11 @@ public class AdminController {
                                   @RequestParam(required = false) String inspiracion,
                                   @RequestParam(defaultValue = "false") boolean promoActivo,
                                   @RequestParam(required = false) Integer descuentoPorcentaje,
+                                  @RequestParam(required = false) String proveedor,
+                                  @RequestParam(required = false) Double costoPorMl,
+                                  @RequestParam(required = false) Double markup,
                                   RedirectAttributes ra) {
-        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje);
+        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje, proveedor, costoPorMl, markup);
         productoService.actualizarStock(id, stock);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
         return "redirect:/aura-gestion/productos";
@@ -352,7 +360,15 @@ public class AdminController {
         model.addAttribute("emailSmtpHost",       configuracionService.get("email_smtp_host", "smtp.gmail.com"));
         model.addAttribute("emailSmtpPort",       configuracionService.get("email_smtp_port", "587"));
         model.addAttribute("emailFrom",           configuracionService.get("email_from", ""));
+        model.addAttribute("markupDefault",       configuracionService.getMarkupDefault());
         return "admin/configuracion";
+    }
+
+    @PostMapping("/configuracion/markup")
+    public String guardarMarkupDefault(@RequestParam double markupDefault, RedirectAttributes ra) {
+        configuracionService.setMarkupDefault(markupDefault);
+        ra.addFlashAttribute("mensaje", "Markup por defecto actualizado.");
+        return "redirect:/aura-gestion/configuracion";
     }
 
     @PostMapping("/configuracion/stripe-modo")

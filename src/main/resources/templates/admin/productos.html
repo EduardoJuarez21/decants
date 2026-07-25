@@ -101,11 +101,13 @@
                         <th>#</th>
                         <th>Nombre</th>
                         <th>Marca</th>
+                        <th>Proveedor</th>
                         <th>Categoría</th>
                         <th>Género</th>
                         <th>Precio</th>
-                        <th>Stock</th>
+                        <th>Margen</th>
                         <th>Promo</th>
+                        <th>Stock</th>
                         <th>Estado</th>
                         <th></th>
                     </tr>
@@ -122,6 +124,7 @@
                             </span>
                         </td>
                         <td th:text="${p.marca}"></td>
+                        <td th:text="${p.proveedor != null ? p.proveedor : '—'}" style="color:var(--muted); font-size:0.85rem;"></td>
                         <td>
                             <span th:text="${p.categoria == 'alta-perfumeria' ? 'Alta Perfumería' : 'Perfumería Árabe'}"></span>
                         </td>
@@ -131,6 +134,12 @@
                             <span th:if="${p.precio5ml != null}"
                                   style="font-size:0.75rem; color:var(--muted);"
                                   th:text="| / $${p.precio5ml} (5ml)|"></span>
+                        </td>
+                        <td>
+                            <span th:if="${p.margenPorcentaje10ml != null}"
+                                  th:text="${#numbers.formatDecimal(p.margenPorcentaje10ml, 1, 0)} + '%'"
+                                  th:style="${p.margenPorcentaje10ml < 40} ? 'color:#c0392b; font-weight:600;' : 'color:#2e7d32; font-weight:600;'"></span>
+                            <span th:unless="${p.margenPorcentaje10ml != null}" style="font-size:0.75rem; color:#ccc;">—</span>
                         </td>
                         <td>
                             <div th:if="${p.descuentoPorcentaje != null}" style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
@@ -206,8 +215,8 @@
             var celdas    = fila.querySelectorAll('td');
             var nombre    = celdas[1].textContent.toLowerCase();
             var marca     = celdas[2].textContent.toLowerCase();
-            var cat       = celdas[3].textContent.toLowerCase();
-            var estadoFila = celdas[8].textContent.toLowerCase().trim();
+            var cat       = celdas[4].textContent.toLowerCase();
+            var estadoFila = celdas[10].textContent.toLowerCase().trim();
 
             var okTexto    = !texto     || nombre.includes(texto) || marca.includes(texto);
             var okCat      = !categoria || cat.includes(categoria);
