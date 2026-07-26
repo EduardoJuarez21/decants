@@ -4,8 +4,8 @@
 <div th:fragment="productSection(title, items)" th:if="${!items.isEmpty()}">
     <h3 th:text="${title}">Seccion</h3>
     <table class="grid">
-        <tr th:each="row : ${#numbers.sequence(0, items.size() - 1, 3)}">
-            <td class="product" th:each="p : ${items.subList(row, T(java.lang.Math).min(row + 3, items.size()))}">
+        <tr th:each="row : ${#numbers.sequence(0, items.size() - 1, 2)}">
+            <td class="product" th:each="p : ${items.subList(row, T(java.lang.Math).min(row + 2, items.size()))}">
                 <div th:replace="~{catalogo-pdf-fragments :: productCard(${p})}"></div>
             </td>
         </tr>
@@ -16,30 +16,32 @@
     <img class="product-image" th:if="${imageSrcById.get(p.id) != null}" th:src="${imageSrcById.get(p.id)}" th:alt="${p.nombre}" />
     <div class="product-image placeholder" th:if="${imageSrcById.get(p.id) == null}">Aura Decants MX</div>
 
-    <span th:if="${p.bestSeller}" class="badge">Best Seller</span>
-    <span th:if="${p.stock != null and p.stock == 0}" class="badge out">Agotado</span>
-    <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="badge out" th:text="|-${p.descuentoPorcentaje}%|">Promo</span>
+    <div class="card-body">
+        <span th:if="${p.bestSeller}" class="badge">Best Seller</span>
+        <span th:if="${p.stock != null and p.stock == 0}" class="badge out">Agotado</span>
+        <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="badge out" th:text="|-${p.descuentoPorcentaje}%|">Promo</span>
 
-    <span class="brand" th:text="${p.marca}">Marca</span>
-    <span class="name" th:text="${p.nombre}">Fragancia</span>
-    <span class="family" th:text="${p.familia}">Familia</span>
-    <div class="tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}" th:text="${p.caracteristicas}"></div>
-    <p class="inspiration" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
+        <span class="brand" th:text="${p.marca}">Marca</span>
+        <span class="name" th:text="${p.nombre}">Fragancia</span>
+        <span class="family" th:text="${p.familia}">Familia</span>
+        <div class="tags" th:if="${p.caracteristicas != null and !p.caracteristicas.isBlank()}" th:text="${p.caracteristicas}"></div>
+        <p class="inspiration" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
 
-    <div class="prices">
-        <span th:if="${p.precio3ml != null}">
-            <span th:if="${p.precio3mlConDescuento == null}" class="price" th:text="|$${p.precio3ml} / 3 ml|"></span>
-            <span th:if="${p.precio3mlConDescuento != null}" class="old" th:text="|$${p.precio3ml}|"></span>
-            <span th:if="${p.precio3mlConDescuento != null}" class="price promo-price" th:text="|$${p.precio3mlConDescuento} / 3 ml|"></span>
-        </span>
-        <span th:if="${p.precio5ml != null}">
-            <span th:if="${p.precio5mlConDescuento == null}" class="price" th:text="|$${p.precio5ml} / 5 ml|"></span>
-            <span th:if="${p.precio5mlConDescuento != null}" class="old" th:text="|$${p.precio5ml}|"></span>
-            <span th:if="${p.precio5mlConDescuento != null}" class="price promo-price" th:text="|$${p.precio5mlConDescuento} / 5 ml|"></span>
-        </span>
-        <span th:if="${p.precioConDescuento == null}" class="price" th:text="|$${p.precio} / 10 ml|"></span>
-        <span th:if="${p.precioConDescuento != null}" class="old" th:text="|$${p.precio}|"></span>
-        <span th:if="${p.precioConDescuento != null}" class="price promo-price" th:text="|$${p.precioConDescuento} / 10 ml|"></span>
+        <div class="prices">
+            <span th:if="${p.precio3ml != null}">
+                <span th:if="${p.precio3mlConDescuento == null}" class="price" th:text="|$${p.precio3ml} / 3 ml|"></span>
+                <span th:if="${p.precio3mlConDescuento != null}" class="old" th:text="|$${p.precio3ml}|"></span>
+                <span th:if="${p.precio3mlConDescuento != null}" class="price promo-price" th:text="|$${p.precio3mlConDescuento} / 3 ml|"></span>
+            </span>
+            <span th:if="${p.precio5ml != null}">
+                <span th:if="${p.precio5mlConDescuento == null}" class="price" th:text="|$${p.precio5ml} / 5 ml|"></span>
+                <span th:if="${p.precio5mlConDescuento != null}" class="old" th:text="|$${p.precio5ml}|"></span>
+                <span th:if="${p.precio5mlConDescuento != null}" class="price promo-price" th:text="|$${p.precio5mlConDescuento} / 5 ml|"></span>
+            </span>
+            <span th:if="${p.precioConDescuento == null}" class="price" th:text="|$${p.precio} / 10 ml|"></span>
+            <span th:if="${p.precioConDescuento != null}" class="old" th:text="|$${p.precio}|"></span>
+            <span th:if="${p.precioConDescuento != null}" class="price promo-price" th:text="|$${p.precioConDescuento} / 10 ml|"></span>
+        </div>
     </div>
 </div>
 </body>

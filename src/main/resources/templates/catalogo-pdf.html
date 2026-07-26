@@ -15,18 +15,18 @@
 
         body {
             margin: 0;
-            color: #1f1d1a;
+            color: #201d19;
             font-family: Arial, Helvetica, sans-serif;
             font-size: 10px;
             line-height: 1.35;
-            background: #ffffff;
+            background: #fbfaf7;
         }
 
         .cover {
             height: 9.9in;
-            padding: 1.25in 0.65in;
+            padding: 1.05in 0.65in;
             color: #fff;
-            background: #191715;
+            background: #171411;
             text-align: center;
             page-break-after: always;
         }
@@ -38,10 +38,22 @@
         }
 
         .gold-line {
-            width: 70px;
+            width: 86px;
             height: 2px;
             margin: 0 auto 28px;
             background: #c5a46b;
+        }
+
+        .cover-kicker {
+            display: inline-block;
+            margin: 0 0 22px;
+            padding: 7px 16px;
+            border: 1px solid rgba(197, 164, 107, 0.45);
+            color: #c5a46b;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         .cover-month {
@@ -56,7 +68,7 @@
         h1 {
             margin: 0;
             font-family: Georgia, 'Times New Roman', serif;
-            font-size: 42px;
+            font-size: 48px;
             font-weight: 700;
             line-height: 1.05;
         }
@@ -71,7 +83,7 @@
         .cover-promo {
             display: inline-block;
             margin-top: 34px;
-            padding: 10px 22px;
+            padding: 11px 24px;
             border-radius: 999px;
             color: #fff;
             background: #b83a2f;
@@ -95,28 +107,33 @@
         }
 
         .section-head {
-            border-bottom: 1px solid #ded2be;
-            margin-bottom: 12px;
-            padding-bottom: 7px;
+            margin-bottom: 14px;
+            padding: 16px 18px;
+            color: #fff;
+            background: #201d19;
+            border-left: 5px solid #c5a46b;
         }
 
         h2 {
             margin: 0;
-            color: #1a1a1a;
+            color: #fff;
             font-family: Georgia, 'Times New Roman', serif;
-            font-size: 22px;
+            font-size: 24px;
             line-height: 1.1;
         }
 
         .section-subtitle {
-            margin: 3px 0 0;
-            color: #7b746b;
+            margin: 5px 0 0;
+            color: rgba(255, 255, 255, 0.68);
             font-size: 10px;
         }
 
         h3 {
-            margin: 18px 0 8px;
+            margin: 20px 0 10px;
+            padding: 8px 10px;
             color: #2a2723;
+            background: #eee4d3;
+            border-left: 4px solid #c5a46b;
             font-family: Georgia, 'Times New Roman', serif;
             font-size: 14px;
             page-break-after: avoid;
@@ -124,39 +141,45 @@
 
         .promo-note {
             margin: 0 0 12px;
-            padding: 9px 12px;
+            padding: 10px 14px;
             color: #fff;
             background: #b83a2f;
-            border-radius: 6px;
+            border-radius: 4px;
             font-weight: 700;
         }
 
         .grid {
             width: 100%;
-            border-spacing: 8px;
+            border-spacing: 10px;
             border-collapse: separate;
             page-break-before: avoid;
         }
 
         .product {
-            width: 33.33%;
+            width: 50%;
             vertical-align: top;
             page-break-inside: avoid;
         }
 
         .card {
-            min-height: 118px;
-            padding: 10px;
-            border: 1px solid #e4ddd2;
-            border-radius: 7px;
-            background: #fffdf9;
+            min-height: 250px;
+            padding: 0;
+            border: 1px solid #dccfbb;
+            border-radius: 8px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .card-body {
+            padding: 10px 12px 12px;
         }
 
         .product-image {
             width: 100%;
-            height: 96px;
-            margin-bottom: 8px;
-            border-radius: 5px;
+            height: 132px;
+            margin: 0;
+            border-bottom: 1px solid #eadfce;
+            border-radius: 0;
             object-fit: cover;
             object-position: center;
             display: block;
@@ -166,7 +189,8 @@
             padding-top: 34px;
             color: #a37e3e;
             background: #f1eadf;
-            border: 1px solid #e4ddd2;
+            border: 0;
+            border-bottom: 1px solid #eadfce;
             font-size: 8px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -177,7 +201,7 @@
         .badge {
             display: inline-block;
             margin: 0 4px 5px 0;
-            padding: 2px 6px;
+            padding: 3px 7px;
             border-radius: 4px;
             color: #fff;
             background: #c5a46b;
@@ -194,7 +218,7 @@
         .brand {
             display: block;
             color: #857b6e;
-            font-size: 8px;
+            font-size: 8.5px;
             font-weight: 700;
             letter-spacing: 0.7px;
             text-transform: uppercase;
@@ -202,17 +226,19 @@
 
         .name {
             display: block;
-            margin-top: 2px;
+            margin-top: 3px;
             color: #1f1d1a;
-            font-size: 12px;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 15px;
             font-weight: 700;
+            line-height: 1.15;
         }
 
         .family {
             display: block;
-            margin-top: 2px;
+            margin-top: 4px;
             color: #766d63;
-            font-size: 8.5px;
+            font-size: 9px;
             font-style: italic;
         }
 
@@ -224,25 +250,25 @@
         }
 
         .tags {
-            margin-top: 6px;
+            margin-top: 7px;
             color: #a37e3e;
-            font-size: 7.5px;
+            font-size: 8px;
             font-weight: 700;
         }
 
         .prices {
-            margin-top: 8px;
-            padding-top: 7px;
+            margin-top: 10px;
+            padding-top: 9px;
             border-top: 1px solid #eee5d7;
             color: #1f1d1a;
-            font-size: 8.5px;
+            font-size: 9px;
             font-weight: 700;
         }
 
         .price {
             display: inline-block;
-            margin: 0 5px 3px 0;
-            padding: 2px 5px;
+            margin: 0 5px 4px 0;
+            padding: 3px 6px;
             border-radius: 4px;
             background: #f1eadf;
         }
@@ -258,9 +284,9 @@
 
         .footer {
             margin-top: 24px;
-            padding-top: 12px;
-            border-top: 1px solid #e4ddd2;
-            color: #7b746b;
+            padding: 10px 12px;
+            color: #fff;
+            background: #201d19;
             font-size: 9px;
             text-align: center;
         }
@@ -270,6 +296,7 @@
 <div class="cover">
     <img class="logo" th:src="${logoSrc}" alt="Aura Decants MX" />
     <div class="gold-line"></div>
+    <p class="cover-kicker">Aura Decants MX</p>
     <p class="cover-month" th:text="|${mesActual} ${anioActual}|">Julio 2026</p>
     <h1>Catalogo de Fragancias</h1>
     <p class="tagline">Decants de perfumes originales. Alta Perfumeria y Perfumeria Arabe.</p>
@@ -284,8 +311,8 @@
     </div>
     <p class="promo-note" th:if="${promoTexto != null and !promoTexto.isBlank()}" th:text="${promoTexto}"></p>
     <table class="grid">
-        <tr th:each="row : ${#numbers.sequence(0, productosPromo.size() - 1, 3)}">
-            <td class="product" th:each="p : ${productosPromo.subList(row, T(java.lang.Math).min(row + 3, productosPromo.size()))}">
+        <tr th:each="row : ${#numbers.sequence(0, productosPromo.size() - 1, 2)}">
+            <td class="product" th:each="p : ${productosPromo.subList(row, T(java.lang.Math).min(row + 2, productosPromo.size()))}">
                 <div th:replace="~{catalogo-pdf-fragments :: productCard(${p})}"></div>
             </td>
         </tr>
