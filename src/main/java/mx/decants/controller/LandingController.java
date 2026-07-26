@@ -239,7 +239,7 @@ public class LandingController {
                 return java.util.Optional.empty();
             }
 
-            BufferedImage scaled = scaleToWidth(original, 400);
+            BufferedImage scaled = cropToSize(original, 520, 620);
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             ImageIO.write(scaled, "png", output);
             String dataUri = "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(output.toByteArray());
@@ -266,18 +266,33 @@ public class LandingController {
         }
     }
 
-    private static BufferedImage scaleToWidth(BufferedImage original, int targetWidth) {
-        if (original.getWidth() <= targetWidth) {
-            return original;
+    private static BufferedImage cropToSize(BufferedImage original, int targetWidth, int targetHeight) {
+        double targetRatio = (double) targetWidth / targetHeight;
+        double originalRatio = (double) original.getWidth() / original.getHeight();
+
+        int sourceWidth = original.getWidth();
+        int sourceHeight = original.getHeight();
+        int sourceX = 0;
+        int sourceY = 0;
+
+        if (originalRatio > targetRatio) {
+            sourceWidth = (int) Math.round(original.getHeight() * targetRatio);
+            sourceX = Math.max(0, (original.getWidth() - sourceWidth) / 2);
+        } else if (originalRatio < targetRatio) {
+            sourceHeight = (int) Math.round(original.getWidth() / targetRatio);
+            sourceY = Math.max(0, (original.getHeight() - sourceHeight) / 2);
         }
 
-        int targetHeight = Math.max(1, original.getHeight() * targetWidth / original.getWidth());
         BufferedImage scaled = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = scaled.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics.drawImage(original, 0, 0, targetWidth, targetHeight, null);
+        graphics.drawImage(
+                original,
+                0, 0, targetWidth, targetHeight,
+                sourceX, sourceY, sourceX + sourceWidth, sourceY + sourceHeight,
+                null);
         graphics.dispose();
         return scaled;
     }
