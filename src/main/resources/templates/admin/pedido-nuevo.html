@@ -136,11 +136,6 @@
         <a th:href="@{/aura-gestion/pedidos}" class="admin-link">&#8592; Volver a pedidos</a>
     </div>
 
-    <div th:if="${error}"
-         style="background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; border-radius:8px;
-                padding:0.75rem 1.25rem; margin-bottom:1.25rem; font-size:0.88rem; max-width:620px;"
-         th:text="${error}"></div>
-
     <div class="admin-card" style="max-width:620px;">
         <div class="admin-card-header">
             <h2>Registrar venta directa</h2>
@@ -200,7 +195,7 @@
                     <p style="color:var(--muted); font-size:0.8rem; margin:0.25rem 0 0;">Sin productos seleccionados</p>
                 </div>
 
-                <input type="hidden" name="itemsJson" id="itemsJsonInput">
+                <input type="hidden" name="productos" id="productosInput">
                 <div id="productosError" style="display:none; color:#c00; font-size:0.75rem;">
                     Agrega al menos un producto.
                 </div>
@@ -353,7 +348,7 @@ function render() {
     var c = document.getElementById('productosLista');
     if (!seleccionados.length) {
         c.innerHTML = '<p style="color:var(--muted); font-size:0.8rem; margin:0.25rem 0 0;">Sin productos seleccionados</p>';
-        document.getElementById('itemsJsonInput').value = '';
+        document.getElementById('productosInput').value = '';
         document.getElementById('total').value = '';
         return;
     }
@@ -372,10 +367,12 @@ function render() {
         '</div>';
     }).join('');
 
-    var items = seleccionados.map(function(s) {
-        return { productoId: s.id, variante: s.variante, cantidad: s.cantidad, precioUnitario: s.precio };
-    });
-    document.getElementById('itemsJsonInput').value = JSON.stringify(items);
+    var texto = seleccionados.map(function(s) {
+        var t = s.nombre + ' ' + s.variante;
+        if (s.cantidad > 1) t += ' x' + s.cantidad;
+        return t;
+    }).join(', ');
+    document.getElementById('productosInput').value = texto;
     document.getElementById('productosError').style.display = 'none';
 
     var totalCalc = seleccionados.reduce(function(sum, s) { return sum + s.precio * s.cantidad; }, 0);

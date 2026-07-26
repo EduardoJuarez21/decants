@@ -314,20 +314,16 @@ public class PedidoService {
     }
 
     public Pedido crearPedidoManual(String nombre, String telefono, String email,
-                                     String itemsJson, Integer total,
+                                     String productosDesc, Integer total,
                                      String direccion, String latitud, String longitud,
                                      String comentarios, String estadoStr) {
         Pedido pedido = new Pedido();
-        List<PedidoItem> items = buildItemsManual(itemsJson);
-        items.forEach(it -> it.setPedido(pedido));
-
         pedido.setNombreCliente(nombre.trim());
         pedido.setTelefono(telefono.trim());
         pedido.setEmail(email != null && !email.isBlank() ? email.trim() : null);
         pedido.setTipoProducto("Venta directa");
-        pedido.setCantidad(items.stream().mapToInt(PedidoItem::getCantidad).sum());
-        pedido.setItems(items);
-        pedido.setProductosSeleccionados(buildResumen(items));
+        pedido.setCantidad(1);
+        pedido.setProductosSeleccionados(productosDesc != null ? productosDesc.trim() : "");
         pedido.setTotalPagado(total);
         pedido.setDireccion(direccion != null && !direccion.isBlank() ? direccion.trim() : null);
         if (latitud != null && !latitud.isBlank()) {
@@ -362,48 +358,9 @@ public class PedidoService {
         pedido.setCliente(clienteRepository.save(cliente));
 
         Pedido saved = pedidoRepository.save(pedido);
-        descontarStock(items);
         log.info("Pedido manual #{} creado — cliente: {}, total: ${} MXN", saved.getId(), nombre, total);
         telegramService.notificarNuevoPedido(saved);
         return saved;
-    }
-
-    private List<PedidoItem> buildItemsManual(String itemsJson) {
-        List<PedidoItem> items = new ArrayList<>();
-        try {
-            JsonNode nodos = objectMapper.readTree(itemsJson);
-            for (JsonNode nodo : nodos) {
-                long productoId = nodo.get("productoId").asLong();
-                String variante = nodo.get("variante").asText("10ml");
-                int cantidad = nodo.get("cantidad").asInt(1);
-                int precioUnitario = nodo.get("precioUnitario").asInt();
-
-                Producto p = productoRepository.findById(productoId)
-                        .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-                if (p.getStock() != null && p.getStock() < cantidad) {
-                    String msg = p.getStock() == 0
-                        ? p.getNombre() + " está agotado"
-                        : p.getNombre() + " solo tiene " + p.getStock() + " unidad(es) disponible(s)";
-                    throw new IllegalArgumentException(msg);
-                }
-
-                PedidoItem item = new PedidoItem();
-                item.setProducto(p);
-                item.setNombre(p.getNombre());
-                item.setVariante(variante);
-                item.setCantidad(cantidad);
-                item.setPrecioUnitario(precioUnitario);
-                items.add(item);
-            }
-        } catch (IllegalArgumentException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Productos inválidos");
-        }
-        if (items.isEmpty()) {
-            throw new IllegalArgumentException("Agrega al menos un producto.");
-        }
-        return items;
     }
 
     public void actualizarGuia(Long id, String guia) {

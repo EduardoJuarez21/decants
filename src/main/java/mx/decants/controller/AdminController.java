@@ -117,7 +117,7 @@ public class AdminController {
     public String guardarPedidoManual(@RequestParam String nombre,
                                       @RequestParam String telefono,
                                       @RequestParam(required = false) String email,
-                                      @RequestParam String itemsJson,
+                                      @RequestParam String productos,
                                       @RequestParam Integer total,
                                       @RequestParam(required = false) String direccion,
                                       @RequestParam(required = false) String latitud,
@@ -125,14 +125,8 @@ public class AdminController {
                                       @RequestParam(required = false) String comentarios,
                                       @RequestParam(defaultValue = "CONFIRMADO") String estado,
                                       RedirectAttributes ra) {
-        Pedido p;
-        try {
-            p = pedidoService.crearPedidoManual(nombre, telefono, email, itemsJson, total,
-                                                direccion, latitud, longitud, comentarios, estado);
-        } catch (IllegalArgumentException e) {
-            ra.addFlashAttribute("error", e.getMessage());
-            return "redirect:/aura-gestion/pedidos/nuevo";
-        }
+        Pedido p = pedidoService.crearPedidoManual(nombre, telefono, email, productos, total,
+                                                    direccion, latitud, longitud, comentarios, estado);
         ra.addFlashAttribute("mensaje", "Pedido #" + p.getId() + " registrado correctamente.");
         return "redirect:/aura-gestion/pedidos";
     }
