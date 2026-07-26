@@ -1,6 +1,7 @@
 package mx.decants.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -53,6 +55,33 @@ public class ImagenService {
         }
 
         return "/" + subdir + "/" + nombreWebp;
+    }
+
+    /**
+     * Lee los bytes de una imagen de producto. Busca primero en el volumen de
+     * uploads (fotos subidas via el panel); si no esta ahi, cae al classpath
+     * (fotos empaquetadas en el build).
+     */
+    public Optional<byte[]> leerImagen(String imagenPrincipal) {
+        if (imagenPrincipal == null || imagenPrincipal.isBlank()) {
+            return Optional.empty();
+        }
+        String rel = imagenPrincipal.startsWith("/") ? imagenPrincipal.substring(1) : imagenPrincipal;
+
+        Path enDisco = Paths.get(uploadsDir).resolve(rel);
+        try {
+            if (Files.exists(enDisco)) {
+                return Optional.of(Files.readAllBytes(enDisco));
+            }
+            if (rel.startsWith("img/")) {
+                try (var in = new ClassPathResource("static/" + rel).getInputStream()) {
+                    return Optional.of(in.readAllBytes());
+                }
+            }
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+        return Optional.empty();
     }
 
     private String resolverSubdir(String categoria, String genero) {

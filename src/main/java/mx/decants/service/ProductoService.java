@@ -52,6 +52,37 @@ public class ProductoService {
         return productoRepository.findByActivoTrueOrderByCategoriaAscOrdenAsc();
     }
 
+    @Transactional(readOnly = true)
+    public byte[] exportarCsvParaIA(List<Producto> productos, java.util.Map<Long, String> archivoPorProducto) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Archivo,Marca,Nombre,Categoria,Genero,Familia,Notas,Caracteristicas,Inspiracion,")
+          .append("Precio3ml,Precio5ml,Precio10ml,PromoActiva,DescuentoPorcentaje\n");
+        for (Producto p : productos) {
+            sb.append(csv(archivoPorProducto.get(p.getId())))
+              .append(",").append(csv(p.getMarca()))
+              .append(",").append(csv(p.getNombre()))
+              .append(",").append(csv(p.getCategoria()))
+              .append(",").append(csv(p.getGenero()))
+              .append(",").append(csv(p.getFamilia()))
+              .append(",").append(csv(p.getNotas()))
+              .append(",").append(csv(p.getCaracteristicas()))
+              .append(",").append(csv(p.getInspiracion()))
+              .append(",").append(csv(p.getPrecio3ml()))
+              .append(",").append(csv(p.getPrecio5ml()))
+              .append(",").append(csv(p.getPrecio()))
+              .append(",").append(csv(p.isPromoActivo() ? "Si" : "No"))
+              .append(",").append(csv(p.getDescuentoPorcentaje()))
+              .append("\n");
+        }
+        return sb.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    private String csv(Object val) {
+        if (val == null) return "";
+        String s = val.toString().replace("\"", "\"\"");
+        return s.contains(",") || s.contains("\"") || s.contains("\n") ? "\"" + s + "\"" : s;
+    }
+
     public void toggleActivo(Long id) {
         productoRepository.findById(id).ifPresent(p -> {
             p.setActivo(!p.isActivo());

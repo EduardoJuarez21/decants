@@ -59,6 +59,11 @@
                     &nbsp;·&nbsp;
                     Inactivos: <strong th:text="${#lists.size(productos.?[activo == false])}"></strong>
                 </span>
+                <a th:href="@{/aura-gestion/productos/exportar-ia}"
+                   style="padding:0.4rem 0.9rem; background:#f5f5f5; color:#444; border:1px solid #ddd; border-radius:7px;
+                          font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap;">
+                    Exportar para IA (ZIP)
+                </a>
                 <a th:href="@{/aura-gestion/productos/nuevo}"
                    style="padding:0.4rem 0.9rem; background:#1a1a1a; color:#fff; border-radius:7px;
                           font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap;">

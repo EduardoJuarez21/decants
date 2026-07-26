@@ -84,6 +84,47 @@ public class AdminController {
             .body(csv);
     }
 
+    @GetMapping("/productos/exportar-ia")
+    public ResponseEntity<byte[]> exportarParaIA() throws java.io.IOException {
+        List<Producto> productos = productoService.activosTodos();
+        Map<Long, String> archivoPorProducto = new LinkedHashMap<>();
+
+        var buffer = new java.io.ByteArrayOutputStream();
+        try (var zip = new java.util.zip.ZipOutputStream(buffer)) {
+            int numero = 1;
+            for (Producto p : productos) {
+                var imagen = imagenService.leerImagen(p.getImagenPrincipal());
+                if (imagen.isEmpty()) {
+                    continue;
+                }
+                String ext = extension(p.getImagenPrincipal());
+                String nombreArchivo = String.format("%02d%s", numero++, ext);
+                archivoPorProducto.put(p.getId(), nombreArchivo);
+
+                zip.putNextEntry(new java.util.zip.ZipEntry("imagenes/" + nombreArchivo));
+                zip.write(imagen.get());
+                zip.closeEntry();
+            }
+
+            byte[] csv = productoService.exportarCsvParaIA(productos, archivoPorProducto);
+            zip.putNextEntry(new java.util.zip.ZipEntry("productos.csv"));
+            zip.write(csv);
+            zip.closeEntry();
+        }
+
+        String filename = "catalogo-para-ia-" + LocalDate.now() + ".zip";
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+            .contentType(MediaType.parseMediaType("application/zip"))
+            .body(buffer.toByteArray());
+    }
+
+    private String extension(String path) {
+        if (path == null) return "";
+        int dot = path.lastIndexOf('.');
+        return dot >= 0 ? path.substring(dot) : "";
+    }
+
     // ── Pedidos ──────────────────────────────────────────────────────────────
 
     @GetMapping("/pedidos")
