@@ -10,6 +10,7 @@ import mx.decants.service.ConfiguracionService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.ResenaService;
 import mx.decants.service.VisitaService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
@@ -25,11 +26,15 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Controller
@@ -42,6 +47,11 @@ public class LandingController {
     private final VisitaService visitaService;
     private final ResenaService resenaService;
     private final TemplateEngine templateEngine;
+
+    @Value("${app.uploads-dir:/app/uploads}")
+    private String uploadsDir;
+
+    private static final Map<String, String> IMAGE_CACHE = new ConcurrentHashMap<>();
 
     public LandingController(ProductoService productoService,
                              ConfiguracionService configuracionService,
@@ -194,7 +204,7 @@ public class LandingController {
         return "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(logo);
     }
 
-    private static Map<Long, String> productImageDataUris(Iterable<mx.decants.entity.Producto> productos) {
+    private Map<Long, String> productImageDataUris(Iterable<mx.decants.entity.Producto> productos) {
         Map<Long, String> images = new HashMap<>();
         for (var producto : productos) {
             if (producto.getId() == null || producto.getImagenPrincipal() == null || producto.getImagenPrincipal().isBlank()) {
@@ -205,24 +215,50 @@ public class LandingController {
         return images;
     }
 
-    private static java.util.Optional<String> productImageDataUri(String imagePath) {
+    private java.util.Optional<String> productImageDataUri(String imagePath) {
         String path = imagePath.startsWith("/") ? imagePath.substring(1) : imagePath;
         if (!path.startsWith("img/")) {
             return java.util.Optional.empty();
         }
 
-        try (var inputStream = new ClassPathResource("static/" + path).getInputStream();
-             var output = new ByteArrayOutputStream()) {
+        String cached = IMAGE_CACHE.get(path);
+        if (cached != null) {
+            return java.util.Optional.of(cached);
+        }
+
+        try (var inputStream = abrirImagen(path)) {
+            if (inputStream == null) {
+                return java.util.Optional.empty();
+            }
             BufferedImage original = ImageIO.read(inputStream);
             if (original == null) {
                 return java.util.Optional.empty();
             }
 
-            BufferedImage scaled = scaleToWidth(original, 260);
+            BufferedImage scaled = scaleToWidth(original, 400);
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
             ImageIO.write(scaled, "png", output);
-            return java.util.Optional.of("data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(output.toByteArray()));
+            String dataUri = "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(output.toByteArray());
+            IMAGE_CACHE.put(path, dataUri);
+            return java.util.Optional.of(dataUri);
         } catch (IOException e) {
             return java.util.Optional.empty();
+        }
+    }
+
+    private InputStream abrirImagen(String path) {
+        var enDisco = Paths.get(uploadsDir).resolve(path);
+        if (Files.exists(enDisco)) {
+            try {
+                return Files.newInputStream(enDisco);
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        try {
+            return new ClassPathResource("static/" + path).getInputStream();
+        } catch (IOException e) {
+            return null;
         }
     }
 

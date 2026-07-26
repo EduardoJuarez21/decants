@@ -3,13 +3,12 @@
 <body>
 <div th:fragment="productSection(title, items)" th:if="${!items.isEmpty()}">
     <h3 th:text="${title}">Seccion</h3>
-    <table class="grid">
-        <tr th:each="row : ${#numbers.sequence(0, items.size() - 1, 2)}">
-            <td class="product" th:each="p : ${items.subList(row, T(java.lang.Math).min(row + 2, items.size()))}">
-                <div th:replace="~{catalogo-pdf-fragments :: productCard(${p})}"></div>
-            </td>
-        </tr>
-    </table>
+    <div class="grid">
+        <div class="product" th:each="p : ${items}">
+            <div th:replace="~{catalogo-pdf-fragments :: productCard(${p})}"></div>
+        </div>
+        <div class="grid-clear"></div>
+    </div>
 </div>
 
 <div th:fragment="productCard(p)" class="card">

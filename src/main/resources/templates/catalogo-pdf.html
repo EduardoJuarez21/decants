@@ -136,7 +136,6 @@
             border-left: 4px solid #c5a46b;
             font-family: Georgia, 'Times New Roman', serif;
             font-size: 14px;
-            page-break-after: avoid;
         }
 
         .promo-note {
@@ -150,19 +149,24 @@
 
         .grid {
             width: 100%;
-            border-spacing: 10px;
-            border-collapse: separate;
-            page-break-before: avoid;
+        }
+
+        .grid-clear {
+            clear: both;
         }
 
         .product {
-            width: 50%;
-            vertical-align: top;
+            float: left;
+            width: 48.7%;
+            margin: 0 0 10px;
             page-break-inside: avoid;
         }
 
+        .product:nth-child(odd) {
+            margin-right: 2.6%;
+        }
+
         .card {
-            min-height: 250px;
             padding: 0;
             border: 1px solid #dccfbb;
             border-radius: 8px;
@@ -310,13 +314,12 @@
         <p class="section-subtitle">Fragancias con descuento activo en este catalogo.</p>
     </div>
     <p class="promo-note" th:if="${promoTexto != null and !promoTexto.isBlank()}" th:text="${promoTexto}"></p>
-    <table class="grid">
-        <tr th:each="row : ${#numbers.sequence(0, productosPromo.size() - 1, 2)}">
-            <td class="product" th:each="p : ${productosPromo.subList(row, T(java.lang.Math).min(row + 2, productosPromo.size()))}">
-                <div th:replace="~{catalogo-pdf-fragments :: productCard(${p})}"></div>
-            </td>
-        </tr>
-    </table>
+    <div class="grid">
+        <div class="product" th:each="p : ${productosPromo}">
+            <div th:replace="~{catalogo-pdf-fragments :: productCard(${p})}"></div>
+        </div>
+        <div class="grid-clear"></div>
+    </div>
 </div>
 
 <div class="section" th:classappend="${!productosPromo.isEmpty()} ? 'break'">
