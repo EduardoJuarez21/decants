@@ -461,7 +461,7 @@
     <h1>Catalogo de Fragancias</h1>
     <p class="tagline">Decants de perfumes originales. Alta Perfumeria y Perfumeria Arabe.</p>
     <p class="cover-promo" th:if="${promoTexto != null and !promoTexto.isBlank()}" th:text="${promoTexto}"></p>
-    <a class="cover-cta" th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Vi el catalogo de ' + mesActual + ' y quiero hacer un pedido.')}">Pide por WhatsApp &#8594;</a>
+    <a class="cover-cta" th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Vi el catalogo de ' + mesActual + ' y quiero hacer un pedido.')}">Pide por WhatsApp</a>
     <p class="cover-footer">auradecantsmx.com</p>
 </div>
 
@@ -646,7 +646,7 @@
 <div class="footer">
     <p style="margin:0 0 10px; font-family: Georgia, 'Times New Roman', serif; font-size: 15px; color: #fff;">¿Listo para tu pedido?</p>
     <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Vi el catalogo de ' + mesActual + ' y quiero hacer un pedido.')}"
-       style="display:inline-block; margin-bottom:12px; padding:10px 26px; border-radius:999px; background:#c5a46b; color:#171411; font-size:11px; font-weight:700; text-decoration:none;">Pide por WhatsApp &#8594;</a>
+       style="display:inline-block; margin-bottom:12px; padding:10px 26px; border-radius:999px; background:#c5a46b; color:#171411; font-size:11px; font-weight:700; text-decoration:none;">Pide por WhatsApp</a>
     <div>100% fragancias originales | envios a todo Mexico | auradecantsmx.com</div>
 </div>
 
