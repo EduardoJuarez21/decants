@@ -1,5 +1,7 @@
 package mx.decants.controller;
 
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import jakarta.servlet.http.HttpServletResponse;
 import mx.decants.entity.Cupon;
 import mx.decants.entity.Kit;
 import mx.decants.repository.CuponRepository;
@@ -8,13 +10,24 @@ import mx.decants.service.ConfiguracionService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.ResenaService;
 import mx.decants.service.VisitaService;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
+import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,19 +41,22 @@ public class LandingController {
     private final KitRepository kitRepository;
     private final VisitaService visitaService;
     private final ResenaService resenaService;
+    private final TemplateEngine templateEngine;
 
     public LandingController(ProductoService productoService,
                              ConfiguracionService configuracionService,
                              CuponRepository cuponRepository,
                              KitRepository kitRepository,
                              VisitaService visitaService,
-                             ResenaService resenaService) {
+                             ResenaService resenaService,
+                             TemplateEngine templateEngine) {
         this.productoService = productoService;
         this.configuracionService = configuracionService;
         this.cuponRepository = cuponRepository;
         this.kitRepository = kitRepository;
         this.visitaService = visitaService;
         this.resenaService = resenaService;
+        this.templateEngine = templateEngine;
     }
 
     @GetMapping("/")
@@ -93,8 +109,7 @@ public class LandingController {
         model.addAttribute("promoTexto", configuracionService.getPromoTexto());
 
         LocalDate hoy = LocalDate.now();
-        String mes = hoy.getMonth().getDisplayName(TextStyle.FULL, new Locale("es", "MX"));
-        model.addAttribute("mesActual",  Character.toUpperCase(mes.charAt(0)) + mes.substring(1));
+        model.addAttribute("mesActual",  mesCapitalizado(hoy));
         model.addAttribute("anioActual", hoy.getYear());
 
         var tags = productos.stream()
@@ -110,8 +125,120 @@ public class LandingController {
         return "catalogo";
     }
 
+    @GetMapping("/catalogo/descargar")
+    public void descargarCatalogo(HttpServletResponse response) throws IOException {
+        var productos = productoService.activosTodos();
+        LocalDate hoy = LocalDate.now();
+        String mes = mesCapitalizado(hoy);
+        int anio = hoy.getYear();
+
+        Context context = new Context(new Locale("es", "MX"));
+        context.setVariable("productos", productos);
+        context.setVariable("productosPromo", productos.stream()
+                .filter(p -> p.isPromoActivo() && p.getDescuentoPorcentaje() != null)
+                .toList());
+        context.setVariable("waNumero", configuracionService.getWhatsappNegocio());
+        context.setVariable("promoTexto", configuracionService.getPromoTexto());
+        context.setVariable("mesActual", mes);
+        context.setVariable("anioActual", anio);
+        context.setVariable("logoSrc", logoDataUri());
+        context.setVariable("imageSrcById", productImageDataUris(productos));
+
+        String html = templateEngine.process("catalogo-pdf", context);
+
+        ByteArrayOutputStream pdf = new ByteArrayOutputStream();
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+        builder.useFastMode();
+        builder.withHtmlContent(html, null);
+        builder.toStream(pdf);
+        try {
+            builder.run();
+        } catch (Exception e) {
+            throw new IOException("No se pudo generar el catalogo PDF", e);
+        }
+
+        String filename = "catalogo-aura-decants-" + slug(mes) + "-" + anio + ".pdf";
+        response.setContentType("application/pdf");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
+        response.setContentLength(pdf.size());
+        pdf.writeTo(response.getOutputStream());
+    }
+
     @GetMapping("/terminos")
     public String terminos() {
         return "terminos";
+    }
+
+    private static String mesCapitalizado(LocalDate fecha) {
+        String mes = fecha.getMonth().getDisplayName(TextStyle.FULL, new Locale("es", "MX"));
+        return Character.toUpperCase(mes.charAt(0)) + mes.substring(1);
+    }
+
+    private static String slug(String value) {
+        return value.toLowerCase(Locale.ROOT)
+                .replace("á", "a")
+                .replace("é", "e")
+                .replace("í", "i")
+                .replace("ó", "o")
+                .replace("ú", "u")
+                .replace("ñ", "n")
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("^-|-$", "");
+    }
+
+    private static String logoDataUri() throws IOException {
+        byte[] logo;
+        try (var inputStream = new ClassPathResource("static/auradecantslogo.png").getInputStream()) {
+            logo = inputStream.readAllBytes();
+        }
+        return "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(logo);
+    }
+
+    private static Map<Long, String> productImageDataUris(Iterable<mx.decants.entity.Producto> productos) {
+        Map<Long, String> images = new HashMap<>();
+        for (var producto : productos) {
+            if (producto.getId() == null || producto.getImagenPrincipal() == null || producto.getImagenPrincipal().isBlank()) {
+                continue;
+            }
+            productImageDataUri(producto.getImagenPrincipal()).ifPresent(src -> images.put(producto.getId(), src));
+        }
+        return images;
+    }
+
+    private static java.util.Optional<String> productImageDataUri(String imagePath) {
+        String path = imagePath.startsWith("/") ? imagePath.substring(1) : imagePath;
+        if (!path.startsWith("img/")) {
+            return java.util.Optional.empty();
+        }
+
+        try (var inputStream = new ClassPathResource("static/" + path).getInputStream();
+             var output = new ByteArrayOutputStream()) {
+            BufferedImage original = ImageIO.read(inputStream);
+            if (original == null) {
+                return java.util.Optional.empty();
+            }
+
+            BufferedImage scaled = scaleToWidth(original, 260);
+            ImageIO.write(scaled, "png", output);
+            return java.util.Optional.of("data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(output.toByteArray()));
+        } catch (IOException e) {
+            return java.util.Optional.empty();
+        }
+    }
+
+    private static BufferedImage scaleToWidth(BufferedImage original, int targetWidth) {
+        if (original.getWidth() <= targetWidth) {
+            return original;
+        }
+
+        int targetHeight = Math.max(1, original.getHeight() * targetWidth / original.getWidth());
+        BufferedImage scaled = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = scaled.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.drawImage(original, 0, 0, targetWidth, targetHeight, null);
+        graphics.dispose();
+        return scaled;
     }
 }

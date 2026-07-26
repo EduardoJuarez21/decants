@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="|Catalogo Aura Decants ${mesActual} ${anioActual}|">Catalogo Aura Decants</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 0.55in;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: #1f1d1a;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10px;
+            line-height: 1.35;
+            background: #ffffff;
+        }
+
+        .cover {
+            height: 9.9in;
+            padding: 1.25in 0.65in;
+            color: #fff;
+            background: #191715;
+            text-align: center;
+            page-break-after: always;
+        }
+
+        .logo {
+            width: 142px;
+            height: auto;
+            margin-bottom: 32px;
+        }
+
+        .gold-line {
+            width: 70px;
+            height: 2px;
+            margin: 0 auto 28px;
+            background: #c5a46b;
+        }
+
+        .cover-month {
+            margin: 0 0 18px;
+            color: #c5a46b;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1.05;
+        }
+
+        .tagline {
+            width: 430px;
+            margin: 24px auto 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+        }
+
+        .cover-promo {
+            display: inline-block;
+            margin-top: 34px;
+            padding: 10px 22px;
+            border-radius: 999px;
+            color: #fff;
+            background: #b83a2f;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .cover-footer {
+            margin-top: 90px;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: 10px;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            margin-bottom: 22px;
+        }
+
+        .section.break {
+            page-break-before: always;
+        }
+
+        .section-head {
+            border-bottom: 1px solid #ded2be;
+            margin-bottom: 12px;
+            padding-bottom: 7px;
+        }
+
+        h2 {
+            margin: 0;
+            color: #1a1a1a;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 22px;
+            line-height: 1.1;
+        }
+
+        .section-subtitle {
+            margin: 3px 0 0;
+            color: #7b746b;
+            font-size: 10px;
+        }
+
+        h3 {
+            margin: 18px 0 8px;
+            color: #2a2723;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 14px;
+        }
+
+        .promo-note {
+            margin: 0 0 12px;
+            padding: 9px 12px;
+            color: #fff;
+            background: #b83a2f;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .grid {
+            width: 100%;
+            border-spacing: 8px;
+            border-collapse: separate;
+        }
+
+        .product {
+            width: 33.33%;
+            vertical-align: top;
+            page-break-inside: avoid;
+        }
+
+        .card {
+            min-height: 118px;
+            padding: 10px;
+            border: 1px solid #e4ddd2;
+            border-radius: 7px;
+            background: #fffdf9;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 96px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .badge {
+            display: inline-block;
+            margin: 0 4px 5px 0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #fff;
+            background: #c5a46b;
+            font-size: 7.5px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .badge.out {
+            background: #b83a2f;
+        }
+
+        .brand {
+            display: block;
+            color: #857b6e;
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+        }
+
+        .name {
+            display: block;
+            margin-top: 2px;
+            color: #1f1d1a;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .family {
+            display: block;
+            margin-top: 2px;
+            color: #766d63;
+            font-size: 8.5px;
+            font-style: italic;
+        }
+
+        .inspiration {
+            margin: 5px 0 0;
+            color: #766d63;
+            font-size: 8px;
+            font-style: italic;
+        }
+
+        .tags {
+            margin-top: 6px;
+            color: #a37e3e;
+            font-size: 7.5px;
+            font-weight: 700;
+        }
+
+        .prices {
+            margin-top: 8px;
+            padding-top: 7px;
+            border-top: 1px solid #eee5d7;
+            color: #1f1d1a;
+            font-size: 8.5px;
+            font-weight: 700;
+        }
+
+        .price {
+            display: inline-block;
+            margin: 0 5px 3px 0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #f1eadf;
+        }
+
+        .old {
+            color: #90877c;
+            text-decoration: line-through;
+        }
+
+        .promo-price {
+            color: #b83a2f;
+        }
+
+        .footer {
+            margin-top: 24px;
+            padding-top: 12px;
+            border-top: 1px solid #e4ddd2;
+            color: #7b746b;
+            font-size: 9px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="cover">
+    <img class="logo" th:src="${logoSrc}" alt="Aura Decants MX" />
+    <div class="gold-line"></div>
+    <p class="cover-month" th:text="|${mesActual} ${anioActual}|">Julio 2026</p>
+    <h1>Catalogo de Fragancias</h1>
+    <p class="tagline">Decants de perfumes originales. Alta Perfumeria y Perfumeria Arabe.</p>
+    <p class="cover-promo" th:if="${promoTexto != null and !promoTexto.isBlank()}" th:text="${promoTexto}"></p>
+    <p class="cover-footer">auradecantsmx.com</p>
+</div>
+
+<div class="section" th:if="${!productosPromo.isEmpty()}">
+    <div class="section-head">
+        <h2 th:text="|Promociones de ${mesActual}|">Promociones del mes</h2>
+        <p class="section-subtitle">Fragancias con descuento activo en este catalogo.</p>
+    </div>
+    <p class="promo-note" th:if="${promoTexto != null and !promoTexto.isBlank()}" th:text="${promoTexto}"></p>
+    <table class="grid">
+        <tr th:each="row : ${#numbers.sequence(0, productosPromo.size() - 1, 3)}">
+            <td class="product" th:each="p : ${productosPromo.subList(row, T(java.lang.Math).min(row + 3, productosPromo.size()))}">
+                <div th:replace="~{catalogo-pdf-fragments :: productCard(${p})}"></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="section" th:classappend="${!productosPromo.isEmpty()} ? 'break'">
+    <div class="section-head">
+        <h2>Catalogo Completo</h2>
+        <p class="section-subtitle" th:text="|Actualizado en ${mesActual} ${anioActual}|">Actualizado este mes</p>
+    </div>
+
+    <div th:replace="~{catalogo-pdf-fragments :: productSection('Alta Perfumeria - Para El', ${productos.?[categoria == 'alta-perfumeria' and genero == 'hombre']})}"></div>
+    <div th:replace="~{catalogo-pdf-fragments :: productSection('Alta Perfumeria - Para Ella', ${productos.?[categoria == 'alta-perfumeria' and genero == 'mujer']})}"></div>
+    <div th:replace="~{catalogo-pdf-fragments :: productSection('Alta Perfumeria - Unisex', ${productos.?[categoria == 'alta-perfumeria' and genero != 'hombre' and genero != 'mujer']})}"></div>
+    <div th:replace="~{catalogo-pdf-fragments :: productSection('Perfumeria Arabe - Para El', ${productos.?[categoria == 'nicho-arabe' and genero == 'hombre']})}"></div>
+    <div th:replace="~{catalogo-pdf-fragments :: productSection('Perfumeria Arabe - Para Ella', ${productos.?[categoria == 'nicho-arabe' and genero == 'mujer']})}"></div>
+    <div th:replace="~{catalogo-pdf-fragments :: productSection('Perfumeria Arabe - Unisex', ${productos.?[categoria == 'nicho-arabe' and genero != 'hombre' and genero != 'mujer']})}"></div>
+</div>
+
+<div class="footer">
+    Pedidos por WhatsApp: <span th:text="${waNumero}"></span> | auradecantsmx.com
+</div>
+
+</body>
+</html>
