@@ -142,7 +142,11 @@ public class LandingController {
         String mes = mesCapitalizado(hoy);
         int anio = hoy.getYear();
 
+        Map<String, Kit> kitsMap = kitRepository.findAllByOrderByOrdenAsc().stream()
+                .collect(Collectors.toMap(Kit::getSlug, k -> k));
+
         Context context = new Context(new Locale("es", "MX"));
+        context.setVariable("kitsMap", kitsMap);
         context.setVariable("productos", productos);
         context.setVariable("productosPromo", productos.stream()
                 .filter(p -> p.isPromoActivo() && p.getDescuentoPorcentaje() != null)
