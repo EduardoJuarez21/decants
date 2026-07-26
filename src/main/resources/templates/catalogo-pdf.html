@@ -119,6 +119,7 @@
             color: #2a2723;
             font-family: Georgia, 'Times New Roman', serif;
             font-size: 14px;
+            page-break-after: avoid;
         }
 
         .promo-note {
@@ -134,6 +135,7 @@
             width: 100%;
             border-spacing: 8px;
             border-collapse: separate;
+            page-break-before: avoid;
         }
 
         .product {
@@ -158,6 +160,18 @@
             object-fit: cover;
             object-position: center;
             display: block;
+        }
+
+        .product-image.placeholder {
+            padding-top: 34px;
+            color: #a37e3e;
+            background: #f1eadf;
+            border: 1px solid #e4ddd2;
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-align: center;
+            text-transform: uppercase;
         }
 
         .badge {

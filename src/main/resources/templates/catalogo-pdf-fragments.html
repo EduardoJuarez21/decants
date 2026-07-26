@@ -14,6 +14,7 @@
 
 <div th:fragment="productCard(p)" class="card">
     <img class="product-image" th:if="${imageSrcById.get(p.id) != null}" th:src="${imageSrcById.get(p.id)}" th:alt="${p.nombre}" />
+    <div class="product-image placeholder" th:if="${imageSrcById.get(p.id) == null}">Aura Decants MX</div>
 
     <span th:if="${p.bestSeller}" class="badge">Best Seller</span>
     <span th:if="${p.stock != null and p.stock == 0}" class="badge out">Agotado</span>
