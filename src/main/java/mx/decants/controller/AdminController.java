@@ -167,11 +167,12 @@ public class AdminController {
                                       @RequestParam(required = false) String longitud,
                                       @RequestParam(required = false) String comentarios,
                                       @RequestParam(defaultValue = "CONFIRMADO") String estado,
+                                      @RequestParam(required = false) String vendedor,
                                       RedirectAttributes ra) {
         Pedido p;
         try {
             p = pedidoService.crearPedidoManual(nombre, telefono, email, itemsJson, total,
-                                                direccion, latitud, longitud, comentarios, estado);
+                                                direccion, latitud, longitud, comentarios, estado, vendedor);
         } catch (IllegalArgumentException e) {
             ra.addFlashAttribute("error", e.getMessage());
             return "redirect:/aura-gestion/pedidos/nuevo";
@@ -348,6 +349,14 @@ public class AdminController {
             .sorted((a, b) -> a.getNombre().compareToIgnoreCase(b.getNombre()))
             .collect(Collectors.toList());
         model.addAttribute("productos", productos);
+
+        int meta = configuracionService.getMetaDorisMonto();
+        int llevas = pedidoService.ventasVendedorMesActual("doris");
+        model.addAttribute("metaMonto", meta);
+        model.addAttribute("metaPremio", configuracionService.getMetaDorisPremio());
+        model.addAttribute("metaLlevas", llevas);
+        model.addAttribute("metaPorcentaje", Math.min(100, meta > 0 ? (llevas * 100 / meta) : 0));
+        model.addAttribute("metaCumplida", llevas >= meta);
         return "admin/comisiones";
     }
 
@@ -441,6 +450,8 @@ public class AdminController {
         model.addAttribute("emailSmtpPort",       configuracionService.get("email_smtp_port", "587"));
         model.addAttribute("emailFrom",           configuracionService.get("email_from", ""));
         model.addAttribute("markupDefault",       configuracionService.getMarkupDefault());
+        model.addAttribute("metaDorisMonto",      configuracionService.getMetaDorisMonto());
+        model.addAttribute("metaDorisPremio",     configuracionService.getMetaDorisPremio());
         return "admin/configuracion";
     }
 
@@ -448,6 +459,16 @@ public class AdminController {
     public String guardarMarkupDefault(@RequestParam double markupDefault, RedirectAttributes ra) {
         configuracionService.setMarkupDefault(markupDefault);
         ra.addFlashAttribute("mensaje", "Markup por defecto actualizado.");
+        return "redirect:/aura-gestion/configuracion";
+    }
+
+    @PostMapping("/configuracion/meta-doris")
+    public String guardarMetaDoris(@RequestParam int metaDorisMonto,
+                                    @RequestParam(required = false) String metaDorisPremio,
+                                    RedirectAttributes ra) {
+        configuracionService.setMetaDorisMonto(metaDorisMonto);
+        configuracionService.setMetaDorisPremio(metaDorisPremio != null ? metaDorisPremio.trim() : "");
+        ra.addFlashAttribute("mensaje", "Meta de Doris actualizada.");
         return "redirect:/aura-gestion/configuracion";
     }
 

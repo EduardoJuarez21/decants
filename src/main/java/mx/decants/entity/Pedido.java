@@ -69,6 +69,8 @@ public class Pedido {
 
     private String entorno;
 
+    private String vendedor; // ej. "doris" — null si fue venta directa del sitio, sin vendedor asignado
+
     private Double latitud;
 
     private Double longitud;
@@ -166,6 +168,9 @@ public class Pedido {
 
     public String getEntorno() { return entorno; }
     public void setEntorno(String entorno) { this.entorno = entorno; }
+
+    public String getVendedor() { return vendedor; }
+    public void setVendedor(String vendedor) { this.vendedor = vendedor; }
 
     public Double getLatitud() { return latitud; }
     public void setLatitud(Double latitud) { this.latitud = latitud; }

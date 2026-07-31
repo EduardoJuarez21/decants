@@ -73,4 +73,25 @@ public class ConfiguracionService {
     public void setMarkupDefault(double markup) {
         set("markup_default", String.valueOf(markup));
     }
+
+    @Transactional(readOnly = true)
+    public int getMetaDorisMonto() {
+        try { return Integer.parseInt(get("meta_doris_monto", "1000")); }
+        catch (NumberFormatException e) { return 1000; }
+    }
+
+    @Transactional
+    public void setMetaDorisMonto(int monto) {
+        set("meta_doris_monto", String.valueOf(monto));
+    }
+
+    @Transactional(readOnly = true)
+    public String getMetaDorisPremio() {
+        return get("meta_doris_premio", "");
+    }
+
+    @Transactional
+    public void setMetaDorisPremio(String premio) {
+        set("meta_doris_premio", premio);
+    }
 }

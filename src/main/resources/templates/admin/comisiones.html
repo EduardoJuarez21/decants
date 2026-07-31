@@ -26,6 +26,28 @@
         </div>
     </div>
 
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>🎯 Meta de este mes</h2>
+        </div>
+        <div style="padding:1.5rem 2rem;">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.6rem;">
+                <span style="font-size:1.4rem; font-weight:700; color:#1a1a1a;">
+                    $<span th:text="${metaLlevas}"></span> <span style="font-size:0.9rem; font-weight:400; color:var(--muted);">de $<span th:text="${metaMonto}"></span></span>
+                </span>
+                <span th:if="${metaCumplida}" style="font-size:0.85rem; font-weight:700; color:#2e7d32;">¡Meta cumplida! 🎉</span>
+                <span th:unless="${metaCumplida}" style="font-size:0.85rem; font-weight:600; color:var(--gold);" th:text="${metaPorcentaje} + '%'"></span>
+            </div>
+            <div style="background:#f0ede8; border-radius:20px; height:14px; overflow:hidden;">
+                <div th:style="'background:' + (${metaCumplida} ? '#2e7d32' : 'var(--gold)') + '; height:100%; border-radius:20px; width:' + ${metaPorcentaje} + '%; transition:width 0.4s ease;'"></div>
+            </div>
+            <p th:if="${metaPremio != null and !metaPremio.isBlank()}"
+               style="font-size:0.85rem; color:#555; margin:0.9rem 0 0;">
+                🎁 Premio al llegar a la meta: <strong th:text="${metaPremio}"></strong>
+            </p>
+        </div>
+    </div>
+
     <div class="admin-card">
         <div class="admin-card-header">
             <h2>Precio y comisión por producto</h2>

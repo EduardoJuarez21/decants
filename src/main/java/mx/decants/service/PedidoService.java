@@ -312,6 +312,16 @@ public class PedidoService {
         log.warn("Pedido #{} cancelado (error en Stripe)", pedidoId);
     }
 
+    @Transactional(readOnly = true)
+    public int ventasVendedorMesActual(String vendedor) {
+        LocalDateTime inicioMes = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        return pedidoRepository
+            .findByVendedorAndFechaCreacionAfterAndEstadoPedidoNot(vendedor, inicioMes, EstadoPedido.CANCELADO)
+            .stream()
+            .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
+            .sum();
+    }
+
     public Pedido confirmarPorSession(String sessionId) {
         Pedido pedido = pedidoRepository.findByStripeSessionId(sessionId)
             .orElseThrow(() -> new IllegalArgumentException("Sesión no encontrada: " + sessionId));
@@ -330,7 +340,7 @@ public class PedidoService {
     public Pedido crearPedidoManual(String nombre, String telefono, String email,
                                      String itemsJson, Integer total,
                                      String direccion, String latitud, String longitud,
-                                     String comentarios, String estadoStr) {
+                                     String comentarios, String estadoStr, String vendedor) {
         Pedido pedido = new Pedido();
         List<PedidoItem> items = buildItemsManual(itemsJson);
         items.forEach(it -> it.setPedido(pedido));
@@ -352,6 +362,7 @@ public class PedidoService {
         }
         pedido.setComentarios(comentarios != null && !comentarios.isBlank() ? comentarios.trim() : null);
         pedido.setEntorno("manual");
+        pedido.setVendedor(vendedor != null && !vendedor.isBlank() ? vendedor.trim() : null);
         EstadoPedido estado = switch (estadoStr) {
             case "CONFIRMADO"       -> EstadoPedido.CONFIRMADO;
             case "LISTO_PARA_ENVIO" -> EstadoPedido.LISTO_PARA_ENVIO;
