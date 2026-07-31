@@ -26,115 +26,115 @@ public class DataInitializer implements CommandLineRunner {
         // ── Alta Perfumería ──────────────────────────────────────────────────
 
         repo.save(p("Acqua di Giò", "Giorgio Armani", "alta-perfumeria", "hombre",
-                "Acuático Aromático · Hombre", "Bergamota · Neroli · Mar · Pachulí",
+                "Acuático Aromático · Hombre", "Bergamota · Neroli · Mar · Pachulí", "EDP",
                 "/img/alta-perfumeria/hombre/aqua-di-gio.webp",
                 "/img/alta-perfumeria/hombre/car-aqua-di-gio.webp",
                 "pi-acqua", 310, 160, 4.9, false, false, 1));
 
         repo.save(p("Light Blue", "Dolce & Gabbana", "alta-perfumeria", "mujer",
-                "Floral Frutal · Mujer", "Manzana · Cedro · Bambú · Ámbar",
+                "Floral Frutal · Mujer", "Manzana · Cedro · Bambú · Ámbar", "EDT",
                 "/img/alta-perfumeria/mujer/light-blue.webp",
                 "/img/alta-perfumeria/mujer/car-light-blue.webp",
                 "pi-lightblue", 160, null, 4.8, false, false, 2));
 
         repo.save(p("Ombré Leather", "Tom Ford", "alta-perfumeria", "hombre",
-                "Cuero Amaderado · Hombre", "Cuero · Cardamomo · Jazmín · Patchouli",
+                "Cuero Amaderado · Hombre", "Cuero · Cardamomo · Jazmín · Patchouli", "EDP",
                 "/img/alta-perfumeria/hombre/ombre-leather.webp",
                 "/img/alta-perfumeria/hombre/car-ombre-leather.webp",
                 "pi-tomford", 290, null, 4.9, false, false, 3));
 
         repo.save(p("Donna Born in Roma", "Valentino", "alta-perfumeria", "mujer",
-                "Floral Gourmand · Mujer", "Jazmín · Vainilla · Vetiver · Iris",
+                "Floral Gourmand · Mujer", "Jazmín · Vainilla · Vetiver · Iris", "EDP",
                 "/img/alta-perfumeria/mujer/valentino.webp",
                 "/img/alta-perfumeria/mujer/car-valentino.webp",
                 "pi-valentino", 220, null, 4.7, false, false, 4));
 
         repo.save(p("Cloud", "Ariana Grande", "alta-perfumeria", "mujer",
-                "Floral Frutal · Mujer", "Lavanda · Pera · Coco · Praliné",
+                "Floral Frutal · Mujer", "Lavanda · Pera · Coco · Praliné", "EDP",
                 "/img/alta-perfumeria/mujer/ariana-grande-cloud.webp",
                 "/img/alta-perfumeria/mujer/car-ariana-grande-cloud.webp",
                 "pi-cloud", 219, null, 4.5, true, true, 5));
 
         repo.save(p("Bleu de Chanel", "Chanel", "alta-perfumeria", "hombre",
-                "Aromático Amaderado · Hombre", "Limón · Jengibre · Sándalo · Cedro",
+                "Aromático Amaderado · Hombre", "Limón · Jengibre · Sándalo · Cedro", "EDP",
                 "/img/alta-perfumeria/hombre/blue-de-chanel.webp",
                 "/img/alta-perfumeria/hombre/car-blue-de-chanel.webp",
                 "pi-bleu", 250, null, 4.9, false, false, 6));
 
         repo.save(p("Sauvage", "Dior", "alta-perfumeria", "hombre",
-                "Aromático Especiado · Hombre", "Bergamota · Pimienta · Ambroxan · Vetiver",
+                "Aromático Especiado · Hombre", "Bergamota · Pimienta · Ambroxan · Vetiver", "EDP",
                 "/img/alta-perfumeria/hombre/sauvage.webp",
                 "/img/alta-perfumeria/hombre/car-sauvage.webp",
                 "pi-sauvage", 240, null, 4.9, false, false, 7));
 
         repo.save(p("Le Male", "Jean Paul Gaultier", "alta-perfumeria", "hombre",
-                "Oriental Fougère · Hombre", "Lavanda · Menta · Vainilla · Ámbar",
+                "Oriental Fougère · Hombre", "Lavanda · Menta · Vainilla · Ámbar", "EDP",
                 "/img/alta-perfumeria/hombre/paul-gaultier.webp",
                 "/img/alta-perfumeria/hombre/car-paul-gaultier.webp",
                 "pi-lemale", 190, null, 4.8, false, false, 8));
 
         repo.save(p("1 Million", "Paco Rabanne", "alta-perfumeria", "hombre",
-                "Oriental Especiado · Hombre", "Mandarina · Canela · Cuero · Pachulí",
+                "Oriental Especiado · Hombre", "Mandarina · Canela · Cuero · Pachulí", "EDP",
                 "/img/alta-perfumeria/hombre/one-million.webp",
                 "/img/alta-perfumeria/hombre/car-one-million.webp",
                 "pi-million", 190, null, 4.8, false, false, 9));
 
         repo.save(p("Black Opium", "Yves Saint Laurent", "alta-perfumeria", "mujer",
-                "Oriental Gourmand · Mujer", "Café · Vainilla · Flor Blanca · Cedro",
+                "Oriental Gourmand · Mujer", "Café · Vainilla · Flor Blanca · Cedro", "EDP",
                 "/img/alta-perfumeria/mujer/black-opium.webp",
                 "/img/alta-perfumeria/mujer/car-black-opium.webp",
                 "pi-blackopium", 200, null, 4.8, false, false, 10));
 
         repo.save(p("Coco Mademoiselle", "Chanel", "alta-perfumeria", "mujer",
-                "Oriental Floral · Mujer", "Naranja · Rosa · Jazmín · Pachulí",
+                "Oriental Floral · Mujer", "Naranja · Rosa · Jazmín · Pachulí", "EDP",
                 "/img/alta-perfumeria/mujer/coco-chanel.webp",
                 "/img/alta-perfumeria/mujer/car-coco-chanel.webp",
                 "pi-coco", 280, null, 4.9, false, false, 11));
 
         repo.save(p("Daisy", "Marc Jacobs", "alta-perfumeria", "mujer",
-                "Floral Frutal · Mujer", "Fresa · Violeta · Jazmín · Sándalo",
+                "Floral Frutal · Mujer", "Fresa · Violeta · Jazmín · Sándalo", "EDP",
                 "/img/alta-perfumeria/mujer/daysi.webp",
                 "/img/alta-perfumeria/mujer/car-daysi.webp",
                 "pi-daisy", 180, null, 4.7, false, false, 12));
 
         repo.save(p("Good Girl", "Carolina Herrera", "alta-perfumeria", "mujer",
-                "Oriental Floral · Mujer", "Jazmín · Cacao · Tonka · Café",
+                "Oriental Floral · Mujer", "Jazmín · Cacao · Tonka · Café", "EDP",
                 "/img/alta-perfumeria/mujer/good-girl.webp",
                 "/img/alta-perfumeria/mujer/car-good-girl.webp",
                 "pi-goodgirl", 220, null, 4.8, false, false, 13));
 
         repo.save(p("J'adore", "Dior", "alta-perfumeria", "mujer",
-                "Floral Afrutado · Mujer", "Ylang Ylang · Rosa · Jazmín · Vainilla",
+                "Floral Afrutado · Mujer", "Ylang Ylang · Rosa · Jazmín · Vainilla", "EDP",
                 "/img/alta-perfumeria/mujer/jadore.webp",
                 "/img/alta-perfumeria/mujer/car-jadore.webp",
                 "pi-jadore", 240, null, 4.8, false, false, 14));
 
         repo.save(p("Libre", "Yves Saint Laurent", "alta-perfumeria", "mujer",
-                "Floral Amaderado · Mujer", "Lavanda · Naranja · Jazmín · Musgo",
+                "Floral Amaderado · Mujer", "Lavanda · Naranja · Jazmín · Musgo", "EDP",
                 "/img/alta-perfumeria/mujer/libre.webp",
                 "/img/alta-perfumeria/mujer/car-libre.webp",
                 "pi-libre", 220, null, 4.8, false, false, 15));
 
         repo.save(p("Sì", "Giorgio Armani", "alta-perfumeria", "mujer",
-                "Chypre Floral · Mujer", "Grosella negra · Rosa · Pachulí · Vainilla",
+                "Chypre Floral · Mujer", "Grosella negra · Rosa · Pachulí · Vainilla", "EDP",
                 "/img/alta-perfumeria/mujer/si-giorgio-armani.webp",
                 "/img/alta-perfumeria/mujer/car-si-giorgio-armani.webp",
                 "pi-si", 200, null, 4.7, false, false, 16));
 
         repo.save(p("Flowerbomb", "Viktor & Rolf", "alta-perfumeria", "mujer",
-                "Floral Oriental · Mujer", "Bergamota · Jazmín · Rosa · Pachulí",
+                "Floral Oriental · Mujer", "Bergamota · Jazmín · Rosa · Pachulí", "EDP",
                 "/img/alta-perfumeria/mujer/viktor.webp",
                 "/img/alta-perfumeria/mujer/car-viktor.webp",
                 "pi-flowerbomb", 230, null, 4.8, false, false, 17));
 
         repo.save(p("Acqua di Giò Profondo", "Giorgio Armani", "alta-perfumeria", "hombre",
-                "Aromático Acuático · Hombre", "Mar · Bergamota · Mandarina · Romero · Lavanda · Pachulí · Ámbar",
+                "Aromático Acuático · Hombre", "Mar · Bergamota · Mandarina · Romero · Lavanda · Pachulí · Ámbar", "EDP",
                 "/img/alta-perfumeria/hombre/acqua-di-gio-profondo.webp",
                 "/img/alta-perfumeria/hombre/car-acqua-di-gio-profondo.webp",
                 "pi-profondo", 420, 230, 4.8, false, false, 18));
 
         repo.save(p("Acqua di Giò Parfum", "Giorgio Armani", "alta-perfumeria", "hombre",
-                "Acuático Amaderado · Hombre", "Marina · Bergamota · Romero · Salvia · Geranio · Olíbano · Pachulí",
+                "Acuático Amaderado · Hombre", "Marina · Bergamota · Romero · Salvia · Geranio · Olíbano · Pachulí", "EDP",
                 "/img/alta-perfumeria/hombre/acqua-di-gio-parfum.webp",
                 "/img/alta-perfumeria/hombre/car-acqua-di-gio-parfum.webp",
                 "pi-parfum", 420, 230, 4.8, false, false, 19));
@@ -142,77 +142,77 @@ public class DataInitializer implements CommandLineRunner {
         // ── Perfumería Árabe ─────────────────────────────────────────────────
 
         repo.save(p("Club de Nuit Intense Man", "Armaf", "nicho-arabe", "hombre",
-                "Woody Especiado · Hombre", "Limón · Piña · Abedul · Almizclé",
+                "Woody Especiado · Hombre", "Limón · Piña · Abedul · Almizclé", "EDP",
                 "/img/arabe/club-de-nuit.webp", "/img/arabe/car-club-de-nuit.webp",
                 "pi-cdni", 99, null, 4.8, true, false, 1));
 
         repo.save(p("9PM", "Afnan", "nicho-arabe", "hombre",
-                "Oriental Vainilla · Hombre", "Manzana · Canela · Vainilla · Ámbar",
+                "Oriental Vainilla · Hombre", "Manzana · Canela · Vainilla · Ámbar", "EDP",
                 "/img/arabe/9pm.webp", "/img/arabe/car-9pm.webp",
                 "pi-9pm", 99, null, 4.7, true, false, 2));
 
         repo.save(p("Khamrah", "Lattafa", "nicho-arabe", "unisex",
-                "Oriental Especiado · Unisex", "Canela · Dátiles · Praliné · Vainilla",
+                "Oriental Especiado · Unisex", "Canela · Dátiles · Praliné · Vainilla", "EDP",
                 "/img/arabe/khamrah.webp", "/img/arabe/car-khamrah.webp",
                 "pi-khamrah", 99, null, 4.8, true, false, 3));
 
         repo.save(p("Yara", "Lattafa", "nicho-arabe", "mujer",
-                "Floral Gourmand · Mujer", "Orquídea · Mandarina · Vainilla · Sándalo",
+                "Floral Gourmand · Mujer", "Orquídea · Mandarina · Vainilla · Sándalo", "EDP",
                 "/img/arabe/yara.webp", "/img/arabe/car-yara.webp",
                 "pi-yara", 89, null, 4.6, true, false, 4));
 
         repo.save(p("Hawas", "Rasasi", "nicho-arabe", "hombre",
-                "Acuático Amaderado · Hombre", "Menta · Manzana · Cardamomo · Cedro · Ámbar",
+                "Acuático Amaderado · Hombre", "Menta · Manzana · Cardamomo · Cedro · Ámbar", "EDP",
                 "/img/arabe/hawas.webp", "/img/arabe/car-hawas.webp",
                 "pi-hawas", 999, null, 4.8, true, false, 5));
 
         repo.save(p("L'Aventure", "Al Haramain", "nicho-arabe", "hombre",
-                "Aromático Fresco · Hombre", "Bergamota · Lavanda · Madera · Vetiver · Almizcle",
+                "Aromático Fresco · Hombre", "Bergamota · Lavanda · Madera · Vetiver · Almizcle", "EDP",
                 "/img/arabe/laventure.webp", "/img/arabe/car-laventure.webp",
                 "pi-laventure", 999, null, 4.7, false, false, 6));
 
         repo.save(p("Supremacy Silver", "Afnan", "nicho-arabe", "hombre",
-                "Acuático Floral · Hombre", "Bergamota · Jazmín · Cedro · Sándalo · Almizcle",
+                "Acuático Floral · Hombre", "Bergamota · Jazmín · Cedro · Sándalo · Almizcle", "EDP",
                 "/img/arabe/supremacy-silver.webp", "/img/arabe/car-supremacy-silver.webp",
                 "pi-supremacy-silver", 999, null, 4.6, false, false, 7));
 
         repo.save(p("Asad", "Lattafa", "nicho-arabe", "hombre",
-                "Amaderado Oriental · Hombre", "Cuero · Oud · Especias · Vainilla · Ámbar",
+                "Amaderado Oriental · Hombre", "Cuero · Oud · Especias · Vainilla · Ámbar", "EDP",
                 "/img/arabe/asad.webp", "/img/arabe/car-asad.webp",
                 "pi-asad", 999, null, 4.7, false, false, 8));
 
         repo.save(p("Supremacy Pink", "Afnan", "nicho-arabe", "mujer",
-                "Frutal Floral · Mujer", "Litchi · Fresia · Rosa · Almizcle · Sándalo",
+                "Frutal Floral · Mujer", "Litchi · Fresia · Rosa · Almizcle · Sándalo", "EDP",
                 "/img/arabe/supremacy-pink.webp", "/img/arabe/car-supremacy-pink.webp",
                 "pi-supremacy-pink", 999, null, 4.6, false, false, 9));
 
         repo.save(p("La Yuqawam Femme", "Rasasi", "nicho-arabe", "mujer",
-                "Floral Oriental · Mujer", "Bergamota · Rosa · Jazmín · Pachulí · Ámbar",
+                "Floral Oriental · Mujer", "Bergamota · Rosa · Jazmín · Pachulí · Ámbar", "EDP",
                 "/img/arabe/la-yuqawam-femme.webp", "/img/arabe/car-la-yuqawam-femme.webp",
                 "pi-layuqawam", 999, null, 4.7, false, false, 10));
 
         repo.save(p("Lail Maleki", "Lattafa", "nicho-arabe", "mujer",
-                "Oriental Floral · Mujer", "Rosa · Oud · Sándalo · Vainilla · Ámbar",
+                "Oriental Floral · Mujer", "Rosa · Oud · Sándalo · Vainilla · Ámbar", "EDP",
                 "/img/arabe/lail-maleki.webp", "/img/arabe/car-lail-maleki.webp",
                 "pi-lailmaleki", 999, null, 4.7, false, false, 11));
 
         repo.save(p("Yara Moi", "Lattafa", "nicho-arabe", "mujer",
-                "Floral Gourmand · Mujer", "Cereza · Rosa · Vainilla · Caramelo · Almizcle",
+                "Floral Gourmand · Mujer", "Cereza · Rosa · Vainilla · Caramelo · Almizcle", "EDP",
                 "/img/arabe/yara-moi.webp", "/img/arabe/car-yara-moi.webp",
                 "pi-yaramoi", 999, null, 4.7, true, false, 12));
 
         repo.save(p("Nouf", "Swiss Arabian", "nicho-arabe", "mujer",
-                "Floral Amaderado · Mujer", "Rosa · Jazmín · Cedro · Sándalo · Almizcle",
+                "Floral Amaderado · Mujer", "Rosa · Jazmín · Cedro · Sándalo · Almizcle", "EDP",
                 "/img/arabe/nouf.webp", "/img/arabe/car-nouf.webp",
                 "pi-nouf", 999, null, 4.6, false, false, 13));
 
         repo.save(p("Amber Oud", "Al Haramain", "nicho-arabe", "unisex",
-                "Oriental Amaderado · Unisex", "Oud · Ámbar · Rosa · Sándalo · Almizcle",
+                "Oriental Amaderado · Unisex", "Oud · Ámbar · Rosa · Sándalo · Almizcle", "EDP",
                 "/img/arabe/amber-oud.webp", "/img/arabe/car-amber-oud.webp",
                 "pi-amberoud", 999, null, 4.9, true, false, 14));
 
         repo.save(p("Raghba", "Lattafa", "nicho-arabe", "unisex",
-                "Oriental Dulce · Unisex", "Vainilla · Ámbar · Cuero · Madera · Almizcle",
+                "Oriental Dulce · Unisex", "Vainilla · Ámbar · Cuero · Madera · Almizcle", "EDP",
                 "/img/arabe/raghba.webp", "/img/arabe/car-raghba.webp",
                 "pi-raghba", 999, null, 4.7, false, false, 15));
     }
@@ -246,7 +246,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private Producto p(String nombre, String marca, String categoria, String genero,
-                       String familia, String notas,
+                       String familia, String notas, String concentracion,
                        String imgPrincipal, String imgCar,
                        String claseCss, int precio, Integer precio5ml,
                        double calificacion, boolean bestSeller, boolean soloItem, int orden) {
@@ -257,6 +257,7 @@ public class DataInitializer implements CommandLineRunner {
         pr.setGenero(genero);
         pr.setFamilia(familia);
         pr.setNotas(notas);
+        pr.setConcentracion(concentracion);
         pr.setImagenPrincipal(imgPrincipal);
         pr.setImagenCaracteristicas(imgCar);
         pr.setClaseCss(claseCss);

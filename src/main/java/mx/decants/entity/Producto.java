@@ -28,6 +28,8 @@ public class Producto {
     @Column(nullable = false)
     private String notas;
 
+    private String concentracion;    // "EDT" | "EDP" | "Parfum"
+
     private String caracteristicas;  // ej. "Dulce · Juvenil · Fresco" — cómo se percibe, no de qué está hecho
 
     private String inspiracion;      // ej. "Recuerda a: Creed Aventus" — comparación olfativa, texto libre
@@ -73,6 +75,10 @@ public class Producto {
 
     private Double markup;   // multiplicador sobre el costo, ej. 1.8 = precio sugerido 80% arriba del costo
 
+    private Integer precioBotella;   // precio de venta del frasco completo, null = no se vende así
+    private Integer mlBotella;       // tamaño del frasco completo, ej. 100
+    private Integer stockBotella;    // inventario de frascos, independiente de `stock` (decants). null = ilimitado, 0 = agotado
+
     // --- Getters & Setters ---
 
     public Long getId() { return id; }
@@ -95,6 +101,9 @@ public class Producto {
 
     public String getNotas() { return notas; }
     public void setNotas(String notas) { this.notas = notas; }
+
+    public String getConcentracion() { return concentracion; }
+    public void setConcentracion(String concentracion) { this.concentracion = concentracion; }
 
     public String getCaracteristicas() { return caracteristicas; }
     public void setCaracteristicas(String caracteristicas) { this.caracteristicas = caracteristicas; }
@@ -153,6 +162,15 @@ public class Producto {
     public Double getMarkup() { return markup; }
     public void setMarkup(Double markup) { this.markup = markup; }
 
+    public Integer getPrecioBotella() { return precioBotella; }
+    public void setPrecioBotella(Integer precioBotella) { this.precioBotella = precioBotella; }
+
+    public Integer getMlBotella() { return mlBotella; }
+    public void setMlBotella(Integer mlBotella) { this.mlBotella = mlBotella; }
+
+    public Integer getStockBotella() { return stockBotella; }
+    public void setStockBotella(Integer stockBotella) { this.stockBotella = stockBotella; }
+
     // --- Precios con descuento (null si no hay promo activa) ---
 
     public Integer getPrecioConDescuento() { return conDescuento(precio); }
@@ -190,4 +208,14 @@ public class Producto {
     private Double precioSugerido(Double costo) {
         return (costo != null && markup != null) ? costo * markup : null;
     }
+
+    // --- Costo, margen y precio sugerido del frasco completo (null si falta costoPorMl o mlBotella) ---
+
+    public Double getCostoBotella() {
+        return (costoPorMl != null && mlBotella != null) ? costoPorMl * mlBotella : null;
+    }
+
+    public Double getMargenBotellaPorcentaje() { return margenPorcentaje(precioBotella, getCostoBotella()); }
+
+    public Double getPrecioSugeridoBotella() { return precioSugerido(getCostoBotella()); }
 }

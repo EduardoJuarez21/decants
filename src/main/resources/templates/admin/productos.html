@@ -106,6 +106,7 @@
                         <th>#</th>
                         <th>Nombre</th>
                         <th>Marca</th>
+                        <th>Conc.</th>
                         <th>Proveedor</th>
                         <th>Categoría</th>
                         <th>Género</th>
@@ -113,6 +114,7 @@
                         <th>Margen</th>
                         <th>Promo</th>
                         <th>Stock</th>
+                        <th>Frasco</th>
                         <th>Estado</th>
                         <th></th>
                     </tr>
@@ -129,6 +131,12 @@
                             </span>
                         </td>
                         <td th:text="${p.marca}"></td>
+                        <td>
+                            <span th:if="${p.concentracion != null}" th:text="${p.concentracion}"
+                                  style="font-size:0.7rem; font-weight:600; color:#888; background:#f5f5f5;
+                                         padding:2px 7px; border-radius:4px;"></span>
+                            <span th:unless="${p.concentracion != null}" style="font-size:0.75rem; color:#ccc;">—</span>
+                        </td>
                         <td th:text="${p.proveedor != null ? p.proveedor : '—'}" style="color:var(--muted); font-size:0.85rem;"></td>
                         <td>
                             <span th:text="${p.categoria == 'alta-perfumeria' ? 'Alta Perfumería' : 'Perfumería Árabe'}"></span>
@@ -178,6 +186,26 @@
                                   style="font-size:0.7rem; color:#c0392b; font-weight:600; display:block; margin-top:3px;">AGOTADO</span>
                         </td>
                         <td>
+                            <div th:if="${p.precioBotella != null}">
+                                <span style="font-size:0.78rem; font-weight:600;" th:text="|$${p.precioBotella}|"></span>
+                                <span style="font-size:0.7rem; color:var(--muted);" th:text="|(${p.mlBotella}ml)|"></span>
+                                <form th:action="@{/aura-gestion/productos/{id}/stock-botella(id=${p.id})}" method="post"
+                                      style="display:flex; align-items:center; gap:4px; margin:2px 0 0;">
+                                    <input type="number" name="stockBotella"
+                                           th:value="${p.stockBotella}"
+                                           min="0" placeholder="∞"
+                                           style="width:58px; padding:3px 7px; border:1px solid #ddd;
+                                                  border-radius:5px; font-size:0.8rem; font-family:inherit; text-align:center;">
+                                    <button type="submit"
+                                            style="padding:3px 8px; border:1px solid #ddd; border-radius:5px;
+                                                   background:#fff; cursor:pointer; font-size:0.78rem; color:#444;">✓</button>
+                                </form>
+                                <span th:if="${p.stockBotella != null and p.stockBotella == 0}"
+                                      style="font-size:0.7rem; color:#c0392b; font-weight:600; display:block; margin-top:3px;">AGOTADO</span>
+                            </div>
+                            <span th:unless="${p.precioBotella != null}" style="font-size:0.75rem; color:#ccc;">—</span>
+                        </td>
+                        <td>
                             <span th:if="${p.activo}"  class="badge badge-activo">Activo</span>
                             <span th:unless="${p.activo}" class="badge badge-inactivo">Inactivo</span>
                         </td>
@@ -220,8 +248,8 @@
             var celdas    = fila.querySelectorAll('td');
             var nombre    = celdas[1].textContent.toLowerCase();
             var marca     = celdas[2].textContent.toLowerCase();
-            var cat       = celdas[4].textContent.toLowerCase();
-            var estadoFila = celdas[10].textContent.toLowerCase().trim();
+            var cat       = celdas[5].textContent.toLowerCase();
+            var estadoFila = celdas[12].textContent.toLowerCase().trim();
 
             var okTexto    = !texto     || nombre.includes(texto) || marca.includes(texto);
             var okCat      = !categoria || cat.includes(categoria);

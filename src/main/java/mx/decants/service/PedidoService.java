@@ -156,19 +156,22 @@ public class PedidoService {
                     long productId = ci.get("id").asLong();
                     int qty = ci.get("qty").asInt(1);
                     String variant = ci.has("variant") ? ci.get("variant").asText() : "10ml";
+                    boolean esBotella = "botella".equals(variant);
                     Producto p = productoRepository.findById(productId).orElseThrow();
-                    if (p.getStock() != null && p.getStock() < qty) {
-                        String msg = p.getStock() == 0
+                    Integer stockDisponible = esBotella ? p.getStockBotella() : p.getStock();
+                    if (stockDisponible != null && stockDisponible < qty) {
+                        String msg = stockDisponible == 0
                             ? p.getNombre() + " está agotado"
-                            : p.getNombre() + " solo tiene " + p.getStock() + " unidad(es) disponible(s)";
+                            : p.getNombre() + " solo tiene " + stockDisponible + " unidad(es) disponible(s)";
                         throw new IllegalArgumentException(msg);
                     }
-                    int price = "5ml".equals(variant) && p.getPrecio5ml() != null
-                            ? p.getPrecio5ml() : p.getPrecio();
+                    int price = esBotella && p.getPrecioBotella() != null ? p.getPrecioBotella()
+                            : "5ml".equals(variant) && p.getPrecio5ml() != null ? p.getPrecio5ml()
+                            : p.getPrecio();
                     PedidoItem item = new PedidoItem();
                     item.setProducto(p);
                     item.setNombre(p.getNombre());
-                    item.setVariante(variant);
+                    item.setVariante(esBotella ? "Frasco " + p.getMlBotella() + "ml" : variant);
                     item.setCantidad(qty);
                     item.setPrecioUnitario(price);
                     items.add(item);
@@ -252,8 +255,8 @@ public class PedidoService {
                 Producto p = productoRepository.findById(productId)
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + productId));
 
-                int price = "5ml".equals(variant) && p.getPrecio5ml() != null
-                    ? p.getPrecio5ml()
+                int price = "botella".equals(variant) && p.getPrecioBotella() != null ? p.getPrecioBotella()
+                    : "5ml".equals(variant) && p.getPrecio5ml() != null ? p.getPrecio5ml()
                     : p.getPrecio();
 
                 total += price * qty;
@@ -274,7 +277,18 @@ public class PedidoService {
         int umbralAlerta = 2;
         for (PedidoItem item : items) {
             Producto p = item.getProducto();
-            if (p != null && p.getStock() != null) {
+            if (p == null) continue;
+            boolean esBotella = item.getVariante() != null && item.getVariante().startsWith("Frasco ");
+            if (esBotella) {
+                if (p.getStockBotella() != null) {
+                    p.setStockBotella(Math.max(0, p.getStockBotella() - item.getCantidad()));
+                    productoRepository.save(p);
+                    log.info("Stock frasco producto #{} ({}) → {}", p.getId(), p.getNombre(), p.getStockBotella());
+                    if (p.getStockBotella() <= umbralAlerta) {
+                        telegramService.notificarStockBajo(p.getNombre() + " (frasco)", p.getStockBotella());
+                    }
+                }
+            } else if (p.getStock() != null) {
                 p.setStock(Math.max(0, p.getStock() - item.getCantidad()));
                 productoRepository.save(p);
                 log.info("Stock producto #{} ({}) → {}", p.getId(), p.getNombre(), p.getStock());
@@ -380,10 +394,12 @@ public class PedidoService {
 
                 Producto p = productoRepository.findById(productoId)
                         .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-                if (p.getStock() != null && p.getStock() < cantidad) {
-                    String msg = p.getStock() == 0
+                boolean esBotella = variante.startsWith("Frasco ");
+                Integer stockDisponible = esBotella ? p.getStockBotella() : p.getStock();
+                if (stockDisponible != null && stockDisponible < cantidad) {
+                    String msg = stockDisponible == 0
                         ? p.getNombre() + " está agotado"
-                        : p.getNombre() + " solo tiene " + p.getStock() + " unidad(es) disponible(s)";
+                        : p.getNombre() + " solo tiene " + stockDisponible + " unidad(es) disponible(s)";
                     throw new IllegalArgumentException(msg);
                 }
 

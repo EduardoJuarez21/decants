@@ -211,6 +211,7 @@
                 </div>
                 <div class="product-info">
                     <p class="product-brand" th:text="${p.marca}"></p>
+                    <p class="product-concentracion" th:if="${p.concentracion != null}" th:text="${p.concentracion}"></p>
                     <h3 th:text="${p.nombre}"></h3>
                     <p class="product-family" th:text="${p.familia}"></p>
                     <p class="product-notes" th:text="${p.notas}"></p>
@@ -251,6 +252,17 @@
                         <span class="desde">Decant 10 ml</span>
                         <span th:text="|$${p.precio}.00|"></span>
                     </p>
+                    <div th:if="${p.precioBotella != null}" class="botella-cta">
+                        <a th:if="${p.stockBotella == null or p.stockBotella > 0}"
+                           th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el frasco completo de ' + p.marca + ' ' + p.nombre + ' (' + p.mlBotella + 'ml) — $' + p.precioBotella + '. ¿Está disponible?')}"
+                           target="_blank" rel="noopener" class="botella-cta-link">
+                            <span class="botella-cta-text">También disponible en<br>botella completa</span>
+                            <span class="botella-cta-action">Consultar precio →</span>
+                        </a>
+                        <span th:if="${p.stockBotella != null and p.stockBotella == 0}" class="botella-cta-agotado">
+                            Botella completa agotada
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -324,6 +336,7 @@
                 </div>
                 <div class="product-info">
                     <p class="product-brand" th:text="${p.marca}"></p>
+                    <p class="product-concentracion" th:if="${p.concentracion != null}" th:text="${p.concentracion}"></p>
                     <h3 th:text="${p.nombre}"></h3>
                     <p class="product-family" th:text="${p.familia}"></p>
                     <p class="product-notes" th:text="${p.notas}"></p>
@@ -364,6 +377,17 @@
                         <span class="desde">Decant 10 ml</span>
                         <span th:text="|$${p.precio}.00|"></span>
                     </p>
+                    <div th:if="${p.precioBotella != null}" class="botella-cta">
+                        <a th:if="${p.stockBotella == null or p.stockBotella > 0}"
+                           th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el frasco completo de ' + p.marca + ' ' + p.nombre + ' (' + p.mlBotella + 'ml) — $' + p.precioBotella + '. ¿Está disponible?')}"
+                           target="_blank" rel="noopener" class="botella-cta-link">
+                            <span class="botella-cta-text">También disponible en<br>botella completa</span>
+                            <span class="botella-cta-action">Consultar precio →</span>
+                        </a>
+                        <span th:if="${p.stockBotella != null and p.stockBotella == 0}" class="botella-cta-agotado">
+                            Botella completa agotada
+                        </span>
+                    </div>
                 </div>
             </div>
 

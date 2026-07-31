@@ -146,6 +146,8 @@ public class AdminController {
                 m.put("precio", p.getPrecio());
                 m.put("precio5ml", p.getPrecio5ml());
                 m.put("precio3ml", p.getPrecio3ml());
+                m.put("precioBotella", p.getPrecioBotella());
+                m.put("mlBotella", p.getMlBotella());
                 return m;
             })
             .collect(Collectors.toList());
@@ -232,6 +234,7 @@ public class AdminController {
                                 @RequestParam(required = false) String familia,
                                 @RequestParam(required = false) String notas,
                                 @RequestParam(required = false) String caracteristicas,
+                                @RequestParam(required = false) String concentracion,
                                 @RequestParam Integer precio,
                                 @RequestParam(required = false) Integer precio5ml,
                                 @RequestParam(defaultValue = "false") boolean bestSeller,
@@ -257,7 +260,7 @@ public class AdminController {
 
             productoService.crear(nombre, marca, categoria, genero,
                 familia, notas, caracteristicas, precio, precio5ml, bestSeller, pathPrincipal, pathCar, orden,
-                proveedor, costoPorMl, markup);
+                proveedor, costoPorMl, markup, concentracion);
 
             ra.addFlashAttribute("mensaje", "Producto \"" + nombre + "\" creado correctamente.");
             return "redirect:/aura-gestion/productos";
@@ -296,9 +299,14 @@ public class AdminController {
                                   @RequestParam(required = false) String proveedor,
                                   @RequestParam(required = false) Double costoPorMl,
                                   @RequestParam(required = false) Double markup,
+                                  @RequestParam(required = false) String concentracion,
+                                  @RequestParam(required = false) Integer precioBotella,
+                                  @RequestParam(required = false) Integer mlBotella,
+                                  @RequestParam(required = false) Integer stockBotella,
                                   RedirectAttributes ra) {
-        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje, proveedor, costoPorMl, markup);
+        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje, proveedor, costoPorMl, markup, concentracion, precioBotella, mlBotella);
         productoService.actualizarStock(id, stock);
+        productoService.actualizarStockBotella(id, stockBotella);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
         return "redirect:/aura-gestion/productos";
     }
@@ -315,6 +323,15 @@ public class AdminController {
                                    RedirectAttributes ra) {
         productoService.actualizarStock(id, stock);
         ra.addFlashAttribute("mensaje", "Stock actualizado.");
+        return "redirect:/aura-gestion/productos";
+    }
+
+    @PostMapping("/productos/{id}/stock-botella")
+    public String actualizarStockBotella(@PathVariable Long id,
+                                          @RequestParam(required = false) Integer stockBotella,
+                                          RedirectAttributes ra) {
+        productoService.actualizarStockBotella(id, stockBotella);
+        ra.addFlashAttribute("mensaje", "Stock de frasco actualizado.");
         return "redirect:/aura-gestion/productos";
     }
 

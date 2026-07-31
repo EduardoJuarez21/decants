@@ -301,6 +301,11 @@ function buscarProducto(q) {
             btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
                 p.id + ',\'3ml\',' + p.precio3ml + ')">3ml · $' + p.precio3ml + '</button>';
         }
+        var hasBotella = p.precioBotella !== null && p.precioBotella !== undefined;
+        if (hasBotella) {
+            btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
+                p.id + ',\'Frasco ' + p.mlBotella + 'ml\',' + p.precioBotella + ')">Frasco ' + p.mlBotella + 'ml · $' + p.precioBotella + '</button>';
+        }
         return '<div class="prod-item">' +
             '<div class="prod-info">' +
                 '<span class="prod-nombre">' + esc(p.nombre) + '</span>' +

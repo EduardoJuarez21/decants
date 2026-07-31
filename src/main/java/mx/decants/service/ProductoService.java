@@ -96,7 +96,8 @@ public class ProductoService {
     }
 
     public void actualizar(Long id, Integer precio, Integer precio5ml, Integer precio3ml, String nombre, String marca, boolean bestSeller, String caracteristicas, String inspiracion,
-                           boolean promoActivo, Integer descuentoPorcentaje, String proveedor, Double costoPorMl, Double markup) {
+                           boolean promoActivo, Integer descuentoPorcentaje, String proveedor, Double costoPorMl, Double markup, String concentracion,
+                           Integer precioBotella, Integer mlBotella) {
         productoRepository.findById(id).ifPresent(p -> {
             if (nombre != null && !nombre.isBlank()) p.setNombre(nombre.trim());
             if (marca  != null && !marca.isBlank())  p.setMarca(marca.trim());
@@ -106,11 +107,21 @@ public class ProductoService {
             p.setBestSeller(bestSeller);
             p.setCaracteristicas(caracteristicas != null && !caracteristicas.isBlank() ? caracteristicas.trim() : null);
             p.setInspiracion(inspiracion != null && !inspiracion.isBlank() ? inspiracion.trim() : null);
+            p.setConcentracion(concentracion != null && !concentracion.isBlank() ? concentracion.trim() : null);
             p.setDescuentoPorcentaje(descuentoPorcentaje != null && descuentoPorcentaje > 0 && descuentoPorcentaje < 100 ? descuentoPorcentaje : null);
             p.setPromoActivo(promoActivo && p.getDescuentoPorcentaje() != null);
             p.setProveedor(proveedor != null && !proveedor.isBlank() ? proveedor.trim() : null);
             p.setCostoPorMl(costoPorMl != null && costoPorMl > 0 ? costoPorMl : null);
             p.setMarkup(markup != null && markup > 0 ? markup : null);
+            p.setPrecioBotella(precioBotella != null && precioBotella > 0 ? precioBotella : null);
+            p.setMlBotella(mlBotella != null && mlBotella > 0 ? mlBotella : null);
+            productoRepository.save(p);
+        });
+    }
+
+    public void actualizarStockBotella(Long id, Integer stockBotella) {
+        productoRepository.findById(id).ifPresent(p -> {
+            p.setStockBotella(stockBotella != null && stockBotella >= 0 ? stockBotella : null);
             productoRepository.save(p);
         });
     }
@@ -132,7 +143,7 @@ public class ProductoService {
     public Producto crear(String nombre, String marca, String categoria, String genero,
                           String familia, String notas, String caracteristicas, Integer precio, Integer precio5ml,
                           boolean bestSeller, String imagenPrincipal, String imagenCaracteristicas, int orden,
-                          String proveedor, Double costoPorMl, Double markup) {
+                          String proveedor, Double costoPorMl, Double markup, String concentracion) {
         Producto p = new Producto();
         p.setNombre(nombre.trim());
         p.setMarca(marca.trim());
@@ -141,6 +152,7 @@ public class ProductoService {
         p.setFamilia(familia != null && !familia.isBlank() ? familia.trim() : "");
         p.setNotas(notas != null && !notas.isBlank() ? notas.trim() : "");
         p.setCaracteristicas(caracteristicas != null && !caracteristicas.isBlank() ? caracteristicas.trim() : null);
+        p.setConcentracion(concentracion != null && !concentracion.isBlank() ? concentracion.trim() : null);
         p.setPrecio(precio);
         p.setPrecio5ml(precio5ml != null && precio5ml > 0 ? precio5ml : null);
         p.setPrecio3ml(null);

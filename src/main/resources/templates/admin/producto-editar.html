@@ -75,6 +75,21 @@
                               font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
             </div>
 
+            <!-- Concentración -->
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                    Concentración <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                </label>
+                <select name="concentracion"
+                        style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                               font-size:0.9rem; font-family:inherit; background:#fff; outline:none; width:100%;">
+                    <option value=""      th:selected="${producto.concentracion == null}">— Sin especificar —</option>
+                    <option value="EDT"   th:selected="${producto.concentracion == 'EDT'}">EDT (Eau de Toilette)</option>
+                    <option value="EDP"   th:selected="${producto.concentracion == 'EDP'}">EDP (Eau de Parfum)</option>
+                    <option value="Parfum" th:selected="${producto.concentracion == 'Parfum'}">Parfum</option>
+                </select>
+            </div>
+
             <!-- Precios -->
             <div style="display:flex; gap:1rem;">
                 <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
@@ -150,16 +165,62 @@
                     Costo 3ml: <strong>$<span th:text="${#numbers.formatDecimal(producto.costoProduccion3ml, 1, 2)}"></span></strong>
                     · Margen: <strong th:text="${#numbers.formatDecimal(producto.margenPorcentaje3ml, 1, 1)} + '%'"></strong>
                 </span>
+                <span th:if="${producto.mlBotella != null and producto.precioBotella != null}">
+                    Costo frasco <span th:text="${producto.mlBotella} + 'ml'"></span>:
+                    <strong>$<span th:text="${#numbers.formatDecimal(producto.costoBotella, 1, 2)}"></span></strong>
+                    · Margen: <strong th:text="${#numbers.formatDecimal(producto.margenBotellaPorcentaje, 1, 1)} + '%'"></strong>
+                    <th:block th:if="${producto.precioSugeridoBotella != null}">
+                        · Precio sugerido: <strong>$<span th:text="${#numbers.formatDecimal(producto.precioSugeridoBotella, 1, 0)}"></span></strong>
+                    </th:block>
+                </span>
+            </div>
+
+            <!-- Botella completa -->
+            <div style="border:1.5px solid #e0e0e0; border-radius:10px; padding:0.9rem 1rem; display:flex; flex-direction:column; gap:0.7rem;">
+                <label style="font-size:0.8rem; font-weight:700; color:#444;">
+                    🧴 Botella completa <span style="font-weight:400; color:var(--muted);">(opcional — vacío = no se vende así)</span>
+                </label>
+                <div style="display:flex; gap:1rem;">
+                    <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                        <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                            Tamaño (ml)
+                        </label>
+                        <input type="number" name="mlBotella" th:value="${producto.mlBotella}" min="1" placeholder="ej. 100"
+                               style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                      font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                        <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                            Precio de venta ($)
+                        </label>
+                        <input type="number" name="precioBotella" th:value="${producto.precioBotella}" min="1" placeholder="ej. 2970"
+                               style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                      font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                    </div>
+                </div>
+                <p style="font-size:0.75rem; color:var(--muted); margin:0;">
+                    Usa el "Costo por ml" y "Markup" de arriba para calcular el costo y margen del frasco.
+                </p>
             </div>
 
             <!-- Stock -->
-            <div style="display:flex; flex-direction:column; gap:0.3rem;">
-                <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
-                    Stock disponible <span style="font-weight:400; color:var(--muted);">(vacío = ilimitado, 0 = agotado)</span>
-                </label>
-                <input type="number" name="stock" th:value="${producto.stock}" min="0" placeholder="∞"
-                       style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
-                              font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+            <div style="display:flex; gap:1rem;">
+                <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                        Stock decants <span style="font-weight:400; color:var(--muted);">(vacío = ilimitado, 0 = agotado)</span>
+                    </label>
+                    <input type="number" name="stock" th:value="${producto.stock}" min="0" placeholder="∞"
+                           style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                  font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                        Stock frascos <span style="font-weight:400; color:var(--muted);">(independiente del decant)</span>
+                    </label>
+                    <input type="number" name="stockBotella" th:value="${producto.stockBotella}" min="0" placeholder="∞"
+                           style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                  font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                </div>
             </div>
 
             <!-- Best Seller -->
