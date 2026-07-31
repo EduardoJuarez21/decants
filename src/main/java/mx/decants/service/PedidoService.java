@@ -140,6 +140,19 @@ public class PedidoService {
         return saved;
     }
 
+    private int resolverPrecio(Producto p, String variant) {
+        if ("botella".equals(variant)) {
+            return p.getPrecioBotella() != null ? p.getPrecioBotella() : p.getPrecio();
+        }
+        if ("3ml".equals(variant) && p.getPrecio3ml() != null) {
+            return p.getPrecio3mlConDescuento() != null ? p.getPrecio3mlConDescuento() : p.getPrecio3ml();
+        }
+        if ("5ml".equals(variant) && p.getPrecio5ml() != null) {
+            return p.getPrecio5mlConDescuento() != null ? p.getPrecio5mlConDescuento() : p.getPrecio5ml();
+        }
+        return p.getPrecioConDescuento() != null ? p.getPrecioConDescuento() : p.getPrecio();
+    }
+
     private List<PedidoItem> buildItems(PedidoDTO dto, Pedido pedido) {
         List<PedidoItem> items = new ArrayList<>();
         if (dto.getPackageType() != null && !dto.getPackageType().isBlank()) {
@@ -165,9 +178,7 @@ public class PedidoService {
                             : p.getNombre() + " solo tiene " + stockDisponible + " unidad(es) disponible(s)";
                         throw new IllegalArgumentException(msg);
                     }
-                    int price = esBotella && p.getPrecioBotella() != null ? p.getPrecioBotella()
-                            : "5ml".equals(variant) && p.getPrecio5ml() != null ? p.getPrecio5ml()
-                            : p.getPrecio();
+                    int price = resolverPrecio(p, variant);
                     PedidoItem item = new PedidoItem();
                     item.setProducto(p);
                     item.setNombre(p.getNombre());
@@ -255,9 +266,7 @@ public class PedidoService {
                 Producto p = productoRepository.findById(productId)
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + productId));
 
-                int price = "botella".equals(variant) && p.getPrecioBotella() != null ? p.getPrecioBotella()
-                    : "5ml".equals(variant) && p.getPrecio5ml() != null ? p.getPrecio5ml()
-                    : p.getPrecio();
+                int price = resolverPrecio(p, variant);
 
                 total += price * qty;
             }

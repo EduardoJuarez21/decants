@@ -197,6 +197,7 @@
                          th:alt="|Características ${p.nombre}|"
                          class="product-img-hover" loading="lazy" decoding="async">
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
+                    <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="badge-promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
                     <span th:if="${p.stock != null and p.stock == 0}"
                           class="badge-bestseller"
                           style="background:#c0392b; color:#fff; pointer-events:none;">Agotado</span>
@@ -204,7 +205,7 @@
                             class="product-add-btn"
                             th:data-id="${p.id}"
                             th:data-name="${p.nombre}"
-                            th:data-price="${p.precio}"
+                            th:data-price="${p.precioConDescuento != null ? p.precioConDescuento : p.precio}"
                             th:data-variant="10ml"
                             th:data-solo="${p.soloItem}"
                             onclick="addFromBtn(this)">+</button>
@@ -223,34 +224,41 @@
                         <button th:if="${p.precio3ml != null}" class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 3ml|"
-                                th:data-price="${p.precio3ml}"
+                                th:data-price="${p.precio3mlConDescuento != null ? p.precio3mlConDescuento : p.precio3ml}"
                                 th:data-variant="3ml"
                                 onclick="addFromBtn(this)">
                             <span class="size-label">3 ml</span>
-                            <span class="size-price" th:text="|$${p.precio3ml}|"></span>
+                            <span th:if="${p.precio3mlConDescuento != null}" class="size-price-old" th:text="|$${p.precio3ml}|"></span>
+                            <span class="size-price" th:classappend="${p.precio3mlConDescuento != null} ? ' size-price-promo'"
+                                  th:text="|$${p.precio3mlConDescuento != null ? p.precio3mlConDescuento : p.precio3ml}|"></span>
                         </button>
                         <button th:if="${p.precio5ml != null}" class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 5ml|"
-                                th:data-price="${p.precio5ml}"
+                                th:data-price="${p.precio5mlConDescuento != null ? p.precio5mlConDescuento : p.precio5ml}"
                                 th:data-variant="5ml"
                                 onclick="addFromBtn(this)">
                             <span class="size-label">5 ml</span>
-                            <span class="size-price" th:text="|$${p.precio5ml}|"></span>
+                            <span th:if="${p.precio5mlConDescuento != null}" class="size-price-old" th:text="|$${p.precio5ml}|"></span>
+                            <span class="size-price" th:classappend="${p.precio5mlConDescuento != null} ? ' size-price-promo'"
+                                  th:text="|$${p.precio5mlConDescuento != null ? p.precio5mlConDescuento : p.precio5ml}|"></span>
                         </button>
                         <button class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 10ml|"
-                                th:data-price="${p.precio}"
+                                th:data-price="${p.precioConDescuento != null ? p.precioConDescuento : p.precio}"
                                 th:data-variant="10ml"
                                 onclick="addFromBtn(this)">
                             <span class="size-label">10 ml</span>
-                            <span class="size-price" th:text="|$${p.precio}|"></span>
+                            <span th:if="${p.precioConDescuento != null}" class="size-price-old" th:text="|$${p.precio}|"></span>
+                            <span class="size-price" th:classappend="${p.precioConDescuento != null} ? ' size-price-promo'"
+                                  th:text="|$${p.precioConDescuento != null ? p.precioConDescuento : p.precio}|"></span>
                         </button>
                     </div>
                     <p th:if="${p.precio3ml == null and p.precio5ml == null}" class="product-price-tag">
                         <span class="desde">Decant 10 ml</span>
-                        <span th:text="|$${p.precio}.00|"></span>
+                        <span th:if="${p.precioConDescuento != null}" class="size-price-old" th:text="|$${p.precio}.00|"></span>
+                        <span th:text="|$${p.precioConDescuento != null ? p.precioConDescuento : p.precio}.00|"></span>
                     </p>
                     <div th:if="${p.precioBotella != null}" class="botella-cta">
                         <a th:if="${p.stockBotella == null or p.stockBotella > 0}"
@@ -322,6 +330,7 @@
                          th:alt="|Características ${p.nombre}|"
                          class="product-img-hover" loading="lazy" decoding="async">
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
+                    <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="badge-promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
                     <span th:if="${p.stock != null and p.stock == 0}"
                           class="badge-bestseller"
                           style="background:#c0392b; color:#fff; pointer-events:none;">Agotado</span>
@@ -329,7 +338,7 @@
                             class="product-add-btn"
                             th:data-id="${p.id}"
                             th:data-name="${p.nombre}"
-                            th:data-price="${p.precio}"
+                            th:data-price="${p.precioConDescuento != null ? p.precioConDescuento : p.precio}"
                             th:data-variant="10ml"
                             th:data-solo="${p.soloItem}"
                             onclick="addFromBtn(this)">+</button>
@@ -348,34 +357,41 @@
                         <button th:if="${p.precio3ml != null}" class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 3ml|"
-                                th:data-price="${p.precio3ml}"
+                                th:data-price="${p.precio3mlConDescuento != null ? p.precio3mlConDescuento : p.precio3ml}"
                                 th:data-variant="3ml"
                                 onclick="addFromBtn(this)">
                             <span class="size-label">3 ml</span>
-                            <span class="size-price" th:text="|$${p.precio3ml}|"></span>
+                            <span th:if="${p.precio3mlConDescuento != null}" class="size-price-old" th:text="|$${p.precio3ml}|"></span>
+                            <span class="size-price" th:classappend="${p.precio3mlConDescuento != null} ? ' size-price-promo'"
+                                  th:text="|$${p.precio3mlConDescuento != null ? p.precio3mlConDescuento : p.precio3ml}|"></span>
                         </button>
                         <button th:if="${p.precio5ml != null}" class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 5ml|"
-                                th:data-price="${p.precio5ml}"
+                                th:data-price="${p.precio5mlConDescuento != null ? p.precio5mlConDescuento : p.precio5ml}"
                                 th:data-variant="5ml"
                                 onclick="addFromBtn(this)">
                             <span class="size-label">5 ml</span>
-                            <span class="size-price" th:text="|$${p.precio5ml}|"></span>
+                            <span th:if="${p.precio5mlConDescuento != null}" class="size-price-old" th:text="|$${p.precio5ml}|"></span>
+                            <span class="size-price" th:classappend="${p.precio5mlConDescuento != null} ? ' size-price-promo'"
+                                  th:text="|$${p.precio5mlConDescuento != null ? p.precio5mlConDescuento : p.precio5ml}|"></span>
                         </button>
                         <button class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 10ml|"
-                                th:data-price="${p.precio}"
+                                th:data-price="${p.precioConDescuento != null ? p.precioConDescuento : p.precio}"
                                 th:data-variant="10ml"
                                 onclick="addFromBtn(this)">
                             <span class="size-label">10 ml</span>
-                            <span class="size-price" th:text="|$${p.precio}|"></span>
+                            <span th:if="${p.precioConDescuento != null}" class="size-price-old" th:text="|$${p.precio}|"></span>
+                            <span class="size-price" th:classappend="${p.precioConDescuento != null} ? ' size-price-promo'"
+                                  th:text="|$${p.precioConDescuento != null ? p.precioConDescuento : p.precio}|"></span>
                         </button>
                     </div>
                     <p th:if="${p.precio3ml == null and p.precio5ml == null}" class="product-price-tag">
                         <span class="desde">Decant 10 ml</span>
-                        <span th:text="|$${p.precio}.00|"></span>
+                        <span th:if="${p.precioConDescuento != null}" class="size-price-old" th:text="|$${p.precio}.00|"></span>
+                        <span th:text="|$${p.precioConDescuento != null ? p.precioConDescuento : p.precio}.00|"></span>
                     </p>
                     <div th:if="${p.precioBotella != null}" class="botella-cta">
                         <a th:if="${p.stockBotella == null or p.stockBotella > 0}"
