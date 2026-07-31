@@ -79,6 +79,10 @@ public class Producto {
     private Integer mlBotella;       // tamaño del frasco completo, ej. 100
     private Integer stockBotella;    // inventario de frascos, independiente de `stock` (decants). null = ilimitado, 0 = agotado
 
+    private Double comisionFamiliar;     // comisión del vendedor familiar por venta de 10ml
+    private Double comisionFamiliar5ml;
+    private Double comisionFamiliar3ml;
+
     // --- Getters & Setters ---
 
     public Long getId() { return id; }
@@ -170,6 +174,15 @@ public class Producto {
 
     public Integer getStockBotella() { return stockBotella; }
     public void setStockBotella(Integer stockBotella) { this.stockBotella = stockBotella; }
+
+    public Double getComisionFamiliar() { return comisionFamiliar; }
+    public void setComisionFamiliar(Double comisionFamiliar) { this.comisionFamiliar = comisionFamiliar; }
+
+    public Double getComisionFamiliar5ml() { return comisionFamiliar5ml; }
+    public void setComisionFamiliar5ml(Double comisionFamiliar5ml) { this.comisionFamiliar5ml = comisionFamiliar5ml; }
+
+    public Double getComisionFamiliar3ml() { return comisionFamiliar3ml; }
+    public void setComisionFamiliar3ml(Double comisionFamiliar3ml) { this.comisionFamiliar3ml = comisionFamiliar3ml; }
 
     // --- Precios con descuento (null si no hay promo activa) ---
 

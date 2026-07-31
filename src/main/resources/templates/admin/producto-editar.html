@@ -118,6 +118,39 @@
                 </div>
             </div>
 
+            <!-- Comisión familiar -->
+            <div style="border:1.5px solid #e0e0e0; border-radius:10px; padding:0.9rem 1rem; display:flex; flex-direction:column; gap:0.7rem;">
+                <label style="font-size:0.8rem; font-weight:700; color:#444;">
+                    💸 Comisión familiar <span style="font-weight:400; color:var(--muted);">(lo que ve el vendedor en /aura-gestion/comisiones)</span>
+                </label>
+                <div style="display:flex; gap:1rem;">
+                    <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                        <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                            10 ml ($)
+                        </label>
+                        <input type="number" name="comisionFamiliar" th:value="${producto.comisionFamiliar}" min="0" step="0.01"
+                               style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                      font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                        <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                            5 ml ($)
+                        </label>
+                        <input type="number" name="comisionFamiliar5ml" th:value="${producto.comisionFamiliar5ml}" min="0" step="0.01"
+                               style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                      font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                        <label style="font-size:0.75rem; font-weight:600; color:#444; text-transform:uppercase; letter-spacing:0.5px;">
+                            3 ml ($)
+                        </label>
+                        <input type="number" name="comisionFamiliar3ml" th:value="${producto.comisionFamiliar3ml}" min="0" step="0.01"
+                               style="padding:0.6rem 0.9rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                                      font-size:0.9rem; font-family:inherit; outline:none; width:100%; box-sizing:border-box;">
+                    </div>
+                </div>
+            </div>
+
             <!-- Proveedor y costo -->
             <div style="display:flex; gap:1rem;">
                 <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">

@@ -303,8 +303,11 @@ public class AdminController {
                                   @RequestParam(required = false) Integer precioBotella,
                                   @RequestParam(required = false) Integer mlBotella,
                                   @RequestParam(required = false) Integer stockBotella,
+                                  @RequestParam(required = false) Double comisionFamiliar,
+                                  @RequestParam(required = false) Double comisionFamiliar5ml,
+                                  @RequestParam(required = false) Double comisionFamiliar3ml,
                                   RedirectAttributes ra) {
-        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje, proveedor, costoPorMl, markup, concentracion, precioBotella, mlBotella);
+        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje, proveedor, costoPorMl, markup, concentracion, precioBotella, mlBotella, comisionFamiliar, comisionFamiliar5ml, comisionFamiliar3ml);
         productoService.actualizarStock(id, stock);
         productoService.actualizarStockBotella(id, stockBotella);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
@@ -333,6 +336,19 @@ public class AdminController {
         productoService.actualizarStockBotella(id, stockBotella);
         ra.addFlashAttribute("mensaje", "Stock de frasco actualizado.");
         return "redirect:/aura-gestion/productos";
+    }
+
+    // ── Comisiones (vista para vendedor familiar) ───────────────────────────────
+
+    @GetMapping("/comisiones")
+    public String comisiones(Model model) {
+        var productos = productoService.listarTodos().stream()
+            .filter(Producto::isActivo)
+            .filter(p -> p.getComisionFamiliar() != null || p.getComisionFamiliar5ml() != null || p.getComisionFamiliar3ml() != null)
+            .sorted((a, b) -> a.getNombre().compareToIgnoreCase(b.getNombre()))
+            .collect(Collectors.toList());
+        model.addAttribute("productos", productos);
+        return "admin/comisiones";
     }
 
     // ── Clientes ──────────────────────────────────────────────────────────────

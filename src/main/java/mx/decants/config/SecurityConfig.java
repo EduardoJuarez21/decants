@@ -51,9 +51,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(new AntPathRequestMatcher("/stripe/webhook")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher(ADMIN_BASE + "/login")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher(ADMIN_BASE + "/logout")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/img/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher(ADMIN_BASE + "/**")).authenticated()
+                .requestMatchers(new AntPathRequestMatcher(ADMIN_BASE + "/comisiones")).hasAnyRole("ADMIN", "VENDEDOR")
+                .requestMatchers(new AntPathRequestMatcher(ADMIN_BASE + "/**")).hasRole("ADMIN")
                 .anyRequest().permitAll()
             )
             .formLogin(form -> form
@@ -63,7 +65,9 @@ public class SecurityConfig {
                 .failureUrl(ADMIN_BASE + "/login?error")
                 .successHandler((req, res, auth) -> {
                     loginAttemptService.succeeded(getClientIp(req));
-                    res.sendRedirect(ADMIN_BASE + "/pedidos");
+                    boolean esVendedor = auth.getAuthorities().stream()
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_VENDEDOR"));
+                    res.sendRedirect(esVendedor ? ADMIN_BASE + "/comisiones" : ADMIN_BASE + "/pedidos");
                 })
                 .failureHandler((req, res, ex) -> {
                     String ip = getClientIp(req);
@@ -86,13 +90,20 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(
             @Value("${admin.usuario}") String usuario,
-            @Value("${admin.password}") String password) {
+            @Value("${admin.password}") String password,
+            @Value("${vendedor.usuario}") String vendedorUsuario,
+            @Value("${vendedor.password}") String vendedorPassword) {
         UserDetails admin = User.builder()
                 .username(usuario)
                 .password(passwordEncoder().encode(password))
                 .roles("ADMIN")
                 .build();
-        return new InMemoryUserDetailsManager(admin);
+        UserDetails vendedor = User.builder()
+                .username(vendedorUsuario)
+                .password(passwordEncoder().encode(vendedorPassword))
+                .roles("VENDEDOR")
+                .build();
+        return new InMemoryUserDetailsManager(admin, vendedor);
     }
 
     @Bean

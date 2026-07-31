@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comisiones — Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-page">
+
+    <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
+        <h1>Comisiones</h1>
+        <div style="display:flex; align-items:center; gap:1.5rem;">
+            <span class="admin-brand">Aura Decants</span>
+            <form th:action="@{/aura-gestion/logout}" method="post" style="margin:0;">
+                <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2>Precio y comisión por producto</h2>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Marca</th>
+                        <th>Presentación</th>
+                        <th>Precio</th>
+                        <th>Comisión</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <th:block th:each="p : ${productos}">
+                        <tr th:if="${p.precio3ml != null and p.comisionFamiliar3ml != null}">
+                            <td th:text="${p.nombre}"></td>
+                            <td th:text="${p.marca}" style="color:var(--muted);"></td>
+                            <td>3 ml</td>
+                            <td th:text="|$${p.precio3ml}|"></td>
+                            <td style="font-weight:700; color:#2e7d32;"
+                                th:text="|$${#numbers.formatDecimal(p.comisionFamiliar3ml, 1, 2)}|"></td>
+                        </tr>
+                        <tr th:if="${p.precio5ml != null and p.comisionFamiliar5ml != null}">
+                            <td th:text="${p.nombre}"></td>
+                            <td th:text="${p.marca}" style="color:var(--muted);"></td>
+                            <td>5 ml</td>
+                            <td th:text="|$${p.precio5ml}|"></td>
+                            <td style="font-weight:700; color:#2e7d32;"
+                                th:text="|$${#numbers.formatDecimal(p.comisionFamiliar5ml, 1, 2)}|"></td>
+                        </tr>
+                        <tr th:if="${p.comisionFamiliar != null}">
+                            <td th:text="${p.nombre}"></td>
+                            <td th:text="${p.marca}" style="color:var(--muted);"></td>
+                            <td>10 ml</td>
+                            <td th:text="|$${p.precio}|"></td>
+                            <td style="font-weight:700; color:#2e7d32;"
+                                th:text="|$${#numbers.formatDecimal(p.comisionFamiliar, 1, 2)}|"></td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

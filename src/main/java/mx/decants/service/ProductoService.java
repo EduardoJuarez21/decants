@@ -100,7 +100,8 @@ public class ProductoService {
 
     public void actualizar(Long id, Integer precio, Integer precio5ml, Integer precio3ml, String nombre, String marca, boolean bestSeller, String caracteristicas, String inspiracion,
                            boolean promoActivo, Integer descuentoPorcentaje, String proveedor, Double costoPorMl, Double markup, String concentracion,
-                           Integer precioBotella, Integer mlBotella) {
+                           Integer precioBotella, Integer mlBotella,
+                           Double comisionFamiliar, Double comisionFamiliar5ml, Double comisionFamiliar3ml) {
         productoRepository.findById(id).ifPresent(p -> {
             if (nombre != null && !nombre.isBlank()) p.setNombre(nombre.trim());
             if (marca  != null && !marca.isBlank())  p.setMarca(marca.trim());
@@ -118,6 +119,9 @@ public class ProductoService {
             p.setMarkup(markup != null && markup > 0 ? markup : null);
             p.setPrecioBotella(precioBotella != null && precioBotella > 0 ? precioBotella : null);
             p.setMlBotella(mlBotella != null && mlBotella > 0 ? mlBotella : null);
+            p.setComisionFamiliar(comisionFamiliar != null && comisionFamiliar > 0 ? comisionFamiliar : null);
+            p.setComisionFamiliar5ml(comisionFamiliar5ml != null && comisionFamiliar5ml > 0 ? comisionFamiliar5ml : null);
+            p.setComisionFamiliar3ml(comisionFamiliar3ml != null && comisionFamiliar3ml > 0 ? comisionFamiliar3ml : null);
             productoRepository.save(p);
         });
     }
