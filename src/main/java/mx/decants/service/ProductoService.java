@@ -14,7 +14,10 @@ import java.util.List;
 @Transactional
 public class ProductoService {
 
-    private static final int PAGE_SIZE = 10;
+    // El buscador del sitio es del lado del cliente y solo filtra lo ya renderizado,
+    // así que el tamaño de página debe cubrir todo el catálogo activo por categoría
+    // para que buscar no dependa de en qué página esté el producto.
+    private static final int PAGE_SIZE = 50;
 
     private final ProductoRepository productoRepository;
     private final ConfiguracionService configuracionService;
