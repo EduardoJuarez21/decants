@@ -53,6 +53,16 @@
             <h2>Precio y comisión por producto</h2>
         </div>
 
+        <div style="padding:1rem 1.75rem; border-bottom:1px solid #ececec;">
+            <input id="filtroComisiones" type="search" placeholder="Buscar por nombre o marca…"
+                   oninput="filtrarComisiones()"
+                   style="width:100%; box-sizing:border-box; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
+                          border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
+        </div>
+        <p id="sinResultadosComisiones" style="display:none; padding:1.5rem; text-align:center; color:var(--muted); font-size:0.88rem;">
+            Sin resultados.
+        </p>
+
         <div style="overflow-x: auto;">
             <table class="admin-table">
                 <thead>
@@ -64,7 +74,7 @@
                         <th>Comisión</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tbodyComisiones">
                     <th:block th:each="p : ${productos}">
                         <tr th:if="${p.precio3ml != null and p.comisionFamiliar3ml != null}">
                             <td th:text="${p.nombre}"></td>
@@ -98,5 +108,23 @@
 
 </div>
 
+<script>
+    function filtrarComisiones() {
+        var texto = document.getElementById('filtroComisiones').value.toLowerCase().trim();
+        var filas = document.querySelectorAll('#tbodyComisiones tr');
+        var visibles = 0;
+
+        filas.forEach(function(fila) {
+            var celdas = fila.querySelectorAll('td');
+            var nombre = celdas[0].textContent.toLowerCase();
+            var marca  = celdas[1].textContent.toLowerCase();
+            var mostrar = !texto || nombre.includes(texto) || marca.includes(texto);
+            fila.style.display = mostrar ? '' : 'none';
+            if (mostrar) visibles++;
+        });
+
+        document.getElementById('sinResultadosComisiones').style.display = visibles === 0 ? 'block' : 'none';
+    }
+</script>
 </body>
 </html>
