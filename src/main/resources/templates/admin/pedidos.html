@@ -77,19 +77,48 @@
                    oninput="aplicarFiltros()"
                    style="flex:1; min-width:180px; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
                           border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
-            <select id="filtroEstado" onchange="aplicarFiltros()" autocomplete="off"
-                    style="padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
-                           font-size:0.82rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
-                <option value="__no_cancelado__" selected>Activos (sin cancelados)</option>
-                <option value="">Todos los estados</option>
-                <option value="Creado">Creado</option>
-                <option value="Pendiente de pago">Pendiente de pago</option>
-                <option value="Confirmado">Confirmado</option>
-                <option value="Listo para envío">Listo para envío</option>
-                <option value="Enviado">Enviado</option>
-                <option value="Entregado">Entregado</option>
-                <option value="Cancelado">Cancelado</option>
-            </select>
+            <div class="filtro-estado-wrap" style="position:relative;">
+                <button type="button" id="filtroEstadoBtn" onclick="toggleFiltroEstado()"
+                        style="padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                               font-size:0.82rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;
+                               display:flex; align-items:center; gap:0.4rem; white-space:nowrap;">
+                    <span id="filtroEstadoLabel">Activos (sin cancelados)</span>
+                    <span style="font-size:0.65rem; color:#999;">&#9662;</span>
+                </button>
+                <div id="filtroEstadoPanel" style="display:none; position:absolute; z-index:20; top:calc(100% + 4px); left:0;
+                            background:#fff; border:1.5px solid #e0e0e0; border-radius:8px; padding:0.5rem;
+                            min-width:200px; box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem;
+                                  cursor:pointer; border-bottom:1px solid #f0ede8; margin-bottom:0.3rem;">
+                        <input type="checkbox" id="filtroEstadoTodos" onchange="toggleTodosEstados(this)"> <strong>Todos los estados</strong>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
+                        <input type="checkbox" class="chkEstado" value="Creado" checked onchange="aplicarFiltros()"> Creado
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
+                        <input type="checkbox" class="chkEstado" value="Pendiente de pago" checked onchange="aplicarFiltros()"> Pendiente de pago
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
+                        <input type="checkbox" class="chkEstado" value="Confirmado" checked onchange="aplicarFiltros()"> Confirmado
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
+                        <input type="checkbox" class="chkEstado" value="En revisión" checked onchange="aplicarFiltros()"> En revisión (legacy)
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
+                        <input type="checkbox" class="chkEstado" value="Listo para envío" checked onchange="aplicarFiltros()"> Listo para envío
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
+                        <input type="checkbox" class="chkEstado" value="Enviado" checked onchange="aplicarFiltros()"> Enviado
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
+                        <input type="checkbox" class="chkEstado" value="Entregado" checked onchange="aplicarFiltros()"> Entregado
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;
+                                  border-top:1px solid #f0ede8; margin-top:0.3rem;">
+                        <input type="checkbox" class="chkEstado" value="Cancelado" onchange="aplicarFiltros()"> Cancelado
+                    </label>
+                </div>
+            </div>
             <select id="filtroTipo" onchange="aplicarFiltros()" autocomplete="off"
                     style="padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
                            font-size:0.82rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
@@ -222,12 +251,56 @@ var POR_PAGINA = 25;
 var paginaActual = 1;
 var filasFiltradas = [];
 
+function toggleFiltroEstado() {
+    var panel = document.getElementById('filtroEstadoPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+document.addEventListener('click', function(e) {
+    var wrap = document.querySelector('.filtro-estado-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+        document.getElementById('filtroEstadoPanel').style.display = 'none';
+    }
+});
+
+function toggleTodosEstados(chk) {
+    document.querySelectorAll('.chkEstado').forEach(function(c) { c.checked = chk.checked; });
+    aplicarFiltros();
+}
+
+function estadosSeleccionados() {
+    return Array.from(document.querySelectorAll('.chkEstado:checked')).map(function(c) { return c.value.toLowerCase(); });
+}
+
+function actualizarLabelFiltroEstado(seleccionados) {
+    var chks         = document.querySelectorAll('.chkEstado');
+    var label        = document.getElementById('filtroEstadoLabel');
+    var canceladoChk = document.querySelector('.chkEstado[value="Cancelado"]');
+    document.getElementById('filtroEstadoTodos').checked = seleccionados.length === chks.length;
+
+    if (seleccionados.length === chks.length) {
+        label.textContent = 'Todos los estados';
+    } else if (seleccionados.length === 0) {
+        label.textContent = 'Ningún estado';
+    } else if (canceladoChk && !canceladoChk.checked && seleccionados.length === chks.length - 1) {
+        label.textContent = 'Activos (sin cancelados)';
+    } else if (seleccionados.length <= 2) {
+        label.textContent = Array.from(document.querySelectorAll('.chkEstado:checked'))
+            .map(function(c) { return c.parentElement.textContent.trim(); }).join(', ');
+    } else {
+        label.textContent = seleccionados.length + ' estados seleccionados';
+    }
+}
+
 function aplicarFiltros() {
     paginaActual = 1;
     var q       = (document.getElementById('buscadorPedidos').value || '').trim().toLowerCase();
-    var estado  = (document.getElementById('filtroEstado').value || '').toLowerCase();
+    var estados = estadosSeleccionados();
     var tipo    = (document.getElementById('filtroTipo').value || '').toLowerCase();
     var filas   = Array.from(document.querySelectorAll('#tablaPedidos tbody tr'));
+
+    actualizarLabelFiltroEstado(estados);
+    var todosEstados = document.getElementById('filtroEstadoTodos').checked;
 
     filasFiltradas = filas.filter(function(fila) {
         var id      = fila.cells[0].textContent.toLowerCase();
@@ -241,11 +314,9 @@ function aplicarFiltros() {
             : fila.cells[8].textContent.toLowerCase();
         var guia    = fila.cells[9].textContent.toLowerCase();
 
-        var okQ      = !q     || id.includes(q) || codigo.includes(q) || nombre.includes(q) || tel.includes(q) || guia.includes(q);
-        var okEstado = estado === '__no_cancelado__' ? !estadoF.includes('cancelado')
-                     : !estado ? true
-                     : estadoF.includes(estado);
-        var okTipo   = !tipo  || entorno.includes(tipo);
+        var okQ      = !q || id.includes(q) || codigo.includes(q) || nombre.includes(q) || tel.includes(q) || guia.includes(q);
+        var okEstado = todosEstados || estados.some(function(e) { return estadoF.includes(e); });
+        var okTipo   = !tipo || entorno.includes(tipo);
         return okQ && okEstado && okTipo;
     });
 
@@ -293,10 +364,12 @@ function renderPagina() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Algunos navegadores restauran el valor anterior del select al recargar
-    // la pagina sin disparar 'change'. Forzamos el estado por defecto.
+    // Algunos navegadores restauran el estado anterior de los checkboxes al
+    // recargar la pagina. Forzamos el estado por defecto (todo excepto cancelado).
     document.getElementById('buscadorPedidos').value = '';
-    document.getElementById('filtroEstado').value = '__no_cancelado__';
+    document.querySelectorAll('.chkEstado').forEach(function(c) {
+        c.checked = c.value !== 'Cancelado';
+    });
     document.getElementById('filtroTipo').value = '';
     aplicarFiltros();
 });
