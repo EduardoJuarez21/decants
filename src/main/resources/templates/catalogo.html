@@ -456,6 +456,13 @@
                 <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
                 <span class="cat-price-label">10 ml</span>
             </div>
+            <div th:if="${p.precioBotella != null and (p.stockBotella == null or p.stockBotella > 0)}" class="botella-cta">
+                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el frasco completo de ' + p.marca + ' ' + p.nombre + ' (' + p.mlBotella + 'ml) — $' + p.precioBotella + '. ¿Está disponible?')}"
+                   target="_blank" rel="noopener" class="botella-cta-link no-print">
+                    <span class="botella-cta-text">También disponible en<br>botella completa</span>
+                    <span class="botella-cta-action">Consultar precio →</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -499,6 +506,13 @@
                 <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
                 <span class="cat-price-label">10 ml</span>
             </div>
+            <div th:if="${p.precioBotella != null and (p.stockBotella == null or p.stockBotella > 0)}" class="botella-cta">
+                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el frasco completo de ' + p.marca + ' ' + p.nombre + ' (' + p.mlBotella + 'ml) — $' + p.precioBotella + '. ¿Está disponible?')}"
+                   target="_blank" rel="noopener" class="botella-cta-link no-print">
+                    <span class="botella-cta-text">También disponible en<br>botella completa</span>
+                    <span class="botella-cta-action">Consultar precio →</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -541,6 +555,13 @@
                 <span th:if="${p.precioConDescuento != null}" class="cat-price-old" th:text="|$${p.precio}|"></span>
                 <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
                 <span class="cat-price-label">10 ml</span>
+            </div>
+            <div th:if="${p.precioBotella != null and (p.stockBotella == null or p.stockBotella > 0)}" class="botella-cta">
+                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el frasco completo de ' + p.marca + ' ' + p.nombre + ' (' + p.mlBotella + 'ml) — $' + p.precioBotella + '. ¿Está disponible?')}"
+                   target="_blank" rel="noopener" class="botella-cta-link no-print">
+                    <span class="botella-cta-text">También disponible en<br>botella completa</span>
+                    <span class="botella-cta-action">Consultar precio →</span>
+                </a>
             </div>
         </div>
     </div>
@@ -594,6 +615,13 @@
                 <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
                 <span class="cat-price-label">10 ml</span>
             </div>
+            <div th:if="${p.precioBotella != null and (p.stockBotella == null or p.stockBotella > 0)}" class="botella-cta">
+                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el frasco completo de ' + p.marca + ' ' + p.nombre + ' (' + p.mlBotella + 'ml) — $' + p.precioBotella + '. ¿Está disponible?')}"
+                   target="_blank" rel="noopener" class="botella-cta-link no-print">
+                    <span class="botella-cta-text">También disponible en<br>botella completa</span>
+                    <span class="botella-cta-action">Consultar precio →</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -637,6 +665,13 @@
                 <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
                 <span class="cat-price-label">10 ml</span>
             </div>
+            <div th:if="${p.precioBotella != null and (p.stockBotella == null or p.stockBotella > 0)}" class="botella-cta">
+                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el frasco completo de ' + p.marca + ' ' + p.nombre + ' (' + p.mlBotella + 'ml) — $' + p.precioBotella + '. ¿Está disponible?')}"
+                   target="_blank" rel="noopener" class="botella-cta-link no-print">
+                    <span class="botella-cta-text">También disponible en<br>botella completa</span>
+                    <span class="botella-cta-action">Consultar precio →</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -679,6 +714,13 @@
                 <span th:if="${p.precioConDescuento != null}" class="cat-price-old" th:text="|$${p.precio}|"></span>
                 <span th:if="${p.precioConDescuento != null}" class="cat-price-tag cat-price-promo" th:text="|$${p.precioConDescuento}|"></span>
                 <span class="cat-price-label">10 ml</span>
+            </div>
+            <div th:if="${p.precioBotella != null and (p.stockBotella == null or p.stockBotella > 0)}" class="botella-cta">
+                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el frasco completo de ' + p.marca + ' ' + p.nombre + ' (' + p.mlBotella + 'ml) — $' + p.precioBotella + '. ¿Está disponible?')}"
+                   target="_blank" rel="noopener" class="botella-cta-link no-print">
+                    <span class="botella-cta-text">También disponible en<br>botella completa</span>
+                    <span class="botella-cta-action">Consultar precio →</span>
+                </a>
             </div>
         </div>
     </div>
