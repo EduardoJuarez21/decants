@@ -152,6 +152,22 @@ public class AdminController {
             })
             .collect(Collectors.toList());
         model.addAttribute("productosJson", prods);
+
+        List<Map<String, Object>> clientes = pedidoService.listarClientes().stream()
+            .map(c -> {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("id", c.getId());
+                m.put("nombre", c.getNombre());
+                m.put("telefono", c.getTelefono());
+                m.put("email", c.getEmail());
+                m.put("ultimaDireccion", c.getUltimaDireccion());
+                m.put("latitud", c.getLatitud());
+                m.put("longitud", c.getLongitud());
+                return m;
+            })
+            .collect(Collectors.toList());
+        model.addAttribute("clientesJson", clientes);
+
         model.addAttribute("mapsApiKey", mapsApiKey);
         return "admin/pedido-nuevo";
     }

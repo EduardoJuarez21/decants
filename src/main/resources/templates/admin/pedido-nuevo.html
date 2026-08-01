@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link th:href="@{/css/styles.css}" rel="stylesheet">
     <style>
-        #productoPicker { position: relative; }
+        #productoPicker, #clientePicker { position: relative; }
 
-        #productoDropdown {
+        #productoDropdown, #clienteDropdown {
             display: none;
             position: absolute;
             top: calc(100% + 4px);
@@ -156,16 +156,32 @@
             <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px;
                       color:var(--muted); margin:0 0 -0.4rem 0;">Datos del cliente</p>
 
+            <!-- Buscador de clientes existentes -->
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                    Buscar cliente existente <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                </label>
+                <div id="clientePicker">
+                    <input type="text" id="clienteBusqueda"
+                           placeholder="Buscar por nombre o teléfono…"
+                           autocomplete="off"
+                           oninput="buscarCliente(this.value)"
+                           onfocus="buscarCliente(this.value)"
+                           class="field-input">
+                    <div id="clienteDropdown"></div>
+                </div>
+            </div>
+
             <div style="display:flex; gap:1rem;">
                 <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
                     <label style="font-size:0.75rem; font-weight:600; color:#444;">Nombre *</label>
-                    <input type="text" name="nombre" required placeholder="Ana García" class="field-input">
+                    <input type="text" id="nombreCliente" name="nombre" required placeholder="Ana García" class="field-input">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
                     <label style="font-size:0.75rem; font-weight:600; color:#444;">
                         Teléfono * <span style="font-weight:400; color:var(--muted);">(10 dígitos)</span>
                     </label>
-                    <input type="tel" name="telefono" required placeholder="5512345678" maxlength="10" class="field-input">
+                    <input type="tel" id="telefonoCliente" name="telefono" required placeholder="5512345678" maxlength="10" class="field-input">
                 </div>
             </div>
 
@@ -173,7 +189,7 @@
                 <label style="font-size:0.75rem; font-weight:600; color:#444;">
                     Email <span style="font-weight:400; color:var(--muted);">(opcional)</span>
                 </label>
-                <input type="email" name="email" placeholder="ana@ejemplo.com" class="field-input">
+                <input type="email" id="emailCliente" name="email" placeholder="ana@ejemplo.com" class="field-input">
             </div>
 
             <hr style="border:none; border-top:1px solid #ececec; margin:0;">
@@ -280,8 +296,64 @@ var PRODUCTOS_DB = /*[[${productosJson}]]*/ [];
 /*]]>*/
 </script>
 
+<!-- Datos de clientes desde BD -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+var CLIENTES_DB = /*[[${clientesJson}]]*/ [];
+/*]]>*/
+</script>
+
 <script>
 var seleccionados = [];
+
+function buscarCliente(q) {
+    var dd = document.getElementById('clienteDropdown');
+    q = q.trim().toLowerCase();
+    if (!q) { dd.style.display = 'none'; return; }
+
+    var filtrados = CLIENTES_DB.filter(function(c) {
+        return (c.nombre && c.nombre.toLowerCase().indexOf(q) !== -1) ||
+               (c.telefono && c.telefono.indexOf(q) !== -1);
+    }).slice(0, 8);
+
+    if (!filtrados.length) { dd.style.display = 'none'; return; }
+
+    dd.innerHTML = filtrados.map(function(c) {
+        return '<div class="prod-item" style="cursor:pointer;" onclick="seleccionarCliente(' + c.id + ')">' +
+            '<div class="prod-info">' +
+                '<span class="prod-nombre">' + esc(c.nombre) + '</span>' +
+                '<span class="prod-marca">' + esc(c.telefono || '') + '</span>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+
+    dd.style.display = 'block';
+}
+
+function seleccionarCliente(id) {
+    var c = null;
+    for (var i = 0; i < CLIENTES_DB.length; i++) {
+        if (CLIENTES_DB[i].id === id) { c = CLIENTES_DB[i]; break; }
+    }
+    if (!c) return;
+
+    document.getElementById('nombreCliente').value = c.nombre || '';
+    document.getElementById('telefonoCliente').value = c.telefono || '';
+    document.getElementById('emailCliente').value = c.email || '';
+    if (c.ultimaDireccion) document.getElementById('direccion').value = c.ultimaDireccion;
+    if (c.latitud != null) document.getElementById('latitud').value = c.latitud;
+    if (c.longitud != null) document.getElementById('longitud').value = c.longitud;
+
+    document.getElementById('clienteDropdown').style.display = 'none';
+    document.getElementById('clienteBusqueda').value = '';
+}
+
+document.addEventListener('click', function(e) {
+    var picker = document.getElementById('clientePicker');
+    if (picker && !picker.contains(e.target)) {
+        document.getElementById('clienteDropdown').style.display = 'none';
+    }
+});
 
 function buscarProducto(q) {
     var dd = document.getElementById('productoDropdown');
