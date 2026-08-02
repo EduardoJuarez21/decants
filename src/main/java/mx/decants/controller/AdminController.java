@@ -230,6 +230,7 @@ public class AdminController {
     @GetMapping("/productos")
     public String listarProductos(Model model) {
         model.addAttribute("productos", productoService.listarTodos());
+        model.addAttribute("vendidosPorProducto", pedidoService.vendidosPorProducto());
         return "admin/productos";
     }
 

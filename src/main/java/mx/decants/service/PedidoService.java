@@ -45,6 +45,11 @@ public class PedidoService {
         "regalo",     299
     );
 
+    private static final Set<EstadoPedido> ESTADOS_VALIDOS = Set.of(
+        EstadoPedido.CREADO, EstadoPedido.CONFIRMADO,
+        EstadoPedido.LISTO_PARA_ENVIO, EstadoPedido.ENVIADO, EstadoPedido.ENTREGADO
+    );
+
     private final PedidoRepository pedidoRepository;
     private final PedidoItemRepository pedidoItemRepository;
     private final ProductoRepository productoRepository;
@@ -516,10 +521,7 @@ public class PedidoService {
     public Map<String, Object> obtenerDashboard() {
         List<Pedido> todos = pedidoRepository.findAllByOrderByFechaCreacionDesc();
 
-        Set<EstadoPedido> validos = Set.of(
-            EstadoPedido.CREADO, EstadoPedido.CONFIRMADO,
-            EstadoPedido.LISTO_PARA_ENVIO, EstadoPedido.ENVIADO, EstadoPedido.ENTREGADO
-        );
+        Set<EstadoPedido> validos = ESTADOS_VALIDOS;
 
         LocalDateTime hoy    = LocalDate.now().atStartOfDay();
         LocalDateTime semana = LocalDate.now().minusDays(7).atStartOfDay();
@@ -551,6 +553,15 @@ public class PedidoService {
         stats.put("topProductos",   topProductos);
         stats.put("ultimosPedidos", todos.stream().limit(10).toList());
         return stats;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<Long, Long> vendidosPorProducto() {
+        Map<Long, Long> map = new LinkedHashMap<>();
+        for (Object[] row : pedidoItemRepository.sumarVendidosPorProducto(ESTADOS_VALIDOS)) {
+            map.put((Long) row[0], (Long) row[1]);
+        }
+        return map;
     }
 
     private int sumarVentas(List<Pedido> pedidos, LocalDateTime desde) {

@@ -115,6 +115,7 @@
                         <th>Precio</th>
                         <th>Margen</th>
                         <th>Promo</th>
+                        <th>Vendidos</th>
                         <th>Stock</th>
                         <th>Frasco</th>
                         <th>Estado</th>
@@ -172,6 +173,8 @@
                             </div>
                             <span th:unless="${p.descuentoPorcentaje != null}" style="font-size:0.75rem; color:#ccc;">—</span>
                         </td>
+                        <td style="text-align:center; font-weight:600; color:#1a1a1a;"
+                            th:text="${vendidosPorProducto.get(p.id) != null ? vendidosPorProducto.get(p.id) : 0}"></td>
                         <td>
                             <form th:action="@{/aura-gestion/productos/{id}/stock(id=${p.id})}" method="post"
                                   style="display:flex; align-items:center; gap:4px; margin:0;">
@@ -251,7 +254,7 @@
             var nombre    = celdas[1].textContent.toLowerCase();
             var marca     = celdas[2].textContent.toLowerCase();
             var cat       = celdas[5].textContent.toLowerCase();
-            var estadoFila = celdas[12].textContent.toLowerCase().trim();
+            var estadoFila = celdas[13].textContent.toLowerCase().trim();
 
             var okTexto    = !texto     || nombre.includes(texto) || marca.includes(texto);
             var okCat      = !categoria || cat.includes(categoria);
