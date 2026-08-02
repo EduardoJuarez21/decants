@@ -664,7 +664,7 @@ public class PedidoService {
         Map<String, Long> porEstado = todos.stream()
             .collect(Collectors.groupingBy(p -> p.getEstadoPedido().getEtiqueta(), Collectors.counting()));
 
-        List<Object[]> topProductos = pedidoItemRepository.findTopProductos(ESTADOS_VALIDOS, PageRequest.of(0, 5));
+        List<Object[]> topProductos = pedidoItemRepository.findTopProductos(ESTADOS_VALIDOS, PageRequest.of(0, 10));
 
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("ventasHoy",      ventasHoy);
