@@ -143,11 +143,16 @@ public class AdminController {
                 m.put("id", p.getId());
                 m.put("nombre", p.getNombre());
                 m.put("marca", p.getMarca());
-                m.put("precio", p.getPrecio());
-                m.put("precio5ml", p.getPrecio5ml());
-                m.put("precio3ml", p.getPrecio3ml());
+                m.put("precio", p.getPrecioConDescuento() != null ? p.getPrecioConDescuento() : p.getPrecio());
+                m.put("precio5ml", p.getPrecio5ml() != null
+                        ? (p.getPrecio5mlConDescuento() != null ? p.getPrecio5mlConDescuento() : p.getPrecio5ml())
+                        : null);
+                m.put("precio3ml", p.getPrecio3ml() != null
+                        ? (p.getPrecio3mlConDescuento() != null ? p.getPrecio3mlConDescuento() : p.getPrecio3ml())
+                        : null);
                 m.put("precioBotella", p.getPrecioBotella());
                 m.put("mlBotella", p.getMlBotella());
+                m.put("promoActivo", p.isPromoActivo() && p.getDescuentoPorcentaje() != null);
                 return m;
             })
             .collect(Collectors.toList());

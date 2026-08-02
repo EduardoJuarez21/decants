@@ -370,15 +370,16 @@ function buscarProducto(q) {
     dd.innerHTML = filtrados.map(function(p) {
         var has5 = p.precio5ml !== null && p.precio5ml !== undefined;
         var has3 = p.precio3ml !== null && p.precio3ml !== undefined;
+        var promoTag = p.promoActivo ? ' 🏷️' : '';
         var btns = '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
-            p.id + ',\'10ml\',' + p.precio + ')">10ml · $' + p.precio + '</button>';
+            p.id + ',\'10ml\',' + p.precio + ')">10ml · $' + p.precio + promoTag + '</button>';
         if (has5) {
             btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
-                p.id + ',\'5ml\',' + p.precio5ml + ')">5ml · $' + p.precio5ml + '</button>';
+                p.id + ',\'5ml\',' + p.precio5ml + ')">5ml · $' + p.precio5ml + promoTag + '</button>';
         }
         if (has3) {
             btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
-                p.id + ',\'3ml\',' + p.precio3ml + ')">3ml · $' + p.precio3ml + '</button>';
+                p.id + ',\'3ml\',' + p.precio3ml + ')">3ml · $' + p.precio3ml + promoTag + '</button>';
         }
         var hasBotella = p.precioBotella !== null && p.precioBotella !== undefined;
         if (hasBotella) {
