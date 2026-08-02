@@ -19,9 +19,14 @@ public interface PedidoItemRepository extends JpaRepository<PedidoItem, Long> {
            "GROUP BY i.nombre ORDER BY SUM(i.cantidad) DESC")
     List<Object[]> findTopProductos(Pageable pageable);
 
-    @Query("SELECT i.producto.id, SUM(i.cantidad) FROM PedidoItem i " +
+    @Query("SELECT i.producto.id, SUM(CASE i.variante " +
+           "WHEN '3ml' THEN i.cantidad * 3 " +
+           "WHEN '5ml' THEN i.cantidad * 5 " +
+           "WHEN '10ml' THEN i.cantidad * 10 " +
+           "ELSE 0 END) " +
+           "FROM PedidoItem i " +
            "WHERE i.producto IS NOT NULL AND i.variante <> 'paquete' " +
            "AND i.pedido.estadoPedido IN :estados " +
            "GROUP BY i.producto.id")
-    List<Object[]> sumarVendidosPorProducto(@Param("estados") Collection<EstadoPedido> estados);
+    List<Object[]> sumarMlVendidoPorProducto(@Param("estados") Collection<EstadoPedido> estados);
 }

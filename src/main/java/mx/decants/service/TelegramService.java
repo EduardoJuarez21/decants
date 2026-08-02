@@ -61,13 +61,13 @@ public class TelegramService {
         enviar(token, chatId, texto);
     }
 
-    public void notificarStockBajo(String nombreProducto, int stock) {
+    public void notificarStockBajo(String nombreProducto, int stock, String unidad) {
         String token  = configuracionService.get("telegram_bot_token", "");
         String chatId = configuracionService.get("telegram_chat_id", "");
         if (token.isBlank() || chatId.isBlank()) return;
         String texto = stock == 0
             ? "🚨 <b>Stock agotado</b>: " + nombreProducto
-            : "⚠️ <b>Stock bajo</b>: " + nombreProducto + " — solo quedan <b>" + stock + "</b> unidad(es)";
+            : "⚠️ <b>Stock bajo</b>: " + nombreProducto + " — solo quedan <b>" + stock + "</b> " + unidad;
         enviar(token, chatId, texto);
     }
 

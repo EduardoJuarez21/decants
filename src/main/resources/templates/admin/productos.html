@@ -115,8 +115,8 @@
                         <th>Precio</th>
                         <th>Margen</th>
                         <th>Promo</th>
-                        <th>Vendidos</th>
-                        <th>Stock</th>
+                        <th>Vendidos (ml)</th>
+                        <th>Stock (ml)</th>
                         <th>Frasco</th>
                         <th>Estado</th>
                         <th></th>
@@ -189,6 +189,8 @@
                             </form>
                             <span th:if="${p.stock != null and p.stock == 0}"
                                   style="font-size:0.7rem; color:#c0392b; font-weight:600; display:block; margin-top:3px;">AGOTADO</span>
+                            <span th:if="${p.stock != null and p.stock > 0 and p.stock <= 10}"
+                                  style="font-size:0.7rem; color:#c9822c; font-weight:600; display:block; margin-top:3px;">STOCK BAJO</span>
                         </td>
                         <td>
                             <div th:if="${p.precioBotella != null}">

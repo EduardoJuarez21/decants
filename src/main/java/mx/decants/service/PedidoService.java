@@ -176,12 +176,23 @@ public class PedidoService {
                     String variant = ci.has("variant") ? ci.get("variant").asText() : "10ml";
                     boolean esBotella = "botella".equals(variant);
                     Producto p = productoRepository.findById(productId).orElseThrow();
-                    Integer stockDisponible = esBotella ? p.getStockBotella() : p.getStock();
-                    if (stockDisponible != null && stockDisponible < qty) {
-                        String msg = stockDisponible == 0
-                            ? p.getNombre() + " está agotado"
-                            : p.getNombre() + " solo tiene " + stockDisponible + " unidad(es) disponible(s)";
-                        throw new IllegalArgumentException(msg);
+                    if (esBotella) {
+                        Integer stockDisponible = p.getStockBotella();
+                        if (stockDisponible != null && stockDisponible < qty) {
+                            String msg = stockDisponible == 0
+                                ? p.getNombre() + " está agotado"
+                                : p.getNombre() + " solo tiene " + stockDisponible + " unidad(es) disponible(s)";
+                            throw new IllegalArgumentException(msg);
+                        }
+                    } else {
+                        int mlNecesario = qty * mlDeVariante(variant);
+                        Integer mlDisponible = p.getStock();
+                        if (mlDisponible != null && mlDisponible < mlNecesario) {
+                            String msg = mlDisponible == 0
+                                ? p.getNombre() + " está agotado"
+                                : p.getNombre() + " solo tiene " + mlDisponible + " ml disponibles";
+                            throw new IllegalArgumentException(msg);
+                        }
                     }
                     int price = resolverPrecio(p, variant);
                     PedidoItem item = new PedidoItem();
@@ -286,9 +297,11 @@ public class PedidoService {
         }
     }
 
+    private static final int UMBRAL_ALERTA_BOTELLA = 2;
+    private static final int UMBRAL_ALERTA_ML       = 10;
+
     private void descontarStock(List<PedidoItem> items) {
         if (items == null) return;
-        int umbralAlerta = 2;
         for (PedidoItem item : items) {
             Producto p = item.getProducto();
             if (p == null) continue;
@@ -298,19 +311,29 @@ public class PedidoService {
                     p.setStockBotella(Math.max(0, p.getStockBotella() - item.getCantidad()));
                     productoRepository.save(p);
                     log.info("Stock frasco producto #{} ({}) → {}", p.getId(), p.getNombre(), p.getStockBotella());
-                    if (p.getStockBotella() <= umbralAlerta) {
-                        telegramService.notificarStockBajo(p.getNombre() + " (frasco)", p.getStockBotella());
+                    if (p.getStockBotella() <= UMBRAL_ALERTA_BOTELLA) {
+                        telegramService.notificarStockBajo(p.getNombre() + " (frasco)", p.getStockBotella(), "unidad(es)");
                     }
                 }
             } else if (p.getStock() != null) {
-                p.setStock(Math.max(0, p.getStock() - item.getCantidad()));
+                int mlVendido = item.getCantidad() * mlDeVariante(item.getVariante());
+                p.setStock(Math.max(0, p.getStock() - mlVendido));
                 productoRepository.save(p);
-                log.info("Stock producto #{} ({}) → {}", p.getId(), p.getNombre(), p.getStock());
-                if (p.getStock() <= umbralAlerta) {
-                    telegramService.notificarStockBajo(p.getNombre(), p.getStock());
+                log.info("Stock producto #{} ({}) → {} ml", p.getId(), p.getNombre(), p.getStock());
+                if (p.getStock() <= UMBRAL_ALERTA_ML) {
+                    telegramService.notificarStockBajo(p.getNombre(), p.getStock(), "ml");
                 }
             }
         }
+    }
+
+    private static int mlDeVariante(String variante) {
+        return switch (variante) {
+            case "3ml"  -> 3;
+            case "5ml"  -> 5;
+            case "10ml" -> 10;
+            default     -> 10;
+        };
     }
 
     public void actualizarStripeSession(Long pedidoId, String sessionId) {
@@ -420,12 +443,23 @@ public class PedidoService {
                 Producto p = productoRepository.findById(productoId)
                         .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
                 boolean esBotella = variante.startsWith("Frasco ");
-                Integer stockDisponible = esBotella ? p.getStockBotella() : p.getStock();
-                if (stockDisponible != null && stockDisponible < cantidad) {
-                    String msg = stockDisponible == 0
-                        ? p.getNombre() + " está agotado"
-                        : p.getNombre() + " solo tiene " + stockDisponible + " unidad(es) disponible(s)";
-                    throw new IllegalArgumentException(msg);
+                if (esBotella) {
+                    Integer stockDisponible = p.getStockBotella();
+                    if (stockDisponible != null && stockDisponible < cantidad) {
+                        String msg = stockDisponible == 0
+                            ? p.getNombre() + " está agotado"
+                            : p.getNombre() + " solo tiene " + stockDisponible + " unidad(es) disponible(s)";
+                        throw new IllegalArgumentException(msg);
+                    }
+                } else {
+                    int mlNecesario = cantidad * mlDeVariante(variante);
+                    Integer mlDisponible = p.getStock();
+                    if (mlDisponible != null && mlDisponible < mlNecesario) {
+                        String msg = mlDisponible == 0
+                            ? p.getNombre() + " está agotado"
+                            : p.getNombre() + " solo tiene " + mlDisponible + " ml disponibles";
+                        throw new IllegalArgumentException(msg);
+                    }
                 }
 
                 PedidoItem item = new PedidoItem();
@@ -556,9 +590,9 @@ public class PedidoService {
     }
 
     @Transactional(readOnly = true)
-    public Map<Long, Long> vendidosPorProducto() {
+    public Map<Long, Long> mlVendidoPorProducto() {
         Map<Long, Long> map = new LinkedHashMap<>();
-        for (Object[] row : pedidoItemRepository.sumarVendidosPorProducto(ESTADOS_VALIDOS)) {
+        for (Object[] row : pedidoItemRepository.sumarMlVendidoPorProducto(ESTADOS_VALIDOS)) {
             map.put((Long) row[0], (Long) row[1]);
         }
         return map;
