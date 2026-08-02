@@ -58,6 +58,7 @@ public class LandingController {
             Model model) {
 
         visitaService.registrar(ref);
+        model.addAttribute("refDescarga", ref != null && !ref.isBlank() ? ref : "sitio");
 
         var designer = productoService.activosPorCategoriaPaginados("alta-perfumeria", df, dp);
         var arabe    = productoService.activosPorCategoriaPaginados("nicho-arabe",    af, ap);
@@ -115,7 +116,7 @@ public class LandingController {
         return "catalogo";
     }
 
-    @GetMapping("/catalogo-pdf")
+    @GetMapping({"/catalogo-pdf", "/pdf"})
     public ResponseEntity<Resource> catalogoPdf(@RequestParam(value = "ref", required = false) String ref) {
         visitaService.registrarDescargaCatalogo(ref);
         Resource pdf = new ClassPathResource("static/catalogo/catalogo-vigente.pdf");
