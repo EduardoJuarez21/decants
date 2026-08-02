@@ -31,6 +31,12 @@ public class VisitaService {
         visitaRepository.save(new Visita(fuente));
     }
 
+    @Async
+    public void registrarDescargaCatalogo(String ref) {
+        String fuente = normalizar(ref);
+        visitaRepository.save(new Visita(fuente, Visita.TIPO_DESCARGA_CATALOGO));
+    }
+
     public Map<String, Object> obtenerStats() {
         LocalDateTime hoy   = LocalDate.now().atStartOfDay();
         LocalDateTime semana = LocalDate.now().minusDays(7).atStartOfDay();
@@ -42,6 +48,11 @@ public class VisitaService {
         stats.put("visitasMes",    visitaRepository.countByFechaAfter(mes));
         stats.put("porFuenteHoy",    porFuente(hoy));
         stats.put("porFuenteSemana", porFuente(semana));
+
+        stats.put("descargasCatalogoHoy",    visitaRepository.countDescargasCatalogoByFechaAfter(hoy));
+        stats.put("descargasCatalogoSemana", visitaRepository.countDescargasCatalogoByFechaAfter(semana));
+        stats.put("descargasCatalogoMes",    visitaRepository.countDescargasCatalogoByFechaAfter(mes));
+        stats.put("descargasCatalogoPorFuenteSemana", porFuenteDescargas(semana));
         return stats;
     }
 
@@ -75,6 +86,14 @@ public class VisitaService {
     private Map<String, Long> porFuente(LocalDateTime desde) {
         Map<String, Long> map = new LinkedHashMap<>();
         for (Object[] row : visitaRepository.contarPorFuenteDesde(desde)) {
+            map.put((String) row[0], (Long) row[1]);
+        }
+        return map;
+    }
+
+    private Map<String, Long> porFuenteDescargas(LocalDateTime desde) {
+        Map<String, Long> map = new LinkedHashMap<>();
+        for (Object[] row : visitaRepository.contarDescargasCatalogoPorFuenteDesde(desde)) {
             map.put((String) row[0], (Long) row[1]);
         }
         return map;

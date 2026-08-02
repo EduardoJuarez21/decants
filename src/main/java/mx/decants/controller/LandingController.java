@@ -116,7 +116,8 @@ public class LandingController {
     }
 
     @GetMapping("/catalogo-pdf")
-    public ResponseEntity<Resource> catalogoPdf() {
+    public ResponseEntity<Resource> catalogoPdf(@RequestParam(value = "ref", required = false) String ref) {
+        visitaService.registrarDescargaCatalogo(ref);
         Resource pdf = new ClassPathResource("static/catalogo/catalogo-vigente.pdf");
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)

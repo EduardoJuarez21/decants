@@ -126,6 +126,33 @@
         </div>
     </div>
 
+    <!-- Descargas del catálogo -->
+    <div class="metric-grid">
+        <div class="metric-card">
+            <div class="metric-label">Descargas hoy</div>
+            <div class="metric-value" th:text="${descargasCatalogoHoy}"></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Descargas 7 días</div>
+            <div class="metric-value" th:text="${descargasCatalogoSemana}"></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Descargas 30 días</div>
+            <div class="metric-value" th:text="${descargasCatalogoMes}"></div>
+        </div>
+    </div>
+
+    <div class="chart-card" th:if="${!descargasCatalogoPorFuenteSemana.isEmpty()}">
+        <div class="chart-title">Descargas del catálogo por origen — últimos 7 días</div>
+        <div th:each="entry : ${descargasCatalogoPorFuenteSemana}" class="fuente-row">
+            <span class="fuente-nombre" th:text="${entry.key}"></span>
+            <div class="fuente-bar-wrap">
+                <div th:style="'width:' + ${entry.value * 100 / descargasCatalogoSemana} + '%;'" class="fuente-bar"></div>
+            </div>
+            <span class="fuente-count" th:text="${entry.value}"></span>
+        </div>
+    </div>
+
     <!-- Gráfica de los últimos 30 días -->
     <div class="chart-card">
         <div class="chart-title">Visitas por día — últimos 30 días</div>
