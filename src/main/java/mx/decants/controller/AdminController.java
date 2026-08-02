@@ -21,8 +21,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.TextStyle;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -364,7 +367,7 @@ public class AdminController {
     // ── Comisiones (vista para vendedor familiar) ───────────────────────────────
 
     @GetMapping("/comisiones")
-    public String comisiones(Model model) {
+    public String comisiones(@RequestParam(value = "mes", required = false) String mesParam, Model model) {
         var productos = productoService.listarTodos().stream()
             .filter(Producto::isActivo)
             .filter(p -> p.getComisionFamiliar() != null || p.getComisionFamiliar5ml() != null || p.getComisionFamiliar3ml() != null)
@@ -379,7 +382,28 @@ public class AdminController {
         model.addAttribute("metaLlevas", llevas);
         model.addAttribute("metaPorcentaje", Math.min(100, meta > 0 ? (llevas * 100 / meta) : 0));
         model.addAttribute("metaCumplida", llevas >= meta);
+
+        YearMonth mes;
+        try {
+            mes = mesParam != null ? YearMonth.parse(mesParam) : YearMonth.now();
+        } catch (Exception e) {
+            mes = YearMonth.now();
+        }
+        Map<String, Object> comision = pedidoService.comisionVendedor("doris", mes);
+        model.addAttribute("comisionMes", mes.toString());
+        model.addAttribute("comisionMesAnterior", mes.minusMonths(1).toString());
+        model.addAttribute("comisionMesSiguiente", mes.plusMonths(1).toString());
+        model.addAttribute("comisionMesEtiqueta", capitalizar(mes.getMonth().getDisplayName(TextStyle.FULL, new Locale("es", "MX"))) + " " + mes.getYear());
+        model.addAttribute("comisionEsMesActual", mes.equals(YearMonth.now()));
+        model.addAttribute("comisionVentasTotales", comision.get("ventasTotales"));
+        model.addAttribute("comisionTotal", comision.get("comisionTotal"));
+        model.addAttribute("comisionDetalle", comision.get("detalle"));
+
         return "admin/comisiones";
+    }
+
+    private static String capitalizar(String s) {
+        return s.isEmpty() ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 
     // ── Clientes ──────────────────────────────────────────────────────────────

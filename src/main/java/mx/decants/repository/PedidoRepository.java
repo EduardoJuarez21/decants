@@ -20,4 +20,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     List<Pedido> findByVendedorAndFechaCreacionAfterAndEstadoPedidoNot(
         String vendedor, LocalDateTime desde, EstadoPedido estadoExcluido);
+
+    List<Pedido> findByVendedorAndFechaCreacionBetweenAndEstadoPedidoNot(
+        String vendedor, LocalDateTime desde, LocalDateTime hasta, EstadoPedido estadoExcluido);
 }

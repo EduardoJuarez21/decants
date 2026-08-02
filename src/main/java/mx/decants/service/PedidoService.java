@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -357,6 +358,60 @@ public class PedidoService {
             .stream()
             .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
             .sum();
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> comisionVendedor(String vendedor, YearMonth mes) {
+        LocalDateTime desde = mes.atDay(1).atStartOfDay();
+        LocalDateTime hasta = mes.plusMonths(1).atDay(1).atStartOfDay();
+        List<Pedido> pedidos = pedidoRepository.findByVendedorAndFechaCreacionBetweenAndEstadoPedidoNot(
+            vendedor, desde, hasta, EstadoPedido.CANCELADO);
+
+        int ventasTotales = pedidos.stream()
+            .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
+            .sum();
+
+        Map<String, Map<String, Object>> detallePorClave = new LinkedHashMap<>();
+        double comisionTotal = 0;
+        for (Pedido pedido : pedidos) {
+            for (PedidoItem item : pedido.getItems()) {
+                Producto p = item.getProducto();
+                if (p == null) continue;
+                Double comisionUnit = comisionUnitaria(p, item.getVariante());
+                if (comisionUnit == null) continue;
+
+                double subtotal = comisionUnit * item.getCantidad();
+                comisionTotal += subtotal;
+
+                String clave = item.getNombre() + "|" + item.getVariante();
+                Map<String, Object> fila = detallePorClave.computeIfAbsent(clave, k -> {
+                    Map<String, Object> f = new LinkedHashMap<>();
+                    f.put("nombre", item.getNombre());
+                    f.put("variante", item.getVariante());
+                    f.put("comisionUnitaria", comisionUnit);
+                    f.put("cantidad", 0);
+                    f.put("subtotal", 0.0);
+                    return f;
+                });
+                fila.put("cantidad", (int) fila.get("cantidad") + item.getCantidad());
+                fila.put("subtotal", (double) fila.get("subtotal") + subtotal);
+            }
+        }
+
+        Map<String, Object> resultado = new LinkedHashMap<>();
+        resultado.put("ventasTotales", ventasTotales);
+        resultado.put("comisionTotal", comisionTotal);
+        resultado.put("detalle", new ArrayList<>(detallePorClave.values()));
+        return resultado;
+    }
+
+    private static Double comisionUnitaria(Producto p, String variante) {
+        return switch (variante) {
+            case "3ml"  -> p.getComisionFamiliar3ml();
+            case "5ml"  -> p.getComisionFamiliar5ml();
+            case "10ml" -> p.getComisionFamiliar();
+            default     -> null;
+        };
     }
 
     public Pedido confirmarPorSession(String sessionId) {

@@ -48,6 +48,53 @@
         </div>
     </div>
 
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header" style="display:flex; align-items:center; justify-content:space-between;">
+            <h2>💰 Comisión a pagar</h2>
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <a th:href="@{/aura-gestion/comisiones(mes=${comisionMesAnterior})}" class="admin-link" style="font-size:0.85rem;">&#8592;</a>
+                <span style="font-size:0.85rem; font-weight:600; color:#1a1a1a; min-width:120px; text-align:center;" th:text="${comisionMesEtiqueta}"></span>
+                <a th:unless="${comisionEsMesActual}" th:href="@{/aura-gestion/comisiones(mes=${comisionMesSiguiente})}" class="admin-link" style="font-size:0.85rem;">&#8594;</a>
+                <span th:if="${comisionEsMesActual}" style="font-size:0.85rem; color:#ccc;">&#8594;</span>
+            </div>
+        </div>
+        <div style="padding:1.5rem 2rem;">
+            <div style="display:flex; gap:2rem; margin-bottom:1.25rem; flex-wrap:wrap;">
+                <div>
+                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Ventas de Doris</div>
+                    <div style="font-size:1.4rem; font-weight:700; color:#1a1a1a;">$<span th:text="${comisionVentasTotales}"></span></div>
+                </div>
+                <div>
+                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Comisión a pagar</div>
+                    <div style="font-size:1.4rem; font-weight:700; color:#2e7d32;">$<span th:text="${#numbers.formatDecimal(comisionTotal, 1, 2)}"></span></div>
+                </div>
+            </div>
+            <p th:if="${comisionDetalle.isEmpty()}" style="color:var(--muted); font-size:0.85rem;">Sin ventas de Doris en este mes.</p>
+            <div th:if="${!comisionDetalle.isEmpty()}" style="overflow-x:auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Presentación</th>
+                            <th style="text-align:right;">Cantidad</th>
+                            <th style="text-align:right;">Comisión unitaria</th>
+                            <th style="text-align:right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="fila : ${comisionDetalle}">
+                            <td th:text="${fila.nombre}"></td>
+                            <td th:text="${fila.variante}"></td>
+                            <td style="text-align:right;" th:text="${fila.cantidad}"></td>
+                            <td style="text-align:right;" th:text="|$${#numbers.formatDecimal(fila.comisionUnitaria, 1, 2)}|"></td>
+                            <td style="text-align:right; font-weight:700; color:#2e7d32;" th:text="|$${#numbers.formatDecimal(fila.subtotal, 1, 2)}|"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div class="admin-card">
         <div class="admin-card-header">
             <h2>Precio y comisión por producto</h2>
