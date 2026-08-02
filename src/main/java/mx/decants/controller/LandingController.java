@@ -8,6 +8,11 @@ import mx.decants.service.ConfiguracionService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.ResenaService;
 import mx.decants.service.VisitaService;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -108,6 +113,15 @@ public class LandingController {
         model.addAttribute("tagsDisponibles", tags);
 
         return "catalogo";
+    }
+
+    @GetMapping("/catalogo-pdf")
+    public ResponseEntity<Resource> catalogoPdf() {
+        Resource pdf = new ClassPathResource("static/catalogo/catalogo-vigente.pdf");
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"catalogo-aura-decants.pdf\"")
+                .body(pdf);
     }
 
     @GetMapping("/terminos")
