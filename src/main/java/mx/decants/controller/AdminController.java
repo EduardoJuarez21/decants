@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -367,7 +368,12 @@ public class AdminController {
     // ── Comisiones (vista para vendedor familiar) ───────────────────────────────
 
     @GetMapping("/comisiones")
-    public String comisiones(@RequestParam(value = "mes", required = false) String mesParam, Model model) {
+    public String comisiones(@RequestParam(value = "mes", required = false) String mesParam,
+                              Authentication authentication, Model model) {
+        boolean esAdmin = authentication != null && authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        model.addAttribute("esAdmin", esAdmin);
+
         var productos = productoService.listarTodos().stream()
             .filter(Producto::isActivo)
             .filter(p -> p.getComisionFamiliar() != null || p.getComisionFamiliar5ml() != null || p.getComisionFamiliar3ml() != null)
