@@ -17,7 +17,7 @@ import java.util.Map;
 public class VisitaService {
 
     private static final List<String> FUENTES_CONOCIDAS =
-        List.of("qr", "instagram", "whatsapp", "facebook", "tiktok");
+        List.of("qr", "instagram", "whatsapp", "facebook", "tiktok", "sitio");
 
     private final VisitaRepository visitaRepository;
 
