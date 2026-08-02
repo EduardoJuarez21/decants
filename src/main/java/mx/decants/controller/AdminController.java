@@ -397,6 +397,10 @@ public class AdminController {
         model.addAttribute("comisionEsMesActual", mes.equals(YearMonth.now()));
         model.addAttribute("comisionVentasTotales", comision.get("ventasTotales"));
         model.addAttribute("comisionTotal", comision.get("comisionTotal"));
+        model.addAttribute("comisionCostoTotal", comision.get("costoTotal"));
+        model.addAttribute("comisionGanancia", comision.get("ganancia"));
+        model.addAttribute("comisionProductosSinCosto", comision.get("productosSinCosto"));
+        model.addAttribute("comisionHuboItemsSinProducto", comision.get("huboItemsSinProducto"));
         model.addAttribute("comisionDetalle", comision.get("detalle"));
 
         return "admin/comisiones";

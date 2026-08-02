@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -373,9 +374,26 @@ public class PedidoService {
 
         Map<String, Map<String, Object>> detallePorClave = new LinkedHashMap<>();
         double comisionTotal = 0;
+        double costoTotal = 0;
+        Set<String> productosSinCosto = new LinkedHashSet<>();
+        boolean huboItemsSinProducto = false;
+
         for (Pedido pedido : pedidos) {
             for (PedidoItem item : pedido.getItems()) {
                 Producto p = item.getProducto();
+                if (p == null) {
+                    huboItemsSinProducto = true;
+                } else {
+                    Integer ml = mlEquivalente(item, p);
+                    if (ml != null) {
+                        if (p.getCostoPorMl() != null) {
+                            costoTotal += p.getCostoPorMl() * ml * item.getCantidad();
+                        } else {
+                            productosSinCosto.add(p.getNombre());
+                        }
+                    }
+                }
+
                 if (p == null) continue;
                 Double comisionUnit = comisionUnitaria(p, item.getVariante());
                 if (comisionUnit == null) continue;
@@ -398,9 +416,15 @@ public class PedidoService {
             }
         }
 
+        double ganancia = ventasTotales - comisionTotal - costoTotal;
+
         Map<String, Object> resultado = new LinkedHashMap<>();
         resultado.put("ventasTotales", ventasTotales);
         resultado.put("comisionTotal", comisionTotal);
+        resultado.put("costoTotal", costoTotal);
+        resultado.put("ganancia", ganancia);
+        resultado.put("productosSinCosto", new ArrayList<>(productosSinCosto));
+        resultado.put("huboItemsSinProducto", huboItemsSinProducto);
         resultado.put("detalle", new ArrayList<>(detallePorClave.values()));
         return resultado;
     }
@@ -410,6 +434,18 @@ public class PedidoService {
             case "3ml"  -> p.getComisionFamiliar3ml();
             case "5ml"  -> p.getComisionFamiliar5ml();
             case "10ml" -> p.getComisionFamiliar();
+            default     -> null;
+        };
+    }
+
+    private static Integer mlEquivalente(PedidoItem item, Producto p) {
+        String v = item.getVariante();
+        if (v == null) return null;
+        if (v.startsWith("Frasco ")) return p.getMlBotella();
+        return switch (v) {
+            case "3ml"  -> 3;
+            case "5ml"  -> 5;
+            case "10ml" -> 10;
             default     -> null;
         };
     }
