@@ -384,10 +384,17 @@ public class AdminController {
         List<Vendedor> vendedoresActivos = vendedorService.listarActivos();
         model.addAttribute("vendedores", vendedoresActivos);
 
-        Optional<Vendedor> vendedorActual = esAdmin
-            ? (vendedorParam != null ? vendedorService.buscarPorUsuario(vendedorParam) : Optional.empty())
-                .or(() -> vendedoresActivos.stream().findFirst())
-            : vendedorService.buscarPorUsuario(authentication.getName());
+        Optional<Vendedor> vendedorActual;
+        if (esAdmin) {
+            vendedorActual = vendedorParam != null
+                ? vendedorService.buscarPorUsuario(vendedorParam)
+                : Optional.empty();
+            if (vendedorActual.isEmpty()) {
+                vendedorActual = vendedoresActivos.stream().findFirst();
+            }
+        } else {
+            vendedorActual = vendedorService.buscarPorUsuario(authentication.getName());
+        }
 
         if (vendedorActual.isEmpty()) {
             model.addAttribute("sinVendedoras", true);
