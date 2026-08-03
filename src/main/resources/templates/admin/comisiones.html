@@ -26,9 +26,18 @@
         </div>
     </div>
 
+    <div th:if="${esAdmin}" style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem;">
+        <span style="font-size:0.8rem; color:var(--muted); font-weight:600;">Viendo a:</span>
+        <a th:each="v : ${vendedores}"
+           th:href="@{/aura-gestion/comisiones(vendedor=${v}, mes=${comisionMes})}"
+           th:text="${#strings.capitalize(v)}"
+           th:style="${v == vendedor} ? 'font-weight:700; color:#1a1a1a;' : ''"
+           class="admin-link"></a>
+    </div>
+
     <div class="admin-card" style="margin-bottom:1.5rem;">
         <div class="admin-card-header">
-            <h2>🎯 Meta de este mes</h2>
+            <h2>🎯 Meta de este mes — <span th:text="${vendedorEtiqueta}"></span></h2>
         </div>
         <div style="padding:1.5rem 2rem;">
             <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.6rem;">
@@ -50,18 +59,18 @@
 
     <div class="admin-card" style="margin-bottom:1.5rem;">
         <div class="admin-card-header" style="display:flex; align-items:center; justify-content:space-between;">
-            <h2>💰 Comisión a pagar</h2>
+            <h2>💰 Comisión a pagar — <span th:text="${vendedorEtiqueta}"></span></h2>
             <div style="display:flex; align-items:center; gap:0.75rem;">
-                <a th:href="@{/aura-gestion/comisiones(mes=${comisionMesAnterior})}" class="admin-link" style="font-size:0.85rem;">&#8592;</a>
+                <a th:href="@{/aura-gestion/comisiones(mes=${comisionMesAnterior}, vendedor=${vendedor})}" class="admin-link" style="font-size:0.85rem;">&#8592;</a>
                 <span style="font-size:0.85rem; font-weight:600; color:#1a1a1a; min-width:120px; text-align:center;" th:text="${comisionMesEtiqueta}"></span>
-                <a th:unless="${comisionEsMesActual}" th:href="@{/aura-gestion/comisiones(mes=${comisionMesSiguiente})}" class="admin-link" style="font-size:0.85rem;">&#8594;</a>
+                <a th:unless="${comisionEsMesActual}" th:href="@{/aura-gestion/comisiones(mes=${comisionMesSiguiente}, vendedor=${vendedor})}" class="admin-link" style="font-size:0.85rem;">&#8594;</a>
                 <span th:if="${comisionEsMesActual}" style="font-size:0.85rem; color:#ccc;">&#8594;</span>
             </div>
         </div>
         <div style="padding:1.5rem 2rem;">
             <div style="display:flex; gap:2rem; margin-bottom:1.25rem; flex-wrap:wrap;">
                 <div>
-                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Ventas de Doris</div>
+                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Ventas de <span th:text="${vendedorEtiqueta}"></span></div>
                     <div style="font-size:1.4rem; font-weight:700; color:#1a1a1a;">$<span th:text="${comisionVentasTotales}"></span></div>
                 </div>
                 <div>
@@ -88,7 +97,7 @@
                 <span th:if="${!comisionProductosSinCosto.isEmpty() and comisionHuboItemsSinProducto}"> ni de </span>
                 <span th:if="${comisionHuboItemsSinProducto}">algún paquete vendido (sin costo por producto individual)</span>.
             </div>
-            <p th:if="${comisionDetalle.isEmpty()}" style="color:var(--muted); font-size:0.85rem;">Sin ventas de Doris en este mes.</p>
+            <p th:if="${comisionDetalle.isEmpty()}" style="color:var(--muted); font-size:0.85rem;">Sin ventas de <span th:text="${vendedorEtiqueta}"></span> en este mes.</p>
             <div th:if="${!comisionDetalle.isEmpty()}" style="overflow-x:auto;">
                 <table class="admin-table">
                     <thead>

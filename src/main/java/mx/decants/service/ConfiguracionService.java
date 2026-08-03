@@ -75,23 +75,23 @@ public class ConfiguracionService {
     }
 
     @Transactional(readOnly = true)
-    public int getMetaDorisMonto() {
-        try { return Integer.parseInt(get("meta_doris_monto", "1000")); }
+    public int getMetaMonto(String vendedor) {
+        try { return Integer.parseInt(get("meta_" + vendedor + "_monto", "1000")); }
         catch (NumberFormatException e) { return 1000; }
     }
 
     @Transactional
-    public void setMetaDorisMonto(int monto) {
-        set("meta_doris_monto", String.valueOf(monto));
+    public void setMetaMonto(String vendedor, int monto) {
+        set("meta_" + vendedor + "_monto", String.valueOf(monto));
     }
 
     @Transactional(readOnly = true)
-    public String getMetaDorisPremio() {
-        return get("meta_doris_premio", "");
+    public String getMetaPremio(String vendedor) {
+        return get("meta_" + vendedor + "_premio", "");
     }
 
     @Transactional
-    public void setMetaDorisPremio(String premio) {
-        set("meta_doris_premio", premio);
+    public void setMetaPremio(String vendedor, String premio) {
+        set("meta_" + vendedor + "_premio", premio);
     }
 }

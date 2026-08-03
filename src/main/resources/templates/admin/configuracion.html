@@ -405,6 +405,48 @@
         </div>
     </div>
 
+    <!-- Meta de Carmen -->
+    <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div class="admin-card-header">
+            <h2>💸 Meta de Carmen (vendedora)</h2>
+        </div>
+        <div style="padding:1.75rem 2rem;">
+            <p style="font-size:0.85rem; color:#555; margin-bottom:1.5rem;">
+                Se reinicia automáticamente cada mes. Solo cuentan los pedidos manuales marcados como "Vendida por Carmen" y que no estén cancelados.
+                Carmen ve su avance en <span style="font-family:monospace;">/aura-gestion/comisiones</span>.
+            </p>
+            <form th:action="@{/aura-gestion/configuracion/meta-carmen}" method="post"
+                  style="display:flex; gap:0.75rem; align-items:flex-end; flex-wrap:wrap;">
+                <div style="max-width:160px;">
+                    <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                  text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                        Meta del mes ($)
+                    </label>
+                    <input type="number" name="metaCarmenMonto" th:value="${metaCarmenMonto}" min="1" required
+                           style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                  border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.9rem;
+                                  font-family:inherit; outline:none;">
+                </div>
+                <div style="flex:1; min-width:220px;">
+                    <label style="display:block; font-size:0.75rem; font-weight:700; color:#555;
+                                  text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">
+                        Premio <span style="font-weight:400; text-transform:none;">(texto libre, opcional)</span>
+                    </label>
+                    <input type="text" name="metaCarmenPremio" th:value="${metaCarmenPremio}" placeholder="ej. $100 extra en efectivo"
+                           style="width:100%; box-sizing:border-box; padding:0.6rem 0.9rem;
+                                  border:1.5px solid #e0e0e0; border-radius:8px; font-size:0.9rem;
+                                  font-family:inherit; outline:none;">
+                </div>
+                <button type="submit"
+                        style="padding:0.65rem 1.5rem; background:#1a1a1a; color:#fff; border:none;
+                               border-radius:8px; font-size:0.85rem; font-family:inherit;
+                               cursor:pointer; font-weight:600;">
+                    Guardar cambios
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Stripe entorno -->
     <div class="admin-card">
         <div class="admin-card-header">

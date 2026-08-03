@@ -262,11 +262,28 @@
             </div>
 
             <!-- Vendedor -->
-            <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; font-size:0.88rem; color:#444;">
-                <input type="checkbox" name="vendedor" value="doris"
-                       style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
-                💸 Vendida por Doris (cuenta para su meta del mes)
-            </label>
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                    💸 Vendida por <span style="font-weight:400; color:var(--muted);">(cuenta para la meta del mes de quien elijas)</span>
+                </label>
+                <div style="display:flex; gap:1.25rem;">
+                    <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.88rem; color:#444;">
+                        <input type="radio" name="vendedor" value="" checked
+                               style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
+                        Ninguna
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.88rem; color:#444;">
+                        <input type="radio" name="vendedor" value="doris"
+                               style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
+                        Doris
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.88rem; color:#444;">
+                        <input type="radio" name="vendedor" value="carmen"
+                               style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
+                        Carmen
+                    </label>
+                </div>
+            </div>
 
             <!-- Botones -->
             <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">

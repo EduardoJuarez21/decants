@@ -367,12 +367,22 @@ public class AdminController {
 
     // ── Comisiones (vista para vendedor familiar) ───────────────────────────────
 
+    private static final List<String> VENDEDORES = List.of("doris", "carmen");
+
     @GetMapping("/comisiones")
     public String comisiones(@RequestParam(value = "mes", required = false) String mesParam,
+                              @RequestParam(value = "vendedor", required = false) String vendedorParam,
                               Authentication authentication, Model model) {
         boolean esAdmin = authentication != null && authentication.getAuthorities().stream()
             .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
         model.addAttribute("esAdmin", esAdmin);
+
+        String vendedor = esAdmin
+            ? (vendedorParam != null && VENDEDORES.contains(vendedorParam) ? vendedorParam : VENDEDORES.get(0))
+            : authentication.getName();
+        model.addAttribute("vendedor", vendedor);
+        model.addAttribute("vendedorEtiqueta", capitalizar(vendedor));
+        model.addAttribute("vendedores", VENDEDORES);
 
         var productos = productoService.listarTodos().stream()
             .filter(Producto::isActivo)
@@ -381,10 +391,10 @@ public class AdminController {
             .collect(Collectors.toList());
         model.addAttribute("productos", productos);
 
-        int meta = configuracionService.getMetaDorisMonto();
-        int llevas = pedidoService.ventasVendedorMesActual("doris");
+        int meta = configuracionService.getMetaMonto(vendedor);
+        int llevas = pedidoService.ventasVendedorMesActual(vendedor);
         model.addAttribute("metaMonto", meta);
-        model.addAttribute("metaPremio", configuracionService.getMetaDorisPremio());
+        model.addAttribute("metaPremio", configuracionService.getMetaPremio(vendedor));
         model.addAttribute("metaLlevas", llevas);
         model.addAttribute("metaPorcentaje", Math.min(100, meta > 0 ? (llevas * 100 / meta) : 0));
         model.addAttribute("metaCumplida", llevas >= meta);
@@ -395,7 +405,7 @@ public class AdminController {
         } catch (Exception e) {
             mes = YearMonth.now();
         }
-        Map<String, Object> comision = pedidoService.comisionVendedor("doris", mes);
+        Map<String, Object> comision = pedidoService.comisionVendedor(vendedor, mes);
         model.addAttribute("comisionMes", mes.toString());
         model.addAttribute("comisionMesAnterior", mes.minusMonths(1).toString());
         model.addAttribute("comisionMesSiguiente", mes.plusMonths(1).toString());
@@ -506,8 +516,10 @@ public class AdminController {
         model.addAttribute("emailSmtpPort",       configuracionService.get("email_smtp_port", "587"));
         model.addAttribute("emailFrom",           configuracionService.get("email_from", ""));
         model.addAttribute("markupDefault",       configuracionService.getMarkupDefault());
-        model.addAttribute("metaDorisMonto",      configuracionService.getMetaDorisMonto());
-        model.addAttribute("metaDorisPremio",     configuracionService.getMetaDorisPremio());
+        model.addAttribute("metaDorisMonto",      configuracionService.getMetaMonto("doris"));
+        model.addAttribute("metaDorisPremio",     configuracionService.getMetaPremio("doris"));
+        model.addAttribute("metaCarmenMonto",     configuracionService.getMetaMonto("carmen"));
+        model.addAttribute("metaCarmenPremio",    configuracionService.getMetaPremio("carmen"));
         return "admin/configuracion";
     }
 
@@ -522,9 +534,19 @@ public class AdminController {
     public String guardarMetaDoris(@RequestParam int metaDorisMonto,
                                     @RequestParam(required = false) String metaDorisPremio,
                                     RedirectAttributes ra) {
-        configuracionService.setMetaDorisMonto(metaDorisMonto);
-        configuracionService.setMetaDorisPremio(metaDorisPremio != null ? metaDorisPremio.trim() : "");
+        configuracionService.setMetaMonto("doris", metaDorisMonto);
+        configuracionService.setMetaPremio("doris", metaDorisPremio != null ? metaDorisPremio.trim() : "");
         ra.addFlashAttribute("mensaje", "Meta de Doris actualizada.");
+        return "redirect:/aura-gestion/configuracion";
+    }
+
+    @PostMapping("/configuracion/meta-carmen")
+    public String guardarMetaCarmen(@RequestParam int metaCarmenMonto,
+                                     @RequestParam(required = false) String metaCarmenPremio,
+                                     RedirectAttributes ra) {
+        configuracionService.setMetaMonto("carmen", metaCarmenMonto);
+        configuracionService.setMetaPremio("carmen", metaCarmenPremio != null ? metaCarmenPremio.trim() : "");
+        ra.addFlashAttribute("mensaje", "Meta de Carmen actualizada.");
         return "redirect:/aura-gestion/configuracion";
     }
 

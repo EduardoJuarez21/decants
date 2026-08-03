@@ -35,6 +35,10 @@ vendedor:
   usuario: ${VENDEDOR_USUARIO:vendedor}
   password: ${VENDEDOR_PASSWORD:changeme123}
 
+carmen:
+  usuario: ${CARMEN_USUARIO:carmen}
+  password: ${CARMEN_PASSWORD:changeme123}
+
 stripe:
   secret-key-live: ${STRIPE_SECRET_KEY:}
   secret-key-test: ${STRIPE_SECRET_KEY_TEST:}

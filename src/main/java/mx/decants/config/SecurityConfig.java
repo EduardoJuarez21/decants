@@ -92,7 +92,9 @@ public class SecurityConfig {
             @Value("${admin.usuario}") String usuario,
             @Value("${admin.password}") String password,
             @Value("${vendedor.usuario}") String vendedorUsuario,
-            @Value("${vendedor.password}") String vendedorPassword) {
+            @Value("${vendedor.password}") String vendedorPassword,
+            @Value("${carmen.usuario}") String carmenUsuario,
+            @Value("${carmen.password}") String carmenPassword) {
         UserDetails admin = User.builder()
                 .username(usuario)
                 .password(passwordEncoder().encode(password))
@@ -103,7 +105,12 @@ public class SecurityConfig {
                 .password(passwordEncoder().encode(vendedorPassword))
                 .roles("VENDEDOR")
                 .build();
-        return new InMemoryUserDetailsManager(admin, vendedor);
+        UserDetails carmen = User.builder()
+                .username(carmenUsuario)
+                .password(passwordEncoder().encode(carmenPassword))
+                .roles("VENDEDOR")
+                .build();
+        return new InMemoryUserDetailsManager(admin, vendedor, carmen);
     }
 
     @Bean
