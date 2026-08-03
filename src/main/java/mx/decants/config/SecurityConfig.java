@@ -120,11 +120,18 @@ public class SecurityConfig {
     }
 
     static String getClientIp(HttpServletRequest request) {
+        // El sitio esta detras de Cloudflare: CF-Connecting-IP es la IP real del visitante,
+        // Cloudflare la sobreescribe siempre asi que el cliente no puede falsificarla.
+        // X-Forwarded-For aqui terminaria en la IP del propio edge de Cloudflare (no la del
+        // visitante), lo que agrupa por error a distintos visitantes bajo la misma IP.
+        String cfConnectingIp = request.getHeader("CF-Connecting-IP");
+        if (cfConnectingIp != null && !cfConnectingIp.isBlank()) {
+            return cfConnectingIp.trim();
+        }
         String forwarded = request.getHeader("X-Forwarded-For");
         if (forwarded != null && !forwarded.isBlank()) {
-            // Usar la última IP: la añade el proxy (Nginx), el cliente no puede falsificarla
             String[] parts = forwarded.split(",");
-            return parts[parts.length - 1].trim();
+            return parts[0].trim();
         }
         return request.getRemoteAddr();
     }
