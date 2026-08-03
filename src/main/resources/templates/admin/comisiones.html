@@ -155,33 +155,46 @@
                         <th>Presentación</th>
                         <th>Precio</th>
                         <th>Comisión</th>
+                        <th th:if="${esAdmin}">Comisión negocio</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyComisiones">
                     <th:block th:each="p : ${productos}">
-                        <tr th:if="${p.precio3ml != null and p.comisionFamiliar3ml != null}">
+                        <tr th:if="${p.precio3ml != null and p.comisionFamiliar3ml != null}"
+                            th:with="costo=${p.costoProduccion3ml}, negocio=${costo != null ? p.precio3ml - costo - p.comisionFamiliar3ml : null}">
                             <td th:text="${p.nombre}"></td>
                             <td th:text="${p.marca}" style="color:var(--muted);"></td>
                             <td>3 ml</td>
                             <td th:text="|$${p.precio3ml}|"></td>
                             <td style="font-weight:700; color:#2e7d32;"
                                 th:text="|$${#numbers.formatDecimal(p.comisionFamiliar3ml, 1, 2)}|"></td>
+                            <td th:if="${esAdmin}" style="font-weight:700;"
+                                th:style="${negocio != null and negocio < 0} ? 'color:#c0392b;' : 'color:#1a1a1a;'"
+                                th:text="${negocio != null ? '$' + #numbers.formatDecimal(negocio, 1, 2) : '—'}"></td>
                         </tr>
-                        <tr th:if="${p.precio5ml != null and p.comisionFamiliar5ml != null}">
+                        <tr th:if="${p.precio5ml != null and p.comisionFamiliar5ml != null}"
+                            th:with="costo=${p.costoProduccion5ml}, negocio=${costo != null ? p.precio5ml - costo - p.comisionFamiliar5ml : null}">
                             <td th:text="${p.nombre}"></td>
                             <td th:text="${p.marca}" style="color:var(--muted);"></td>
                             <td>5 ml</td>
                             <td th:text="|$${p.precio5ml}|"></td>
                             <td style="font-weight:700; color:#2e7d32;"
                                 th:text="|$${#numbers.formatDecimal(p.comisionFamiliar5ml, 1, 2)}|"></td>
+                            <td th:if="${esAdmin}" style="font-weight:700;"
+                                th:style="${negocio != null and negocio < 0} ? 'color:#c0392b;' : 'color:#1a1a1a;'"
+                                th:text="${negocio != null ? '$' + #numbers.formatDecimal(negocio, 1, 2) : '—'}"></td>
                         </tr>
-                        <tr th:if="${p.comisionFamiliar != null}">
+                        <tr th:if="${p.comisionFamiliar != null}"
+                            th:with="costo=${p.costoProduccion10ml}, negocio=${costo != null ? p.precio - costo - p.comisionFamiliar : null}">
                             <td th:text="${p.nombre}"></td>
                             <td th:text="${p.marca}" style="color:var(--muted);"></td>
                             <td>10 ml</td>
                             <td th:text="|$${p.precio}|"></td>
                             <td style="font-weight:700; color:#2e7d32;"
                                 th:text="|$${#numbers.formatDecimal(p.comisionFamiliar, 1, 2)}|"></td>
+                            <td th:if="${esAdmin}" style="font-weight:700;"
+                                th:style="${negocio != null and negocio < 0} ? 'color:#c0392b;' : 'color:#1a1a1a;'"
+                                th:text="${negocio != null ? '$' + #numbers.formatDecimal(negocio, 1, 2) : '—'}"></td>
                         </tr>
                     </th:block>
                 </tbody>
