@@ -266,21 +266,17 @@
                 <label style="font-size:0.75rem; font-weight:600; color:#444;">
                     💸 Vendida por <span style="font-weight:400; color:var(--muted);">(cuenta para la meta del mes de quien elijas)</span>
                 </label>
-                <div style="display:flex; gap:1.25rem;">
+                <div style="display:flex; gap:1.25rem; flex-wrap:wrap;">
                     <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.88rem; color:#444;">
                         <input type="radio" name="vendedor" value="" checked
                                style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
                         Ninguna
                     </label>
-                    <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.88rem; color:#444;">
-                        <input type="radio" name="vendedor" value="doris"
+                    <label th:each="v : ${vendedoresActivos}"
+                           style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.88rem; color:#444;">
+                        <input type="radio" name="vendedor" th:value="${v.usuario}"
                                style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
-                        Doris
-                    </label>
-                    <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.88rem; color:#444;">
-                        <input type="radio" name="vendedor" value="carmen"
-                               style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
-                        Carmen
+                        <span th:text="${v.nombre}"></span>
                     </label>
                 </div>
             </div>

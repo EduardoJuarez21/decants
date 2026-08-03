@@ -1,21 +1,25 @@
 package mx.decants.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import mx.decants.repository.VendedorRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -89,28 +93,25 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(
-            @Value("${admin.usuario}") String usuario,
-            @Value("${admin.password}") String password,
-            @Value("${vendedor.usuario}") String vendedorUsuario,
-            @Value("${vendedor.password}") String vendedorPassword,
-            @Value("${carmen.usuario}") String carmenUsuario,
-            @Value("${carmen.password}") String carmenPassword) {
+            @Value("${admin.usuario}") String adminUsuario,
+            @Value("${admin.password}") String adminPassword,
+            VendedorRepository vendedorRepository) {
         UserDetails admin = User.builder()
-                .username(usuario)
-                .password(passwordEncoder().encode(password))
+                .username(adminUsuario)
+                .password(passwordEncoder().encode(adminPassword))
                 .roles("ADMIN")
                 .build();
-        UserDetails vendedor = User.builder()
-                .username(vendedorUsuario)
-                .password(passwordEncoder().encode(vendedorPassword))
-                .roles("VENDEDOR")
-                .build();
-        UserDetails carmen = User.builder()
-                .username(carmenUsuario)
-                .password(passwordEncoder().encode(carmenPassword))
-                .roles("VENDEDOR")
-                .build();
-        return new InMemoryUserDetailsManager(admin, vendedor, carmen);
+
+        return username -> {
+            if (admin.getUsername().equalsIgnoreCase(username)) {
+                return admin;
+            }
+            return vendedorRepository.findByUsuarioIgnoreCase(username)
+                    .filter(v -> v.isActivo())
+                    .map(v -> new User(v.getUsuario(), v.getPasswordHash(),
+                            List.of(new SimpleGrantedAuthority("ROLE_VENDEDOR"))))
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+        };
     }
 
     @Bean

@@ -3,12 +3,14 @@ package mx.decants.controller;
 import mx.decants.entity.Cupon;
 import mx.decants.entity.Pedido;
 import mx.decants.entity.Producto;
+import mx.decants.entity.Vendedor;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.CuponService;
 import mx.decants.service.ImagenService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.ResenaService;
+import mx.decants.service.VendedorService;
 import mx.decants.service.VisitaService;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,11 +47,12 @@ public class AdminController {
     private final VisitaService visitaService;
     private final ImagenService imagenService;
     private final ResenaService resenaService;
+    private final VendedorService vendedorService;
 
     public AdminController(PedidoService pedidoService, ProductoService productoService,
                            CuponService cuponService, ConfiguracionService configuracionService,
                            VisitaService visitaService, ImagenService imagenService,
-                           ResenaService resenaService) {
+                           ResenaService resenaService, VendedorService vendedorService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
         this.cuponService = cuponService;
@@ -57,6 +60,7 @@ public class AdminController {
         this.visitaService = visitaService;
         this.imagenService = imagenService;
         this.resenaService = resenaService;
+        this.vendedorService = vendedorService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────────
@@ -140,6 +144,8 @@ public class AdminController {
 
     @GetMapping("/pedidos/nuevo")
     public String nuevoPedidoForm(Model model) {
+        model.addAttribute("vendedoresActivos", vendedorService.listarActivos());
+
         List<Map<String, Object>> prods = productoService.listarTodos().stream()
             .filter(Producto::isActivo)
             .map(p -> {
@@ -365,9 +371,7 @@ public class AdminController {
         return "redirect:/aura-gestion/productos";
     }
 
-    // ── Comisiones (vista para vendedor familiar) ───────────────────────────────
-
-    private static final List<String> VENDEDORES = List.of("doris", "carmen");
+    // ── Comisiones (vista para vendedoras) ───────────────────────────────────────
 
     @GetMapping("/comisiones")
     public String comisiones(@RequestParam(value = "mes", required = false) String mesParam,
@@ -377,12 +381,22 @@ public class AdminController {
             .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
         model.addAttribute("esAdmin", esAdmin);
 
-        String vendedor = esAdmin
-            ? (vendedorParam != null && VENDEDORES.contains(vendedorParam) ? vendedorParam : VENDEDORES.get(0))
-            : authentication.getName();
+        List<Vendedor> vendedoresActivos = vendedorService.listarActivos();
+        model.addAttribute("vendedores", vendedoresActivos);
+
+        Optional<Vendedor> vendedorActual = esAdmin
+            ? (vendedorParam != null ? vendedorService.buscarPorUsuario(vendedorParam) : Optional.empty())
+                .or(() -> vendedoresActivos.stream().findFirst())
+            : vendedorService.buscarPorUsuario(authentication.getName());
+
+        if (vendedorActual.isEmpty()) {
+            model.addAttribute("sinVendedoras", true);
+            return "admin/comisiones";
+        }
+        Vendedor vendedorEntity = vendedorActual.get();
+        String vendedor = vendedorEntity.getUsuario();
         model.addAttribute("vendedor", vendedor);
-        model.addAttribute("vendedorEtiqueta", capitalizar(vendedor));
-        model.addAttribute("vendedores", VENDEDORES);
+        model.addAttribute("vendedorEtiqueta", vendedorEntity.getNombre());
 
         var productos = productoService.listarTodos().stream()
             .filter(Producto::isActivo)
@@ -391,10 +405,10 @@ public class AdminController {
             .collect(Collectors.toList());
         model.addAttribute("productos", productos);
 
-        int meta = configuracionService.getMetaMonto(vendedor);
+        int meta = vendedorEntity.getMetaMonto();
         int llevas = pedidoService.ventasVendedorMesActual(vendedor);
         model.addAttribute("metaMonto", meta);
-        model.addAttribute("metaPremio", configuracionService.getMetaPremio(vendedor));
+        model.addAttribute("metaPremio", vendedorEntity.getMetaPremio());
         model.addAttribute("metaLlevas", llevas);
         model.addAttribute("metaPorcentaje", Math.min(100, meta > 0 ? (llevas * 100 / meta) : 0));
         model.addAttribute("metaCumplida", llevas >= meta);
@@ -499,6 +513,51 @@ public class AdminController {
         return "admin/visitas";
     }
 
+    // ── Vendedoras ────────────────────────────────────────────────────────────
+
+    @GetMapping("/vendedores")
+    public String listarVendedores(Model model) {
+        model.addAttribute("vendedores", vendedorService.listarTodos());
+        return "admin/vendedores";
+    }
+
+    @PostMapping("/vendedores")
+    public String crearVendedor(@RequestParam String usuario, @RequestParam String password,
+                                 @RequestParam String nombre, @RequestParam int metaMonto,
+                                 @RequestParam(required = false) String metaPremio,
+                                 RedirectAttributes ra) {
+        if (vendedorService.buscarPorUsuario(usuario).isPresent()) {
+            ra.addFlashAttribute("error", "Ya existe una vendedora con ese usuario.");
+            return "redirect:/aura-gestion/vendedores";
+        }
+        vendedorService.crear(usuario, password, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "");
+        ra.addFlashAttribute("mensaje", "Vendedora agregada.");
+        return "redirect:/aura-gestion/vendedores";
+    }
+
+    @PostMapping("/vendedores/{id}/editar")
+    public String editarVendedor(@PathVariable Long id, @RequestParam String nombre,
+                                  @RequestParam int metaMonto, @RequestParam(required = false) String metaPremio,
+                                  RedirectAttributes ra) {
+        vendedorService.actualizar(id, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "");
+        ra.addFlashAttribute("mensaje", "Vendedora actualizada.");
+        return "redirect:/aura-gestion/vendedores";
+    }
+
+    @PostMapping("/vendedores/{id}/password")
+    public String cambiarPasswordVendedor(@PathVariable Long id, @RequestParam String password,
+                                           RedirectAttributes ra) {
+        vendedorService.cambiarPassword(id, password);
+        ra.addFlashAttribute("mensaje", "Contraseña actualizada.");
+        return "redirect:/aura-gestion/vendedores";
+    }
+
+    @PostMapping("/vendedores/{id}/toggle")
+    public String toggleVendedor(@PathVariable Long id, RedirectAttributes ra) {
+        vendedorService.toggleActivo(id);
+        return "redirect:/aura-gestion/vendedores";
+    }
+
     // ── Configuración ─────────────────────────────────────────────────────────
 
     @GetMapping("/configuracion")
@@ -516,10 +575,6 @@ public class AdminController {
         model.addAttribute("emailSmtpPort",       configuracionService.get("email_smtp_port", "587"));
         model.addAttribute("emailFrom",           configuracionService.get("email_from", ""));
         model.addAttribute("markupDefault",       configuracionService.getMarkupDefault());
-        model.addAttribute("metaDorisMonto",      configuracionService.getMetaMonto("doris"));
-        model.addAttribute("metaDorisPremio",     configuracionService.getMetaPremio("doris"));
-        model.addAttribute("metaCarmenMonto",     configuracionService.getMetaMonto("carmen"));
-        model.addAttribute("metaCarmenPremio",    configuracionService.getMetaPremio("carmen"));
         return "admin/configuracion";
     }
 
@@ -527,26 +582,6 @@ public class AdminController {
     public String guardarMarkupDefault(@RequestParam double markupDefault, RedirectAttributes ra) {
         configuracionService.setMarkupDefault(markupDefault);
         ra.addFlashAttribute("mensaje", "Markup por defecto actualizado.");
-        return "redirect:/aura-gestion/configuracion";
-    }
-
-    @PostMapping("/configuracion/meta-doris")
-    public String guardarMetaDoris(@RequestParam int metaDorisMonto,
-                                    @RequestParam(required = false) String metaDorisPremio,
-                                    RedirectAttributes ra) {
-        configuracionService.setMetaMonto("doris", metaDorisMonto);
-        configuracionService.setMetaPremio("doris", metaDorisPremio != null ? metaDorisPremio.trim() : "");
-        ra.addFlashAttribute("mensaje", "Meta de Doris actualizada.");
-        return "redirect:/aura-gestion/configuracion";
-    }
-
-    @PostMapping("/configuracion/meta-carmen")
-    public String guardarMetaCarmen(@RequestParam int metaCarmenMonto,
-                                     @RequestParam(required = false) String metaCarmenPremio,
-                                     RedirectAttributes ra) {
-        configuracionService.setMetaMonto("carmen", metaCarmenMonto);
-        configuracionService.setMetaPremio("carmen", metaCarmenPremio != null ? metaCarmenPremio.trim() : "");
-        ra.addFlashAttribute("mensaje", "Meta de Carmen actualizada.");
         return "redirect:/aura-gestion/configuracion";
     }
 

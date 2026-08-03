@@ -26,13 +26,21 @@
         </div>
     </div>
 
-    <div th:if="${esAdmin}" style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem;">
+    <div th:if="${sinVendedoras}" class="admin-card" style="padding:2rem; text-align:center; color:var(--muted);">
+        <p>Aún no hay vendedoras registradas.</p>
+        <a th:if="${esAdmin}" th:href="@{/aura-gestion/vendedores}" class="admin-link" style="font-weight:700;">Agregar una vendedora &#8594;</a>
+    </div>
+
+    <div th:unless="${sinVendedoras}">
+
+    <div th:if="${esAdmin}" style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem; flex-wrap:wrap;">
         <span style="font-size:0.8rem; color:var(--muted); font-weight:600;">Viendo a:</span>
         <a th:each="v : ${vendedores}"
-           th:href="@{/aura-gestion/comisiones(vendedor=${v}, mes=${comisionMes})}"
-           th:text="${#strings.capitalize(v)}"
-           th:style="${v == vendedor} ? 'font-weight:700; color:#1a1a1a;' : ''"
+           th:href="@{/aura-gestion/comisiones(vendedor=${v.usuario}, mes=${comisionMes})}"
+           th:text="${v.nombre}"
+           th:style="${v.usuario == vendedor} ? 'font-weight:700; color:#1a1a1a;' : ''"
            class="admin-link"></a>
+        <a th:href="@{/aura-gestion/vendedores}" class="admin-link" style="margin-left:auto; font-size:0.8rem;">Administrar vendedoras &#8594;</a>
     </div>
 
     <div class="admin-card" style="margin-bottom:1.5rem;">
@@ -179,6 +187,8 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
     </div>
 
 </div>

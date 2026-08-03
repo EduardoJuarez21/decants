@@ -73,25 +73,4 @@ public class ConfiguracionService {
     public void setMarkupDefault(double markup) {
         set("markup_default", String.valueOf(markup));
     }
-
-    @Transactional(readOnly = true)
-    public int getMetaMonto(String vendedor) {
-        try { return Integer.parseInt(get("meta_" + vendedor + "_monto", "1000")); }
-        catch (NumberFormatException e) { return 1000; }
-    }
-
-    @Transactional
-    public void setMetaMonto(String vendedor, int monto) {
-        set("meta_" + vendedor + "_monto", String.valueOf(monto));
-    }
-
-    @Transactional(readOnly = true)
-    public String getMetaPremio(String vendedor) {
-        return get("meta_" + vendedor + "_premio", "");
-    }
-
-    @Transactional
-    public void setMetaPremio(String vendedor, String premio) {
-        set("meta_" + vendedor + "_premio", premio);
-    }
 }
