@@ -96,15 +96,20 @@ public class SecurityConfig {
             @Value("${admin.usuario}") String adminUsuario,
             @Value("${admin.password}") String adminPassword,
             VendedorRepository vendedorRepository) {
-        UserDetails admin = User.builder()
-                .username(adminUsuario)
-                .password(passwordEncoder().encode(adminPassword))
-                .roles("ADMIN")
-                .build();
+        // Ojo: NUNCA construir el UserDetails del admin una sola vez aqui afuera y
+        // reutilizarlo — Spring Security borra la contraseña del objeto (in-place)
+        // despues de cada login exitoso (eraseCredentialsAfterAuthentication), asi
+        // que una instancia compartida solo sirve para el primer login y falla el
+        // resto hasta reiniciar la app. Hay que crear una instancia nueva por intento.
+        String encodedAdminPassword = passwordEncoder().encode(adminPassword);
 
         return username -> {
-            if (admin.getUsername().equalsIgnoreCase(username)) {
-                return admin;
+            if (adminUsuario.equalsIgnoreCase(username)) {
+                return User.builder()
+                        .username(adminUsuario)
+                        .password(encodedAdminPassword)
+                        .roles("ADMIN")
+                        .build();
             }
             return vendedorRepository.findByUsuarioIgnoreCase(username)
                     .filter(v -> v.isActivo())
