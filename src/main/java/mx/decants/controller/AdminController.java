@@ -227,7 +227,7 @@ public class AdminController {
                                 RedirectAttributes ra) {
         pedidoService.cambiarEstado(id, estado);
         ra.addFlashAttribute("mensaje", "Estado actualizado correctamente.");
-        return "redirect:/aura-gestion/pedidos/" + id;
+        return "redirect:/aura-gestion/pedidos";
     }
 
     @GetMapping("/pedidos/{id}")
