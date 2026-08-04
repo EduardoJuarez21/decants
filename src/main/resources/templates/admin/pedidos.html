@@ -86,7 +86,7 @@
                         style="padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
                                font-size:0.82rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;
                                display:flex; align-items:center; gap:0.4rem; white-space:nowrap;">
-                    <span id="filtroEstadoLabel">Activos (sin cancelados)</span>
+                    <span id="filtroEstadoLabel">Activos (sin cancelados ni entregados)</span>
                     <span style="font-size:0.65rem; color:#999;">&#9662;</span>
                 </button>
                 <div id="filtroEstadoPanel" style="display:none; position:absolute; z-index:20; top:calc(100% + 4px); left:0;
@@ -115,7 +115,7 @@
                         <input type="checkbox" class="chkEstado" value="Enviado" checked onchange="aplicarFiltros()"> Enviado
                     </label>
                     <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
-                        <input type="checkbox" class="chkEstado" value="Entregado" checked onchange="aplicarFiltros()"> Entregado
+                        <input type="checkbox" class="chkEstado" value="Entregado" onchange="aplicarFiltros()"> Entregado
                     </label>
                     <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;
                                   border-top:1px solid #f0ede8; margin-top:0.3rem;">
@@ -280,12 +280,15 @@ function actualizarLabelFiltroEstado(seleccionados) {
     var chks         = document.querySelectorAll('.chkEstado');
     var label        = document.getElementById('filtroEstadoLabel');
     var canceladoChk = document.querySelector('.chkEstado[value="Cancelado"]');
+    var entregadoChk = document.querySelector('.chkEstado[value="Entregado"]');
     document.getElementById('filtroEstadoTodos').checked = seleccionados.length === chks.length;
 
     if (seleccionados.length === chks.length) {
         label.textContent = 'Todos los estados';
     } else if (seleccionados.length === 0) {
         label.textContent = 'Ningún estado';
+    } else if (canceladoChk && !canceladoChk.checked && entregadoChk && !entregadoChk.checked && seleccionados.length === chks.length - 2) {
+        label.textContent = 'Activos (sin cancelados ni entregados)';
     } else if (canceladoChk && !canceladoChk.checked && seleccionados.length === chks.length - 1) {
         label.textContent = 'Activos (sin cancelados)';
     } else if (seleccionados.length <= 2) {
@@ -369,10 +372,10 @@ function renderPagina() {
 
 document.addEventListener('DOMContentLoaded', function() {
     // Algunos navegadores restauran el estado anterior de los checkboxes al
-    // recargar la pagina. Forzamos el estado por defecto (todo excepto cancelado).
+    // recargar la pagina. Forzamos el estado por defecto (todo excepto cancelado y entregado).
     document.getElementById('buscadorPedidos').value = '';
     document.querySelectorAll('.chkEstado').forEach(function(c) {
-        c.checked = c.value !== 'Cancelado';
+        c.checked = c.value !== 'Cancelado' && c.value !== 'Entregado';
     });
     document.getElementById('filtroTipo').value = '';
     aplicarFiltros();
