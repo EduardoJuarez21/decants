@@ -52,6 +52,7 @@ public class VisitaService {
         stats.put("descargasCatalogoHoy",    visitaRepository.countDescargasCatalogoByFechaAfter(hoy));
         stats.put("descargasCatalogoSemana", visitaRepository.countDescargasCatalogoByFechaAfter(semana));
         stats.put("descargasCatalogoMes",    visitaRepository.countDescargasCatalogoByFechaAfter(mes));
+        stats.put("descargasCatalogoPorFuenteHoy",    porFuenteDescargas(hoy));
         stats.put("descargasCatalogoPorFuenteSemana", porFuenteDescargas(semana));
         return stats;
     }

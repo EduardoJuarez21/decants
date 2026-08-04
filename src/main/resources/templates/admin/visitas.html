@@ -144,6 +144,17 @@
         </div>
     </div>
 
+    <div class="chart-card" th:if="${!descargasCatalogoPorFuenteHoy.isEmpty()}">
+        <div class="chart-title">Descargas del catálogo por origen — hoy</div>
+        <div th:each="entry : ${descargasCatalogoPorFuenteHoy}" class="fuente-row">
+            <span class="fuente-nombre" th:text="${entry.key}"></span>
+            <div class="fuente-bar-wrap">
+                <div th:style="'width:' + ${entry.value * 100 / descargasCatalogoHoy} + '%;'" class="fuente-bar"></div>
+            </div>
+            <span class="fuente-count" th:text="${entry.value}"></span>
+        </div>
+    </div>
+
     <div class="chart-card" th:if="${!descargasCatalogoPorFuenteSemana.isEmpty()}">
         <div class="chart-title">Descargas del catálogo por origen — últimos 7 días</div>
         <div th:each="entry : ${descargasCatalogoPorFuenteSemana}" class="fuente-row">
