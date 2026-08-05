@@ -422,12 +422,6 @@ public class PedidoService {
             }
         }
 
-        for (Map<String, Object> fila : detallePorClave.values()) {
-            int cantidad = (int) fila.get("cantidad");
-            double subtotal = (double) fila.get("subtotal");
-            fila.put("comisionUnitaria", cantidad > 0 ? subtotal / cantidad : 0.0);
-        }
-
         double ganancia = ventasTotales - comisionTotal - costoTotal;
 
         Map<String, Object> resultado = new LinkedHashMap<>();
