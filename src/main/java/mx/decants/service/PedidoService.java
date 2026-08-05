@@ -409,6 +409,7 @@ public class PedidoService {
                 comisionTotal += subtotal;
 
                 Map<String, Object> fila = new LinkedHashMap<>();
+                fila.put("codigoPedido", pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId()));
                 fila.put("nombre", item.getNombre());
                 fila.put("variante", item.getVariante());
                 fila.put("cantidad", item.getCantidad());

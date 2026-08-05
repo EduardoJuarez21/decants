@@ -110,6 +110,7 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th>Pedido</th>
                             <th>Fecha</th>
                             <th>Producto</th>
                             <th>Presentación</th>
@@ -121,6 +122,7 @@
                     </thead>
                     <tbody>
                         <tr th:each="fila : ${comisionDetalle}">
+                            <td style="font-family:monospace; font-size:0.8rem; color:var(--muted);" th:text="${fila.codigoPedido}"></td>
                             <td style="color:var(--muted); white-space:nowrap;" th:text="${#temporals.format(fila.fecha, 'dd/MM/yyyy HH:mm')}"></td>
                             <td th:text="${fila.nombre}"></td>
                             <td th:text="${fila.variante}"></td>
