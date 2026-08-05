@@ -372,7 +372,7 @@ public class PedidoService {
             .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
             .sum();
 
-        Map<String, Map<String, Object>> detallePorClave = new LinkedHashMap<>();
+        List<Map<String, Object>> detalle = new ArrayList<>();
         double comisionTotal = 0;
         double costoTotal = 0;
         Set<String> productosSinCosto = new LinkedHashSet<>();
@@ -408,19 +408,16 @@ public class PedidoService {
                 double subtotal = item.getSubtotal() * (comisionPorcentaje / 100.0) * factorDescuento;
                 comisionTotal += subtotal;
 
-                String clave = item.getNombre() + "|" + item.getVariante();
-                Map<String, Object> fila = detallePorClave.computeIfAbsent(clave, k -> {
-                    Map<String, Object> f = new LinkedHashMap<>();
-                    f.put("nombre", item.getNombre());
-                    f.put("variante", item.getVariante());
-                    f.put("cantidad", 0);
-                    f.put("subtotal", 0.0);
-                    return f;
-                });
-                fila.put("cantidad", (int) fila.get("cantidad") + item.getCantidad());
-                fila.put("subtotal", (double) fila.get("subtotal") + subtotal);
+                Map<String, Object> fila = new LinkedHashMap<>();
+                fila.put("nombre", item.getNombre());
+                fila.put("variante", item.getVariante());
+                fila.put("cantidad", item.getCantidad());
+                fila.put("fecha", pedido.getFechaCreacion());
+                fila.put("subtotal", subtotal);
+                detalle.add(fila);
             }
         }
+        detalle.sort((a, b) -> ((LocalDateTime) b.get("fecha")).compareTo((LocalDateTime) a.get("fecha")));
 
         double ganancia = ventasTotales - comisionTotal - costoTotal;
 
@@ -431,7 +428,7 @@ public class PedidoService {
         resultado.put("ganancia", ganancia);
         resultado.put("productosSinCosto", new ArrayList<>(productosSinCosto));
         resultado.put("huboItemsSinProducto", huboItemsSinProducto);
-        resultado.put("detalle", new ArrayList<>(detallePorClave.values()));
+        resultado.put("detalle", detalle);
         return resultado;
     }
 
