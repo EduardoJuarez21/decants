@@ -199,11 +199,13 @@ public class AdminController {
                                       @RequestParam(required = false) String comentarios,
                                       @RequestParam(defaultValue = "CONFIRMADO") String estado,
                                       @RequestParam(required = false) String vendedor,
+                                      @RequestParam(required = false) Integer descuentoPorcentaje,
                                       RedirectAttributes ra) {
         Pedido p;
         try {
             p = pedidoService.crearPedidoManual(nombre, telefono, email, itemsJson, total,
-                                                direccion, latitud, longitud, comentarios, estado, vendedor);
+                                                direccion, latitud, longitud, comentarios, estado, vendedor,
+                                                descuentoPorcentaje);
         } catch (IllegalArgumentException e) {
             ra.addFlashAttribute("error", e.getMessage());
             return "redirect:/aura-gestion/pedidos/nuevo";

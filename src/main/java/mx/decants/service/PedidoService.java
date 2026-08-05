@@ -468,7 +468,8 @@ public class PedidoService {
     public Pedido crearPedidoManual(String nombre, String telefono, String email,
                                      String itemsJson, Integer total,
                                      String direccion, String latitud, String longitud,
-                                     String comentarios, String estadoStr, String vendedor) {
+                                     String comentarios, String estadoStr, String vendedor,
+                                     Integer descuentoPorcentaje) {
         Pedido pedido = new Pedido();
         List<PedidoItem> items = buildItemsManual(itemsJson);
         items.forEach(it -> it.setPedido(pedido));
@@ -481,6 +482,11 @@ public class PedidoService {
         pedido.setItems(items);
         pedido.setProductosSeleccionados(buildResumen(items));
         pedido.setTotalPagado(total);
+        if (descuentoPorcentaje != null && descuentoPorcentaje > 0) {
+            int subtotal = items.stream().mapToInt(PedidoItem::getSubtotal).sum();
+            pedido.setDescuentoAplicado(Math.round(subtotal * descuentoPorcentaje / 100f));
+            pedido.setCodigoCuponAplicado("MANUAL " + descuentoPorcentaje + "%");
+        }
         pedido.setDireccion(direccion != null && !direccion.isBlank() ? direccion.trim() : null);
         if (latitud != null && !latitud.isBlank()) {
             try { pedido.setLatitud(Double.parseDouble(latitud)); } catch (NumberFormatException ignored) {}

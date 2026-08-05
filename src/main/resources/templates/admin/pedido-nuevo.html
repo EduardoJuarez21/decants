@@ -222,8 +222,15 @@
                 </div>
             </div>
 
-            <!-- Total + Estado -->
+            <!-- Descuento + Total + Estado -->
             <div style="display:flex; gap:1rem;">
+                <div style="display:flex; flex-direction:column; gap:0.3rem; max-width:130px;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                        Descuento % <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                    </label>
+                    <input type="number" name="descuentoPorcentaje" id="descuentoPorcentaje" min="0" max="100"
+                           placeholder="0" class="field-input" oninput="render()">
+                </div>
                 <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
                     <label style="font-size:0.75rem; font-weight:600; color:#444;">Total cobrado ($MXN) *</label>
                     <input type="number" name="total" id="total" required min="1" placeholder="350" class="field-input">
@@ -476,7 +483,9 @@ function render() {
     document.getElementById('itemsJsonInput').value = JSON.stringify(items);
     document.getElementById('productosError').style.display = 'none';
 
-    var totalCalc = seleccionados.reduce(function(sum, s) { return sum + s.precio * s.cantidad; }, 0);
+    var subtotal = seleccionados.reduce(function(sum, s) { return sum + s.precio * s.cantidad; }, 0);
+    var descuentoPct = parseFloat(document.getElementById('descuentoPorcentaje').value) || 0;
+    var totalCalc = Math.round(subtotal * (1 - descuentoPct / 100));
     document.getElementById('total').value = totalCalc;
 }
 
