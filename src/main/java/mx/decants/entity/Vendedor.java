@@ -1,6 +1,7 @@
 package mx.decants.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,6 +28,10 @@ public class Vendedor {
     private int metaMonto = 1000;
 
     private String metaPremio;
+
+    @Column(nullable = false)
+    @ColumnDefault("15")
+    private double comisionPorcentaje = 15;
 
     @Column(nullable = false)
     private LocalDateTime fechaCreacion;
@@ -56,6 +61,9 @@ public class Vendedor {
 
     public String getMetaPremio() { return metaPremio; }
     public void setMetaPremio(String metaPremio) { this.metaPremio = metaPremio; }
+
+    public double getComisionPorcentaje() { return comisionPorcentaje; }
+    public void setComisionPorcentaje(double comisionPorcentaje) { this.comisionPorcentaje = comisionPorcentaje; }
 
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
 }

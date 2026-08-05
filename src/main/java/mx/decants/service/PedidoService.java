@@ -362,7 +362,7 @@ public class PedidoService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, Object> comisionVendedor(String vendedor, YearMonth mes) {
+    public Map<String, Object> comisionVendedor(String vendedor, YearMonth mes, double comisionPorcentaje) {
         LocalDateTime desde = mes.atDay(1).atStartOfDay();
         LocalDateTime hasta = mes.plusMonths(1).atDay(1).atStartOfDay();
         List<Pedido> pedidos = pedidoRepository.findByVendedorAndFechaCreacionBetweenAndEstadoPedidoNot(
@@ -379,6 +379,14 @@ public class PedidoService {
         boolean huboItemsSinProducto = false;
 
         for (Pedido pedido : pedidos) {
+            double factorDescuento = 1.0;
+            if (pedido.getDescuentoAplicado() != null && pedido.getDescuentoAplicado() > 0) {
+                int subtotalPedido = pedido.getItems().stream().mapToInt(PedidoItem::getSubtotal).sum();
+                if (subtotalPedido > 0) {
+                    factorDescuento = 1.0 - (pedido.getDescuentoAplicado() / (double) subtotalPedido);
+                }
+            }
+
             for (PedidoItem item : pedido.getItems()) {
                 Producto p = item.getProducto();
                 if (p == null) {
@@ -394,11 +402,10 @@ public class PedidoService {
                     }
                 }
 
-                if (p == null) continue;
-                Double comisionUnit = comisionUnitaria(p, item.getVariante());
-                if (comisionUnit == null) continue;
-
-                double subtotal = comisionUnit * item.getCantidad();
+                // La comision es % del precio real cobrado (ya con cualquier descuento del
+                // pedido reflejado via factorDescuento), aplica a cualquier producto/variante
+                // que venda, sin necesitar una tarifa configurada por producto.
+                double subtotal = item.getSubtotal() * (comisionPorcentaje / 100.0) * factorDescuento;
                 comisionTotal += subtotal;
 
                 String clave = item.getNombre() + "|" + item.getVariante();
@@ -406,7 +413,6 @@ public class PedidoService {
                     Map<String, Object> f = new LinkedHashMap<>();
                     f.put("nombre", item.getNombre());
                     f.put("variante", item.getVariante());
-                    f.put("comisionUnitaria", comisionUnit);
                     f.put("cantidad", 0);
                     f.put("subtotal", 0.0);
                     return f;
@@ -414,6 +420,12 @@ public class PedidoService {
                 fila.put("cantidad", (int) fila.get("cantidad") + item.getCantidad());
                 fila.put("subtotal", (double) fila.get("subtotal") + subtotal);
             }
+        }
+
+        for (Map<String, Object> fila : detallePorClave.values()) {
+            int cantidad = (int) fila.get("cantidad");
+            double subtotal = (double) fila.get("subtotal");
+            fila.put("comisionUnitaria", cantidad > 0 ? subtotal / cantidad : 0.0);
         }
 
         double ganancia = ventasTotales - comisionTotal - costoTotal;
@@ -427,15 +439,6 @@ public class PedidoService {
         resultado.put("huboItemsSinProducto", huboItemsSinProducto);
         resultado.put("detalle", new ArrayList<>(detallePorClave.values()));
         return resultado;
-    }
-
-    private static Double comisionUnitaria(Producto p, String variante) {
-        return switch (variante) {
-            case "3ml"  -> p.getComisionFamiliar3ml();
-            case "5ml"  -> p.getComisionFamiliar5ml();
-            case "10ml" -> p.getComisionFamiliar();
-            default     -> null;
-        };
     }
 
     private static Integer mlEquivalente(PedidoItem item, Producto p) {

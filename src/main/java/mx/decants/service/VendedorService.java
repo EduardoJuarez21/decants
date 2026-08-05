@@ -31,21 +31,24 @@ public class VendedorService {
         return vendedorRepository.findByUsuarioIgnoreCase(usuario);
     }
 
-    public Vendedor crear(String usuario, String passwordPlano, String nombre, int metaMonto, String metaPremio) {
+    public Vendedor crear(String usuario, String passwordPlano, String nombre, int metaMonto, String metaPremio,
+                           double comisionPorcentaje) {
         Vendedor v = new Vendedor();
         v.setUsuario(usuario.trim().toLowerCase());
         v.setPasswordHash(passwordEncoder.encode(passwordPlano));
         v.setNombre(nombre.trim());
         v.setMetaMonto(metaMonto);
         v.setMetaPremio(metaPremio);
+        v.setComisionPorcentaje(comisionPorcentaje);
         return vendedorRepository.save(v);
     }
 
-    public void actualizar(Long id, String nombre, int metaMonto, String metaPremio) {
+    public void actualizar(Long id, String nombre, int metaMonto, String metaPremio, double comisionPorcentaje) {
         vendedorRepository.findById(id).ifPresent(v -> {
             v.setNombre(nombre.trim());
             v.setMetaMonto(metaMonto);
             v.setMetaPremio(metaPremio);
+            v.setComisionPorcentaje(comisionPorcentaje);
             vendedorRepository.save(v);
         });
     }

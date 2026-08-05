@@ -81,6 +81,12 @@
                        style="width:100%; box-sizing:border-box; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
                               border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
             </div>
+            <div style="display:flex; flex-direction:column; gap:0.3rem; min-width:90px; max-width:100px;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">Comisión %</label>
+                <input name="comisionPorcentaje" type="number" min="0" max="100" step="0.1" value="15" required
+                       style="width:100%; box-sizing:border-box; padding:0.55rem 0.9rem; border:1.5px solid #e0e0e0;
+                              border-radius:8px; font-size:0.85rem; font-family:inherit; outline:none;">
+            </div>
             <div style="display:flex; flex-direction:column; gap:0.3rem; min-width:110px; max-width:130px;">
                 <label style="font-size:0.75rem; font-weight:600; color:#444;">Meta del mes ($)</label>
                 <input name="metaMonto" type="number" min="1" value="1000" required
@@ -119,6 +125,7 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Usuario</th>
+                        <th>Comisión %</th>
                         <th>Meta del mes</th>
                         <th>Premio</th>
                         <th>Estado</th>
@@ -134,6 +141,10 @@
                                    style="width:110px; padding:0.4rem 0.6rem; border:1px solid #ddd; border-radius:6px; font-size:0.85rem; font-family:inherit;">
                         </td>
                         <td style="font-family:monospace; color:var(--muted);" th:text="${v.usuario}"></td>
+                        <td>
+                            <input th:form="'form-editar-' + ${v.id}" name="comisionPorcentaje" type="number" min="0" max="100" step="0.1" th:value="${v.comisionPorcentaje}" required
+                                   style="width:60px; padding:0.4rem 0.6rem; border:1px solid #ddd; border-radius:6px; font-size:0.85rem; font-family:inherit;">%
+                        </td>
                         <td>
                             $<input th:form="'form-editar-' + ${v.id}" name="metaMonto" type="number" min="1" th:value="${v.metaMonto}" required
                                     style="width:80px; padding:0.4rem 0.6rem; border:1px solid #ddd; border-radius:6px; font-size:0.85rem; font-family:inherit;">

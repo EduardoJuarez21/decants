@@ -406,10 +406,10 @@ public class AdminController {
         String vendedor = vendedorEntity.getUsuario();
         model.addAttribute("vendedor", vendedor);
         model.addAttribute("vendedorEtiqueta", vendedorEntity.getNombre());
+        model.addAttribute("comisionPorcentaje", vendedorEntity.getComisionPorcentaje());
 
         var productos = productoService.listarTodos().stream()
             .filter(Producto::isActivo)
-            .filter(p -> p.getComisionFamiliar() != null || p.getComisionFamiliar5ml() != null || p.getComisionFamiliar3ml() != null)
             .sorted((a, b) -> a.getNombre().compareToIgnoreCase(b.getNombre()))
             .collect(Collectors.toList());
         model.addAttribute("productos", productos);
@@ -428,7 +428,7 @@ public class AdminController {
         } catch (Exception e) {
             mes = YearMonth.now();
         }
-        Map<String, Object> comision = pedidoService.comisionVendedor(vendedor, mes);
+        Map<String, Object> comision = pedidoService.comisionVendedor(vendedor, mes, vendedorEntity.getComisionPorcentaje());
         model.addAttribute("comisionMes", mes.toString());
         model.addAttribute("comisionMesAnterior", mes.minusMonths(1).toString());
         model.addAttribute("comisionMesSiguiente", mes.plusMonths(1).toString());
@@ -534,12 +534,13 @@ public class AdminController {
     public String crearVendedor(@RequestParam String usuario, @RequestParam String password,
                                  @RequestParam String nombre, @RequestParam int metaMonto,
                                  @RequestParam(required = false) String metaPremio,
+                                 @RequestParam double comisionPorcentaje,
                                  RedirectAttributes ra) {
         if (vendedorService.buscarPorUsuario(usuario).isPresent()) {
             ra.addFlashAttribute("error", "Ya existe una vendedora con ese usuario.");
             return "redirect:/aura-gestion/vendedores";
         }
-        vendedorService.crear(usuario, password, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "");
+        vendedorService.crear(usuario, password, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "", comisionPorcentaje);
         ra.addFlashAttribute("mensaje", "Vendedora agregada.");
         return "redirect:/aura-gestion/vendedores";
     }
@@ -547,8 +548,9 @@ public class AdminController {
     @PostMapping("/vendedores/{id}/editar")
     public String editarVendedor(@PathVariable Long id, @RequestParam String nombre,
                                   @RequestParam int metaMonto, @RequestParam(required = false) String metaPremio,
+                                  @RequestParam double comisionPorcentaje,
                                   RedirectAttributes ra) {
-        vendedorService.actualizar(id, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "");
+        vendedorService.actualizar(id, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "", comisionPorcentaje);
         ra.addFlashAttribute("mensaje", "Vendedora actualizada.");
         return "redirect:/aura-gestion/vendedores";
     }
