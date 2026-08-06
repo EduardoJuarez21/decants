@@ -144,6 +144,12 @@ public class AdminController {
 
     @GetMapping("/pedidos/nuevo")
     public String nuevoPedidoForm(Model model) {
+        cargarProductosYClientes(model);
+        model.addAttribute("mapsApiKey", mapsApiKey);
+        return "admin/pedido-nuevo";
+    }
+
+    private void cargarProductosYClientes(Model model) {
         model.addAttribute("vendedoresActivos", vendedorService.listarActivos());
 
         List<Map<String, Object>> prods = productoService.listarTodos().stream()
@@ -182,9 +188,6 @@ public class AdminController {
             })
             .collect(Collectors.toList());
         model.addAttribute("clientesJson", clientes);
-
-        model.addAttribute("mapsApiKey", mapsApiKey);
-        return "admin/pedido-nuevo";
     }
 
     @PostMapping("/pedidos/nuevo")
@@ -212,6 +215,70 @@ public class AdminController {
         }
         ra.addFlashAttribute("mensaje", "Pedido #" + p.getId() + " registrado correctamente.");
         return "redirect:/aura-gestion/pedidos";
+    }
+
+    @GetMapping("/pedidos/{id}/editar")
+    public String editarPedidoForm(@PathVariable Long id, Model model) {
+        Optional<Pedido> pedidoOpt = pedidoService.buscarPorId(id);
+        if (pedidoOpt.isEmpty()) {
+            return "redirect:/aura-gestion/pedidos";
+        }
+        Pedido pedido = pedidoOpt.get();
+        cargarProductosYClientes(model);
+
+        List<Map<String, Object>> itemsExistentes = pedido.getItems().stream()
+            .filter(it -> it.getProducto() != null)
+            .map(it -> {
+                Map<String, Object> m = new LinkedHashMap<>();
+                m.put("id", it.getProducto().getId());
+                m.put("nombre", it.getNombre());
+                m.put("variante", it.getVariante());
+                m.put("precio", it.getPrecioUnitario());
+                m.put("cantidad", it.getCantidad());
+                return m;
+            })
+            .collect(Collectors.toList());
+        model.addAttribute("itemsExistentesJson", itemsExistentes);
+        model.addAttribute("huboItemsSinProducto",
+            pedido.getItems().stream().anyMatch(it -> it.getProducto() == null));
+
+        int descuentoActual = 0;
+        if (pedido.getCodigoCuponAplicado() != null) {
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("MANUAL (\\d+)%")
+                .matcher(pedido.getCodigoCuponAplicado());
+            if (m.matches()) descuentoActual = Integer.parseInt(m.group(1));
+        }
+        model.addAttribute("descuentoActual", descuentoActual);
+
+        model.addAttribute("pedido", pedido);
+        model.addAttribute("mapsApiKey", mapsApiKey);
+        return "admin/pedido-editar";
+    }
+
+    @PostMapping("/pedidos/{id}/editar")
+    public String guardarPedidoEditado(@PathVariable Long id,
+                                       @RequestParam String nombre,
+                                       @RequestParam String telefono,
+                                       @RequestParam(required = false) String email,
+                                       @RequestParam String itemsJson,
+                                       @RequestParam Integer total,
+                                       @RequestParam(required = false) String direccion,
+                                       @RequestParam(required = false) String latitud,
+                                       @RequestParam(required = false) String longitud,
+                                       @RequestParam(required = false) String comentarios,
+                                       @RequestParam(defaultValue = "CREADO") String estado,
+                                       @RequestParam(required = false) String vendedor,
+                                       @RequestParam(required = false) Integer descuentoPorcentaje,
+                                       RedirectAttributes ra) {
+        try {
+            pedidoService.actualizarPedidoManual(id, nombre, telefono, email, itemsJson, total,
+                    direccion, latitud, longitud, comentarios, estado, vendedor, descuentoPorcentaje);
+        } catch (IllegalArgumentException e) {
+            ra.addFlashAttribute("error", "Error al editar el pedido: " + e.getMessage());
+            return "redirect:/aura-gestion/pedidos/" + id + "/editar";
+        }
+        ra.addFlashAttribute("mensaje", "Pedido #" + id + " actualizado correctamente.");
+        return "redirect:/aura-gestion/pedidos/" + id;
     }
 
     @PostMapping("/pedidos/{id}/guia")

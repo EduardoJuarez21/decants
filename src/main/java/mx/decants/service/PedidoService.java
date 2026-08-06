@@ -329,6 +329,27 @@ public class PedidoService {
         }
     }
 
+    private void reponerStock(List<PedidoItem> items) {
+        if (items == null) return;
+        for (PedidoItem item : items) {
+            Producto p = item.getProducto();
+            if (p == null) continue;
+            boolean esBotella = item.getVariante() != null && item.getVariante().startsWith("Frasco ");
+            if (esBotella) {
+                if (p.getStockBotella() != null) {
+                    p.setStockBotella(p.getStockBotella() + item.getCantidad());
+                    productoRepository.save(p);
+                    log.info("Stock frasco producto #{} ({}) repuesto → {}", p.getId(), p.getNombre(), p.getStockBotella());
+                }
+            } else if (p.getStock() != null) {
+                int mlRepuesto = item.getCantidad() * mlDeVariante(item.getVariante());
+                p.setStock(p.getStock() + mlRepuesto);
+                productoRepository.save(p);
+                log.info("Stock producto #{} ({}) repuesto → {} ml", p.getId(), p.getNombre(), p.getStock());
+            }
+        }
+    }
+
     private static int mlDeVariante(String variante) {
         return switch (variante) {
             case "3ml"  -> 3;
@@ -572,6 +593,81 @@ public class PedidoService {
             throw new IllegalArgumentException("Agrega al menos un producto.");
         }
         return items;
+    }
+
+    public Pedido actualizarPedidoManual(Long id, String nombre, String telefono, String email,
+                                          String itemsJson, Integer total,
+                                          String direccion, String latitud, String longitud,
+                                          String comentarios, String estadoStr, String vendedor,
+                                          Integer descuentoPorcentaje) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
+
+        reponerStock(pedido.getItems());
+
+        List<PedidoItem> nuevosItems = buildItemsManual(itemsJson);
+        nuevosItems.forEach(it -> it.setPedido(pedido));
+        descontarStock(nuevosItems);
+
+        pedido.getItems().clear();
+        pedido.getItems().addAll(nuevosItems);
+
+        pedido.setNombreCliente(nombre.trim());
+        pedido.setTelefono(telefono.trim());
+        pedido.setEmail(email != null && !email.isBlank() ? email.trim() : null);
+        pedido.setCantidad(nuevosItems.stream().mapToInt(PedidoItem::getCantidad).sum());
+        pedido.setProductosSeleccionados(buildResumen(nuevosItems));
+        pedido.setTotalPagado(total);
+
+        pedido.setDescuentoAplicado(null);
+        pedido.setCodigoCuponAplicado(null);
+        if (descuentoPorcentaje != null && descuentoPorcentaje > 0) {
+            int subtotal = nuevosItems.stream().mapToInt(PedidoItem::getSubtotal).sum();
+            pedido.setDescuentoAplicado(Math.round(subtotal * descuentoPorcentaje / 100f));
+            pedido.setCodigoCuponAplicado("MANUAL " + descuentoPorcentaje + "%");
+        }
+
+        pedido.setDireccion(direccion != null && !direccion.isBlank() ? direccion.trim() : null);
+        pedido.setLatitud(null);
+        pedido.setLongitud(null);
+        if (latitud != null && !latitud.isBlank()) {
+            try { pedido.setLatitud(Double.parseDouble(latitud)); } catch (NumberFormatException ignored) {}
+        }
+        if (longitud != null && !longitud.isBlank()) {
+            try { pedido.setLongitud(Double.parseDouble(longitud)); } catch (NumberFormatException ignored) {}
+        }
+        pedido.setComentarios(comentarios != null && !comentarios.isBlank() ? comentarios.trim() : null);
+        pedido.setVendedor(vendedor != null && !vendedor.isBlank() ? vendedor.trim() : null);
+
+        EstadoPedido estado = switch (estadoStr) {
+            case "CONFIRMADO"       -> EstadoPedido.CONFIRMADO;
+            case "LISTO_PARA_ENVIO" -> EstadoPedido.LISTO_PARA_ENVIO;
+            case "ENVIADO"          -> EstadoPedido.ENVIADO;
+            case "ENTREGADO"        -> EstadoPedido.ENTREGADO;
+            case "CANCELADO"        -> EstadoPedido.CANCELADO;
+            default                 -> EstadoPedido.CREADO;
+        };
+        pedido.setEstadoPedido(estado);
+
+        Cliente cliente = pedido.getCliente();
+        if (cliente == null) {
+            cliente = clienteRepository.findByTelefono(telefono.trim()).orElseGet(Cliente::new);
+        }
+        cliente.setTelefono(telefono.trim());
+        cliente.setNombre(nombre.trim());
+        if (email != null && !email.isBlank()) cliente.setEmail(email.trim());
+        if (direccion != null && !direccion.isBlank()) cliente.setUltimaDireccion(direccion.trim());
+        if (latitud != null && !latitud.isBlank()) {
+            try { cliente.setLatitud(Double.parseDouble(latitud)); } catch (NumberFormatException ignored) {}
+        }
+        if (longitud != null && !longitud.isBlank()) {
+            try { cliente.setLongitud(Double.parseDouble(longitud)); } catch (NumberFormatException ignored) {}
+        }
+        pedido.setCliente(clienteRepository.save(cliente));
+
+        Pedido saved = pedidoRepository.save(pedido);
+        log.info("Pedido #{} editado — cliente: {}, total: ${} MXN", saved.getId(), nombre, total);
+        return saved;
     }
 
     public void actualizarGuia(Long id, String guia) {

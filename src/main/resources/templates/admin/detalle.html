@@ -300,6 +300,17 @@
         <!-- ── Sidebar de acciones ── -->
         <div>
 
+            <!-- Editar pedido -->
+            <div class="side-card">
+                <p class="side-card-title">Editar pedido</p>
+                <div class="side-card-body">
+                    <a th:href="@{/aura-gestion/pedidos/{id}/editar(id=${pedido.id})}" class="btn-dark"
+                       style="display:block; text-align:center; text-decoration:none; box-sizing:border-box;">
+                        Editar cliente, productos y datos
+                    </a>
+                </div>
+            </div>
+
             <!-- Número de guía -->
             <div class="side-card">
                 <p class="side-card-title">Número de guía</p>

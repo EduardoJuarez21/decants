@@ -224,6 +224,7 @@
                         <td th:text="${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
                         <td style="display:flex; gap:0.5rem; align-items:center; white-space:nowrap;">
                             <a th:href="@{/aura-gestion/pedidos/{id}(id=${p.id})}" class="admin-link">Ver detalle</a>
+                            <a th:href="@{/aura-gestion/pedidos/{id}/editar(id=${p.id})}" class="admin-link">Editar</a>
                             <a th:href="${p.waLink}" target="_blank" title="Avisar por WhatsApp"
                                style="display:inline-flex; align-items:center; justify-content:center;
                                       width:26px; height:26px; background:#25d366; color:#fff;

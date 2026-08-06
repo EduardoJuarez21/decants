@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar pedido — Admin | Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        #productoPicker, #clientePicker { position: relative; }
+
+        #productoDropdown, #clienteDropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0; right: 0;
+            background: #fff;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0,0,0,.13);
+            z-index: 200;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .prod-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.55rem 0.9rem;
+            border-bottom: 1px solid #f3f3f3;
+        }
+        .prod-item:last-child { border-bottom: none; }
+        .prod-item:hover { background: #faf9f7; }
+
+        .prod-info { display: flex; flex-direction: column; gap: 0.05rem; flex: 1; min-width: 0; }
+        .prod-nombre { font-weight: 600; font-size: 0.84rem; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .prod-marca  { font-size: 0.71rem; color: var(--muted); }
+
+        .prod-sizes { display: flex; gap: 0.4rem; flex-shrink: 0; }
+        .size-add-btn {
+            padding: 0.22rem 0.65rem;
+            border: 1.5px solid #c8a84b;
+            border-radius: 6px;
+            background: transparent;
+            color: #7a5c0a;
+            font-size: 0.72rem;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background .15s, color .15s;
+        }
+        .size-add-btn:hover { background: #c8a84b; color: #fff; }
+
+        #productosLista { display: flex; flex-direction: column; gap: 0.4rem; }
+
+        .sel-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #faf9f7;
+            border: 1px solid #ececec;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            gap: 0.75rem;
+        }
+        .sel-info  { display: flex; flex-direction: column; gap: 0.1rem; flex: 1; min-width: 0; }
+        .sel-nombre { font-weight: 600; font-size: 0.83rem; color: #1a1a1a; }
+        .sel-det    { font-size: 0.71rem; color: var(--muted); }
+
+        .sel-controls { display: flex; align-items: center; gap: 0.35rem; flex-shrink: 0; }
+        .qty-btn {
+            width: 26px; height: 26px;
+            border: 1.5px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-family: inherit;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+            transition: border-color .12s;
+        }
+        .qty-btn:hover { border-color: #aaa; background: #f5f5f5; }
+        .qty-num { font-size: 0.83rem; font-weight: 700; min-width: 18px; text-align: center; }
+        .del-btn {
+            width: 26px; height: 26px;
+            border: 1.5px solid #fcc;
+            border-radius: 5px;
+            background: #fff;
+            color: #c00;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-family: inherit;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+            transition: background .12s;
+        }
+        .del-btn:hover { background: #fee5e5; }
+
+        .field-input {
+            padding: 0.6rem 0.9rem;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .field-input:focus { border-color: #c8a84b; }
+    </style>
+</head>
+<body>
+
+<div class="admin-page">
+
+    <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
+        <h1>Panel de administración</h1>
+        <div style="display:flex; align-items:center; gap:1.5rem;">
+            <span class="admin-brand">Aura Decants</span>
+            <form th:action="@{/aura-gestion/logout}" method="post" style="margin:0;">
+                <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); font-size:0.8rem; cursor:pointer; font-family:inherit;">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+        <a th:href="@{/aura-gestion/pedidos/{id}(id=${pedido.id})}" class="admin-link">&#8592; Volver al detalle</a>
+    </div>
+
+    <div th:if="${error}"
+         style="background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; border-radius:8px;
+                padding:0.75rem 1.25rem; margin-bottom:1.25rem; font-size:0.88rem; max-width:620px;"
+         th:text="${error}"></div>
+
+    <div th:if="${huboItemsSinProducto}"
+         style="background:#fff3cd; color:#664d03; border:1px solid #ffe69c; border-radius:8px;
+                padding:0.75rem 1.25rem; margin-bottom:1.25rem; font-size:0.85rem; max-width:620px;">
+        Este pedido tiene artículos antiguos sin producto vinculado que no se pueden mostrar aquí.
+        Si guardas cambios, esos artículos se eliminarán del pedido.
+    </div>
+
+    <div class="admin-card" style="max-width:620px;">
+        <div class="admin-card-header">
+            <h2>Editar pedido <span th:text="${pedido.codigoPublico != null ? pedido.codigoPublico : ('#' + pedido.id)}"></span></h2>
+            <span style="background:#e8e0f8; color:#4a2d8a; font-size:0.72rem; font-weight:700;
+                         padding:0.2rem 0.6rem; border-radius:4px;">EDITAR</span>
+        </div>
+
+        <form id="ventaForm" th:action="@{/aura-gestion/pedidos/{id}/editar(id=${pedido.id})}" method="post"
+              onsubmit="return validarForm()"
+              style="padding:1.5rem 1.75rem; display:flex; flex-direction:column; gap:1.1rem;">
+
+            <!-- ── Datos del cliente ── -->
+            <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px;
+                      color:var(--muted); margin:0 0 -0.4rem 0;">Datos del cliente</p>
+
+            <!-- Buscador de clientes existentes -->
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                    Buscar cliente existente <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                </label>
+                <div id="clientePicker">
+                    <input type="text" id="clienteBusqueda"
+                           placeholder="Buscar por nombre o teléfono…"
+                           autocomplete="off"
+                           oninput="buscarCliente(this.value)"
+                           onfocus="buscarCliente(this.value)"
+                           class="field-input">
+                    <div id="clienteDropdown"></div>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:1rem;">
+                <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444;">Nombre *</label>
+                    <input type="text" id="nombreCliente" name="nombre" required placeholder="Ana García"
+                           th:value="${pedido.nombreCliente}" class="field-input">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                        Teléfono * <span style="font-weight:400; color:var(--muted);">(10 dígitos)</span>
+                    </label>
+                    <input type="tel" id="telefonoCliente" name="telefono" required placeholder="5512345678" maxlength="10"
+                           th:value="${pedido.telefono}" class="field-input">
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                    Email <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                </label>
+                <input type="email" id="emailCliente" name="email" placeholder="ana@ejemplo.com"
+                       th:value="${pedido.email}" class="field-input">
+            </div>
+
+            <hr style="border:none; border-top:1px solid #ececec; margin:0;">
+
+            <!-- ── Detalle del pedido ── -->
+            <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px;
+                      color:var(--muted); margin:0 0 -0.4rem 0;">Detalle del pedido</p>
+
+            <!-- Buscador de productos -->
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">Productos vendidos *</label>
+
+                <div id="productoPicker">
+                    <input type="text" id="productoBusqueda"
+                           placeholder="Buscar por nombre o marca…"
+                           autocomplete="off"
+                           oninput="buscarProducto(this.value)"
+                           onfocus="buscarProducto(this.value)"
+                           class="field-input">
+                    <div id="productoDropdown"></div>
+                </div>
+
+                <div id="productosLista">
+                    <p style="color:var(--muted); font-size:0.8rem; margin:0.25rem 0 0;">Sin productos seleccionados</p>
+                </div>
+
+                <input type="hidden" name="itemsJson" id="itemsJsonInput">
+                <div id="productosError" style="display:none; color:#c00; font-size:0.75rem;">
+                    Agrega al menos un producto.
+                </div>
+            </div>
+
+            <!-- Descuento + Total + Estado -->
+            <div style="display:flex; gap:1rem;">
+                <div style="display:flex; flex-direction:column; gap:0.3rem; max-width:130px;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                        Descuento % <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                    </label>
+                    <input type="number" name="descuentoPorcentaje" id="descuentoPorcentaje" min="0" max="100"
+                           placeholder="0" th:value="${descuentoActual}" class="field-input" oninput="render()">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444;">Total cobrado ($MXN) *</label>
+                    <input type="number" name="total" id="total" required min="1" placeholder="350"
+                           th:value="${pedido.totalPagado}" class="field-input">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
+                    <label style="font-size:0.75rem; font-weight:600; color:#444;">Estado</label>
+                    <select name="estado" class="field-input" style="background:#fff; cursor:pointer;">
+                        <option value="CREADO" th:selected="${pedido.estadoPedido.name() == 'CREADO'}">Creado</option>
+                        <option value="CONFIRMADO" th:selected="${pedido.estadoPedido.name() == 'CONFIRMADO'}">Confirmado</option>
+                        <option value="LISTO_PARA_ENVIO" th:selected="${pedido.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
+                        <option value="ENVIADO" th:selected="${pedido.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
+                        <option value="ENTREGADO" th:selected="${pedido.estadoPedido.name() == 'ENTREGADO'}">Entregado</option>
+                        <option value="CANCELADO" th:selected="${pedido.estadoPedido.name() == 'CANCELADO'}">Cancelado</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dirección (required + Maps Autocomplete) -->
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">Dirección de entrega *</label>
+                <input type="text" id="direccion" name="direccion" required
+                       placeholder="Calle, colonia, ciudad…"
+                       th:value="${pedido.direccion}" class="field-input">
+                <input type="hidden" name="latitud"  id="latitud"  th:value="${pedido.latitud}">
+                <input type="hidden" name="longitud" id="longitud" th:value="${pedido.longitud}">
+            </div>
+
+            <!-- Notas -->
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                    Notas / método de pago <span style="font-weight:400; color:var(--muted);">(opcional)</span>
+                </label>
+                <textarea name="comentarios" rows="2"
+                          placeholder="Pago por transferencia, venta por WhatsApp, cliente conocido…"
+                          th:text="${pedido.comentarios}"
+                          class="field-input" style="resize:vertical;"></textarea>
+            </div>
+
+            <!-- Vendedor -->
+            <div style="display:flex; flex-direction:column; gap:0.4rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                    💸 Vendida por <span style="font-weight:400; color:var(--muted);">(cuenta para la meta del mes de quien elijas)</span>
+                </label>
+                <div style="display:flex; gap:1.25rem; flex-wrap:wrap;">
+                    <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.88rem; color:#444;">
+                        <input type="radio" name="vendedor" value="" th:checked="${pedido.vendedor == null}"
+                               style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
+                        Ninguna
+                    </label>
+                    <label th:each="v : ${vendedoresActivos}"
+                           style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; font-size:0.88rem; color:#444;">
+                        <input type="radio" name="vendedor" th:value="${v.usuario}"
+                               th:checked="${pedido.vendedor == v.usuario}"
+                               style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
+                        <span th:text="${v.nombre}"></span>
+                    </label>
+                </div>
+                <p th:if="${pedido.vendedor != null}"
+                   style="font-size:0.75rem; color:#8a6d1f; background:#fff8e6; border:1px solid #f0e0b0;
+                          border-radius:6px; padding:0.5rem 0.75rem; margin:0.2rem 0 0;">
+                    ⚠️ Este pedido tiene vendedor asignado. Si pertenece a un mes ya cerrado, editar
+                    cantidades/descuento puede cambiar el reporte de comisión de ese mes.
+                </p>
+            </div>
+
+            <!-- Botones -->
+            <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+                <button type="submit"
+                        style="flex:1; padding:0.75rem 1.5rem; background:#1a1a1a; color:#fff; border:none;
+                               border-radius:8px; font-size:0.88rem; font-family:inherit; cursor:pointer; font-weight:600;">
+                    Guardar cambios
+                </button>
+                <a th:href="@{/aura-gestion/pedidos/{id}(id=${pedido.id})}"
+                   style="flex:1; padding:0.75rem 1.5rem; background:#f5f5f5; color:#444; border:none;
+                          border-radius:8px; font-size:0.88rem; font-family:inherit; text-align:center;
+                          text-decoration:none; display:flex; align-items:center; justify-content:center;
+                          font-weight:600;">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+<!-- Datos de productos desde BD -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+var PRODUCTOS_DB = /*[[${productosJson}]]*/ [];
+/*]]>*/
+</script>
+
+<!-- Datos de clientes desde BD -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+var CLIENTES_DB = /*[[${clientesJson}]]*/ [];
+/*]]>*/
+</script>
+
+<!-- Items ya cargados en este pedido -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+var ITEMS_EXISTENTES = /*[[${itemsExistentesJson}]]*/ [];
+/*]]>*/
+</script>
+
+<script>
+var seleccionados = ITEMS_EXISTENTES.map(function(it) {
+    return { id: it.id, nombre: it.nombre, variante: it.variante, precio: it.precio, cantidad: it.cantidad };
+});
+
+function buscarCliente(q) {
+    var dd = document.getElementById('clienteDropdown');
+    q = q.trim().toLowerCase();
+    if (!q) { dd.style.display = 'none'; return; }
+
+    var filtrados = CLIENTES_DB.filter(function(c) {
+        return (c.nombre && c.nombre.toLowerCase().indexOf(q) !== -1) ||
+               (c.telefono && c.telefono.indexOf(q) !== -1);
+    }).slice(0, 8);
+
+    if (!filtrados.length) { dd.style.display = 'none'; return; }
+
+    dd.innerHTML = filtrados.map(function(c) {
+        return '<div class="prod-item" style="cursor:pointer;" onclick="seleccionarCliente(' + c.id + ')">' +
+            '<div class="prod-info">' +
+                '<span class="prod-nombre">' + esc(c.nombre) + '</span>' +
+                '<span class="prod-marca">' + esc(c.telefono || '') + '</span>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+
+    dd.style.display = 'block';
+}
+
+function seleccionarCliente(id) {
+    var c = null;
+    for (var i = 0; i < CLIENTES_DB.length; i++) {
+        if (CLIENTES_DB[i].id === id) { c = CLIENTES_DB[i]; break; }
+    }
+    if (!c) return;
+
+    document.getElementById('nombreCliente').value = c.nombre || '';
+    document.getElementById('telefonoCliente').value = c.telefono || '';
+    document.getElementById('emailCliente').value = c.email || '';
+    if (c.ultimaDireccion) document.getElementById('direccion').value = c.ultimaDireccion;
+    if (c.latitud != null) document.getElementById('latitud').value = c.latitud;
+    if (c.longitud != null) document.getElementById('longitud').value = c.longitud;
+
+    document.getElementById('clienteDropdown').style.display = 'none';
+    document.getElementById('clienteBusqueda').value = '';
+}
+
+document.addEventListener('click', function(e) {
+    var picker = document.getElementById('clientePicker');
+    if (picker && !picker.contains(e.target)) {
+        document.getElementById('clienteDropdown').style.display = 'none';
+    }
+});
+
+function buscarProducto(q) {
+    var dd = document.getElementById('productoDropdown');
+    q = q.trim().toLowerCase();
+    if (!q) { dd.style.display = 'none'; return; }
+
+    var filtrados = PRODUCTOS_DB.filter(function(p) {
+        return p.nombre.toLowerCase().indexOf(q) !== -1 ||
+               p.marca.toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 8);
+
+    if (!filtrados.length) { dd.style.display = 'none'; return; }
+
+    dd.innerHTML = filtrados.map(function(p) {
+        var has5 = p.precio5ml !== null && p.precio5ml !== undefined;
+        var has3 = p.precio3ml !== null && p.precio3ml !== undefined;
+        var promoTag = p.promoActivo ? ' 🏷️' : '';
+        var btns = '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
+            p.id + ',\'10ml\',' + p.precio + ')">10ml · $' + p.precio + promoTag + '</button>';
+        if (has5) {
+            btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
+                p.id + ',\'5ml\',' + p.precio5ml + ')">5ml · $' + p.precio5ml + promoTag + '</button>';
+        }
+        if (has3) {
+            btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
+                p.id + ',\'3ml\',' + p.precio3ml + ')">3ml · $' + p.precio3ml + promoTag + '</button>';
+        }
+        var hasBotella = p.precioBotella !== null && p.precioBotella !== undefined;
+        if (hasBotella) {
+            btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
+                p.id + ',\'Frasco ' + p.mlBotella + 'ml\',' + p.precioBotella + ')">Frasco ' + p.mlBotella + 'ml · $' + p.precioBotella + '</button>';
+        }
+        return '<div class="prod-item">' +
+            '<div class="prod-info">' +
+                '<span class="prod-nombre">' + esc(p.nombre) + '</span>' +
+                '<span class="prod-marca">' + esc(p.marca) + '</span>' +
+            '</div>' +
+            '<div class="prod-sizes">' + btns + '</div>' +
+        '</div>';
+    }).join('');
+
+    dd.style.display = 'block';
+}
+
+function agregarProducto(id, variante, precio) {
+    var prod = null;
+    for (var i = 0; i < PRODUCTOS_DB.length; i++) {
+        if (PRODUCTOS_DB[i].id === id) { prod = PRODUCTOS_DB[i]; break; }
+    }
+    if (!prod) return;
+
+    for (var j = 0; j < seleccionados.length; j++) {
+        if (seleccionados[j].id === id && seleccionados[j].variante === variante) {
+            seleccionados[j].cantidad++;
+            cerrar();
+            render();
+            return;
+        }
+    }
+    seleccionados.push({ id: prod.id, nombre: prod.nombre, variante: variante, precio: precio, cantidad: 1 });
+    cerrar();
+    render();
+}
+
+function cerrar() {
+    document.getElementById('productoDropdown').style.display = 'none';
+    document.getElementById('productoBusqueda').value = '';
+}
+
+function cambiarCantidad(idx, delta) {
+    seleccionados[idx].cantidad += delta;
+    if (seleccionados[idx].cantidad <= 0) seleccionados.splice(idx, 1);
+    render();
+}
+
+function eliminarProducto(idx) {
+    seleccionados.splice(idx, 1);
+    render();
+}
+
+function render() {
+    var c = document.getElementById('productosLista');
+    if (!seleccionados.length) {
+        c.innerHTML = '<p style="color:var(--muted); font-size:0.8rem; margin:0.25rem 0 0;">Sin productos seleccionados</p>';
+        document.getElementById('itemsJsonInput').value = '';
+        return;
+    }
+    c.innerHTML = seleccionados.map(function(s, i) {
+        return '<div class="sel-item">' +
+            '<div class="sel-info">' +
+                '<span class="sel-nombre">' + esc(s.nombre) + '</span>' +
+                '<span class="sel-det">' + s.variante + ' · $' + s.precio + '</span>' +
+            '</div>' +
+            '<div class="sel-controls">' +
+                '<button type="button" class="qty-btn" onclick="cambiarCantidad(' + i + ',-1)">&#8722;</button>' +
+                '<span class="qty-num">' + s.cantidad + '</span>' +
+                '<button type="button" class="qty-btn" onclick="cambiarCantidad(' + i + ',1)">+</button>' +
+                '<button type="button" class="del-btn" onclick="eliminarProducto(' + i + ')">&#215;</button>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+
+    var items = seleccionados.map(function(s) {
+        return { productoId: s.id, variante: s.variante, cantidad: s.cantidad, precioUnitario: s.precio };
+    });
+    document.getElementById('itemsJsonInput').value = JSON.stringify(items);
+    document.getElementById('productosError').style.display = 'none';
+}
+
+function validarForm() {
+    if (!seleccionados.length) {
+        document.getElementById('productosError').style.display = 'block';
+        document.getElementById('productoBusqueda').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('productoBusqueda').focus();
+        return false;
+    }
+    return true;
+}
+
+function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.addEventListener('click', function(e) {
+    if (!document.getElementById('productoPicker').contains(e.target)) {
+        document.getElementById('productoDropdown').style.display = 'none';
+    }
+});
+
+render();
+</script>
+
+<!-- Google Maps Places Autocomplete -->
+<th:block th:if="${mapsApiKey != null and !#strings.isEmpty(mapsApiKey)}">
+    <script>
+    function initMaps() {
+        var input = document.getElementById('direccion');
+        var ac = new google.maps.places.Autocomplete(input, {
+            componentRestrictions: { country: 'mx' },
+            fields: ['formatted_address', 'geometry']
+        });
+        ac.addListener('place_changed', function() {
+            var place = ac.getPlace();
+            if (place.geometry && place.geometry.location) {
+                document.getElementById('latitud').value  = place.geometry.location.lat();
+                document.getElementById('longitud').value = place.geometry.location.lng();
+            }
+            if (place.formatted_address) input.value = place.formatted_address;
+        });
+    }
+    </script>
+    <script th:src="|https://maps.googleapis.com/maps/api/js?key=${mapsApiKey}&libraries=places&loading=async&callback=initMaps|"
+            async defer></script>
+</th:block>
+
+</body>
+</html>
