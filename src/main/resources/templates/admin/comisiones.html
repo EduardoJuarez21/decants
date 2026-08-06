@@ -15,7 +15,11 @@
 <div class="admin-page">
 
     <div class="admin-header" style="display:flex; align-items:center; justify-content:space-between;">
-        <h1>Comisiones</h1>
+        <div style="display:flex; align-items:center; gap:0.85rem;">
+            <a th:if="${esEjuarez}" th:href="@{/aura-gestion/dashboard}" title="Ir al dashboard"
+               style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:1.2rem; line-height:1;">&#8592;</a>
+            <h1>Comisiones</h1>
+        </div>
         <div style="display:flex; align-items:center; gap:1.5rem;">
             <span class="admin-brand">Aura Decants</span>
             <form th:action="@{/aura-gestion/logout}" method="post" style="margin:0;">

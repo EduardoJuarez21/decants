@@ -449,6 +449,7 @@ public class AdminController {
         boolean esAdmin = authentication != null && authentication.getAuthorities().stream()
             .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
         model.addAttribute("esAdmin", esAdmin);
+        model.addAttribute("esEjuarez", authentication != null && "ejuarez".equalsIgnoreCase(authentication.getName()));
 
         List<Vendedor> vendedoresActivos = vendedorService.listarActivos();
         model.addAttribute("vendedores", vendedoresActivos);
