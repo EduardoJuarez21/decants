@@ -190,8 +190,8 @@
                                          padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">LIVE</span>
                         </td>
                         <td>
-                            <form th:action="@{/aura-gestion/pedidos/{id}/estado(id=${p.id})}" method="post">
-                                <select name="estado" onchange="if(confirm('¿Cambiar el estado del pedido a «' + this.options[this.selectedIndex].text + '»?')) { this.form.submit(); } else { this.value = this.dataset.original; }" th:attr="data-original=${p.estadoPedido.name()}"
+                            <form th:action="@{/aura-gestion/pedidos/{id}/estado(id=${p.id})}" method="post" onsubmit="return false;">
+                                <select name="estado" onchange="cambiarEstadoAjax(this)" th:attr="data-original=${p.estadoPedido.name()}"
                                         style="border:none; border-radius:20px; font-size:0.72rem; font-weight:600;
                                                letter-spacing:0.2px; cursor:pointer; padding:0.28rem 0.6rem;
                                                font-family:inherit; outline:none;"
@@ -261,6 +261,44 @@
 var POR_PAGINA = 25;
 var paginaActual = 1;
 var filasFiltradas = [];
+
+function badgeClassParaEstado(estado) {
+    switch (estado) {
+        case 'CREADO':           return 'badge-creado';
+        case 'PENDIENTE_PAGO':   return 'badge-pendiente';
+        case 'CONFIRMADO':       return 'badge-confirmado';
+        case 'LISTO_PARA_ENVIO': return 'badge-listo-envio';
+        case 'ENVIADO':          return 'badge-enviado';
+        case 'ENTREGADO':        return 'badge-entregado';
+        case 'CANCELADO':        return 'badge-cancelado';
+        default:                 return 'badge-creado';
+    }
+}
+
+function cambiarEstadoAjax(select) {
+    var nuevoValor = select.value;
+    var nuevoTexto = select.options[select.selectedIndex].text;
+    if (!confirm('¿Cambiar el estado del pedido a «' + nuevoTexto + '»?')) {
+        select.value = select.dataset.original;
+        return;
+    }
+    var form = select.form;
+    var fd = new FormData(form);
+    select.disabled = true;
+    fetch(form.action, { method: 'POST', body: fd })
+        .then(function(res) {
+            if (!res.ok) throw new Error('Respuesta no exitosa');
+            select.dataset.original = nuevoValor;
+            select.className = badgeClassParaEstado(nuevoValor);
+        })
+        .catch(function() {
+            alert('No se pudo actualizar el estado. Intenta de nuevo.');
+            select.value = select.dataset.original;
+        })
+        .finally(function() {
+            select.disabled = false;
+        });
+}
 
 function toggleFiltroEstado() {
     var panel = document.getElementById('filtroEstadoPanel');
