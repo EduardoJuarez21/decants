@@ -306,6 +306,9 @@ section      { padding: 6rem 2rem; }
 }
 .filter-tab:hover:not(.active) { color: var(--dark); background: rgba(0,0,0,0.05); }
 .product-card.hidden { display: none; }
+.product-card.card-collapsed { display: none; }
+.ver-mas-wrap { display: flex; justify-content: center; margin: 2rem 0 0.5rem; }
+.ver-mas-btn { min-width: 220px; }
 
 /* ── Products ──────────────────────────────────────────────── */
 .products-grid {

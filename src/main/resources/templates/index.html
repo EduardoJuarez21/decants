@@ -277,6 +277,10 @@
 
         </div>
 
+        <div class="ver-mas-wrap">
+            <button type="button" id="grid-designer-ver-mas" class="btn btn-dark ver-mas-btn">Ver más fragancias</button>
+        </div>
+
         <!-- Paginación Alta Perfumería -->
         <div class="pagination-controls" th:if="${designerPage.totalPages > 1}">
             <a th:if="${!designerPage.first}"
@@ -408,6 +412,10 @@
                 </div>
             </div>
 
+        </div>
+
+        <div class="ver-mas-wrap">
+            <button type="button" id="grid-arabe-ver-mas" class="btn btn-dark ver-mas-btn">Ver más fragancias</button>
         </div>
 
         <!-- Paginación Perfumería Árabe -->
@@ -1776,6 +1784,40 @@
     })();
 
     /* ── Buscador de productos ── */
+    /* ── "Ver más" — oculta las tarjetas después de las primeras N para no
+       alargar el scroll del home; el buscador sigue funcionando sobre TODO
+       el catálogo ya renderizado porque solo se manipula display/clase. ── */
+    var GRID_INITIAL_COUNT = 10;
+
+    function inicializarVerMas(gridId, btnId) {
+        var cards = Array.prototype.slice.call(document.querySelectorAll('#' + gridId + ' .product-card'));
+        var btn = document.getElementById(btnId);
+        if (!btn) return;
+        if (cards.length <= GRID_INITIAL_COUNT) { btn.style.display = 'none'; return; }
+        cards.forEach(function(card, i) {
+            if (i >= GRID_INITIAL_COUNT) card.classList.add('card-collapsed');
+        });
+        btn.dataset.hasMore = 'true';
+        btn.addEventListener('click', function() {
+            cards.forEach(function(card) { card.classList.remove('card-collapsed'); });
+            btn.dataset.hasMore = 'false';
+            btn.style.display = 'none';
+        });
+    }
+
+    function aplicarColapso(gridId, q) {
+        var btn = document.getElementById(gridId + '-ver-mas');
+        if (!btn || btn.dataset.hasMore !== 'true') return;
+        document.querySelectorAll('#' + gridId + ' .product-card').forEach(function(card, i) {
+            if (q) {
+                card.classList.remove('card-collapsed');
+            } else if (i >= GRID_INITIAL_COUNT) {
+                card.classList.add('card-collapsed');
+            }
+        });
+        btn.style.display = q ? 'none' : '';
+    }
+
     function buscarSeccion(inputId, gridId, sinResultadosId) {
         var q = document.getElementById(inputId).value.toLowerCase().trim();
         var total = 0;
@@ -1786,6 +1828,7 @@
             card.style.display = match ? '' : 'none';
             if (match) total++;
         });
+        aplicarColapso(gridId, q);
         document.getElementById(sinResultadosId).style.display = (!q || total > 0) ? 'none' : 'block';
     }
 
@@ -1820,6 +1863,9 @@
             if (match) totalArabe++;
         });
 
+        aplicarColapso('grid-designer', q);
+        aplicarColapso('grid-arabe', q);
+
         var show = !q;
         document.getElementById('alta-perfumeria').style.display    = (show || totalDesigner > 0) ? '' : 'none';
         document.getElementById('filtros-designer').style.display   = (show || totalDesigner > 0) ? '' : 'none';
@@ -1828,6 +1874,9 @@
         var noRes = document.getElementById('buscarSinResultados');
         if (noRes) noRes.style.display = (!q || totalDesigner + totalArabe > 0) ? 'none' : 'block';
     }
+
+    inicializarVerMas('grid-designer', 'grid-designer-ver-mas');
+    inicializarVerMas('grid-arabe', 'grid-arabe-ver-mas');
 
     /* ── Lightbox características ── */
     function openLightbox(imgs, startIdx) {
