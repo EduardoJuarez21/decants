@@ -1,9 +1,11 @@
 package mx.decants.controller;
 
+import mx.decants.entity.ComisionPago;
 import mx.decants.entity.Cupon;
 import mx.decants.entity.Pedido;
 import mx.decants.entity.Producto;
 import mx.decants.entity.Vendedor;
+import mx.decants.service.ComisionPagoService;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.CuponService;
 import mx.decants.service.ImagenService;
@@ -48,11 +50,13 @@ public class AdminController {
     private final ImagenService imagenService;
     private final ResenaService resenaService;
     private final VendedorService vendedorService;
+    private final ComisionPagoService comisionPagoService;
 
     public AdminController(PedidoService pedidoService, ProductoService productoService,
                            CuponService cuponService, ConfiguracionService configuracionService,
                            VisitaService visitaService, ImagenService imagenService,
-                           ResenaService resenaService, VendedorService vendedorService) {
+                           ResenaService resenaService, VendedorService vendedorService,
+                           ComisionPagoService comisionPagoService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
         this.cuponService = cuponService;
@@ -61,6 +65,7 @@ public class AdminController {
         this.imagenService = imagenService;
         this.resenaService = resenaService;
         this.vendedorService = vendedorService;
+        this.comisionPagoService = comisionPagoService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────────
@@ -514,8 +519,29 @@ public class AdminController {
         model.addAttribute("comisionProductosSinCosto", comision.get("productosSinCosto"));
         model.addAttribute("comisionHuboItemsSinProducto", comision.get("huboItemsSinProducto"));
         model.addAttribute("comisionDetalle", comision.get("detalle"));
+        model.addAttribute("comisionPago", comisionPagoService.buscar(vendedor, mes).orElse(null));
 
         return "admin/comisiones";
+    }
+
+    @PostMapping("/comisiones/marcar-pagado")
+    public String marcarComisionPagada(@RequestParam String vendedor,
+                                       @RequestParam String mes,
+                                       @RequestParam Integer monto,
+                                       @RequestParam(required = false) String notas,
+                                       RedirectAttributes ra) {
+        comisionPagoService.marcarPagado(vendedor, YearMonth.parse(mes), monto, notas);
+        ra.addFlashAttribute("mensaje", "Comisión marcada como pagada.");
+        return "redirect:/aura-gestion/comisiones?vendedor=" + vendedor + "&mes=" + mes;
+    }
+
+    @PostMapping("/comisiones/marcar-no-pagado")
+    public String desmarcarComisionPagada(@RequestParam String vendedor,
+                                          @RequestParam String mes,
+                                          RedirectAttributes ra) {
+        comisionPagoService.desmarcar(vendedor, YearMonth.parse(mes));
+        ra.addFlashAttribute("mensaje", "Se quitó la marca de pagado.");
+        return "redirect:/aura-gestion/comisiones?vendedor=" + vendedor + "&mes=" + mes;
     }
 
     private static String capitalizar(String s) {

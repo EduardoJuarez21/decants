@@ -80,6 +80,55 @@
             </div>
         </div>
         <div style="padding:1.5rem 2rem;">
+
+            <!-- Estado de pago de la comision -->
+            <div th:if="${comisionPago != null}"
+                 style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;
+                        background:#e8f5e9; border:1px solid #b7dfba; border-radius:8px;
+                        padding:0.75rem 1rem; margin-bottom:1.25rem;">
+                <span style="font-size:0.85rem; color:#2e7d32; font-weight:600;">
+                    ✅ Pagado el <span th:text="${#temporals.format(comisionPago.fechaPago, 'dd/MM/yyyy')}"></span>
+                    — $<span th:text="${comisionPago.montoPagado}"></span>
+                    <span th:if="${comisionPago.notas != null and !#strings.isEmpty(comisionPago.notas)}"
+                          th:text="'(' + ${comisionPago.notas} + ')'" style="font-weight:400; color:#4a7a4d;"></span>
+                </span>
+                <form th:if="${esAdmin}" th:action="@{/aura-gestion/comisiones/marcar-no-pagado}" method="post"
+                      onsubmit="return confirm('¿Quitar la marca de pagado?');" style="margin:0;">
+                    <input type="hidden" name="vendedor" th:value="${vendedor}">
+                    <input type="hidden" name="mes" th:value="${comisionMes}">
+                    <button type="submit" style="background:none; border:none; color:#2e7d32; text-decoration:underline;
+                                                  font-size:0.78rem; cursor:pointer; font-family:inherit;">Deshacer</button>
+                </form>
+            </div>
+
+            <form th:if="${comisionPago == null and esAdmin}"
+                  th:action="@{/aura-gestion/comisiones/marcar-pagado}" method="post"
+                  style="display:flex; align-items:flex-end; gap:0.75rem; flex-wrap:wrap;
+                         background:#fff8e6; border:1px solid #f0e0b0; border-radius:8px;
+                         padding:0.75rem 1rem; margin-bottom:1.25rem;">
+                <input type="hidden" name="vendedor" th:value="${vendedor}">
+                <input type="hidden" name="mes" th:value="${comisionMes}">
+                <div style="display:flex; flex-direction:column; gap:0.2rem;">
+                    <label style="font-size:0.7rem; font-weight:600; color:#8a6d1f;">Monto pagado ($MXN)</label>
+                    <input type="number" name="monto" required min="0"
+                           th:value="${T(java.lang.Math).round(comisionTotal)}"
+                           style="padding:0.4rem 0.6rem; border:1.5px solid #e0d0a0; border-radius:6px; width:110px; font-family:inherit;">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.2rem; flex:1; min-width:160px;">
+                    <label style="font-size:0.7rem; font-weight:600; color:#8a6d1f;">Nota (opcional)</label>
+                    <input type="text" name="notas" placeholder="Ej. pagado por transferencia"
+                           style="padding:0.4rem 0.6rem; border:1.5px solid #e0d0a0; border-radius:6px; width:100%; font-family:inherit;">
+                </div>
+                <button type="submit"
+                        style="padding:0.5rem 1rem; background:#8a6d1f; color:#fff; border:none; border-radius:6px;
+                               font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit;">
+                    Marcar como pagado
+                </button>
+            </form>
+
+            <p th:if="${comisionPago == null and !esAdmin}"
+               style="color:var(--muted); font-size:0.82rem; margin:0 0 1.25rem;">Pendiente de pago</p>
+
             <div style="display:flex; gap:2rem; margin-bottom:1.25rem; flex-wrap:wrap;">
                 <div>
                     <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Ventas de <span th:text="${vendedorEtiqueta}"></span></div>
