@@ -46,6 +46,9 @@ public class Pedido {
     @Column(length = 500)
     private String comentarios;
 
+    @Column(length = 500)
+    private String observaciones; // nombre real del cliente cuando el pedido queda a nombre de la vendedora, u otras notas internas
+
     @Column(columnDefinition = "TEXT")
     private String productosSeleccionados;
 
@@ -143,6 +146,9 @@ public class Pedido {
 
     public String getComentarios() { return comentarios; }
     public void setComentarios(String comentarios) { this.comentarios = comentarios; }
+
+    public String getObservaciones() { return observaciones; }
+    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
 
     public String getProductosSeleccionados() { return productosSeleccionados; }
     public void setProductosSeleccionados(String productosSeleccionados) { this.productosSeleccionados = productosSeleccionados; }

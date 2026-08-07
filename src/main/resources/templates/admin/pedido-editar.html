@@ -288,6 +288,17 @@
                           class="field-input" style="resize:vertical;"></textarea>
             </div>
 
+            <!-- Observaciones -->
+            <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                    Observaciones <span style="font-weight:400; color:var(--muted);">(opcional — ej. nombre real del cliente si el pedido queda a nombre de la vendedora)</span>
+                </label>
+                <textarea name="observaciones" rows="2"
+                          placeholder="Ej. Cliente real: María López"
+                          th:text="${pedido.observaciones}"
+                          class="field-input" style="resize:vertical;"></textarea>
+            </div>
+
             <!-- Vendedor -->
             <div style="display:flex; flex-direction:column; gap:0.4rem;">
                 <label style="font-size:0.75rem; font-weight:600; color:#444;">

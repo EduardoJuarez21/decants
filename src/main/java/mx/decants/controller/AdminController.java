@@ -204,12 +204,13 @@ public class AdminController {
                                       @RequestParam(required = false) String vendedor,
                                       @RequestParam(required = false) Integer descuentoPorcentaje,
                                       @RequestParam(required = false) Integer montoAbonado,
+                                      @RequestParam(required = false) String observaciones,
                                       RedirectAttributes ra) {
         Pedido p;
         try {
             p = pedidoService.crearPedidoManual(nombre, telefono, email, itemsJson, total,
                                                 direccion, latitud, longitud, comentarios, estado, vendedor,
-                                                descuentoPorcentaje, montoAbonado);
+                                                descuentoPorcentaje, montoAbonado, observaciones);
         } catch (IllegalArgumentException e) {
             ra.addFlashAttribute("error", e.getMessage());
             return "redirect:/aura-gestion/pedidos/nuevo";
@@ -271,10 +272,12 @@ public class AdminController {
                                        @RequestParam(required = false) String vendedor,
                                        @RequestParam(required = false) Integer descuentoPorcentaje,
                                        @RequestParam(required = false) Integer montoAbonado,
+                                       @RequestParam(required = false) String observaciones,
                                        RedirectAttributes ra) {
         try {
             pedidoService.actualizarPedidoManual(id, nombre, telefono, email, itemsJson, total,
-                    direccion, latitud, longitud, comentarios, estado, vendedor, descuentoPorcentaje, montoAbonado);
+                    direccion, latitud, longitud, comentarios, estado, vendedor, descuentoPorcentaje, montoAbonado,
+                    observaciones);
         } catch (IllegalArgumentException e) {
             ra.addFlashAttribute("error", "Error al editar el pedido: " + e.getMessage());
             return "redirect:/aura-gestion/pedidos/" + id + "/editar";

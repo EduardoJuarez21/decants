@@ -298,6 +298,12 @@
                         <span class="info-value" th:text="${pedido.comentarios}"
                               style="white-space:pre-wrap; color:#444;"></span>
                     </div>
+                    <div class="info-field" style="grid-column:1/-1;"
+                         th:if="${pedido.observaciones != null and !#strings.isEmpty(pedido.observaciones)}">
+                        <span class="info-label">Observaciones</span>
+                        <span class="info-value" th:text="${pedido.observaciones}"
+                              style="white-space:pre-wrap; color:#444;"></span>
+                    </div>
                     <div class="info-field">
                         <span class="info-label">Fecha de creación</span>
                         <span class="info-value" th:text="${#temporals.format(pedido.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></span>

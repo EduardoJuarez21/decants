@@ -486,9 +486,10 @@ public class PedidoService {
                                      String itemsJson, Integer total,
                                      String direccion, String latitud, String longitud,
                                      String comentarios, String estadoStr, String vendedor,
-                                     Integer descuentoPorcentaje, Integer montoAbonado) {
+                                     Integer descuentoPorcentaje, Integer montoAbonado, String observaciones) {
         Pedido pedido = new Pedido();
         pedido.setMontoAbonado(montoAbonado);
+        pedido.setObservaciones(observaciones != null && !observaciones.isBlank() ? observaciones.trim() : null);
         List<PedidoItem> items = buildItemsManual(itemsJson);
         items.forEach(it -> it.setPedido(pedido));
 
@@ -601,7 +602,7 @@ public class PedidoService {
                                           String itemsJson, Integer total,
                                           String direccion, String latitud, String longitud,
                                           String comentarios, String estadoStr, String vendedor,
-                                          Integer descuentoPorcentaje, Integer montoAbonado) {
+                                          Integer descuentoPorcentaje, Integer montoAbonado, String observaciones) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
 
@@ -621,6 +622,7 @@ public class PedidoService {
         pedido.setProductosSeleccionados(buildResumen(nuevosItems));
         pedido.setTotalPagado(total);
         pedido.setMontoAbonado(montoAbonado);
+        pedido.setObservaciones(observaciones != null && !observaciones.isBlank() ? observaciones.trim() : null);
 
         pedido.setDescuentoAplicado(null);
         pedido.setCodigoCuponAplicado(null);
