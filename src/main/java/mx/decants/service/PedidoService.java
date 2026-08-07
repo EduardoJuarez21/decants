@@ -770,6 +770,13 @@ public class PedidoService {
 
         List<Object[]> topProductos = pedidoItemRepository.findTopProductos(ESTADOS_VALIDOS, PageRequest.of(0, 10));
 
+        List<Pedido> pendientesPago = todos.stream()
+            .filter(p -> p.getEstadoPedido() == EstadoPedido.PENDIENTE_PAGO)
+            .toList();
+        int totalPendientePago = pendientesPago.stream()
+            .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
+            .sum();
+
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("ventasHoy",      ventasHoy);
         stats.put("ventasSemana",   ventasSemana);
@@ -781,6 +788,8 @@ public class PedidoService {
         stats.put("porEstado",      porEstado);
         stats.put("topProductos",   topProductos);
         stats.put("ultimosPedidos", todos.stream().limit(10).toList());
+        stats.put("totalPendientePago",   totalPendientePago);
+        stats.put("pedidosPendientePago", pendientesPago.size());
         return stats;
     }
 

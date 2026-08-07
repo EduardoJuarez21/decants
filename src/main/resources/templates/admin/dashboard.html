@@ -134,6 +134,14 @@
         </div>
     </div>
 
+    <!-- Pendiente de pago -->
+    <div th:if="${pedidosPendientePago != null and pedidosPendientePago > 0}"
+         class="metric-card" style="background:#fff8e6; border-color:#f0e0b0; margin-bottom:1.5rem;">
+        <div class="metric-label" style="color:#8a6d1f;">Pendiente de pago</div>
+        <div class="metric-value" style="color:#8a6d1f;" th:text="'$' + ${totalPendientePago}"></div>
+        <div class="metric-sub" style="color:#a58a3f;" th:text="${pedidosPendientePago} + ' pedido(s) sin cobrar por completo'"></div>
+    </div>
+
     <!-- Métricas de visitas -->
     <div class="metric-grid" style="margin-bottom:1.5rem;">
         <div class="metric-card">
