@@ -205,19 +205,21 @@
                                             p.estadoPedido.name() == 'PENDIENTE_PAGO'  ? 'badge-pendiente'    :
                                             'badge-creado'}">
                                     <option value="CREADO"          th:selected="${p.estadoPedido.name() == 'CREADO' or p.estadoPedido.name() == 'NUEVO'}">Creado</option>
+                                    <option value="PENDIENTE_PAGO"  th:selected="${p.estadoPedido.name() == 'PENDIENTE_PAGO'}">Pendiente de pago</option>
                                     <option value="CONFIRMADO"      th:selected="${p.estadoPedido.name() == 'CONFIRMADO'}">Confirmado</option>
                                     <option th:if="${p.entorno != 'local'}" value="LISTO_PARA_ENVIO" th:selected="${p.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
                                     <option th:if="${p.entorno != 'local'}" value="ENVIADO"          th:selected="${p.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
                                     <option value="ENTREGADO"       th:selected="${p.estadoPedido.name() == 'ENTREGADO'}">Entregado</option>
                                     <option value="CANCELADO"       th:selected="${p.estadoPedido.name() == 'CANCELADO'}">Cancelado</option>
-                                    <option th:if="${p.estadoPedido.name() == 'PENDIENTE_PAGO'}"
-                                            value="PENDIENTE_PAGO" selected disabled
-                                            style="color:#999;">Pendiente de pago</option>
                                     <option th:if="${p.estadoPedido.name() == 'EN_REVISION'}"
                                             value="EN_REVISION" selected disabled
                                             style="color:#999;">En revisión (legacy)</option>
                                 </select>
                             </form>
+                            <div th:if="${p.montoAbonado != null}"
+                                 style="font-size:0.68rem; color:var(--muted); margin-top:0.3rem; white-space:nowrap;"
+                                 th:text="'Abonó $' + ${p.montoAbonado} + ' de $' + ${p.totalPagado} + ' · falta $' + ${p.saldoPendiente}">
+                            </div>
                         </td>
                         <td style="font-family:monospace; font-size:0.78rem;"
                             th:text="${p.numeroGuia != null and !#strings.isEmpty(p.numeroGuia)} ? ${p.numeroGuia} : '—'"></td>

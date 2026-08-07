@@ -486,8 +486,9 @@ public class PedidoService {
                                      String itemsJson, Integer total,
                                      String direccion, String latitud, String longitud,
                                      String comentarios, String estadoStr, String vendedor,
-                                     Integer descuentoPorcentaje) {
+                                     Integer descuentoPorcentaje, Integer montoAbonado) {
         Pedido pedido = new Pedido();
+        pedido.setMontoAbonado(montoAbonado);
         List<PedidoItem> items = buildItemsManual(itemsJson);
         items.forEach(it -> it.setPedido(pedido));
 
@@ -515,6 +516,7 @@ public class PedidoService {
         pedido.setEntorno("manual");
         pedido.setVendedor(vendedor != null && !vendedor.isBlank() ? vendedor.trim() : null);
         EstadoPedido estado = switch (estadoStr) {
+            case "PENDIENTE_PAGO"   -> EstadoPedido.PENDIENTE_PAGO;
             case "CONFIRMADO"       -> EstadoPedido.CONFIRMADO;
             case "LISTO_PARA_ENVIO" -> EstadoPedido.LISTO_PARA_ENVIO;
             case "ENVIADO"          -> EstadoPedido.ENVIADO;
@@ -599,7 +601,7 @@ public class PedidoService {
                                           String itemsJson, Integer total,
                                           String direccion, String latitud, String longitud,
                                           String comentarios, String estadoStr, String vendedor,
-                                          Integer descuentoPorcentaje) {
+                                          Integer descuentoPorcentaje, Integer montoAbonado) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado"));
 
@@ -618,6 +620,7 @@ public class PedidoService {
         pedido.setCantidad(nuevosItems.stream().mapToInt(PedidoItem::getCantidad).sum());
         pedido.setProductosSeleccionados(buildResumen(nuevosItems));
         pedido.setTotalPagado(total);
+        pedido.setMontoAbonado(montoAbonado);
 
         pedido.setDescuentoAplicado(null);
         pedido.setCodigoCuponAplicado(null);
@@ -640,6 +643,7 @@ public class PedidoService {
         pedido.setVendedor(vendedor != null && !vendedor.isBlank() ? vendedor.trim() : null);
 
         EstadoPedido estado = switch (estadoStr) {
+            case "PENDIENTE_PAGO"   -> EstadoPedido.PENDIENTE_PAGO;
             case "CONFIRMADO"       -> EstadoPedido.CONFIRMADO;
             case "LISTO_PARA_ENVIO" -> EstadoPedido.LISTO_PARA_ENVIO;
             case "ENVIADO"          -> EstadoPedido.ENVIADO;

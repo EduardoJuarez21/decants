@@ -203,12 +203,13 @@ public class AdminController {
                                       @RequestParam(defaultValue = "CONFIRMADO") String estado,
                                       @RequestParam(required = false) String vendedor,
                                       @RequestParam(required = false) Integer descuentoPorcentaje,
+                                      @RequestParam(required = false) Integer montoAbonado,
                                       RedirectAttributes ra) {
         Pedido p;
         try {
             p = pedidoService.crearPedidoManual(nombre, telefono, email, itemsJson, total,
                                                 direccion, latitud, longitud, comentarios, estado, vendedor,
-                                                descuentoPorcentaje);
+                                                descuentoPorcentaje, montoAbonado);
         } catch (IllegalArgumentException e) {
             ra.addFlashAttribute("error", e.getMessage());
             return "redirect:/aura-gestion/pedidos/nuevo";
@@ -269,10 +270,11 @@ public class AdminController {
                                        @RequestParam(defaultValue = "CREADO") String estado,
                                        @RequestParam(required = false) String vendedor,
                                        @RequestParam(required = false) Integer descuentoPorcentaje,
+                                       @RequestParam(required = false) Integer montoAbonado,
                                        RedirectAttributes ra) {
         try {
             pedidoService.actualizarPedidoManual(id, nombre, telefono, email, itemsJson, total,
-                    direccion, latitud, longitud, comentarios, estado, vendedor, descuentoPorcentaje);
+                    direccion, latitud, longitud, comentarios, estado, vendedor, descuentoPorcentaje, montoAbonado);
         } catch (IllegalArgumentException e) {
             ra.addFlashAttribute("error", "Error al editar el pedido: " + e.getMessage());
             return "redirect:/aura-gestion/pedidos/" + id + "/editar";

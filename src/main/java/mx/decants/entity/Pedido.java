@@ -60,6 +60,8 @@ public class Pedido {
 
     private Integer totalPagado;
 
+    private Integer montoAbonado; // cuanto ha pagado el cliente hasta ahora; null = no se esta trackeando un anticipo
+
     private String codigoCuponAplicado;
 
     private Integer descuentoAplicado;
@@ -157,6 +159,13 @@ public class Pedido {
     public Integer getTotalPagado() { return totalPagado; }
     public void setTotalPagado(Integer totalPagado) { this.totalPagado = totalPagado; }
 
+    public Integer getMontoAbonado() { return montoAbonado; }
+    public void setMontoAbonado(Integer montoAbonado) { this.montoAbonado = montoAbonado; }
+
+    public Integer getSaldoPendiente() {
+        return (montoAbonado != null && totalPagado != null) ? Math.max(0, totalPagado - montoAbonado) : null;
+    }
+
     public String getCodigoCuponAplicado() { return codigoCuponAplicado; }
     public void setCodigoCuponAplicado(String codigoCuponAplicado) { this.codigoCuponAplicado = codigoCuponAplicado; }
 
@@ -196,6 +205,11 @@ public class Pedido {
         String codigo = codigoPublico != null ? codigoPublico : ("#" + id);
         String cliente = nombreCliente != null ? nombreCliente : "";
         return switch (estadoPedido) {
+            case PENDIENTE_PAGO -> "Hola " + cliente + "! Tu pedido " + codigo + " está pendiente de pago."
+                + (getSaldoPendiente() != null
+                    ? " Llevas $" + montoAbonado + " abonados, falta $" + getSaldoPendiente() + " MXN por liquidar."
+                    : "")
+                + " — Aura Decants MX";
             case CREADO -> "Hola " + cliente + "! Recibimos tu pedido " + codigo
                 + ". Estamos revisando los detalles y pronto nos ponemos en contacto contigo. — Aura Decants MX";
             case CONFIRMADO -> "Hola " + cliente + "! Tu pedido " + codigo

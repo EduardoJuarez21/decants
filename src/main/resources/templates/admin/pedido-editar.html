@@ -250,6 +250,7 @@
                     <label style="font-size:0.75rem; font-weight:600; color:#444;">Estado</label>
                     <select name="estado" class="field-input" style="background:#fff; cursor:pointer;">
                         <option value="CREADO" th:selected="${pedido.estadoPedido.name() == 'CREADO'}">Creado</option>
+                        <option value="PENDIENTE_PAGO" th:selected="${pedido.estadoPedido.name() == 'PENDIENTE_PAGO'}">Pendiente de pago</option>
                         <option value="CONFIRMADO" th:selected="${pedido.estadoPedido.name() == 'CONFIRMADO'}">Confirmado</option>
                         <option value="LISTO_PARA_ENVIO" th:selected="${pedido.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
                         <option value="ENVIADO" th:selected="${pedido.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
@@ -257,6 +258,13 @@
                         <option value="CANCELADO" th:selected="${pedido.estadoPedido.name() == 'CANCELADO'}">Cancelado</option>
                     </select>
                 </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:0.3rem; max-width:220px;">
+                <label style="font-size:0.75rem; font-weight:600; color:#444;">
+                    Monto abonado ($MXN) <span style="font-weight:400; color:var(--muted);">(opcional, si pagó solo una parte)</span>
+                </label>
+                <input type="number" name="montoAbonado" min="0" placeholder="Ej. 100" th:value="${pedido.montoAbonado}" class="field-input">
             </div>
 
             <!-- Dirección (required + Maps Autocomplete) -->
