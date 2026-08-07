@@ -134,6 +134,20 @@
         </div>
     </div>
 
+    <!-- Total histórico (sin cancelados) -->
+    <div class="metric-card" style="margin-bottom:1.5rem;">
+        <div class="metric-label">Total histórico (sin cancelados)</div>
+        <div style="display:flex; align-items:baseline; gap:1.5rem; flex-wrap:wrap; margin-top:0.2rem;">
+            <div class="metric-value gold" th:text="'$' + ${totalVendidoHistorico}"></div>
+            <div class="metric-sub" style="font-size:0.85rem;" th:text="${totalPedidosHistorico} + ' pedido(s) en total'"></div>
+        </div>
+        <div class="metric-sub" style="margin-top:0.6rem;">
+            Entregado <strong style="color:#1a1a1a;" th:text="'$' + ${totalEntregado}"></strong>
+            &nbsp;·&nbsp; En proceso <strong style="color:#1a1a1a;" th:text="'$' + ${totalEnProceso}"></strong>
+            &nbsp;·&nbsp; Pendiente de pago <strong style="color:#8a6d1f;" th:text="'$' + ${totalPendientePago}"></strong>
+        </div>
+    </div>
+
     <!-- Pendiente de pago -->
     <div th:if="${pedidosPendientePago != null and pedidosPendientePago > 0}"
          class="metric-card" style="background:#fff8e6; border-color:#f0e0b0; margin-bottom:1.5rem;">

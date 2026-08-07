@@ -777,6 +777,19 @@ public class PedidoService {
             .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
             .sum();
 
+        List<Pedido> noCancelados = todos.stream()
+            .filter(p -> p.getEstadoPedido() != EstadoPedido.CANCELADO)
+            .toList();
+        int totalPedidosHistorico = noCancelados.size();
+        int totalVendidoHistorico = noCancelados.stream()
+            .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
+            .sum();
+        int totalEntregado = noCancelados.stream()
+            .filter(p -> p.getEstadoPedido() == EstadoPedido.ENTREGADO)
+            .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
+            .sum();
+        int totalEnProceso = totalVendidoHistorico - totalEntregado - totalPendientePago;
+
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("ventasHoy",      ventasHoy);
         stats.put("ventasSemana",   ventasSemana);
@@ -790,6 +803,10 @@ public class PedidoService {
         stats.put("ultimosPedidos", todos.stream().limit(10).toList());
         stats.put("totalPendientePago",   totalPendientePago);
         stats.put("pedidosPendientePago", pendientesPago.size());
+        stats.put("totalPedidosHistorico", totalPedidosHistorico);
+        stats.put("totalVendidoHistorico", totalVendidoHistorico);
+        stats.put("totalEntregado",        totalEntregado);
+        stats.put("totalEnProceso",        totalEnProceso);
         return stats;
     }
 
