@@ -218,7 +218,7 @@
                             <span th:if="${p.activo}"  class="badge badge-activo">Activo</span>
                             <span th:unless="${p.activo}" class="badge badge-inactivo">Inactivo</span>
                         </td>
-                        <td style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                        <td style="display:flex; gap:0.5rem; align-items:flex-start; flex-wrap:wrap;">
                             <a th:href="@{/aura-gestion/productos/{id}/editar(id=${p.id})}"
                                class="admin-link"
                                style="font-size:0.78rem; padding:0.25rem 0.6rem; border:1px solid #ddd;
