@@ -174,7 +174,19 @@
                             th:text="${p.codigoPublico != null ? p.codigoPublico : '—'}"></td>
                         <td th:text="${p.nombreCliente}"></td>
                         <td th:text="${p.telefono}"></td>
-                        <td th:text="${p.tipoProducto}"></td>
+                        <td>
+                            <span th:if="${p.productosSeleccionados != null and !#strings.isEmpty(p.productosSeleccionados)}"
+                                  th:text="${p.tipoProducto}"
+                                  th:title="${p.productosSeleccionados}"
+                                  style="cursor:pointer; border-bottom:1px dotted var(--muted);"
+                                  onclick="toggleProductos(this)"></span>
+                            <span th:unless="${p.productosSeleccionados != null and !#strings.isEmpty(p.productosSeleccionados)}"
+                                  th:text="${p.tipoProducto}"></span>
+                            <div th:if="${p.productosSeleccionados != null and !#strings.isEmpty(p.productosSeleccionados)}"
+                                 class="productos-preview"
+                                 style="display:none; font-size:0.72rem; color:var(--muted); margin-top:0.3rem; max-width:220px;"
+                                 th:text="${p.productosSeleccionados}"></div>
+                        </td>
                         <td th:text="${p.cantidad}"></td>
                         <td style="font-weight:600; color:var(--gold);"
                             th:text="${p.totalPagado != null ? '$' + p.totalPagado + ' MXN' : '—'}"></td>
@@ -263,6 +275,15 @@
 var POR_PAGINA = 25;
 var paginaActual = 1;
 var filasFiltradas = [];
+
+/* Alterna la previsualizacion de productos: en desktop el title= ya
+   muestra un tooltip nativo al pasar el mouse; en movil (sin hover)
+   el tap llama esto para mostrar/ocultar el mismo texto en la fila. */
+function toggleProductos(el) {
+    var preview = el.parentElement.querySelector('.productos-preview');
+    if (!preview) return;
+    preview.style.display = preview.style.display === 'none' ? 'block' : 'none';
+}
 
 function badgeClassParaEstado(estado) {
     switch (estado) {
