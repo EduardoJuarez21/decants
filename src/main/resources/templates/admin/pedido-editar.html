@@ -239,7 +239,7 @@
                         Descuento % <span style="font-weight:400; color:var(--muted);">(opcional)</span>
                     </label>
                     <input type="number" name="descuentoPorcentaje" id="descuentoPorcentaje" min="0" max="100"
-                           placeholder="0" th:value="${descuentoActual}" class="field-input" oninput="render()">
+                           placeholder="0" th:value="${descuentoActual}" class="field-input" oninput="recalcularTotal()">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.3rem; flex:1;">
                     <label style="font-size:0.75rem; font-weight:600; color:#444;">Total cobrado ($MXN) *</label>
@@ -477,12 +477,14 @@ function agregarProducto(id, variante, precio) {
             seleccionados[j].cantidad++;
             cerrar();
             render();
+            recalcularTotal();
             return;
         }
     }
     seleccionados.push({ id: prod.id, nombre: prod.nombre, variante: variante, precio: precio, cantidad: 1 });
     cerrar();
     render();
+    recalcularTotal();
 }
 
 function cerrar() {
@@ -494,11 +496,13 @@ function cambiarCantidad(idx, delta) {
     seleccionados[idx].cantidad += delta;
     if (seleccionados[idx].cantidad <= 0) seleccionados.splice(idx, 1);
     render();
+    recalcularTotal();
 }
 
 function eliminarProducto(idx) {
     seleccionados.splice(idx, 1);
     render();
+    recalcularTotal();
 }
 
 function render() {
@@ -528,6 +532,17 @@ function render() {
     });
     document.getElementById('itemsJsonInput').value = JSON.stringify(items);
     document.getElementById('productosError').style.display = 'none';
+}
+
+/* Recalcula "Total cobrado" a partir de los productos y el % de descuento.
+   No se llama en la carga inicial: el total guardado del pedido puede
+   incluir ajustes manuales (envío, negociación) que esta formula no conoce;
+   solo se recalcula cuando el admin cambia productos, cantidades o el
+   descuento, que es cuando el total viejo ya no aplica. */
+function recalcularTotal() {
+    var subtotal = seleccionados.reduce(function(sum, s) { return sum + s.precio * s.cantidad; }, 0);
+    var descuentoPct = parseFloat(document.getElementById('descuentoPorcentaje').value) || 0;
+    document.getElementById('total').value = Math.round(subtotal * (1 - descuentoPct / 100));
 }
 
 function validarForm() {
