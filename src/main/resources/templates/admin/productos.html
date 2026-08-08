@@ -218,19 +218,21 @@
                             <span th:if="${p.activo}"  class="badge badge-activo">Activo</span>
                             <span th:unless="${p.activo}" class="badge badge-inactivo">Inactivo</span>
                         </td>
-                        <td style="display:flex; gap:0.5rem; align-items:flex-start; flex-wrap:wrap;">
-                            <a th:href="@{/aura-gestion/productos/{id}/editar(id=${p.id})}"
-                               class="admin-link"
-                               style="font-size:0.78rem; padding:0.25rem 0.6rem; border:1px solid #ddd;
-                                      border-radius:5px; background:#fff; white-space:nowrap;">
-                                ✏ Editar
-                            </a>
-                            <form th:action="@{/aura-gestion/productos/{id}/toggle(id=${p.id})}" method="post" style="margin:0;">
-                                <button type="submit"
-                                        th:class="${p.activo ? 'btn-toggle btn-toggle-off' : 'btn-toggle btn-toggle-on'}">
-                                    <span th:text="${p.activo ? 'Desactivar' : 'Activar'}"></span>
-                                </button>
-                            </form>
+                        <td>
+                            <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                                <a th:href="@{/aura-gestion/productos/{id}/editar(id=${p.id})}"
+                                   class="admin-link"
+                                   style="font-size:0.78rem; padding:0.25rem 0.6rem; border:1px solid #ddd;
+                                          border-radius:5px; background:#fff; white-space:nowrap;">
+                                    ✏ Editar
+                                </a>
+                                <form th:action="@{/aura-gestion/productos/{id}/toggle(id=${p.id})}" method="post" style="margin:0;">
+                                    <button type="submit"
+                                            th:class="${p.activo ? 'btn-toggle btn-toggle-off' : 'btn-toggle btn-toggle-on'}">
+                                        <span th:text="${p.activo ? 'Desactivar' : 'Activar'}"></span>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
