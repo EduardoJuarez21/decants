@@ -149,15 +149,6 @@
                     </div>
                 </th:block>
             </div>
-            <div th:if="${esAdmin and (!comisionProductosSinCosto.isEmpty() or comisionHuboItemsSinProducto)}"
-                 style="background:#fff8e6; border:1px solid #f0d896; border-radius:8px; padding:0.75rem 1rem; margin-bottom:1.25rem; font-size:0.8rem; color:#8a6d1f;">
-                ⚠️ Ganancia estimada: no se pudo calcular el costo de
-                <span th:if="${!comisionProductosSinCosto.isEmpty()}"
-                      th:text="${#strings.listJoin(comisionProductosSinCosto, ', ')}"></span>
-                <span th:if="${!comisionProductosSinCosto.isEmpty()}"> (falta "Costo por ml" en su ficha)</span>
-                <span th:if="${!comisionProductosSinCosto.isEmpty() and comisionHuboItemsSinProducto}"> ni de </span>
-                <span th:if="${comisionHuboItemsSinProducto}">algún paquete vendido (sin costo por producto individual)</span>.
-            </div>
             <p th:if="${comisionDetalle.isEmpty()}" style="color:var(--muted); font-size:0.85rem;">Sin ventas de <span th:text="${vendedorEtiqueta}"></span> en este mes.</p>
             <div th:if="${!comisionDetalle.isEmpty()}" style="overflow-x:auto;">
                 <table class="admin-table">

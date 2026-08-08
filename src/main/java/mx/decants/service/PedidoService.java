@@ -400,12 +400,14 @@ public class PedidoService {
         boolean huboItemsSinProducto = false;
 
         for (Pedido pedido : pedidos) {
+            // factorDescuento sale de comparar lo realmente cobrado (totalPagado) contra
+            // la suma de precios de los items, en vez de depender de descuentoAplicado --
+            // asi cualquier rebaja (por % de descuento o por editar el total a mano)
+            // se refleja igual en la comision, sin importar como se haya capturado.
             double factorDescuento = 1.0;
-            if (pedido.getDescuentoAplicado() != null && pedido.getDescuentoAplicado() > 0) {
-                int subtotalPedido = pedido.getItems().stream().mapToInt(PedidoItem::getSubtotal).sum();
-                if (subtotalPedido > 0) {
-                    factorDescuento = 1.0 - (pedido.getDescuentoAplicado() / (double) subtotalPedido);
-                }
+            int subtotalPedido = pedido.getItems().stream().mapToInt(PedidoItem::getSubtotal).sum();
+            if (subtotalPedido > 0 && pedido.getTotalPagado() != null) {
+                factorDescuento = pedido.getTotalPagado() / (double) subtotalPedido;
             }
 
             for (PedidoItem item : pedido.getItems()) {
