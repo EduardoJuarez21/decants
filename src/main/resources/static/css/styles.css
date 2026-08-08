@@ -1061,7 +1061,7 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 .admin-table td {
   padding: 0.95rem 1.2rem;
   border-bottom: 1px solid #f0f0f0;
-  color: var(--dark); vertical-align: middle;
+  color: var(--dark); vertical-align: top;
 }
 .admin-table tr:last-child td { border-bottom: none; }
 .admin-table tr:hover td { background: #fafafa; }
