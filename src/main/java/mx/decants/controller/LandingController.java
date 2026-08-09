@@ -117,12 +117,16 @@ public class LandingController {
     }
 
     @GetMapping({"/catalogo-pdf", "/pdf"})
-    public ResponseEntity<Resource> catalogoPdf(@RequestParam(value = "ref", required = false) String ref) {
+    public ResponseEntity<Resource> catalogoPdf(@RequestParam(value = "ref", required = false) String ref,
+                                                 @RequestParam(value = "modo", required = false) String modo) {
         visitaService.registrarDescargaCatalogo(ref);
         Resource pdf = new ClassPathResource("static/catalogo/catalogo-vigente.pdf");
+        String disposicion = "ver".equals(modo)
+                ? "inline; filename=\"catalogo-aura-decants.pdf\""
+                : "attachment; filename=\"catalogo-aura-decants.pdf\"";
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"catalogo-aura-decants.pdf\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposicion)
                 .body(pdf);
     }
 
