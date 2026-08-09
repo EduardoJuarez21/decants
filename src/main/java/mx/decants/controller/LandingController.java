@@ -121,9 +121,9 @@ public class LandingController {
                                                  @RequestParam(value = "modo", required = false) String modo) {
         visitaService.registrarDescargaCatalogo(ref);
         Resource pdf = new ClassPathResource("static/catalogo/catalogo-vigente.pdf");
-        String disposicion = "ver".equals(modo)
-                ? "inline; filename=\"catalogo-aura-decants.pdf\""
-                : "attachment; filename=\"catalogo-aura-decants.pdf\"";
+        String disposicion = "descargar".equals(modo)
+                ? "attachment; filename=\"catalogo-aura-decants.pdf\""
+                : "inline; filename=\"catalogo-aura-decants.pdf\"";
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, disposicion)
