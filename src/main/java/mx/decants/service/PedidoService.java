@@ -439,6 +439,7 @@ public class PedidoService {
                 fila.put("precioUnitario", item.getPrecioUnitario() * factorDescuento);
                 fila.put("fecha", pedido.getFechaCreacion());
                 fila.put("subtotal", subtotal);
+                fila.put("observaciones", pedido.getObservaciones());
                 detalle.add(fila);
             }
         }
