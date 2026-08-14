@@ -14,6 +14,7 @@ import mx.decants.service.ProductoService;
 import mx.decants.service.ResenaService;
 import mx.decants.service.VendedorService;
 import mx.decants.service.VisitaService;
+import mx.decants.util.SlugUtil;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -358,11 +359,7 @@ public class AdminController {
                                 @RequestParam(value = "imagenCaracteristicas", required = false) MultipartFile imagenCaracteristicas,
                                 RedirectAttributes ra) {
         try {
-            String slug = nombre.trim().toLowerCase()
-                .replaceAll("[áàäâã]", "a").replaceAll("[éèëê]", "e")
-                .replaceAll("[íìïî]", "i").replaceAll("[óòöôõ]", "o")
-                .replaceAll("[úùüû]", "u").replaceAll("[ñ]", "n")
-                .replaceAll("[^a-z0-9]+", "-").replaceAll("^-|-$", "");
+            String slug = SlugUtil.slugify(nombre.trim());
 
             String pathPrincipal = imagenService.guardarYConvertir(imagenPrincipal, categoria, genero, slug);
             String pathCar = null;

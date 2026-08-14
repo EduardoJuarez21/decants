@@ -2,6 +2,7 @@ package mx.decants.service;
 
 import mx.decants.entity.Producto;
 import mx.decants.repository.ProductoRepository;
+import mx.decants.util.SlugUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -166,7 +168,7 @@ public class ProductoService {
         p.setBestSeller(bestSeller);
         p.setImagenPrincipal(imagenPrincipal);
         p.setImagenCaracteristicas(imagenCaracteristicas);
-        p.setClaseCss("pi-" + slugificar(nombre.trim()));
+        p.setClaseCss("pi-" + SlugUtil.slugify(nombre.trim()));
         p.setCalificacion(4.8);
         p.setSoloItem(false);
         p.setActivo(true);
@@ -174,14 +176,25 @@ public class ProductoService {
         p.setProveedor(proveedor != null && !proveedor.isBlank() ? proveedor.trim() : null);
         p.setCostoPorMl(costoPorMl != null && costoPorMl > 0 ? costoPorMl : null);
         p.setMarkup(markup != null && markup > 0 ? markup : configuracionService.getMarkupDefault());
+        p.setSlug(generarSlugUnico(marca, nombre));
         return productoRepository.save(p);
     }
 
-    private static String slugificar(String texto) {
-        return texto.toLowerCase()
-            .replaceAll("[áàäâã]", "a").replaceAll("[éèëê]", "e")
-            .replaceAll("[íìïî]", "i").replaceAll("[óòöôõ]", "o")
-            .replaceAll("[úùüû]", "u").replaceAll("[ñ]", "n")
-            .replaceAll("[^a-z0-9]+", "-").replaceAll("^-|-$", "");
+    /** Slug estable para la URL publica /perfume/{slug} -- se genera una sola vez al
+        crear el producto y no se vuelve a tocar aunque despues se edite el nombre,
+        para no romper links ya compartidos o indexados por Google. */
+    public String generarSlugUnico(String marca, String nombre) {
+        String base = SlugUtil.slugify(marca.trim() + "-" + nombre.trim());
+        String slug = base;
+        int sufijo = 2;
+        while (productoRepository.existsBySlug(slug)) {
+            slug = base + "-" + sufijo++;
+        }
+        return slug;
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Producto> buscarPorSlugActivo(String slug) {
+        return productoRepository.findBySlugAndActivoTrue(slug);
     }
 }

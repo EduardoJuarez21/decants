@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /aura-gestion
+
+Sitemap: https://auradecantsmx.com/sitemap.xml

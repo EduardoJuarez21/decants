@@ -192,11 +192,13 @@
 
             <div class="product-card" th:each="p : ${productosDesigner}" th:data-filter="${p.genero}">
                 <div th:class="|product-image-area ${p.claseCss}${p.imagenCaracteristicas != null ? ' has-hover-img' : ''}|">
-                    <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img" loading="lazy" decoding="async">
-                    <img th:if="${p.imagenCaracteristicas != null}"
-                         th:src="@{${p.imagenCaracteristicas}}"
-                         th:alt="|Características ${p.nombre}|"
-                         class="product-img-hover" loading="lazy" decoding="async">
+                    <a th:href="@{/perfume/{slug}(slug=${p.slug})}">
+                        <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img" loading="lazy" decoding="async">
+                        <img th:if="${p.imagenCaracteristicas != null}"
+                             th:src="@{${p.imagenCaracteristicas}}"
+                             th:alt="|Características ${p.nombre}|"
+                             class="product-img-hover" loading="lazy" decoding="async">
+                    </a>
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
                     <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="badge-promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
                     <span th:if="${p.stock != null and p.stock == 0}"
@@ -329,11 +331,13 @@
 
             <div class="product-card" th:each="p : ${productosArabe}" th:data-filter="${p.genero}">
                 <div th:class="|product-image-area ${p.claseCss}${p.imagenCaracteristicas != null ? ' has-hover-img' : ''}|">
-                    <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img" loading="lazy" decoding="async">
-                    <img th:if="${p.imagenCaracteristicas != null}"
-                         th:src="@{${p.imagenCaracteristicas}}"
-                         th:alt="|Características ${p.nombre}|"
-                         class="product-img-hover" loading="lazy" decoding="async">
+                    <a th:href="@{/perfume/{slug}(slug=${p.slug})}">
+                        <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" class="product-img" loading="lazy" decoding="async">
+                        <img th:if="${p.imagenCaracteristicas != null}"
+                             th:src="@{${p.imagenCaracteristicas}}"
+                             th:alt="|Características ${p.nombre}|"
+                             class="product-img-hover" loading="lazy" decoding="async">
+                    </a>
                     <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
                     <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="badge-promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
                     <span th:if="${p.stock != null and p.stock == 0}"
@@ -1158,15 +1162,6 @@
 <!-- Toast notification -->
 <div class="cart-toast" id="cartToast"></div>
 
-<!-- Lightbox características -->
-<div class="lb-overlay" id="lbOverlay" onclick="closeLightbox()">
-    <button class="lb-close" onclick="closeLightbox()">✕</button>
-    <div class="lb-content" onclick="event.stopPropagation()">
-        <img class="lb-img" id="lbImg" src="" alt="">
-        <div class="lb-thumbs" id="lbThumbs" style="display:none;"></div>
-    </div>
-</div>
-
 <!-- ═══════════════════════════════════════════════════════════
      FOOTER
 ════════════════════════════════════════════════════════════ -->
@@ -1698,7 +1693,6 @@
                 document.getElementById(cuerpoId).innerHTML = newEl.innerHTML;
                 history.pushState(null, '', cleanHref);
                 updateProductButtons();
-                bindLightbox(document.getElementById(cuerpoId));
                 if (scrollToId) {
                     var anchor = document.getElementById(scrollToId);
                     if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1877,62 +1871,6 @@
 
     inicializarVerMas('grid-designer', 'grid-designer-ver-mas');
     inicializarVerMas('grid-arabe', 'grid-arabe-ver-mas');
-
-    /* ── Lightbox características ── */
-    function openLightbox(imgs, startIdx) {
-        var lbImg    = document.getElementById('lbImg');
-        var lbThumbs = document.getElementById('lbThumbs');
-
-        lbImg.src = imgs[startIdx].src;
-        lbImg.alt = imgs[startIdx].alt;
-
-        lbThumbs.innerHTML = '';
-        if (imgs.length > 1) {
-            lbThumbs.style.display = 'flex';
-            imgs.forEach(function(img, i) {
-                var t = document.createElement('img');
-                t.src = img.src;
-                t.alt = img.alt;
-                t.className = 'lb-thumb' + (i === startIdx ? ' active' : '');
-                t.addEventListener('click', function() {
-                    lbImg.src = img.src;
-                    lbImg.alt = img.alt;
-                    lbThumbs.querySelectorAll('.lb-thumb').forEach(function(el) { el.classList.remove('active'); });
-                    t.classList.add('active');
-                });
-                lbThumbs.appendChild(t);
-            });
-        } else {
-            lbThumbs.style.display = 'none';
-        }
-
-        document.getElementById('lbOverlay').classList.add('open');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function bindLightbox(scope) {
-        (scope || document).querySelectorAll('.product-image-area').forEach(function(area) {
-            if (area._lbBound) return;
-            area._lbBound = true;
-            area.addEventListener('click', function(e) {
-                if (e.target.classList.contains('product-add-btn') || e.target.closest('.product-add-btn')) return;
-                var mainImg  = area.querySelector('.product-img');
-                if (!mainImg) return;
-                var hoverImg = area.querySelector('.product-img-hover');
-                openLightbox(hoverImg ? [mainImg, hoverImg] : [mainImg], 0);
-            });
-        });
-    }
-    bindLightbox();
-
-    function closeLightbox() {
-        document.getElementById('lbOverlay').classList.remove('open');
-        document.body.style.overflow = '';
-    }
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closeLightbox();
-    });
 
     /* ── FAQ accordion ── */
     function toggleFaq(btn) {

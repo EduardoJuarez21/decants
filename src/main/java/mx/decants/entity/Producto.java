@@ -42,6 +42,9 @@ public class Producto {
     @Column(nullable = false)
     private String claseCss;
 
+    @Column(unique = true)
+    private String slug;             // URL publica /perfume/{slug} -- se genera una vez y no cambia
+
     @Column(nullable = false)
     private Integer precio;          // precio 10 ml (o único)
 
@@ -123,6 +126,9 @@ public class Producto {
 
     public String getClaseCss() { return claseCss; }
     public void setClaseCss(String claseCss) { this.claseCss = claseCss; }
+
+    public String getSlug() { return slug; }
+    public void setSlug(String slug) { this.slug = slug; }
 
     public Integer getPrecio() { return precio; }
     public void setPrecio(Integer precio) { this.precio = precio; }

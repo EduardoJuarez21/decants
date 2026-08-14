@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
@@ -24,4 +25,10 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     Page<Producto> findByCategoriaAndGeneroAndActivoTrue(String categoria, String genero, Pageable pageable);
 
     Page<Producto> findByCategoriaAndGeneroInAndActivoTrue(String categoria, List<String> generos, Pageable pageable);
+
+    Optional<Producto> findBySlugAndActivoTrue(String slug);
+
+    boolean existsBySlug(String slug);
+
+    List<Producto> findBySlugIsNull();
 }

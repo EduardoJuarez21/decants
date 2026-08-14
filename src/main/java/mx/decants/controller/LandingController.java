@@ -2,21 +2,26 @@ package mx.decants.controller;
 
 import mx.decants.entity.Cupon;
 import mx.decants.entity.Kit;
+import mx.decants.entity.Producto;
 import mx.decants.repository.CuponRepository;
 import mx.decants.repository.KitRepository;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.ResenaService;
 import mx.decants.service.VisitaService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -33,6 +38,9 @@ public class LandingController {
     private final KitRepository kitRepository;
     private final VisitaService visitaService;
     private final ResenaService resenaService;
+
+    @Value("${app.base-url:https://auradecantsmx.com}")
+    private String baseUrl;
 
     public LandingController(ProductoService productoService,
                              ConfiguracionService configuracionService,
@@ -128,6 +136,18 @@ public class LandingController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, disposicion)
                 .body(pdf);
+    }
+
+    @GetMapping("/perfume/{slug}")
+    public String producto(@PathVariable String slug, Model model) {
+        Producto producto = productoService.buscarPorSlugActivo(slug)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        model.addAttribute("producto", producto);
+        model.addAttribute("waNumero", configuracionService.getWhatsappNegocio());
+        model.addAttribute("baseUrl", baseUrl);
+
+        return "producto";
     }
 
     @GetMapping("/terminos")

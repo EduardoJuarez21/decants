@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${producto.marca + ' ' + producto.nombre + ' — Decant desde $' + (producto.precio3ml != null ? producto.precio3ml : producto.precio) + ' MXN | Aura Decants MX'}"></title>
+    <meta name="description"
+          th:content="|Decant de ${producto.marca} ${producto.nombre} en 3, 5 y 10 ml. ${producto.familia}. Perfume 100% original, envíos a toda la República Mexicana.|">
+    <link rel="canonical" th:href="${baseUrl + '/perfume/' + producto.slug}">
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+
+    <!-- Open Graph (preview en WhatsApp, Instagram, etc.) -->
+    <meta property="og:type"        content="product">
+    <meta property="og:url"         th:content="${baseUrl + '/perfume/' + producto.slug}">
+    <meta property="og:title"       th:content="|${producto.marca} ${producto.nombre} — Aura Decants MX|">
+    <meta property="og:description" th:content="|Decant original en 3, 5 y 10 ml. ${producto.familia}|">
+    <meta property="og:image"       th:content="${baseUrl + producto.imagenPrincipal}">
+    <meta name="twitter:card"       content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        body { background: #faf8f5; }
+
+        .prod-nav {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.5rem; background: #1a1a1a;
+        }
+        .prod-nav-cart {
+            position: relative; color: #fff; background: none; border: none; cursor: pointer;
+        }
+        .prod-nav-cart .cart-badge {
+            position: absolute; top: -6px; right: -8px;
+        }
+
+        .prod-wrap {
+            max-width: 960px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem;
+        }
+        .prod-back {
+            display: inline-block; font-size: 0.82rem; color: var(--muted);
+            text-decoration: none; margin-bottom: 1.25rem;
+        }
+        .prod-back:hover { color: var(--gold); }
+
+        .prod-grid {
+            display: grid; grid-template-columns: 1fr; gap: 1.5rem;
+        }
+        @media (min-width: 720px) {
+            .prod-grid { grid-template-columns: 380px 1fr; gap: 2.5rem; }
+        }
+
+        .prod-img-wrap {
+            background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #ececec;
+        }
+        .prod-img-wrap img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+        .prod-img-hover-wrap {
+            margin-top: 0.75rem; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #ececec;
+        }
+        .prod-img-hover-wrap img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+
+        .prod-badges { display: flex; gap: 0.4rem; margin-bottom: 0.6rem; }
+        .prod-brand {
+            font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.8px; color: var(--muted);
+        }
+        .prod-concentracion {
+            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.6px; color: var(--muted); opacity: 0.7; margin-left: 0.5rem;
+        }
+        .prod-name {
+            font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 600;
+            color: #1a1a1a; margin: 0.25rem 0 0.15rem;
+        }
+        .prod-family { font-size: 0.92rem; color: var(--muted); font-style: italic; margin: 0 0 0.75rem; }
+        .prod-notas { font-size: 0.88rem; color: #555; margin: 0 0 0.75rem; }
+        .prod-inspiracion { font-size: 0.8rem; color: var(--muted); font-style: italic; margin: 0 0 1rem; }
+
+        .prod-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; }
+
+        .prod-precios {
+            display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem;
+        }
+        .prod-precio-box {
+            background: #fff; border: 1.5px solid #e0e0e0; border-radius: 10px;
+            padding: 0.75rem 1.1rem; text-align: center; cursor: pointer;
+            transition: border-color 0.15s;
+        }
+        .prod-precio-box:hover { border-color: var(--gold); }
+        .prod-precio-label { display: block; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.2rem; }
+        .prod-precio-old { display: block; font-size: 0.72rem; color: var(--muted); text-decoration: line-through; }
+        .prod-precio-actual { display: block; font-size: 1.15rem; font-weight: 700; color: #1a1a1a; }
+        .prod-precio-promo .prod-precio-actual { color: #c0392b; }
+
+        .prod-toast {
+            position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: #1a1a1a; color: #fff; padding: 0.7rem 1.4rem; border-radius: 30px;
+            font-size: 0.85rem; opacity: 0; pointer-events: none; transition: all 0.25s ease; z-index: 999;
+        }
+        .prod-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+<nav class="prod-nav">
+    <a th:href="@{/}" style="display:flex; align-items:center; gap:0.5rem; text-decoration:none;">
+        <img th:src="@{/img/logo-navbar.webp}" alt="Aura Decants" style="height:40px; width:auto; object-fit:contain;">
+    </a>
+    <a th:href="@{/}" class="prod-nav-cart" aria-label="Ver carrito">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="cart-badge" id="prodCartBadge" style="display:none;">0</span>
+    </a>
+</nav>
+
+<div class="prod-wrap">
+    <a th:href="@{/catalogo}" class="prod-back">&#8592; Volver al catálogo</a>
+
+    <div class="prod-grid">
+        <div>
+            <div class="prod-img-wrap">
+                <img th:src="@{${producto.imagenPrincipal}}" th:alt="${producto.nombre}">
+            </div>
+            <div class="prod-img-hover-wrap" th:if="${producto.imagenCaracteristicas != null}">
+                <img th:src="@{${producto.imagenCaracteristicas}}" th:alt="|Características ${producto.nombre}|">
+            </div>
+        </div>
+
+        <div>
+            <div class="prod-badges">
+                <span th:if="${producto.bestSeller}" class="badge-bestseller">Best Seller</span>
+                <span th:if="${producto.stock != null and producto.stock == 0}" class="badge-bestseller" style="background:#c0392b; color:#fff;">Agotado</span>
+                <span th:if="${producto.promoActivo and producto.descuentoPorcentaje != null}" class="badge-promo" th:text="|-${producto.descuentoPorcentaje}%|"></span>
+            </div>
+            <span class="prod-brand" th:text="${producto.marca}"></span>
+            <span class="prod-concentracion" th:if="${producto.concentracion != null}" th:text="${producto.concentracion}"></span>
+            <h1 class="prod-name" th:text="${producto.nombre}"></h1>
+            <p class="prod-family" th:text="${producto.familia}"></p>
+            <p class="prod-notas" th:if="${producto.notas != null and !producto.notas.isBlank()}" th:text="${producto.notas}"></p>
+            <p class="prod-inspiracion" th:if="${producto.inspiracion != null and !producto.inspiracion.isBlank()}" th:text="${producto.inspiracion}"></p>
+
+            <div class="prod-tags" th:if="${producto.caracteristicas != null and !producto.caracteristicas.isBlank()}">
+                <span class="tag-pill" th:each="tag : ${#strings.arraySplit(producto.caracteristicas, '·')}" th:text="${#strings.trim(tag)}"></span>
+            </div>
+
+            <div class="prod-precios" th:if="${producto.stock == null or producto.stock > 0}">
+                <div class="prod-precio-box" th:if="${producto.precio3ml != null}"
+                     th:classappend="${producto.precio3mlConDescuento != null} ? ' prod-precio-promo'"
+                     th:data-id="${producto.id}" th:data-name="|${producto.nombre} 3ml|"
+                     th:data-price="${producto.precio3mlConDescuento != null ? producto.precio3mlConDescuento : producto.precio3ml}"
+                     data-variant="3ml" onclick="agregarAlCarritoBtn(this)">
+                    <span class="prod-precio-label">3 ml</span>
+                    <span class="prod-precio-old" th:if="${producto.precio3mlConDescuento != null}" th:text="|$${producto.precio3ml}|"></span>
+                    <span class="prod-precio-actual" th:text="|$${producto.precio3mlConDescuento != null ? producto.precio3mlConDescuento : producto.precio3ml}|"></span>
+                </div>
+                <div class="prod-precio-box" th:if="${producto.precio5ml != null}"
+                     th:classappend="${producto.precio5mlConDescuento != null} ? ' prod-precio-promo'"
+                     th:data-id="${producto.id}" th:data-name="|${producto.nombre} 5ml|"
+                     th:data-price="${producto.precio5mlConDescuento != null ? producto.precio5mlConDescuento : producto.precio5ml}"
+                     data-variant="5ml" onclick="agregarAlCarritoBtn(this)">
+                    <span class="prod-precio-label">5 ml</span>
+                    <span class="prod-precio-old" th:if="${producto.precio5mlConDescuento != null}" th:text="|$${producto.precio5ml}|"></span>
+                    <span class="prod-precio-actual" th:text="|$${producto.precio5mlConDescuento != null ? producto.precio5mlConDescuento : producto.precio5ml}|"></span>
+                </div>
+                <div class="prod-precio-box"
+                     th:classappend="${producto.precioConDescuento != null} ? ' prod-precio-promo'"
+                     th:data-id="${producto.id}" th:data-name="|${producto.nombre} 10ml|"
+                     th:data-price="${producto.precioConDescuento != null ? producto.precioConDescuento : producto.precio}"
+                     data-variant="10ml" onclick="agregarAlCarritoBtn(this)">
+                    <span class="prod-precio-label">10 ml</span>
+                    <span class="prod-precio-old" th:if="${producto.precioConDescuento != null}" th:text="|$${producto.precio}|"></span>
+                    <span class="prod-precio-actual" th:text="|$${producto.precioConDescuento != null ? producto.precioConDescuento : producto.precio}|"></span>
+                </div>
+            </div>
+            <p th:if="${producto.stock != null and producto.stock == 0}" style="color:#c0392b; font-size:0.9rem; margin-bottom:1.5rem;">
+                Este perfume está agotado por el momento.
+            </p>
+            <p style="font-size:0.78rem; color:var(--muted); margin-top:-1rem; margin-bottom:1.5rem;">
+                Toca un tamaño para agregarlo a tu carrito.
+            </p>
+
+            <div th:if="${producto.precioBotella != null and (producto.stockBotella == null or producto.stockBotella > 0)}" class="botella-cta">
+                <a th:href="${'https://wa.me/' + waNumero + '?text=' + #uris.escapeQueryParam('Hola! Me interesa el frasco completo de ' + producto.marca + ' ' + producto.nombre + ' (' + producto.mlBotella + 'ml) — $' + producto.precioBotella + '. ¿Está disponible?')}"
+                   target="_blank" rel="noopener" class="botella-cta-link">
+                    <span class="botella-cta-text">También disponible en<br>botella completa</span>
+                    <span class="botella-cta-action">Consultar precio →</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <span class="brand">Aura Decants</span>
+        <p>Perfumes originales en decants de 3, 5 y 10 ml.</p>
+        <p style="margin-top:0.5rem;">
+            <a th:href="@{/pedido/seguimiento}"
+               style="color:rgba(255,255,255,0.55); font-size:0.78rem; text-decoration:none;">
+                &#128230; Rastrear mi pedido
+            </a>
+            &nbsp;&nbsp;·&nbsp;&nbsp;
+            <a th:href="@{/terminos}"
+               style="color:rgba(255,255,255,0.55); font-size:0.78rem; text-decoration:none;">
+                Términos y Condiciones
+            </a>
+        </p>
+        <p style="margin-top: 0.4rem;">&copy; 2026 Aura Decants. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<div class="prod-toast" id="prodToast"></div>
+
+<script>
+    /* Carrito minimo: agrega al mismo localStorage ('decants_cart') que usa
+       el home, con el mismo formato de item, para que el drawer del home
+       (que ya existe y funciona) lo recoja normal. No se porta aqui toda la
+       logica de paquetes/cupon/envio del home -- esta pagina es de
+       aterrizaje/SEO, comprar de verdad se sigue haciendo desde el sitio. */
+    function agregarAlCarritoBtn(btn) {
+        var id = btn.dataset.id ? parseInt(btn.dataset.id) : null;
+        var name = btn.dataset.name;
+        var price = parseInt(btn.dataset.price);
+        var variant = btn.dataset.variant || '10ml';
+
+        var cart = JSON.parse(localStorage.getItem('decants_cart') || '[]');
+        var existing = cart.find(function(i) { return i.name === name; });
+        if (existing) { existing.qty++; } else { cart.push({ id:id, name:name, price:price, qty:1, variant:variant }); }
+        localStorage.setItem('decants_cart', JSON.stringify(cart));
+        actualizarBadge(cart);
+        mostrarToast('Agregado al carrito ✓');
+    }
+
+    function actualizarBadge(cart) {
+        cart = cart || JSON.parse(localStorage.getItem('decants_cart') || '[]');
+        var count = cart.reduce(function(sum, i) { return sum + i.qty; }, 0);
+        var badge = document.getElementById('prodCartBadge');
+        if (count > 0) { badge.textContent = count; badge.style.display = ''; }
+        else { badge.style.display = 'none'; }
+    }
+
+    var toastTimer = null;
+    function mostrarToast(msg) {
+        var toast = document.getElementById('prodToast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 2200);
+    }
+
+    actualizarBadge();
+</script>
+</body>
+</html>
