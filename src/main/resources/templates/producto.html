@@ -58,7 +58,7 @@
         .prod-img-hover-wrap {
             margin-top: 0.75rem; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid #ececec;
         }
-        .prod-img-hover-wrap img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
+        .prod-img-hover-wrap img { width: 100%; height: auto; display: block; }
 
         .prod-badges { display: flex; gap: 0.4rem; margin-bottom: 0.6rem; }
         .prod-brand {
@@ -114,7 +114,7 @@
 </nav>
 
 <div class="prod-wrap">
-    <a th:href="@{/catalogo}" class="prod-back">&#8592; Volver al catálogo</a>
+    <a th:href="@{/}" class="prod-back">&#8592; Volver al catálogo</a>
 
     <div class="prod-grid">
         <div>
