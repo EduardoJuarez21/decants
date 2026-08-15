@@ -127,13 +127,15 @@ public class PedidoService {
         if (dto.getLongitud() != null && !dto.getLongitud().isBlank()) {
             try { pedido.setLongitud(Double.parseDouble(dto.getLongitud())); } catch (NumberFormatException ignored) {}
         }
-        if (esLocal) {
-            pedido.setEstadoPedido(EstadoPedido.CREADO);
-            pedido.setEntorno("local");
-        } else {
-            pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
-            pedido.setEntorno(configuracionService.getStripeModo());
-        }
+        // El estado inicial depende de si el pago pasa por Stripe (nacional, o
+        // local que eligio pagar con tarjeta) o no (local contra entrega).
+        // "entorno" en cambio siempre marca "local" para entregas locales sin
+        // importar el metodo de pago -- otros servicios (EmailService,
+        // TelegramService, el CSV, las restricciones de estado del admin) lo
+        // usan para saber si es entrega local, no el modo de Stripe.
+        boolean pasaPorStripe = !esLocal || dto.isPagarConTarjeta();
+        pedido.setEstadoPedido(pasaPorStripe ? EstadoPedido.PENDIENTE_PAGO : EstadoPedido.CREADO);
+        pedido.setEntorno(esLocal ? "local" : configuracionService.getStripeModo());
         pedido.setCliente(encontrarOCrearCliente(dto));
         Pedido saved = pedidoRepository.save(pedido);
         log.info("Pedido #{} creado — cliente: {}, total: ${} MXN, entrega: {}, productos: {}",
