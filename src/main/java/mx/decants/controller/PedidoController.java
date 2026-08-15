@@ -97,8 +97,10 @@ public class PedidoController {
             return "redirect:/pedido/nuevo";
         }
 
-        // Entrega local: sin Stripe, pago contra entrega
-        if ("local".equalsIgnoreCase(dto.getTipoEntrega())) {
+        // Entrega local con pago contra entrega: sin Stripe. Si el cliente local
+        // eligio pagar con tarjeta, sigue el mismo flujo de Stripe que un pedido
+        // nacional (asi puede acceder a meses sin intereses).
+        if (esLocal && !dto.isPagarConTarjeta()) {
             redirectAttributes.addFlashAttribute("pedido", pedido);
             redirectAttributes.addFlashAttribute("pagado", false);
             redirectAttributes.addFlashAttribute("entregaLocal", true);

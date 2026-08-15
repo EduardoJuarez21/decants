@@ -194,7 +194,31 @@
                      background:#e8f5e9; border:1px solid #a5d6a7; border-radius:10px;
                      padding:0.9rem 1.1rem; font-size:0.84rem; color:#1b5e20; line-height:1.6;">
                     &#127968; <strong>Entrega personal en Nuevo León</strong><br>
-                    Sin costo de envío. <strong>El pago se realiza al momento de la entrega (contra entrega).</strong>
+                    Sin costo de envío.
+                </div>
+
+                <!-- Metodo de pago para entrega local -->
+                <input type="hidden" th:field="*{pagarConTarjeta}" id="pagarConTarjetaInput">
+                <div id="metodoPagoLocalSection" class="full-width" style="display:none; margin-top:0.75rem;">
+                    <label style="display:block; font-size:0.9rem; font-weight:600; margin-bottom:0.6rem;">
+                        ¿Cómo prefieres pagar?
+                    </label>
+                    <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                        <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; font-size:0.87rem;">
+                            <input type="radio" name="metodoPagoLocal" value="contraentrega" checked
+                                   onchange="cambiarMetodoPagoLocal(this.value)" style="margin-top:0.2rem;">
+                            <span><strong>Pago contra entrega</strong><br>
+                                <span style="color:var(--muted); font-size:0.82rem;">Efectivo o transferencia al momento de recibir tu pedido.</span>
+                            </span>
+                        </label>
+                        <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; font-size:0.87rem;">
+                            <input type="radio" name="metodoPagoLocal" value="tarjeta"
+                                   onchange="cambiarMetodoPagoLocal(this.value)" style="margin-top:0.2rem;">
+                            <span><strong>Pagar con tarjeta ahora</strong><br>
+                                <span style="color:var(--muted); font-size:0.82rem;">Acepta meses sin intereses con tarjetas participantes.</span>
+                            </span>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- CP para entrega local -->
@@ -445,14 +469,24 @@
             _esLocal = true;
             document.getElementById('tipoEntregaInput').value = 'local';
             document.getElementById('entregaLocalNotice').style.display = 'block';
+            document.getElementById('metodoPagoLocalSection').style.display = 'block';
             document.getElementById('cpLocalSection').style.display = 'block';
-            var btn = document.getElementById('submitBtn');
-            if (btn) btn.textContent = 'Confirmar pedido (pago contra entrega)';
+            cambiarMetodoPagoLocal('contraentrega');
             // Ocultar sección de dirección nacional
             var addrSection = document.getElementById('addressSection');
             if (addrSection) addrSection.style.display = 'none';
         }
     })();
+
+    function cambiarMetodoPagoLocal(valor) {
+        document.getElementById('pagarConTarjetaInput').value = (valor === 'tarjeta');
+        var btn = document.getElementById('submitBtn');
+        if (btn) {
+            btn.textContent = valor === 'tarjeta'
+                ? 'Continuar al pago con tarjeta'
+                : 'Confirmar pedido (pago contra entrega)';
+        }
+    }
 
     initForm();
 </script>

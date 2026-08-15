@@ -57,6 +57,11 @@ public class PedidoDTO {
     @Pattern(regexp = "^[0-9]{5}$", message = "El código postal debe tener 5 dígitos")
     private String codigoPostal;
 
+    // Solo aplica cuando tipoEntrega = "local". Si es true, el pedido pasa
+    // por Stripe Checkout (permite meses sin intereses) en vez del flujo de
+    // pago contra entrega.
+    private boolean pagarConTarjeta;
+
     // --- Getters & Setters ---
 
     public String getNombreCliente() { return nombreCliente; }
@@ -112,4 +117,7 @@ public class PedidoDTO {
 
     public String getCodigoPostal() { return codigoPostal; }
     public void setCodigoPostal(String codigoPostal) { this.codigoPostal = codigoPostal; }
+
+    public boolean isPagarConTarjeta() { return pagarConTarjeta; }
+    public void setPagarConTarjeta(boolean pagarConTarjeta) { this.pagarConTarjeta = pagarConTarjeta; }
 }
