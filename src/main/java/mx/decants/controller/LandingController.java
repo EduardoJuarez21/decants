@@ -86,6 +86,7 @@ public class LandingController {
         model.addAttribute("textoEnvioLocal",   configuracionService.getTextoEnvioLocal());
         model.addAttribute("waNumero",          configuracionService.getWhatsappNegocio());
         model.addAttribute("resenas",           resenaService.listarAprobadas());
+        model.addAttribute("msiMontoMinimo",    configuracionService.getMsiMontoMinimo());
 
         Map<String, Kit> kitsMap = kitRepository.findAllByOrderByOrdenAsc().stream()
                 .collect(Collectors.toMap(Kit::getSlug, k -> k));

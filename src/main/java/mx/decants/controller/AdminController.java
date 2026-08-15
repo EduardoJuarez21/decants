@@ -682,7 +682,15 @@ public class AdminController {
         model.addAttribute("emailSmtpPort",       configuracionService.get("email_smtp_port", "587"));
         model.addAttribute("emailFrom",           configuracionService.get("email_from", ""));
         model.addAttribute("markupDefault",       configuracionService.getMarkupDefault());
+        model.addAttribute("msiMontoMinimo",      configuracionService.getMsiMontoMinimo());
         return "admin/configuracion";
+    }
+
+    @PostMapping("/configuracion/msi")
+    public String guardarMsiMontoMinimo(@RequestParam int msiMontoMinimo, RedirectAttributes ra) {
+        configuracionService.setMsiMontoMinimo(msiMontoMinimo);
+        ra.addFlashAttribute("mensaje", "Monto mínimo de meses sin intereses actualizado.");
+        return "redirect:/aura-gestion/configuracion";
     }
 
     @PostMapping("/configuracion/markup")

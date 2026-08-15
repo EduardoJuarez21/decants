@@ -91,6 +91,28 @@ section      { padding: 6rem 2rem; }
 }
 .promo-bar-link:hover { color: #fff; }
 
+/* ── Galería ───────────────────────────────────────────────── */
+.galeria-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  max-width: 900px;
+  margin: 2.5rem auto 0;
+}
+@media (min-width: 720px) {
+  .galeria-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.galeria-grid img {
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform var(--ease);
+}
+.galeria-grid img:hover { transform: scale(1.03); }
+
 /* ── Meses sin intereses ───────────────────────────────────── */
 .msi-banner { background: var(--gold); }
 .msi-banner-inner {

@@ -100,6 +100,7 @@
         <li><a href="#nicho-arabe">Perfumería Árabe</a></li>
         <li style="display:none;"><a href="#paquetes">Kits</a></li>
         <li><a href="#faq">FAQ</a></li>
+        <li><a href="#galeria">Galería</a></li>
         <li><a href="#resenas">Reseñas</a></li>
         <li><a href="#contacto">Contacto</a></li>
         <li><a th:href="@{/pedido/seguimiento}">Rastrear pedido</a></li>
@@ -131,7 +132,7 @@
             </h1>
             <p class="hero-sub fade-up fade-up-3">
                 Prueba tu próxima fragancia sin comprar la botella completa.<br>
-                Personalización incluida y envíos a todo México.
+                Paga a 3 o 6 meses sin intereses con tarjetas participantes.
             </p>
             <div class="btn-group fade-up fade-up-4">
                 <a href="#productos" class="btn btn-primary">Ver fragancias</a>
@@ -148,7 +149,7 @@
 <div class="msi-banner">
     <div class="container msi-banner-inner">
         <span class="msi-banner-icon">&#128179;</span>
-        <span>Paga a <strong>3 o 6 Meses Sin Intereses</strong> con tarjetas participantes</span>
+        <span>Paga a <strong>3 o 6 Meses Sin Intereses</strong> en compras desde $<span th:text="${msiMontoMinimo}">1499</span> con tarjetas participantes</span>
         <button type="button" class="msi-banner-toggle" onclick="toggleBancosMsi()">Ver bancos participantes <span id="msiChevron">&#9662;</span></button>
     </div>
     <div class="msi-bancos" id="msiBancos" style="display:none;">
@@ -915,6 +916,23 @@
     </div>
 </section>
 
+<!-- ═══════════════════════════════════════════════════════════
+     GALERÍA
+════════════════════════════════════════════════════════════ -->
+<section id="galeria" class="section-center">
+    <div class="container">
+        <div class="gold-line"></div>
+        <h2 class="section-title">Nuestro trabajo</h2>
+        <p class="section-subtitle">Así preparamos y empacamos cada decant, con cuidado y buena presentación.</p>
+
+        <div class="galeria-grid">
+            <img th:src="@{/img/galeria/galeria-proceso.jpg}" alt="Proceso de llenado de un decant" loading="lazy">
+            <img th:src="@{/img/galeria/galeria-vials.jpg}" alt="Decants de distintas fragancias" loading="lazy">
+            <img th:src="@{/img/galeria/galeria-bolsas.jpg}" alt="Decants empacados en bolsas Aura Decants" loading="lazy">
+            <img th:src="@{/img/galeria/galeria-regalo.jpg}" alt="Decant en presentación de regalo" loading="lazy">
+        </div>
+    </div>
+</section>
 
 <!-- ═══════════════════════════════════════════════════════════
      RESEÑAS

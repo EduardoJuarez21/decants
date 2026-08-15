@@ -73,4 +73,15 @@ public class ConfiguracionService {
     public void setMarkupDefault(double markup) {
         set("markup_default", String.valueOf(markup));
     }
+
+    @Transactional(readOnly = true)
+    public int getMsiMontoMinimo() {
+        try { return Integer.parseInt(get("msi_monto_minimo", "1499")); }
+        catch (NumberFormatException e) { return 1499; }
+    }
+
+    @Transactional
+    public void setMsiMontoMinimo(int monto) {
+        set("msi_monto_minimo", String.valueOf(monto));
+    }
 }
