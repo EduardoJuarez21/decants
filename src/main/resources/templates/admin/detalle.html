@@ -345,6 +345,26 @@
                 </div>
             </div>
 
+            <!-- Link de pago (Stripe, incluye meses sin intereses) -->
+            <div class="side-card"
+                 th:if="${pedido.estadoPedido.name() == 'CREADO' or pedido.estadoPedido.name() == 'PENDIENTE_PAGO'}">
+                <p class="side-card-title">Link de pago</p>
+                <div class="side-card-body">
+                    <form th:action="@{/aura-gestion/pedidos/{id}/link-pago(id=${pedido.id})}" method="post">
+                        <button type="submit" class="btn-dark">Generar link de pago</button>
+                    </form>
+                    <p style="font-size:0.72rem; color:var(--muted); margin:0.5rem 0 0; line-height:1.5;">
+                        Abre el checkout de Stripe para este pedido (acepta meses sin intereses si el cliente
+                        califica). Mándaselo por WhatsApp para que pague desde ahí.
+                    </p>
+                    <div th:if="${linkPago}" style="margin-top:0.6rem; display:flex; gap:0.4rem;">
+                        <input type="text" id="linkPagoInput" th:value="${linkPago}" readonly
+                               class="action-input" style="font-size:0.72rem;" onclick="this.select()">
+                        <button type="button" class="btn-dark" onclick="copiarLinkPago()">Copiar</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- WhatsApp -->
             <div class="side-card">
                 <p class="side-card-title">Contacto</p>
@@ -367,10 +387,22 @@
                  style="background:#d4edda; color:#155724; border:1px solid #c3e6cb; border-radius:8px;
                         padding:0.65rem 1rem; font-size:0.83rem; margin-top:0.25rem;"
                  th:text="${mensaje}"></div>
+            <div th:if="${error}"
+                 style="background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; border-radius:8px;
+                        padding:0.65rem 1rem; font-size:0.83rem; margin-top:0.25rem;"
+                 th:text="${error}"></div>
 
         </div>
     </div>
 
 </div>
+
+<script>
+    function copiarLinkPago() {
+        var input = document.getElementById('linkPagoInput');
+        input.select();
+        navigator.clipboard.writeText(input.value);
+    }
+</script>
 </body>
 </html>

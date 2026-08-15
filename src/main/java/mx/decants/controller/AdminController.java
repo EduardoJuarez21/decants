@@ -12,9 +12,12 @@ import mx.decants.service.ImagenService;
 import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.ResenaService;
+import mx.decants.service.StripeService;
 import mx.decants.service.VendedorService;
 import mx.decants.service.VisitaService;
 import mx.decants.util.SlugUtil;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -52,12 +55,13 @@ public class AdminController {
     private final ResenaService resenaService;
     private final VendedorService vendedorService;
     private final ComisionPagoService comisionPagoService;
+    private final StripeService stripeService;
 
     public AdminController(PedidoService pedidoService, ProductoService productoService,
                            CuponService cuponService, ConfiguracionService configuracionService,
                            VisitaService visitaService, ImagenService imagenService,
                            ResenaService resenaService, VendedorService vendedorService,
-                           ComisionPagoService comisionPagoService) {
+                           ComisionPagoService comisionPagoService, StripeService stripeService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
         this.cuponService = cuponService;
@@ -67,6 +71,7 @@ public class AdminController {
         this.resenaService = resenaService;
         this.vendedorService = vendedorService;
         this.comisionPagoService = comisionPagoService;
+        this.stripeService = stripeService;
     }
 
     // ── Login ────────────────────────────────────────────────────────────────
@@ -320,6 +325,23 @@ public class AdminController {
         return "admin/detalle";
     }
 
+    @PostMapping("/pedidos/{id}/link-pago")
+    public String generarLinkPago(@PathVariable Long id, RedirectAttributes ra) {
+        Optional<Pedido> pedidoOpt = pedidoService.buscarPorId(id);
+        if (pedidoOpt.isEmpty()) {
+            return "redirect:/aura-gestion/pedidos";
+        }
+        Pedido pedido = pedidoOpt.get();
+        try {
+            Session session = stripeService.crearCheckoutSession(pedido);
+            pedidoService.actualizarStripeSession(pedido.getId(), session.getId());
+            ra.addFlashAttribute("linkPago", session.getUrl());
+        } catch (StripeException e) {
+            ra.addFlashAttribute("error", "No se pudo generar el link de pago: " + e.getMessage());
+        }
+        return "redirect:/aura-gestion/pedidos/" + id;
+    }
+
     // ── Productos ─────────────────────────────────────────────────────────────
 
     @GetMapping("/productos")
@@ -513,8 +535,6 @@ public class AdminController {
         model.addAttribute("comisionTotal", comision.get("comisionTotal"));
         model.addAttribute("comisionCostoTotal", comision.get("costoTotal"));
         model.addAttribute("comisionGanancia", comision.get("ganancia"));
-        model.addAttribute("comisionProductosSinCosto", comision.get("productosSinCosto"));
-        model.addAttribute("comisionHuboItemsSinProducto", comision.get("huboItemsSinProducto"));
         model.addAttribute("comisionDetalle", comision.get("detalle"));
         model.addAttribute("comisionPago", comisionPagoService.buscar(vendedor, mes).orElse(null));
 

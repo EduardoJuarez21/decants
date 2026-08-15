@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -364,6 +363,14 @@ public class PedidoService {
     public void actualizarStripeSession(Long pedidoId, String sessionId) {
         Pedido pedido = pedidoRepository.findById(pedidoId).orElseThrow();
         pedido.setStripeSessionId(sessionId);
+        // Si se genera una sesion de Stripe para un pedido que seguia en CREADO
+        // (ej. un link de pago armado desde el admin para un pedido que se
+        // habia creado como local/contra entrega), debe pasar a PENDIENTE_PAGO
+        // para que confirmarPorSession() (el webhook) lo confirme cuando pague.
+        // No se toca si ya esta en otro estado (PENDIENTE_PAGO, CONFIRMADO, etc).
+        if (pedido.getEstadoPedido() == EstadoPedido.CREADO) {
+            pedido.setEstadoPedido(EstadoPedido.PENDIENTE_PAGO);
+        }
         pedidoRepository.save(pedido);
     }
 
@@ -398,8 +405,6 @@ public class PedidoService {
         List<Map<String, Object>> detalle = new ArrayList<>();
         double comisionTotal = 0;
         double costoTotal = 0;
-        Set<String> productosSinCosto = new LinkedHashSet<>();
-        boolean huboItemsSinProducto = false;
 
         for (Pedido pedido : pedidos) {
             // factorDescuento sale de comparar lo realmente cobrado (totalPagado) contra
@@ -414,16 +419,10 @@ public class PedidoService {
 
             for (PedidoItem item : pedido.getItems()) {
                 Producto p = item.getProducto();
-                if (p == null) {
-                    huboItemsSinProducto = true;
-                } else {
+                if (p != null && p.getCostoPorMl() != null) {
                     Integer ml = mlEquivalente(item, p);
                     if (ml != null) {
-                        if (p.getCostoPorMl() != null) {
-                            costoTotal += p.getCostoPorMl() * ml * item.getCantidad();
-                        } else {
-                            productosSinCosto.add(p.getNombre());
-                        }
+                        costoTotal += p.getCostoPorMl() * ml * item.getCantidad();
                     }
                 }
 
@@ -454,8 +453,6 @@ public class PedidoService {
         resultado.put("comisionTotal", comisionTotal);
         resultado.put("costoTotal", costoTotal);
         resultado.put("ganancia", ganancia);
-        resultado.put("productosSinCosto", new ArrayList<>(productosSinCosto));
-        resultado.put("huboItemsSinProducto", huboItemsSinProducto);
         resultado.put("detalle", detalle);
         return resultado;
     }
