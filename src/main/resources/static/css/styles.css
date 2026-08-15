@@ -91,6 +91,47 @@ section      { padding: 6rem 2rem; }
 }
 .promo-bar-link:hover { color: #fff; }
 
+/* ── Meses sin intereses ───────────────────────────────────── */
+.msi-banner { background: var(--gold); }
+.msi-banner-inner {
+  padding: 1.1rem 1.5rem;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 0.6rem 1rem;
+  text-align: center;
+  color: var(--black);
+  font-size: 1rem;
+  font-weight: 600;
+}
+.msi-banner-icon { font-size: 1.3rem; }
+.msi-banner-toggle {
+  background: rgba(26,26,26,0.1);
+  border: 1.5px solid rgba(26,26,26,0.3);
+  border-radius: 20px;
+  color: var(--black);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  transition: background 0.2s;
+}
+.msi-banner-toggle:hover { background: rgba(26,26,26,0.18); }
+.msi-bancos { background: #1a1a1a; }
+.msi-bancos-list {
+  padding: 1rem 1.5rem 1.25rem;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem;
+}
+.msi-banco-pill {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #e8e0d0;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(201,169,110,0.3);
+  border-radius: 20px;
+  padding: 0.3rem 0.8rem;
+}
+
 /* ── Navbar ────────────────────────────────────────────────── */
 .navbar {
   background: rgba(26, 26, 26, 0.97);

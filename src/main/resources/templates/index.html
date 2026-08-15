@@ -143,6 +143,52 @@
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════
+     MESES SIN INTERESES
+════════════════════════════════════════════════════════════ -->
+<div class="msi-banner">
+    <div class="container msi-banner-inner">
+        <span class="msi-banner-icon">&#128179;</span>
+        <span>Paga a <strong>3 o 6 Meses Sin Intereses</strong> con tarjetas participantes</span>
+        <button type="button" class="msi-banner-toggle" onclick="toggleBancosMsi()">Ver bancos participantes <span id="msiChevron">&#9662;</span></button>
+    </div>
+    <div class="msi-bancos" id="msiBancos" style="display:none;">
+        <div class="container msi-bancos-list">
+            <span class="msi-banco-pill">American Express</span>
+            <span class="msi-banco-pill">Afirme</span>
+            <span class="msi-banco-pill">Banamex</span>
+            <span class="msi-banco-pill">BanBajío</span>
+            <span class="msi-banco-pill">Banca Mifel</span>
+            <span class="msi-banco-pill">Banco Azteca</span>
+            <span class="msi-banco-pill">Banco Invex</span>
+            <span class="msi-banco-pill">Banco Multiva</span>
+            <span class="msi-banco-pill">Bancoppel</span>
+            <span class="msi-banco-pill">Banjercito</span>
+            <span class="msi-banco-pill">Banorte</span>
+            <span class="msi-banco-pill">Banregio</span>
+            <span class="msi-banco-pill">BBVA</span>
+            <span class="msi-banco-pill">Caja Morelia Valladolid</span>
+            <span class="msi-banco-pill">CrediClub</span>
+            <span class="msi-banco-pill">Didi</span>
+            <span class="msi-banco-pill">Efevoo Pay</span>
+            <span class="msi-banco-pill">Falabella</span>
+            <span class="msi-banco-pill">Hey Banco</span>
+            <span class="msi-banco-pill">Inbursa</span>
+            <span class="msi-banco-pill">Klar</span>
+            <span class="msi-banco-pill">Konfío</span>
+            <span class="msi-banco-pill">Liverpool</span>
+            <span class="msi-banco-pill">MercadoPago</span>
+            <span class="msi-banco-pill">NanoPay</span>
+            <span class="msi-banco-pill">Nubank</span>
+            <span class="msi-banco-pill">RappiCard</span>
+            <span class="msi-banco-pill">Santander</span>
+            <span class="msi-banco-pill">Scotiabank</span>
+            <span class="msi-banco-pill">Stori</span>
+            <span class="msi-banco-pill">Suburbia</span>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
      BENEFITS STRIP
 ════════════════════════════════════════════════════════════ -->
 <div class="benefits-strip">
@@ -1205,6 +1251,15 @@
 </a>
 
 <script>
+    /* ── Meses sin intereses: mostrar/ocultar bancos participantes ── */
+    function toggleBancosMsi() {
+        var el = document.getElementById('msiBancos');
+        var chevron = document.getElementById('msiChevron');
+        var abierto = el.style.display !== 'none';
+        el.style.display = abierto ? 'none' : 'block';
+        chevron.innerHTML = abierto ? '&#9662;' : '&#9652;';
+    }
+
     /* ── Cupón lateral: toggle y copiar ── */
     function toggleCupon() {
         document.getElementById('couponSide').classList.toggle('open');
