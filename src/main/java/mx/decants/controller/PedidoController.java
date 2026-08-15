@@ -89,6 +89,14 @@ public class PedidoController {
             }
         }
 
+        // Correo obligatorio cuando el pago pasa por Stripe (nacional, o local
+        // que eligio pagar con tarjeta) -- ahi es donde Stripe manda el recibo.
+        boolean pagaConTarjeta = !esLocal || dto.isPagarConTarjeta();
+        if (pagaConTarjeta && (dto.getEmail() == null || dto.getEmail().isBlank())) {
+            result.rejectValue("email", "NotBlank", "El correo es obligatorio para pagar con tarjeta");
+            return "pedido/form";
+        }
+
         Pedido pedido;
         try {
             pedido = pedidoService.crearPedido(dto);

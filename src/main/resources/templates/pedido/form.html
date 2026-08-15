@@ -105,7 +105,7 @@
                 </div>
 
                 <div class="form-group full-width">
-                    <label for="email">Correo electrónico <span style="color:var(--muted); font-weight:400;">(opcional)</span></label>
+                    <label for="email">Correo electrónico <span id="emailReq" class="required">*</span><span id="emailOpcional" style="display:none; color:var(--muted); font-weight:400;">(opcional)</span></label>
                     <input type="email"
                            id="email"
                            th:field="*{email}"
@@ -114,6 +114,10 @@
                            autocomplete="email"
                            autocapitalize="none"
                            inputmode="email" />
+                    <span style="font-size:0.75rem; color:var(--muted); display:block; margin-top:0.25rem;">
+                        Stripe manda tu recibo de pago a este correo.
+                    </span>
+                    <span class="field-error" id="emailError" style="display:none;">El correo es obligatorio para pagar con tarjeta.</span>
                     <span class="field-error"
                           th:if="${#fields.hasErrors('email')}"
                           th:errors="*{email}"></span>
@@ -410,6 +414,21 @@
             }
         }
 
+        // Correo: obligatorio cuando el pago pasa por Stripe (nacional, o local
+        // que eligio pagar con tarjeta) -- ahi es donde llega el recibo de pago.
+        var pagaConTarjeta = !_esLocal || document.getElementById('pagarConTarjetaInput').value === 'true';
+        var emailEl  = document.getElementById('email');
+        var emailErr = document.getElementById('emailError');
+        if (pagaConTarjeta && !emailEl.value.trim()) {
+            emailErr.style.display = 'block';
+            emailEl.classList.add('is-invalid');
+            if (!primerError) primerError = emailEl;
+            valid = false;
+        } else {
+            emailErr.style.display = 'none';
+            emailEl.classList.remove('is-invalid');
+        }
+
         if (!valid) {
             e.preventDefault();
             primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -475,6 +494,9 @@
             // Ocultar sección de dirección nacional
             var addrSection = document.getElementById('addressSection');
             if (addrSection) addrSection.style.display = 'none';
+        } else {
+            // Nacional siempre paga con tarjeta via Stripe -- correo obligatorio.
+            actualizarEmailRequerido(true);
         }
     })();
 
@@ -486,6 +508,15 @@
                 ? 'Continuar al pago con tarjeta'
                 : 'Confirmar pedido (pago contra entrega)';
         }
+        actualizarEmailRequerido(valor === 'tarjeta');
+    }
+
+    function actualizarEmailRequerido(requerido) {
+        var email = document.getElementById('email');
+        email.required = requerido;
+        document.getElementById('emailReq').style.display = requerido ? '' : 'none';
+        document.getElementById('emailOpcional').style.display = requerido ? 'none' : '';
+        if (!requerido) document.getElementById('emailError').style.display = 'none';
     }
 
     initForm();
