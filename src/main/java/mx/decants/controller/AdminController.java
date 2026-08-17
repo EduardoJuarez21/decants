@@ -372,6 +372,7 @@ public class AdminController {
                                 @RequestParam(required = false) String concentracion,
                                 @RequestParam Integer precio,
                                 @RequestParam(required = false) Integer precio5ml,
+                                @RequestParam(required = false) Integer precio3ml,
                                 @RequestParam(defaultValue = "false") boolean bestSeller,
                                 @RequestParam int orden,
                                 @RequestParam(required = false) String proveedor,
@@ -390,7 +391,7 @@ public class AdminController {
             }
 
             productoService.crear(nombre, marca, categoria, genero,
-                familia, notas, caracteristicas, precio, precio5ml, bestSeller, pathPrincipal, pathCar, orden,
+                familia, notas, caracteristicas, precio, precio5ml, precio3ml, bestSeller, pathPrincipal, pathCar, orden,
                 proveedor, costoPorMl, markup, concentracion);
 
             ra.addFlashAttribute("mensaje", "Producto \"" + nombre + "\" creado correctamente.");

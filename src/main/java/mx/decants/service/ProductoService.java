@@ -150,7 +150,7 @@ public class ProductoService {
     }
 
     public Producto crear(String nombre, String marca, String categoria, String genero,
-                          String familia, String notas, String caracteristicas, Integer precio, Integer precio5ml,
+                          String familia, String notas, String caracteristicas, Integer precio, Integer precio5ml, Integer precio3ml,
                           boolean bestSeller, String imagenPrincipal, String imagenCaracteristicas, int orden,
                           String proveedor, Double costoPorMl, Double markup, String concentracion) {
         Producto p = new Producto();
@@ -164,7 +164,7 @@ public class ProductoService {
         p.setConcentracion(concentracion != null && !concentracion.isBlank() ? concentracion.trim() : null);
         p.setPrecio(precio);
         p.setPrecio5ml(precio5ml != null && precio5ml > 0 ? precio5ml : null);
-        p.setPrecio3ml(null);
+        p.setPrecio3ml(precio3ml != null && precio3ml > 0 ? precio3ml : null);
         p.setBestSeller(bestSeller);
         p.setImagenPrincipal(imagenPrincipal);
         p.setImagenCaracteristicas(imagenCaracteristicas);
