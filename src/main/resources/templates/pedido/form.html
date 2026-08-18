@@ -444,6 +444,13 @@
             document.getElementById('comentariosInput').value = extras;
         }
         // El carrito se limpia solo al confirmar el pago (confirmacion.html)
+
+        // Evita doble envio y da feedback visual mientras el servidor procesa
+        // el pedido y (si aplica) crea la sesion de Stripe -- con señal mala
+        // esto puede tardar varios segundos y sin esto el boton se ve "muerto".
+        var btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Procesando…';
     });
 
     function esCpValido(val) {
