@@ -140,7 +140,12 @@ public class PedidoService {
         log.info("Pedido #{} creado — cliente: {}, total: ${} MXN, entrega: {}, productos: {}",
                 saved.getId(), dto.getNombreCliente(), saved.getTotalPagado(),
                 esLocal ? "local" : "nacional", saved.getProductosSeleccionados());
-        if (esLocal) {
+        // Solo local + contra entrega se notifica/descuenta stock aqui, porque
+        // ya esta "vendido" sin pasar por Stripe. Local + tarjeta (pasaPorStripe)
+        // debe esperar al webhook de Stripe (confirmarPorSession), igual que un
+        // pedido nacional -- si no, se notifica/descuenta dos veces (una aqui
+        // antes de que el pago este confirmado, otra cuando el webhook llega).
+        if (esLocal && !pasaPorStripe) {
             descontarStock(items);
             telegramService.notificarNuevoPedido(saved);
             emailService.enviarConfirmacion(saved);
