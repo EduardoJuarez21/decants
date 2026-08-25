@@ -101,7 +101,7 @@
                 </form>
             </div>
 
-            <form th:if="${comisionPago == null and esAdmin}"
+            <form th:if="${comisionPendiente > 0 and esAdmin}"
                   th:action="@{/aura-gestion/comisiones/marcar-pagado}" method="post"
                   style="display:flex; align-items:flex-end; gap:0.75rem; flex-wrap:wrap;
                          background:#fff8e6; border:1px solid #f0e0b0; border-radius:8px;
@@ -111,7 +111,7 @@
                 <div style="display:flex; flex-direction:column; gap:0.2rem;">
                     <label style="font-size:0.7rem; font-weight:600; color:#8a6d1f;">Monto pagado ($MXN)</label>
                     <input type="number" name="monto" required min="0"
-                           th:value="${T(java.lang.Math).round(comisionTotal)}"
+                           th:value="${T(java.lang.Math).round(comisionPendiente)}"
                            style="padding:0.4rem 0.6rem; border:1.5px solid #e0d0a0; border-radius:6px; width:110px; font-family:inherit;">
                 </div>
                 <div style="display:flex; flex-direction:column; gap:0.2rem; flex:1; min-width:160px;">
@@ -122,11 +122,11 @@
                 <button type="submit"
                         style="padding:0.5rem 1rem; background:#8a6d1f; color:#fff; border:none; border-radius:6px;
                                font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit;">
-                    Marcar como pagado
+                    <span th:text="${comisionPago != null ? 'Registrar abono adicional' : 'Marcar como pagado'}"></span>
                 </button>
             </form>
 
-            <p th:if="${comisionPago == null and !esAdmin}"
+            <p th:if="${comisionPendiente > 0 and !esAdmin}"
                style="color:var(--muted); font-size:0.82rem; margin:0 0 1.25rem;">Pendiente de pago</p>
 
             <div style="display:flex; gap:2rem; margin-bottom:1.25rem; flex-wrap:wrap;">
@@ -136,7 +136,7 @@
                 </div>
                 <div>
                     <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Comisión a pagar</div>
-                    <div style="font-size:1.4rem; font-weight:700; color:#2e7d32;">$<span th:text="${#numbers.formatDecimal(comisionTotal, 1, 2)}"></span></div>
+                    <div style="font-size:1.4rem; font-weight:700; color:#2e7d32;">$<span th:text="${#numbers.formatDecimal(comisionPendiente, 1, 2)}"></span></div>
                 </div>
                 <th:block th:if="${esAdmin}">
                     <div>

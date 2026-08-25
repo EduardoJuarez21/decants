@@ -537,7 +537,11 @@ public class AdminController {
         model.addAttribute("comisionCostoTotal", comision.get("costoTotal"));
         model.addAttribute("comisionGanancia", comision.get("ganancia"));
         model.addAttribute("comisionDetalle", comision.get("detalle"));
-        model.addAttribute("comisionPago", comisionPagoService.buscar(vendedor, mes).orElse(null));
+        Optional<ComisionPago> comisionPagoOpt = comisionPagoService.buscar(vendedor, mes);
+        model.addAttribute("comisionPago", comisionPagoOpt.orElse(null));
+        double comisionTotalVal = (double) comision.get("comisionTotal");
+        int montoPagado = comisionPagoOpt.map(ComisionPago::getMontoPagado).orElse(0);
+        model.addAttribute("comisionPendiente", Math.max(0, comisionTotalVal - montoPagado));
 
         return "admin/comisiones";
     }
