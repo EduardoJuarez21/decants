@@ -162,6 +162,7 @@
                             <th style="text-align:right;">Precio de venta</th>
                             <th style="text-align:right;">% Comisión</th>
                             <th style="text-align:right;">Subtotal</th>
+                            <th th:if="${esEjuarez}" style="text-align:right;">Costo de producción</th>
                             <th>Notas</th>
                         </tr>
                     </thead>
@@ -175,6 +176,8 @@
                             <td style="text-align:right;" th:text="|$${#numbers.formatDecimal(fila.precioUnitario, 1, 2)}|"></td>
                             <td style="text-align:right;" th:text="${comisionPorcentaje} + '%'"></td>
                             <td style="text-align:right; font-weight:700; color:#2e7d32;" th:text="|$${#numbers.formatDecimal(fila.subtotal, 1, 2)}|"></td>
+                            <td th:if="${esEjuarez}" style="text-align:right; color:#c0392b;"
+                                th:text="${fila.costoProduccion != null ? '$' + #numbers.formatDecimal(fila.costoProduccion, 1, 2) : '—'}"></td>
                             <td style="font-size:0.8rem; color:#8a6d1f; max-width:180px;" th:text="${fila.observaciones}"></td>
                         </tr>
                     </tbody>

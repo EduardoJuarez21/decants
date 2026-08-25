@@ -424,10 +424,12 @@ public class PedidoService {
 
             for (PedidoItem item : pedido.getItems()) {
                 Producto p = item.getProducto();
+                Double costoItem = null;
                 if (p != null && p.getCostoPorMl() != null) {
                     Integer ml = mlEquivalente(item, p);
                     if (ml != null) {
-                        costoTotal += p.getCostoPorMl() * ml * item.getCantidad();
+                        costoItem = p.getCostoPorMl() * ml * item.getCantidad();
+                        costoTotal += costoItem;
                     }
                 }
 
@@ -445,6 +447,7 @@ public class PedidoService {
                 fila.put("precioUnitario", item.getPrecioUnitario() * factorDescuento);
                 fila.put("fecha", pedido.getFechaCreacion());
                 fila.put("subtotal", subtotal);
+                fila.put("costoProduccion", costoItem);
                 fila.put("observaciones", pedido.getObservaciones());
                 detalle.add(fila);
             }
