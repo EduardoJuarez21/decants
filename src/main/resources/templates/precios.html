@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de precios — Aura Decants MX</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
+    <meta name="robots" content="noindex">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <style>
+        body { background: #faf8f5; }
+
+        .precios-header {
+            background: var(--black);
+            padding: 1.5rem 1.25rem 1.25rem;
+            text-align: center;
+        }
+        .precios-header img { height: 48px; width: auto; object-fit: contain; }
+        .precios-header p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0.5rem 0 0;
+        }
+
+        .precios-wrap { max-width: 980px; margin: 0 auto; padding: 1.75rem 1.1rem 3.5rem; }
+
+        .precios-titulo { text-align: center; margin-bottom: 1.5rem; }
+        .precios-titulo .gold-line { width: 40px; height: 2px; background: var(--gold); margin: 0 auto 0.85rem; }
+        .precios-titulo h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.5rem, 4vw, 1.9rem);
+            color: var(--black);
+            margin: 0 0 0.35rem;
+        }
+        .precios-titulo p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+
+        .precios-buscador { position: sticky; top: 0; z-index: 5; background: #faf8f5; padding: 0.9rem 0 1rem; }
+        .precios-buscador-box { position: relative; max-width: 340px; margin: 0 auto; }
+        .precios-buscador-box input {
+            width: 100%; box-sizing: border-box;
+            padding: 0.6rem 0.9rem 0.6rem 2.15rem;
+            border-radius: 9px; border: 1.5px solid #e0d8cc;
+            font-family: var(--font-body); font-size: 0.86rem;
+            outline: none; background: #fff; transition: border-color 0.15s ease;
+        }
+        .precios-buscador-box input:focus { border-color: var(--gold); }
+        .precios-buscador-box svg {
+            position: absolute; left: 0.68rem; top: 50%; transform: translateY(-50%);
+            width: 14px; height: 14px; stroke: var(--muted); pointer-events: none;
+        }
+
+        .precios-cat { margin-top: 2.1rem; }
+        .precios-cat-head {
+            display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+            margin-bottom: 0.8rem; padding-bottom: 0.55rem; border-bottom: 1px solid #e8ddd0;
+        }
+        .precios-cat-head h2 {
+            font-family: var(--font-heading); font-weight: 600; font-style: italic;
+            font-size: 1.18rem; color: var(--black); margin: 0;
+        }
+        .precios-cat-count { font-size: 0.74rem; color: var(--muted); white-space: nowrap; }
+
+        .precios-table-scroll {
+            overflow-x: auto; border-radius: 12px; border: 1px solid #e8ddd0;
+            background: #fff; box-shadow: 0 1px 2px rgba(26,26,26,0.04), 0 8px 20px rgba(26,26,26,0.04);
+        }
+        table.precios-table { width: 100%; min-width: 680px; border-collapse: collapse; font-size: 0.85rem; }
+        table.precios-table thead th {
+            text-align: left; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.8px;
+            text-transform: uppercase; color: var(--muted);
+            padding: 0.7rem 0.9rem; border-bottom: 1px solid #e8ddd0; white-space: nowrap;
+        }
+        table.precios-table thead th.num, table.precios-table td.num { text-align: right; }
+        table.precios-table tbody td { padding: 0.62rem 0.9rem; border-bottom: 1px solid #f0e9de; vertical-align: middle; }
+        table.precios-table tbody tr:last-child td { border-bottom: none; }
+        table.precios-table tbody tr:hover { background: #fbf6ec; }
+
+        .precios-marca { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
+        .precios-nombre { font-weight: 600; color: var(--black); }
+        .precios-genero { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+        .precios-price { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+        .precios-price-strike { font-variant-numeric: tabular-nums; text-decoration: line-through; color: var(--muted); font-size: 0.76rem; margin-right: 0.3rem; }
+        .precios-promo-price { color: #96631e; }
+        .precios-promo-tag {
+            display: inline-block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.3px;
+            color: #96631e; background: #f4ead4; border-radius: 5px; padding: 0.1rem 0.35rem;
+            margin-left: 0.35rem; vertical-align: middle; white-space: nowrap;
+        }
+        .precios-sin-resultados { display: none; padding: 2rem 1rem; text-align: center; color: var(--muted); font-size: 0.86rem; }
+
+        .precios-footer {
+            margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid #e8ddd0;
+            font-size: 0.76rem; color: var(--muted); line-height: 1.6; text-align: center;
+        }
+        .precios-footer strong { color: var(--black); }
+
+        @media (max-width: 560px) {
+            .precios-cat-head { flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="precios-header">
+    <img th:src="@{/img/logo-navbar.webp}" alt="Aura Decants MX">
+    <p>Lista de precios</p>
+</div>
+
+<div class="precios-wrap">
+
+    <div class="precios-titulo">
+        <div class="gold-line"></div>
+        <h1>Lista de Precios</h1>
+        <p>Precios en pesos mexicanos (MXN) &middot; se actualiza en automático</p>
+    </div>
+
+    <div class="precios-buscador">
+        <div class="precios-buscador-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input id="precioBuscador" type="search" placeholder="Buscar por marca o perfume…" autocomplete="off">
+        </div>
+    </div>
+
+    <div class="precios-cat">
+        <div class="precios-cat-head">
+            <h2>Alta Perfumería</h2>
+            <span class="precios-cat-count"
+                  th:with="items=${productos.?[categoria == 'alta-perfumeria']}"
+                  th:text="${items.size() + (items.size() == 1 ? ' perfume' : ' perfumes')}"></span>
+        </div>
+        <div class="precios-table-scroll">
+            <table class="precios-table">
+                <thead>
+                    <tr>
+                        <th>Marca</th>
+                        <th>Perfume</th>
+                        <th>Para</th>
+                        <th class="num">3&nbsp;ml</th>
+                        <th class="num">5&nbsp;ml</th>
+                        <th class="num">10&nbsp;ml</th>
+                        <th class="num">Frasco</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${productos.?[categoria == 'alta-perfumeria']}"
+                        class="precios-fila"
+                        th:attr="data-buscar=${#strings.toLowerCase(p.marca + ' ' + p.nombre)}">
+                        <td class="precios-marca" th:text="${p.marca}"></td>
+                        <td class="precios-nombre">
+                            <span th:text="${p.nombre}"></span>
+                            <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}"
+                                  class="precios-promo-tag" th:text="'-' + ${p.descuentoPorcentaje} + '%'"></span>
+                        </td>
+                        <td class="precios-genero"
+                            th:text="${p.genero == 'hombre' ? 'Hombre' : (p.genero == 'mujer' ? 'Mujer' : 'Unisex')}"></td>
+                        <td class="num">
+                            <span th:if="${p.precio3mlConDescuento != null}">
+                                <span class="precios-price-strike" th:text="'$' + ${p.precio3ml}"></span>
+                                <span class="precios-price precios-promo-price" th:text="'$' + ${p.precio3mlConDescuento}"></span>
+                            </span>
+                            <span th:unless="${p.precio3mlConDescuento != null}" class="precios-price"
+                                  th:text="${p.precio3ml != null ? '$' + p.precio3ml : '—'}"></span>
+                        </td>
+                        <td class="num">
+                            <span th:if="${p.precio5mlConDescuento != null}">
+                                <span class="precios-price-strike" th:text="'$' + ${p.precio5ml}"></span>
+                                <span class="precios-price precios-promo-price" th:text="'$' + ${p.precio5mlConDescuento}"></span>
+                            </span>
+                            <span th:unless="${p.precio5mlConDescuento != null}" class="precios-price"
+                                  th:text="${p.precio5ml != null ? '$' + p.precio5ml : '—'}"></span>
+                        </td>
+                        <td class="num">
+                            <span th:if="${p.precioConDescuento != null}">
+                                <span class="precios-price-strike" th:text="'$' + ${p.precio}"></span>
+                                <span class="precios-price precios-promo-price" th:text="'$' + ${p.precioConDescuento}"></span>
+                            </span>
+                            <span th:unless="${p.precioConDescuento != null}" class="precios-price" th:text="'$' + ${p.precio}"></span>
+                        </td>
+                        <td class="num">
+                            <span th:if="${p.precioBotella != null}">
+                                <span class="precios-price" th:text="'$' + ${p.precioBotella}"></span><br>
+                                <span class="precios-genero" th:text="${p.mlBotella} + ' ml'"></span>
+                            </span>
+                            <span th:unless="${p.precioBotella != null}" class="precios-genero">—</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="precios-sin-resultados">Sin resultados en esta categoría.</p>
+    </div>
+
+    <div class="precios-cat">
+        <div class="precios-cat-head">
+            <h2>Perfumería Árabe</h2>
+            <span class="precios-cat-count"
+                  th:with="items=${productos.?[categoria == 'nicho-arabe']}"
+                  th:text="${items.size() + (items.size() == 1 ? ' perfume' : ' perfumes')}"></span>
+        </div>
+        <div class="precios-table-scroll">
+            <table class="precios-table">
+                <thead>
+                    <tr>
+                        <th>Marca</th>
+                        <th>Perfume</th>
+                        <th>Para</th>
+                        <th class="num">3&nbsp;ml</th>
+                        <th class="num">5&nbsp;ml</th>
+                        <th class="num">10&nbsp;ml</th>
+                        <th class="num">Frasco</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${productos.?[categoria == 'nicho-arabe']}"
+                        class="precios-fila"
+                        th:attr="data-buscar=${#strings.toLowerCase(p.marca + ' ' + p.nombre)}">
+                        <td class="precios-marca" th:text="${p.marca}"></td>
+                        <td class="precios-nombre">
+                            <span th:text="${p.nombre}"></span>
+                            <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}"
+                                  class="precios-promo-tag" th:text="'-' + ${p.descuentoPorcentaje} + '%'"></span>
+                        </td>
+                        <td class="precios-genero"
+                            th:text="${p.genero == 'hombre' ? 'Hombre' : (p.genero == 'mujer' ? 'Mujer' : 'Unisex')}"></td>
+                        <td class="num">
+                            <span th:if="${p.precio3mlConDescuento != null}">
+                                <span class="precios-price-strike" th:text="'$' + ${p.precio3ml}"></span>
+                                <span class="precios-price precios-promo-price" th:text="'$' + ${p.precio3mlConDescuento}"></span>
+                            </span>
+                            <span th:unless="${p.precio3mlConDescuento != null}" class="precios-price"
+                                  th:text="${p.precio3ml != null ? '$' + p.precio3ml : '—'}"></span>
+                        </td>
+                        <td class="num">
+                            <span th:if="${p.precio5mlConDescuento != null}">
+                                <span class="precios-price-strike" th:text="'$' + ${p.precio5ml}"></span>
+                                <span class="precios-price precios-promo-price" th:text="'$' + ${p.precio5mlConDescuento}"></span>
+                            </span>
+                            <span th:unless="${p.precio5mlConDescuento != null}" class="precios-price"
+                                  th:text="${p.precio5ml != null ? '$' + p.precio5ml : '—'}"></span>
+                        </td>
+                        <td class="num">
+                            <span th:if="${p.precioConDescuento != null}">
+                                <span class="precios-price-strike" th:text="'$' + ${p.precio}"></span>
+                                <span class="precios-price precios-promo-price" th:text="'$' + ${p.precioConDescuento}"></span>
+                            </span>
+                            <span th:unless="${p.precioConDescuento != null}" class="precios-price" th:text="'$' + ${p.precio}"></span>
+                        </td>
+                        <td class="num">
+                            <span th:if="${p.precioBotella != null}">
+                                <span class="precios-price" th:text="'$' + ${p.precioBotella}"></span><br>
+                                <span class="precios-genero" th:text="${p.mlBotella} + ' ml'"></span>
+                            </span>
+                            <span th:unless="${p.precioBotella != null}" class="precios-genero">—</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="precios-sin-resultados">Sin resultados en esta categoría.</p>
+    </div>
+
+    <div class="precios-footer">
+        <p><strong>Nota:</strong> los productos con <span class="precios-promo-tag" style="margin-left:0;">-%</span> tienen una promoción activa; puede cambiar sin previo aviso.
+        La columna "Frasco" es el precio del perfume completo (no decant) cuando lo manejamos.</p>
+    </div>
+
+</div>
+
+<script>
+    var buscador = document.getElementById('precioBuscador');
+    buscador.addEventListener('input', function () {
+        var q = buscador.value.trim().toLowerCase();
+        document.querySelectorAll('.precios-cat').forEach(function (cat) {
+            var filas = cat.querySelectorAll('.precios-fila');
+            var visibles = 0;
+            filas.forEach(function (fila) {
+                var coincide = !q || fila.getAttribute('data-buscar').indexOf(q) !== -1;
+                fila.style.display = coincide ? '' : 'none';
+                if (coincide) visibles++;
+            });
+            cat.querySelector('.precios-table-scroll').style.display = visibles ? '' : 'none';
+            cat.querySelector('.precios-sin-resultados').style.display = visibles ? 'none' : 'block';
+            cat.style.display = (q && visibles === 0) ? 'none' : '';
+        });
+    });
+</script>
+
+</body>
+</html>

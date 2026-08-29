@@ -125,6 +125,12 @@ public class LandingController {
         return "catalogo";
     }
 
+    @GetMapping("/precios")
+    public String precios(Model model) {
+        model.addAttribute("productos", productoService.activosTodos());
+        return "precios";
+    }
+
     @GetMapping({"/catalogo-pdf", "/pdf"})
     public ResponseEntity<Resource> catalogoPdf(@RequestParam(value = "ref", required = false) String ref,
                                                  @RequestParam(value = "modo", required = false) String modo) {
