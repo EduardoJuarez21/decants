@@ -24,6 +24,11 @@ public class ComisionPagoService {
         return repo.findByVendedorAndMes(vendedor, mes.toString());
     }
 
+    @Transactional(readOnly = true)
+    public int totalPagadoAcumulado(String vendedor) {
+        return repo.sumMontoPagadoByVendedor(vendedor);
+    }
+
     // Acumula sobre lo ya pagado ese mes en vez de reemplazarlo, para poder
     // registrar un abono adicional cuando entran ventas nuevas despues de
     // haber marcado el mes como pagado (sin perder el pago anterior).

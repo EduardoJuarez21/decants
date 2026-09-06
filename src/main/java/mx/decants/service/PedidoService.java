@@ -465,6 +465,27 @@ public class PedidoService {
         return resultado;
     }
 
+    // Comision generada en TODA la historia del vendedor (no solo el mes en pantalla),
+    // para poder comparar contra lo pagado acumulado y que un pendiente de un mes
+    // se arrastre solo al sumarse con lo generado despues, sin logica de "traspaso" aparte.
+    @Transactional(readOnly = true)
+    public double comisionTotalAcumulada(String vendedor, double comisionPorcentaje) {
+        List<Pedido> pedidos = pedidoRepository.findByVendedorAndEstadoPedidoNot(vendedor, EstadoPedido.CANCELADO);
+
+        double comisionTotal = 0;
+        for (Pedido pedido : pedidos) {
+            double factorDescuento = 1.0;
+            int subtotalPedido = pedido.getItems().stream().mapToInt(PedidoItem::getSubtotal).sum();
+            if (subtotalPedido > 0 && pedido.getTotalPagado() != null) {
+                factorDescuento = pedido.getTotalPagado() / (double) subtotalPedido;
+            }
+            for (PedidoItem item : pedido.getItems()) {
+                comisionTotal += item.getSubtotal() * (comisionPorcentaje / 100.0) * factorDescuento;
+            }
+        }
+        return comisionTotal;
+    }
+
     private static Integer mlEquivalente(PedidoItem item, Producto p) {
         String v = item.getVariante();
         if (v == null) return null;

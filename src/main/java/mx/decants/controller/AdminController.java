@@ -539,9 +539,12 @@ public class AdminController {
         model.addAttribute("comisionDetalle", comision.get("detalle"));
         Optional<ComisionPago> comisionPagoOpt = comisionPagoService.buscar(vendedor, mes);
         model.addAttribute("comisionPago", comisionPagoOpt.orElse(null));
-        double comisionTotalVal = (double) comision.get("comisionTotal");
-        int montoPagado = comisionPagoOpt.map(ComisionPago::getMontoPagado).orElse(0);
-        model.addAttribute("comisionPendiente", Math.max(0, comisionTotalVal - montoPagado));
+        // Pendiente = comision generada en TODA la historia menos lo pagado en TODA la
+        // historia (no solo del mes en pantalla), para que un pendiente de un mes anterior
+        // se arrastre automaticamente al sumarse con lo del mes siguiente.
+        double comisionAcumulada = pedidoService.comisionTotalAcumulada(vendedor, vendedorEntity.getComisionPorcentaje());
+        int totalPagadoAcumulado = comisionPagoService.totalPagadoAcumulado(vendedor);
+        model.addAttribute("comisionPendiente", Math.max(0, comisionAcumulada - totalPagadoAcumulado));
 
         return "admin/comisiones";
     }

@@ -135,7 +135,7 @@
                     <div style="font-size:1.4rem; font-weight:700; color:#1a1a1a;">$<span th:text="${comisionVentasTotales}"></span></div>
                 </div>
                 <div>
-                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Comisión a pagar</div>
+                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Comisión pendiente (acumulado)</div>
                     <div style="font-size:1.4rem; font-weight:700; color:#2e7d32;">$<span th:text="${#numbers.formatDecimal(comisionPendiente, 1, 2)}"></span></div>
                 </div>
                 <th:block th:if="${esAdmin}">
