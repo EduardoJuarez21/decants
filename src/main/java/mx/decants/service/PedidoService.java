@@ -488,6 +488,47 @@ public class PedidoService {
         return comisionTotal;
     }
 
+    // ── Deuda de la vendedora hacia la empresa (consignación) ───────────────────
+    // A diferencia de la comision (que se agrupa por fechaCreacion), la deuda solo
+    // cuenta pedidos ya ENTREGADOS -- porque solo hasta que ella entrega/cobra a su
+    // cliente final es que nos debe ese dinero -- y se agrupa por fechaEntrega, no
+    // por fechaCreacion, para no contar ventas que siguen en transito.
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> deudaVendedor(String vendedor, YearMonth mes) {
+        LocalDateTime desde = mes.atDay(1).atStartOfDay();
+        LocalDateTime hasta = mes.plusMonths(1).atDay(1).atStartOfDay();
+        List<Pedido> pedidos = pedidoRepository.findByVendedorAndEstadoPedidoAndFechaEntregaBetween(
+            vendedor, EstadoPedido.ENTREGADO, desde, hasta);
+
+        int total = pedidos.stream().mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0).sum();
+
+        List<Map<String, Object>> detalle = new ArrayList<>();
+        for (Pedido pedido : pedidos) {
+            Map<String, Object> fila = new LinkedHashMap<>();
+            fila.put("codigoPedido", pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId()));
+            fila.put("fechaEntrega", pedido.getFechaEntrega());
+            fila.put("productos", pedido.getProductosSeleccionados());
+            fila.put("total", pedido.getTotalPagado());
+            detalle.add(fila);
+        }
+        detalle.sort((a, b) -> ((LocalDateTime) b.get("fechaEntrega")).compareTo((LocalDateTime) a.get("fechaEntrega")));
+
+        Map<String, Object> resultado = new LinkedHashMap<>();
+        resultado.put("total", total);
+        resultado.put("detalle", detalle);
+        return resultado;
+    }
+
+    // Deuda generada en TODA la historia (no solo el mes en pantalla), para que el
+    // pendiente se arrastre de un mes a otro igual que con comisionTotalAcumulada.
+    @Transactional(readOnly = true)
+    public int deudaTotalAcumulada(String vendedor) {
+        return pedidoRepository.findByVendedorAndEstadoPedido(vendedor, EstadoPedido.ENTREGADO).stream()
+            .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
+            .sum();
+    }
+
     private static Integer mlEquivalente(PedidoItem item, Producto p) {
         String v = item.getVariante();
         if (v == null) return null;
@@ -559,6 +600,9 @@ public class PedidoService {
             default                 -> EstadoPedido.CREADO;
         };
         pedido.setEstadoPedido(estado);
+        if (estado == EstadoPedido.ENTREGADO) {
+            pedido.setFechaEntrega(LocalDateTime.now());
+        }
 
         Cliente cliente = clienteRepository.findByTelefono(telefono.trim()).orElseGet(Cliente::new);
         cliente.setTelefono(telefono.trim());
@@ -687,6 +731,9 @@ public class PedidoService {
             default                 -> EstadoPedido.CREADO;
         };
         pedido.setEstadoPedido(estado);
+        if (estado == EstadoPedido.ENTREGADO && pedido.getFechaEntrega() == null) {
+            pedido.setFechaEntrega(LocalDateTime.now());
+        }
 
         Cliente cliente = pedido.getCliente();
         if (cliente == null) {
@@ -727,6 +774,9 @@ public class PedidoService {
                     return;
                 }
                 p.setEstadoPedido(nuevoEstado);
+                if (nuevoEstado == EstadoPedido.ENTREGADO && p.getFechaEntrega() == null) {
+                    p.setFechaEntrega(LocalDateTime.now());
+                }
                 pedidoRepository.save(p);
                 log.info("Pedido #{} → estado: {}", id, estadoStr);
                 switch (nuevoEstado) {
