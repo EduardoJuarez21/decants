@@ -149,6 +149,8 @@ public class PedidoService {
             descontarStock(items);
             telegramService.notificarNuevoPedido(saved);
             emailService.enviarConfirmacion(saved);
+        } else {
+            telegramService.notificarPedidoPendiente(saved);
         }
         return saved;
     }

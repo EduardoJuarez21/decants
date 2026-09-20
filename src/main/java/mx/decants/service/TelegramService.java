@@ -61,6 +61,34 @@ public class TelegramService {
         enviar(token, chatId, texto);
     }
 
+    public void notificarPedidoPendiente(Pedido pedido) {
+        String token  = configuracionService.get("telegram_bot_token", "");
+        String chatId = configuracionService.get("telegram_chat_id", "");
+        if (token.isBlank() || chatId.isBlank()) return;
+
+        String productos = pedido.getProductosSeleccionados() != null
+            ? pedido.getProductosSeleccionados() : "—";
+        String codigo = pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("—");
+
+        String texto = String.format(
+            "🕐 <b>Pedido pendiente de pago #%d</b> · <code>%s</code>\n\n" +
+            "👤 <b>%s</b>\n" +
+            "📱 %s\n" +
+            "📦 %s\n" +
+            "💰 <b>$%d MXN</b>\n\n" +
+            "El cliente inició el pago pero aún no lo completa. Dale seguimiento por WhatsApp: %s",
+            pedido.getId(),
+            codigo,
+            pedido.getNombreCliente(),
+            pedido.getTelefono(),
+            productos,
+            pedido.getTotalPagado() != null ? pedido.getTotalPagado() : 0,
+            pedido.getWaLink()
+        );
+
+        enviar(token, chatId, texto);
+    }
+
     public void notificarStockBajo(String nombreProducto, int stock, String unidad) {
         String token  = configuracionService.get("telegram_bot_token", "");
         String chatId = configuracionService.get("telegram_chat_id", "");
