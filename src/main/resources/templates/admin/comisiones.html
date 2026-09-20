@@ -188,7 +188,7 @@
 
     <div class="admin-card" style="margin-bottom:1.5rem;">
         <div class="admin-card-header" style="display:flex; align-items:center; justify-content:space-between;">
-            <h2>📦 Debe a la empresa — <span th:text="${vendedorEtiqueta}"></span></h2>
+            <h2>📦 Saldo pendiente por entregar — <span th:text="${vendedorEtiqueta}"></span></h2>
             <div style="display:flex; align-items:center; gap:0.75rem;">
                 <a th:href="@{/aura-gestion/comisiones(mes=${comisionMesAnterior}, vendedor=${vendedor})}" class="admin-link" style="font-size:0.85rem;">&#8592;</a>
                 <span style="font-size:0.85rem; font-weight:600; color:#1a1a1a; min-width:120px; text-align:center;" th:text="${comisionMesEtiqueta}"></span>
@@ -252,7 +252,7 @@
                     <div style="font-size:1.4rem; font-weight:700; color:#1a1a1a;">$<span th:text="${deudaTotal}"></span></div>
                 </div>
                 <div>
-                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Debe a la empresa (acumulado)</div>
+                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Saldo pendiente (acumulado)</div>
                     <div style="font-size:1.4rem; font-weight:700; color:#a34141;">$<span th:text="${deudaPendiente}"></span></div>
                 </div>
             </div>
