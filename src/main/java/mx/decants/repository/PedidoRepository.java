@@ -26,8 +26,12 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     List<Pedido> findByVendedorAndEstadoPedidoNot(String vendedor, EstadoPedido estadoExcluido);
 
-    List<Pedido> findByVendedorAndEstadoPedido(String vendedor, EstadoPedido estado);
+    // fechaEntrega es la señal real de "aqui empieza la deuda de la vendedora" --
+    // normalmente se llena al llegar a ENTREGADO, pero tambien se puede marcar a
+    // mano (ver PedidoService.marcarDeudaManual) sin depender del estado de envio.
+    List<Pedido> findByVendedorAndFechaEntregaIsNotNullAndEstadoPedidoNot(
+        String vendedor, EstadoPedido estadoExcluido);
 
-    List<Pedido> findByVendedorAndEstadoPedidoAndFechaEntregaBetween(
-        String vendedor, EstadoPedido estado, LocalDateTime desde, LocalDateTime hasta);
+    List<Pedido> findByVendedorAndFechaEntregaBetweenAndEstadoPedidoNot(
+        String vendedor, LocalDateTime desde, LocalDateTime hasta, EstadoPedido estadoExcluido);
 }

@@ -345,6 +345,30 @@
                 </div>
             </div>
 
+            <!-- Deuda manual de la vendedora (independiente del estado de envio) -->
+            <div class="side-card" th:if="${pedido.vendedor != null}">
+                <p class="side-card-title">Deuda de la vendedora</p>
+                <div class="side-card-body">
+                    <p th:if="${pedido.fechaEntrega != null}" style="font-size:0.8rem; color:#2e7d32; margin:0 0 0.75rem;">
+                        ✅ Cuenta como deuda desde el <span th:text="${#temporals.format(pedido.fechaEntrega, 'dd/MM/yyyy HH:mm')}"></span>
+                    </p>
+                    <p th:if="${pedido.fechaEntrega == null}" style="font-size:0.8rem; color:var(--muted); margin:0 0 0.75rem;">
+                        Aún no cuenta como deuda pendiente.
+                    </p>
+                    <form th:if="${pedido.fechaEntrega == null}"
+                          th:action="@{/aura-gestion/pedidos/{id}/deuda(id=${pedido.id})}" method="post">
+                        <input type="hidden" name="marcar" value="true">
+                        <button type="submit" class="btn-dark">Marcar como deuda pendiente</button>
+                    </form>
+                    <form th:if="${pedido.fechaEntrega != null}"
+                          th:action="@{/aura-gestion/pedidos/{id}/deuda(id=${pedido.id})}" method="post"
+                          onsubmit="return confirm('¿Quitar la marca de deuda de este pedido?');">
+                        <input type="hidden" name="marcar" value="false">
+                        <button type="submit" class="btn-dark" style="background:#8a8a8a;">Quitar marca de deuda</button>
+                    </form>
+                </div>
+            </div>
+
             <!-- Link de pago (Stripe, incluye meses sin intereses) -->
             <div class="side-card"
                  th:if="${pedido.estadoPedido.name() == 'CREADO' or pedido.estadoPedido.name() == 'PENDIENTE_PAGO'}">

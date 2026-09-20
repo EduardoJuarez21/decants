@@ -320,6 +320,15 @@ public class AdminController {
         return "redirect:/aura-gestion/pedidos";
     }
 
+    @PostMapping("/pedidos/{id}/deuda")
+    public String marcarDeudaManual(@PathVariable Long id,
+                                    @RequestParam boolean marcar,
+                                    RedirectAttributes ra) {
+        pedidoService.marcarDeudaManual(id, marcar);
+        ra.addFlashAttribute("mensaje", marcar ? "Pedido marcado como deuda pendiente." : "Se quitó la marca de deuda.");
+        return "redirect:/aura-gestion/pedidos/" + id;
+    }
+
     @GetMapping("/pedidos/{id}")
     public String detallePedido(@PathVariable Long id, Model model) {
         Optional<Pedido> pedido = pedidoService.buscarPorId(id);
