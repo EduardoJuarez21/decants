@@ -187,84 +187,30 @@
     </div>
 
     <div class="admin-card" style="margin-bottom:1.5rem;">
-        <div class="admin-card-header" style="display:flex; align-items:center; justify-content:space-between;">
+        <div class="admin-card-header">
             <h2>📦 Saldo pendiente por entregar — <span th:text="${vendedorEtiqueta}"></span></h2>
-            <div style="display:flex; align-items:center; gap:0.75rem;">
-                <a th:href="@{/aura-gestion/comisiones(mes=${comisionMesAnterior}, vendedor=${vendedor})}" class="admin-link" style="font-size:0.85rem;">&#8592;</a>
-                <span style="font-size:0.85rem; font-weight:600; color:#1a1a1a; min-width:120px; text-align:center;" th:text="${comisionMesEtiqueta}"></span>
-                <a th:unless="${comisionEsMesActual}" th:href="@{/aura-gestion/comisiones(mes=${comisionMesSiguiente}, vendedor=${vendedor})}" class="admin-link" style="font-size:0.85rem;">&#8594;</a>
-                <span th:if="${comisionEsMesActual}" style="font-size:0.85rem; color:#ccc;">&#8594;</span>
-            </div>
         </div>
         <div style="padding:1.5rem 2rem;">
 
-            <!-- Estado de cobro de la deuda -->
-            <div th:if="${vendedorCobro != null}"
-                 style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;
-                        background:#e8f5e9; border:1px solid #b7dfba; border-radius:8px;
-                        padding:0.75rem 1rem; margin-bottom:1.25rem;">
-                <span style="font-size:0.85rem; color:#2e7d32; font-weight:600;">
-                    ✅ Cobrado el <span th:text="${#temporals.format(vendedorCobro.fechaCobro, 'dd/MM/yyyy')}"></span>
-                    — $<span th:text="${vendedorCobro.montoCobrado}"></span>
-                    <span th:if="${vendedorCobro.notas != null and !#strings.isEmpty(vendedorCobro.notas)}"
-                          th:text="'(' + ${vendedorCobro.notas} + ')'" style="font-weight:400; color:#4a7a4d;"></span>
-                </span>
-                <form th:if="${esAdmin}" th:action="@{/aura-gestion/comisiones/marcar-no-cobrado}" method="post"
-                      onsubmit="return confirm('¿Quitar la marca de cobrado?');" style="margin:0;">
-                    <input type="hidden" name="vendedor" th:value="${vendedor}">
-                    <input type="hidden" name="mes" th:value="${comisionMes}">
-                    <button type="submit" style="background:none; border:none; color:#2e7d32; text-decoration:underline;
-                                                  font-size:0.78rem; cursor:pointer; font-family:inherit;">Deshacer</button>
-                </form>
-            </div>
+            <p style="color:var(--muted); font-size:0.82rem; margin:0 0 1.25rem;">
+                Pedidos que <span th:text="${vendedorEtiqueta}"></span> ya tiene para vender y que aún no ha entregado/cobrado.
+                Se resuelve solo al marcar el pedido como Entregado.
+            </p>
 
-            <form th:if="${deudaPendiente > 0 and esAdmin}"
-                  th:action="@{/aura-gestion/comisiones/marcar-cobrado}" method="post"
-                  style="display:flex; align-items:flex-end; gap:0.75rem; flex-wrap:wrap;
-                         background:#fdeeee; border:1px solid #f0c0c0; border-radius:8px;
-                         padding:0.75rem 1rem; margin-bottom:1.25rem;">
-                <input type="hidden" name="vendedor" th:value="${vendedor}">
-                <input type="hidden" name="mes" th:value="${comisionMes}">
-                <div style="display:flex; flex-direction:column; gap:0.2rem;">
-                    <label style="font-size:0.7rem; font-weight:600; color:#a34141;">Monto cobrado ($MXN)</label>
-                    <input type="number" name="monto" required min="0"
-                           th:value="${deudaPendiente}"
-                           style="padding:0.4rem 0.6rem; border:1.5px solid #e0b0b0; border-radius:6px; width:110px; font-family:inherit;">
-                </div>
-                <div style="display:flex; flex-direction:column; gap:0.2rem; flex:1; min-width:160px;">
-                    <label style="font-size:0.7rem; font-weight:600; color:#a34141;">Nota (opcional)</label>
-                    <input type="text" name="notas" placeholder="Ej. pagado por transferencia"
-                           style="padding:0.4rem 0.6rem; border:1.5px solid #e0b0b0; border-radius:6px; width:100%; font-family:inherit;">
-                </div>
-                <button type="submit"
-                        style="padding:0.5rem 1rem; background:#a34141; color:#fff; border:none; border-radius:6px;
-                               font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit;">
-                    <span th:text="${vendedorCobro != null ? 'Registrar abono adicional' : 'Marcar como cobrado'}"></span>
-                </button>
-            </form>
-
-            <p th:if="${deudaPendiente > 0 and !esAdmin}"
-               style="color:var(--muted); font-size:0.82rem; margin:0 0 1.25rem;">Pendiente de entregar a la empresa</p>
-
-            <div style="display:flex; gap:2rem; margin-bottom:1.25rem; flex-wrap:wrap;">
-                <div>
-                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Entregado este mes</div>
-                    <div style="font-size:1.4rem; font-weight:700; color:#1a1a1a;">$<span th:text="${deudaTotal}"></span></div>
-                </div>
-                <div>
-                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Saldo pendiente (acumulado)</div>
-                    <div style="font-size:1.4rem; font-weight:700; color:#a34141;">$<span th:text="${deudaPendiente}"></span></div>
-                </div>
+            <div style="margin-bottom:1.25rem;">
+                <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Debe ahora</div>
+                <div style="font-size:1.4rem; font-weight:700; color:#a34141;">$<span th:text="${deudaTotal}"></span></div>
             </div>
             <p th:if="${deudaDetalle.isEmpty()}" style="color:var(--muted); font-size:0.85rem;">
-                Sin pedidos entregados de <span th:text="${vendedorEtiqueta}"></span> este mes.
+                <span th:text="${vendedorEtiqueta}"></span> no tiene pedidos pendientes por entregar.
             </p>
             <div th:if="${!deudaDetalle.isEmpty()}" style="overflow-x:auto;">
                 <table class="admin-table">
                     <thead>
                         <tr>
                             <th>Pedido</th>
-                            <th>Entregado</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
                             <th>Productos</th>
                             <th style="text-align:right;">Total</th>
                         </tr>
@@ -272,7 +218,8 @@
                     <tbody>
                         <tr th:each="fila : ${deudaDetalle}">
                             <td style="font-family:monospace; font-size:0.8rem; color:var(--muted);" th:text="${fila.codigoPedido}"></td>
-                            <td style="color:var(--muted); white-space:nowrap;" th:text="${#temporals.format(fila.fechaEntrega, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td style="color:var(--muted); white-space:nowrap;" th:text="${#temporals.format(fila.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${fila.estado}"></td>
                             <td th:text="${fila.productos}"></td>
                             <td style="text-align:right; font-weight:700;" th:text="|$${fila.total}|"></td>
                         </tr>

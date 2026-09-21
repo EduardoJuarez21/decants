@@ -93,8 +93,6 @@ public class Pedido {
     @Column(nullable = false)
     private LocalDateTime fechaActualizacion;
 
-    private LocalDateTime fechaEntrega; // se llena la primera vez que el pedido pasa a ENTREGADO
-
     @PrePersist
     protected void onCreate() {
         fechaCreacion = LocalDateTime.now();
@@ -206,9 +204,6 @@ public class Pedido {
 
     public LocalDateTime getFechaActualizacion() { return fechaActualizacion; }
     public void setFechaActualizacion(LocalDateTime fechaActualizacion) { this.fechaActualizacion = fechaActualizacion; }
-
-    public LocalDateTime getFechaEntrega() { return fechaEntrega; }
-    public void setFechaEntrega(LocalDateTime fechaEntrega) { this.fechaEntrega = fechaEntrega; }
 
     // --- WhatsApp: mensaje y link pre-armados según el estado actual ---
 

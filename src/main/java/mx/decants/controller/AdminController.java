@@ -5,7 +5,6 @@ import mx.decants.entity.Cupon;
 import mx.decants.entity.Pedido;
 import mx.decants.entity.Producto;
 import mx.decants.entity.Vendedor;
-import mx.decants.entity.VendedorCobro;
 import mx.decants.service.ComisionPagoService;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.CuponService;
@@ -14,7 +13,6 @@ import mx.decants.service.PedidoService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.ResenaService;
 import mx.decants.service.StripeService;
-import mx.decants.service.VendedorCobroService;
 import mx.decants.service.VendedorService;
 import mx.decants.service.VisitaService;
 import mx.decants.util.SlugUtil;
@@ -57,15 +55,13 @@ public class AdminController {
     private final ResenaService resenaService;
     private final VendedorService vendedorService;
     private final ComisionPagoService comisionPagoService;
-    private final VendedorCobroService vendedorCobroService;
     private final StripeService stripeService;
 
     public AdminController(PedidoService pedidoService, ProductoService productoService,
                            CuponService cuponService, ConfiguracionService configuracionService,
                            VisitaService visitaService, ImagenService imagenService,
                            ResenaService resenaService, VendedorService vendedorService,
-                           ComisionPagoService comisionPagoService, VendedorCobroService vendedorCobroService,
-                           StripeService stripeService) {
+                           ComisionPagoService comisionPagoService, StripeService stripeService) {
         this.pedidoService = pedidoService;
         this.productoService = productoService;
         this.cuponService = cuponService;
@@ -75,7 +71,6 @@ public class AdminController {
         this.resenaService = resenaService;
         this.vendedorService = vendedorService;
         this.comisionPagoService = comisionPagoService;
-        this.vendedorCobroService = vendedorCobroService;
         this.stripeService = stripeService;
     }
 
@@ -320,15 +315,6 @@ public class AdminController {
         return "redirect:/aura-gestion/pedidos";
     }
 
-    @PostMapping("/pedidos/{id}/deuda")
-    public String marcarDeudaManual(@PathVariable Long id,
-                                    @RequestParam boolean marcar,
-                                    RedirectAttributes ra) {
-        pedidoService.marcarDeudaManual(id, marcar);
-        ra.addFlashAttribute("mensaje", marcar ? "Pedido marcado como deuda pendiente." : "Se quitó la marca de deuda.");
-        return "redirect:/aura-gestion/pedidos/" + id;
-    }
-
     @GetMapping("/pedidos/{id}")
     public String detallePedido(@PathVariable Long id, Model model) {
         Optional<Pedido> pedido = pedidoService.buscarPorId(id);
@@ -561,14 +547,12 @@ public class AdminController {
         model.addAttribute("comisionPendiente", Math.max(0, comisionAcumulada - totalPagadoAcumulado));
 
         // ── Deuda de la vendedora hacia la empresa (consignación) ───────────
-        Map<String, Object> deuda = pedidoService.deudaVendedor(vendedor, mes);
+        // Es lo que sigue en curso ahora mismo (no Entregado, no Cancelado) --
+        // se resuelve solo cuando marcas el pedido como Entregado, sin necesitar
+        // un registro de pago aparte.
+        Map<String, Object> deuda = pedidoService.deudaActualVendedor(vendedor);
         model.addAttribute("deudaTotal", deuda.get("total"));
         model.addAttribute("deudaDetalle", deuda.get("detalle"));
-        Optional<VendedorCobro> vendedorCobroOpt = vendedorCobroService.buscar(vendedor, mes);
-        model.addAttribute("vendedorCobro", vendedorCobroOpt.orElse(null));
-        int deudaAcumulada = pedidoService.deudaTotalAcumulada(vendedor);
-        int totalCobradoAcumulado = vendedorCobroService.totalCobradoAcumulado(vendedor);
-        model.addAttribute("deudaPendiente", Math.max(0, deudaAcumulada - totalCobradoAcumulado));
 
         return "admin/comisiones";
     }
@@ -590,26 +574,6 @@ public class AdminController {
                                           RedirectAttributes ra) {
         comisionPagoService.desmarcar(vendedor, YearMonth.parse(mes));
         ra.addFlashAttribute("mensaje", "Se quitó la marca de pagado.");
-        return "redirect:/aura-gestion/comisiones?vendedor=" + vendedor + "&mes=" + mes;
-    }
-
-    @PostMapping("/comisiones/marcar-cobrado")
-    public String marcarVendedorCobrado(@RequestParam String vendedor,
-                                        @RequestParam String mes,
-                                        @RequestParam Integer monto,
-                                        @RequestParam(required = false) String notas,
-                                        RedirectAttributes ra) {
-        vendedorCobroService.marcarCobrado(vendedor, YearMonth.parse(mes), monto, notas);
-        ra.addFlashAttribute("mensaje", "Cobro registrado.");
-        return "redirect:/aura-gestion/comisiones?vendedor=" + vendedor + "&mes=" + mes;
-    }
-
-    @PostMapping("/comisiones/marcar-no-cobrado")
-    public String desmarcarVendedorCobrado(@RequestParam String vendedor,
-                                           @RequestParam String mes,
-                                           RedirectAttributes ra) {
-        vendedorCobroService.desmarcar(vendedor, YearMonth.parse(mes));
-        ra.addFlashAttribute("mensaje", "Se quitó la marca de cobrado.");
         return "redirect:/aura-gestion/comisiones?vendedor=" + vendedor + "&mes=" + mes;
     }
 

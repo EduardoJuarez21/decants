@@ -489,19 +489,14 @@ public class PedidoService {
     }
 
     // ── Deuda de la vendedora hacia la empresa (consignación) ───────────────────
-    // A diferencia de la comision (que se agrupa por fechaCreacion), la deuda solo
-    // cuenta pedidos con fechaEntrega ya asignada -- normalmente cuando llega a
-    // ENTREGADO, pero tambien se puede marcar a mano (marcarDeudaManual) para un
-    // pedido que la vendedora ya debe cobrar aunque siga en transito en el sistema --
-    // y se agrupa por fechaEntrega, no por fechaCreacion, para no contar ventas que
-    // aun no se le han entregado/cobrado a su cliente.
-
+    // El pedido se marca ENTREGADO cuando su cliente le paga a ella -- ese es el
+    // momento en que deja de debernos ese dinero. Por eso la deuda es simplemente
+    // lo que sigue en curso: cualquier pedido suyo que no este Entregado ni
+    // Cancelado, sin importar fechas ni pagos registrados aparte.
     @Transactional(readOnly = true)
-    public Map<String, Object> deudaVendedor(String vendedor, YearMonth mes) {
-        LocalDateTime desde = mes.atDay(1).atStartOfDay();
-        LocalDateTime hasta = mes.plusMonths(1).atDay(1).atStartOfDay();
-        List<Pedido> pedidos = pedidoRepository.findByVendedorAndFechaEntregaBetweenAndEstadoPedidoNot(
-            vendedor, desde, hasta, EstadoPedido.CANCELADO);
+    public Map<String, Object> deudaActualVendedor(String vendedor) {
+        List<Pedido> pedidos = pedidoRepository.findByVendedorAndEstadoPedidoNotIn(
+            vendedor, Set.of(EstadoPedido.ENTREGADO, EstadoPedido.CANCELADO));
 
         int total = pedidos.stream().mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0).sum();
 
@@ -509,26 +504,18 @@ public class PedidoService {
         for (Pedido pedido : pedidos) {
             Map<String, Object> fila = new LinkedHashMap<>();
             fila.put("codigoPedido", pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId()));
-            fila.put("fechaEntrega", pedido.getFechaEntrega());
+            fila.put("fecha", pedido.getFechaCreacion());
+            fila.put("estado", pedido.getEstadoPedido().getEtiqueta());
             fila.put("productos", pedido.getProductosSeleccionados());
             fila.put("total", pedido.getTotalPagado());
             detalle.add(fila);
         }
-        detalle.sort((a, b) -> ((LocalDateTime) b.get("fechaEntrega")).compareTo((LocalDateTime) a.get("fechaEntrega")));
+        detalle.sort((a, b) -> ((LocalDateTime) b.get("fecha")).compareTo((LocalDateTime) a.get("fecha")));
 
         Map<String, Object> resultado = new LinkedHashMap<>();
         resultado.put("total", total);
         resultado.put("detalle", detalle);
         return resultado;
-    }
-
-    // Deuda generada en TODA la historia (no solo el mes en pantalla), para que el
-    // pendiente se arrastre de un mes a otro igual que con comisionTotalAcumulada.
-    @Transactional(readOnly = true)
-    public int deudaTotalAcumulada(String vendedor) {
-        return pedidoRepository.findByVendedorAndFechaEntregaIsNotNullAndEstadoPedidoNot(vendedor, EstadoPedido.CANCELADO).stream()
-            .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
-            .sum();
     }
 
     private static Integer mlEquivalente(PedidoItem item, Producto p) {
@@ -602,9 +589,6 @@ public class PedidoService {
             default                 -> EstadoPedido.CREADO;
         };
         pedido.setEstadoPedido(estado);
-        if (estado == EstadoPedido.ENTREGADO) {
-            pedido.setFechaEntrega(LocalDateTime.now());
-        }
 
         Cliente cliente = clienteRepository.findByTelefono(telefono.trim()).orElseGet(Cliente::new);
         cliente.setTelefono(telefono.trim());
@@ -733,9 +717,6 @@ public class PedidoService {
             default                 -> EstadoPedido.CREADO;
         };
         pedido.setEstadoPedido(estado);
-        if (estado == EstadoPedido.ENTREGADO && pedido.getFechaEntrega() == null) {
-            pedido.setFechaEntrega(LocalDateTime.now());
-        }
 
         Cliente cliente = pedido.getCliente();
         if (cliente == null) {
@@ -766,18 +747,6 @@ public class PedidoService {
         });
     }
 
-    // Ajuste manual de fechaEntrega, independiente del estado de envio -- para
-    // casos donde la vendedora ya tiene el pedido y debe cobrarlo aunque el
-    // pedido siga en transito real (ej. Listo para envio) y no vaya a marcarse
-    // Entregado pronto en el sistema.
-    public void marcarDeudaManual(Long id, boolean marcar) {
-        pedidoRepository.findById(id).ifPresent(p -> {
-            p.setFechaEntrega(marcar ? LocalDateTime.now() : null);
-            pedidoRepository.save(p);
-            log.info("Pedido #{} → deuda manual: {}", id, marcar ? "marcada" : "quitada");
-        });
-    }
-
     public void cambiarEstado(Long id, String estadoStr) {
         pedidoRepository.findById(id).ifPresent(p -> {
             try {
@@ -788,9 +757,6 @@ public class PedidoService {
                     return;
                 }
                 p.setEstadoPedido(nuevoEstado);
-                if (nuevoEstado == EstadoPedido.ENTREGADO && p.getFechaEntrega() == null) {
-                    p.setFechaEntrega(LocalDateTime.now());
-                }
                 pedidoRepository.save(p);
                 log.info("Pedido #{} → estado: {}", id, estadoStr);
                 switch (nuevoEstado) {
