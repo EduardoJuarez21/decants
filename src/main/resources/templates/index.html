@@ -1798,6 +1798,26 @@
         var proceedBtn = document.getElementById('mobileProceedBtn');
         if (!cta) return;
 
+        /* Si el usuario está viendo una sección con su propio buscador
+           (Alta Perfumería / Perfumería Árabe), la lupa flotante enfoca ESE
+           buscador en vez de abrir uno global aparte, para no amontonar dos
+           cajas de búsqueda en pantalla. */
+        var seccionEnfocadaActual = null;
+        function seccionActivaParaBusqueda() {
+            var candidatos = [
+                { wrapId: 'alta-cuerpo', inputId: 'buscadorDesigner', gridId: 'grid-designer', sinResultadosId: 'sinResultadosDesigner' },
+                { wrapId: 'arabe-cuerpo', inputId: 'buscadorArabe', gridId: 'grid-arabe', sinResultadosId: 'sinResultadosArabe' }
+            ];
+            var vh = window.innerHeight;
+            for (var i = 0; i < candidatos.length; i++) {
+                var el = document.getElementById(candidatos[i].wrapId);
+                if (!el) continue;
+                var r = el.getBoundingClientRect();
+                if (r.top < vh * 0.75 && r.bottom > vh * 0.15) return candidatos[i];
+            }
+            return null;
+        }
+
         function updateMobileCta() {
             var n = getCount();
             if (n > 0) {
@@ -1823,6 +1843,35 @@
             var proceed = document.getElementById('mobileProceedBtn');
             var icoS    = document.getElementById('iconSearch');
             var icoC    = document.getElementById('iconClose');
+
+            // Cerrando un buscador de sección que quedó enfocado
+            if (seccionEnfocadaActual) {
+                var campoActivo = document.getElementById(seccionEnfocadaActual.inputId);
+                campoActivo.value = '';
+                campoActivo.blur();
+                buscarSeccion(seccionEnfocadaActual.inputId, seccionEnfocadaActual.gridId, seccionEnfocadaActual.sinResultadosId);
+                seccionEnfocadaActual = null;
+                icoS.style.display = 'block';
+                icoC.style.display = 'none';
+                return;
+            }
+
+            // Abriendo: si hay una sección con buscador propio visible, usar ESE
+            if (icoC.style.display === 'none') {
+                var seccion = seccionActivaParaBusqueda();
+                if (seccion) {
+                    seccionEnfocadaActual = seccion;
+                    var campo = document.getElementById(seccion.inputId);
+                    campo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(function() { campo.focus(); }, 350);
+                    icoS.style.display = 'none';
+                    icoC.style.display = 'block';
+                    return;
+                }
+            }
+
+            // Comportamiento original: buscador global (cuando no hay
+            // sección de catálogo con buscador propio a la vista)
             var searching = input.style.display === 'none';
 
             input.style.display   = searching ? 'block' : 'none';
