@@ -166,6 +166,10 @@
     <!-- Ventas por mes -->
     <div class="chart-card">
         <div class="chart-title">Ventas por mes</div>
+        <p id="ventasPorMesVacio" style="display:none; color:var(--muted); font-size:0.85rem;">
+            Aún no hay suficientes ventas para graficar.
+        </p>
+        <p id="ventasPorMesError" style="display:none; color:#c0392b; font-size:0.8rem;"></p>
         <canvas id="graficaVentasPorMes" height="90"></canvas>
     </div>
 
@@ -322,45 +326,57 @@
     const ventasPorMesEtiquetas = /*[[${ventasPorMesEtiquetas}]]*/ [];
     const ventasPorMesValores   = /*[[${ventasPorMesValores}]]*/ [];
 
-    new Chart(document.getElementById('graficaVentasPorMes'), {
-        type: 'bar',
-        data: {
-            labels: ventasPorMesEtiquetas,
-            datasets: [{
-                label: 'Ventas',
-                data: ventasPorMesValores,
-                backgroundColor: '#c9a96e',
-                borderRadius: 4,
-                maxBarThickness: 48
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        title: ctx => ctx[0].label,
-                        label: ctx => ' $' + ctx.parsed.y.toLocaleString('es-MX')
+    try {
+        if (!ventasPorMesEtiquetas || !ventasPorMesEtiquetas.length) {
+            document.getElementById('graficaVentasPorMes').style.display = 'none';
+            document.getElementById('ventasPorMesVacio').style.display = 'block';
+        } else {
+            new Chart(document.getElementById('graficaVentasPorMes'), {
+                type: 'bar',
+                data: {
+                    labels: ventasPorMesEtiquetas,
+                    datasets: [{
+                        label: 'Ventas',
+                        data: ventasPorMesValores,
+                        backgroundColor: '#c9a96e',
+                        borderRadius: 4,
+                        maxBarThickness: 48
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: ctx => ctx[0].label,
+                                label: ctx => ' $' + ctx.parsed.y.toLocaleString('es-MX')
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11 }, color: '#aaa' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                font: { size: 11 }, color: '#aaa',
+                                callback: value => '$' + value.toLocaleString('es-MX')
+                            },
+                            grid: { color: '#f0f0f0' }
+                        }
                     }
                 }
-            },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { size: 11 }, color: '#aaa' }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        font: { size: 11 }, color: '#aaa',
-                        callback: value => '$' + value.toLocaleString('es-MX')
-                    },
-                    grid: { color: '#f0f0f0' }
-                }
-            }
+            });
         }
-    });
+    } catch (err) {
+        var errEl = document.getElementById('ventasPorMesError');
+        errEl.textContent = 'Error al graficar: ' + err.message;
+        errEl.style.display = 'block';
+        console.error('ventasPorMes chart error', err, ventasPorMesEtiquetas, ventasPorMesValores);
+    }
 </script>
 </body>
 </html>
