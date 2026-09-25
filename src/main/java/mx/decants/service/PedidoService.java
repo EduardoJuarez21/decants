@@ -23,13 +23,16 @@ import org.springframework.data.domain.PageRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -853,6 +856,23 @@ public class PedidoService {
             .sum();
         int totalEnProceso = totalVendidoHistorico - totalEntregado - totalPendientePago;
 
+        // Ventas por mes calendario (desde el primer pedido), para la grafica del dashboard
+        Map<YearMonth, Integer> ventasPorMesMap = validosList.stream()
+            .collect(Collectors.groupingBy(
+                p -> YearMonth.from(p.getFechaCreacion()),
+                TreeMap::new,
+                Collectors.summingInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
+            ));
+        List<String> ventasPorMesEtiquetas = new ArrayList<>();
+        List<Integer> ventasPorMesValores = new ArrayList<>();
+        Locale esMx = new Locale("es", "MX");
+        ventasPorMesMap.forEach((mesActual, total) -> {
+            String nombreMes = mesActual.getMonth().getDisplayName(TextStyle.SHORT, esMx);
+            nombreMes = Character.toUpperCase(nombreMes.charAt(0)) + nombreMes.substring(1);
+            ventasPorMesEtiquetas.add(nombreMes + " " + mesActual.getYear());
+            ventasPorMesValores.add(total);
+        });
+
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("ventasHoy",      ventasHoy);
         stats.put("ventasSemana",   ventasSemana);
@@ -870,6 +890,8 @@ public class PedidoService {
         stats.put("totalVendidoHistorico", totalVendidoHistorico);
         stats.put("totalEntregado",        totalEntregado);
         stats.put("totalEnProceso",        totalEnProceso);
+        stats.put("ventasPorMesEtiquetas", ventasPorMesEtiquetas);
+        stats.put("ventasPorMesValores",   ventasPorMesValores);
         return stats;
     }
 
