@@ -97,12 +97,18 @@
                     <option value="Activo">Activos</option>
                     <option value="Inactivo">Inactivos</option>
                 </select>
-                <select id="filtroBotella" onchange="filtrarTabla()"
-                        style="flex:1; padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
-                               font-size:0.85rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
-                    <option value="">Todas las botellas</option>
-                    <option value="alerta">⚠ Alerta (≥80% vendido)</option>
-                </select>
+            </div>
+            <div style="display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap;">
+                <span style="font-size:0.82rem; color:#444;">⚠ Alertar botella desde</span>
+                <input id="umbralBotella" type="number" min="1" max="100" value="80"
+                       oninput="actualizarUmbralBotella()"
+                       style="width:64px; padding:0.4rem 0.5rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                              font-size:0.85rem; font-family:inherit; outline:none; text-align:center;">
+                <span style="font-size:0.82rem; color:#444;">% vendido</span>
+                <label style="display:flex; align-items:center; gap:0.35rem; font-size:0.82rem; color:#444; cursor:pointer; margin-left:0.5rem;">
+                    <input type="checkbox" id="filtroSoloAlerta" onchange="filtrarTabla()">
+                    Mostrar solo alertas
+                </label>
             </div>
         </div>
         <p id="sinResultados" style="display:none; padding:2rem; text-align:center; color:var(--muted); font-size:0.88rem;">
@@ -225,11 +231,11 @@
                             <span th:unless="${p.precioBotella != null}" style="font-size:0.75rem; color:#ccc;">—</span>
                         </td>
                         <td>
-                            <span th:if="${pctBotella != null}"
+                            <span th:if="${pctBotella != null}" class="pct-botella-valor"
                                   th:text="${pctBotella} + '%'"
-                                  th:style="${pctBotella >= 80 ? 'font-weight:700; color:#c0392b;' : 'font-weight:600; color:#444;'}"></span>
-                            <span th:if="${pctBotella != null and pctBotella >= 80}"
-                                  style="font-size:0.68rem; color:#c0392b; font-weight:600; display:block; margin-top:2px;">ALERTA</span>
+                                  style="font-weight:600; color:#444;"></span>
+                            <span th:if="${pctBotella != null}" class="pct-botella-alerta"
+                                  style="display:none; font-size:0.68rem; color:#c0392b; font-weight:600; margin-top:2px;">ALERTA</span>
                             <span th:unless="${pctBotella != null}" style="font-size:0.75rem; color:#ccc;">—</span>
                         </td>
                         <td>
@@ -265,11 +271,32 @@
 </div>
 
 <script>
+    function obtenerUmbralBotella() {
+        var umbral = parseInt(document.getElementById('umbralBotella').value, 10);
+        return isNaN(umbral) ? 80 : umbral;
+    }
+
+    function actualizarUmbralBotella() {
+        var umbral = obtenerUmbralBotella();
+        document.querySelectorAll('.admin-table tbody tr').forEach(function(fila) {
+            var valorEl = fila.querySelector('.pct-botella-valor');
+            if (!valorEl) return; // producto sin mlBotella capturado
+            var pct = parseInt(fila.getAttribute('data-pct-botella'), 10);
+            var esAlerta = pct >= umbral;
+            valorEl.style.color = esAlerta ? '#c0392b' : '#444';
+            valorEl.style.fontWeight = esAlerta ? '700' : '600';
+            var alertaEl = fila.querySelector('.pct-botella-alerta');
+            if (alertaEl) alertaEl.style.display = esAlerta ? 'block' : 'none';
+        });
+        filtrarTabla();
+    }
+
     function filtrarTabla() {
-        var texto     = document.getElementById('filtroTexto').value.toLowerCase().trim();
-        var categoria = document.getElementById('filtroCategoria').value.toLowerCase();
-        var estado    = document.getElementById('filtroEstado').value.toLowerCase();
-        var botella   = document.getElementById('filtroBotella').value;
+        var texto      = document.getElementById('filtroTexto').value.toLowerCase().trim();
+        var categoria  = document.getElementById('filtroCategoria').value.toLowerCase();
+        var estado     = document.getElementById('filtroEstado').value.toLowerCase();
+        var soloAlerta = document.getElementById('filtroSoloAlerta').checked;
+        var umbral     = obtenerUmbralBotella();
 
         var filas     = document.querySelectorAll('.admin-table tbody tr');
         var visibles  = 0;
@@ -285,7 +312,7 @@
             var okTexto    = !texto     || nombre.includes(texto) || marca.includes(texto);
             var okCat      = !categoria || cat.includes(categoria);
             var okEstado   = !estado    || estadoFila.includes(estado);
-            var okBotella  = !botella   || (botella === 'alerta' && pctBotella >= 80);
+            var okBotella  = !soloAlerta || pctBotella >= umbral;
 
             var mostrar = okTexto && okCat && okEstado && okBotella;
             fila.style.display = mostrar ? '' : 'none';
@@ -294,6 +321,8 @@
 
         document.getElementById('sinResultados').style.display = visibles === 0 ? 'block' : 'none';
     }
+
+    actualizarUmbralBotella();
 </script>
 </body>
 </html>
