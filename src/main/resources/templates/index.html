@@ -127,7 +127,8 @@
         <div class="hero-content">
             <span class="hero-label fade-up fade-up-1">Perfumes 100% originales &amp; Personalizaci&oacute;n</span>
             <h1 class="fade-up fade-up-2">
-                Perfumes originales en<br>
+                Perfumes originales<br>
+                en<br>
                 <em>decants premium</em> de 3, 5 y 10 ml
             </h1>
             <p class="hero-sub fade-up fade-up-3">
@@ -930,6 +931,11 @@
             <img th:src="@{/img/galeria/galeria-vials.jpg}" alt="Decants de distintas fragancias" loading="lazy">
             <img th:src="@{/img/galeria/galeria-bolsas.jpg}" alt="Decants empacados en bolsas Aura Decants" loading="lazy">
             <img th:src="@{/img/galeria/galeria-regalo.jpg}" alt="Decant en presentación de regalo" loading="lazy">
+            <img th:src="@{/img/galeria/galeria-kits-mesa.jpg}" alt="Kits de decants Aura Decants sobre escritorio" loading="lazy">
+            <img th:src="@{/img/galeria/galeria-llenado-jeringa.jpg}" alt="Llenado de decant con jeringa desde botella original" loading="lazy">
+            <img th:src="@{/img/galeria/galeria-empaque-regalo.jpg}" alt="Decants en caja de regalo con listón" loading="lazy">
+            <img th:src="@{/img/galeria/galeria-coleccion-lujo.jpg}" alt="Colección de decants de alta perfumería" loading="lazy">
+            <img th:src="@{/img/galeria/galeria-muestrario.jpg}" alt="Muestrario de 10 decants Aura Decants MX" loading="lazy">
         </div>
     </div>
 </section>
@@ -1124,20 +1130,25 @@
 <!-- Mobile sticky CTA bar -->
 <div id="mobileCta" class="mobile-bottom-cta">
     <button id="mobileSearchToggle" class="mobile-cta-btn mobile-search-toggle" onclick="toggleMobileSearch()" aria-label="Buscar">
-        <svg id="iconSearch" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span id="iconClose" style="display:none; font-size:1.1rem; line-height:1;">✕</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
-    <input type="search" id="mobileSearchInput"
-           class="mobile-search-input"
-           placeholder="Buscar fragancia…"
-           oninput="onMobileSearch(this.value)"
-           autocomplete="off"
-           style="display:none;">
     <button id="mobileProceedBtn" class="mobile-cta-btn gold">Ver fragancias</button>
     <a id="mobileWaBtn" th:href="'https://wa.me/' + ${waNumero} + '?text=Hola%2C%20me%20interesan%20sus%20decants%20de%20perfume.%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F'"
        target="_blank" rel="noopener" class="mobile-cta-btn mobile-wa-btn" aria-label="WhatsApp">
         <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16c0 2.824.738 5.476 2.027 7.775L0 32l8.476-2.004A15.938 15.938 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.77-1.852l-.485-.29-5.03 1.189 1.215-4.9-.317-.503A13.267 13.267 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.952c-.398-.199-2.355-1.162-2.72-1.295-.365-.133-.631-.199-.897.2-.266.398-1.03 1.294-1.263 1.56-.232.266-.465.3-.863.1-.398-.2-1.681-.62-3.202-1.977-1.184-1.057-1.983-2.362-2.216-2.76-.232-.399-.025-.614.174-.812.179-.178.398-.465.597-.697.2-.233.266-.399.399-.665.132-.266.066-.498-.033-.697-.1-.2-.897-2.163-1.23-2.962-.323-.778-.652-.672-.897-.684l-.764-.013c-.266 0-.697.1-1.063.498-.365.399-1.395 1.362-1.395 3.324s1.428 3.856 1.628 4.122c.199.265 2.81 4.29 6.81 6.018.952.411 1.695.657 2.274.84.955.304 1.824.261 2.511.158.766-.114 2.355-.963 2.688-1.893.332-.93.332-1.727.232-1.893-.099-.166-.365-.266-.763-.465z"/></svg>
     </a>
+</div>
+
+<!-- Buscador móvil — overlay de pantalla completa -->
+<div id="mobileSearchOverlay" class="mobile-search-overlay" role="dialog" aria-modal="true" aria-label="Buscar fragancias">
+    <div class="mso-header">
+        <svg class="mso-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="mobileSearchOverlayInput" type="search" placeholder="Buscar fragancia o marca…" autocomplete="off" oninput="onMobileSearchOverlay(this.value)">
+        <button class="mso-close" onclick="closeMobileSearchOverlay()" aria-label="Cerrar búsqueda">✕</button>
+    </div>
+    <div id="mobileSearchResults" class="mso-results"></div>
+    <p id="mobileSearchEmpty" class="mso-empty" style="display:none;">Sin resultados. Prueba con otro nombre o marca.</p>
+    <p id="mobileSearchHint" class="mso-hint">Escribe el nombre de una fragancia o una marca.</p>
 </div>
 
 <!-- Package progress banner (fixed bottom) -->
@@ -1798,26 +1809,6 @@
         var proceedBtn = document.getElementById('mobileProceedBtn');
         if (!cta) return;
 
-        /* Si el usuario está viendo una sección con su propio buscador
-           (Alta Perfumería / Perfumería Árabe), la lupa flotante enfoca ESE
-           buscador en vez de abrir uno global aparte, para no amontonar dos
-           cajas de búsqueda en pantalla. */
-        var seccionEnfocadaActual = null;
-        function seccionActivaParaBusqueda() {
-            var candidatos = [
-                { wrapId: 'alta-cuerpo', inputId: 'buscadorDesigner', gridId: 'grid-designer', sinResultadosId: 'sinResultadosDesigner' },
-                { wrapId: 'arabe-cuerpo', inputId: 'buscadorArabe', gridId: 'grid-arabe', sinResultadosId: 'sinResultadosArabe' }
-            ];
-            var vh = window.innerHeight;
-            for (var i = 0; i < candidatos.length; i++) {
-                var el = document.getElementById(candidatos[i].wrapId);
-                if (!el) continue;
-                var r = el.getBoundingClientRect();
-                if (r.top < vh * 0.75 && r.bottom > vh * 0.15) return candidatos[i];
-            }
-            return null;
-        }
-
         function updateMobileCta() {
             var n = getCount();
             if (n > 0) {
@@ -1838,62 +1829,93 @@
         };
         updateMobileCta();
 
+        /* Buscador móvil: overlay de pantalla completa con resultados en
+           vivo, en vez de un input metido en la barra inferior compitiendo
+           con los demás botones. */
         window.toggleMobileSearch = function() {
-            var input   = document.getElementById('mobileSearchInput');
-            var proceed = document.getElementById('mobileProceedBtn');
-            var icoS    = document.getElementById('iconSearch');
-            var icoC    = document.getElementById('iconClose');
-
-            // Cerrando un buscador de sección que quedó enfocado
-            if (seccionEnfocadaActual) {
-                var campoActivo = document.getElementById(seccionEnfocadaActual.inputId);
-                campoActivo.value = '';
-                campoActivo.blur();
-                buscarSeccion(seccionEnfocadaActual.inputId, seccionEnfocadaActual.gridId, seccionEnfocadaActual.sinResultadosId);
-                seccionEnfocadaActual = null;
-                icoS.style.display = 'block';
-                icoC.style.display = 'none';
+            var overlay = document.getElementById('mobileSearchOverlay');
+            if (overlay.classList.contains('open')) {
+                closeMobileSearchOverlay();
                 return;
             }
-
-            // Abriendo: si hay una sección con buscador propio visible, usar ESE
-            if (icoC.style.display === 'none') {
-                var seccion = seccionActivaParaBusqueda();
-                if (seccion) {
-                    seccionEnfocadaActual = seccion;
-                    var campo = document.getElementById(seccion.inputId);
-                    campo.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(function() { campo.focus(); }, 350);
-                    icoS.style.display = 'none';
-                    icoC.style.display = 'block';
-                    return;
-                }
-            }
-
-            // Comportamiento original: buscador global (cuando no hay
-            // sección de catálogo con buscador propio a la vista)
-            var searching = input.style.display === 'none';
-
-            input.style.display   = searching ? 'block' : 'none';
-            proceed.style.display = searching ? 'none'  : 'flex';
-            icoS.style.display    = searching ? 'none'  : 'block';
-            icoC.style.display    = searching ? 'block' : 'none';
-
-            if (searching) {
-                input.focus();
-            } else {
-                input.value = '';
-                document.getElementById('buscadorProductos').value = '';
-                buscarProductos();
-            }
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            setTimeout(function() { document.getElementById('mobileSearchOverlayInput').focus(); }, 50);
         };
 
-        window.onMobileSearch = function(q) {
-            document.getElementById('buscadorProductos').value = q;
-            buscarProductos();
-            if (q.length === 1) {
-                document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
+        window.closeMobileSearchOverlay = function() {
+            var overlay = document.getElementById('mobileSearchOverlay');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+            document.getElementById('mobileSearchOverlayInput').value = '';
+            onMobileSearchOverlay('');
+        };
+
+        function crearFilaResultado(nombre, marca, href, imgSrc) {
+            var row = document.createElement('a');
+            row.className = 'mso-result-row';
+            row.href = href;
+
+            var img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = '';
+            img.loading = 'lazy';
+
+            var info = document.createElement('span');
+            info.className = 'mso-result-info';
+            var brandEl = document.createElement('span');
+            brandEl.className = 'mso-result-brand';
+            brandEl.textContent = marca;
+            var nameEl = document.createElement('span');
+            nameEl.className = 'mso-result-name';
+            nameEl.textContent = nombre;
+            info.appendChild(brandEl);
+            info.appendChild(nameEl);
+
+            var arrow = document.createElement('span');
+            arrow.className = 'mso-result-arrow';
+            arrow.textContent = '›';
+
+            row.appendChild(img);
+            row.appendChild(info);
+            row.appendChild(arrow);
+            return row;
+        }
+
+        window.onMobileSearchOverlay = function(valor) {
+            var q = valor.toLowerCase().trim();
+            var resultsEl = document.getElementById('mobileSearchResults');
+            var emptyEl   = document.getElementById('mobileSearchEmpty');
+            var hintEl    = document.getElementById('mobileSearchHint');
+            resultsEl.innerHTML = '';
+
+            if (!q) {
+                hintEl.style.display = 'block';
+                emptyEl.style.display = 'none';
+                return;
             }
+            hintEl.style.display = 'none';
+
+            var encontrados = 0;
+            document.querySelectorAll('#grid-designer .product-card, #grid-arabe .product-card').forEach(function(card) {
+                var nombreEl = card.querySelector('h3');
+                if (!nombreEl) return;
+                var nombre = nombreEl.textContent.trim();
+                var marcaEl = card.querySelector('.product-brand');
+                var marca = marcaEl ? marcaEl.textContent.trim() : '';
+                if (!(nombre + ' ' + marca).toLowerCase().includes(q)) return;
+
+                var linkEl = card.querySelector('.product-image-area a');
+                var imgEl  = card.querySelector('.product-img');
+                resultsEl.appendChild(crearFilaResultado(
+                    nombre, marca,
+                    linkEl ? linkEl.getAttribute('href') : '#',
+                    imgEl ? imgEl.getAttribute('src') : ''
+                ));
+                encontrados++;
+            });
+
+            emptyEl.style.display = encontrados ? 'none' : 'block';
         };
 
         cta.classList.add('visible');
