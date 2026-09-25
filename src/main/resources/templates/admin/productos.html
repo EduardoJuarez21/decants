@@ -97,6 +97,12 @@
                     <option value="Activo">Activos</option>
                     <option value="Inactivo">Inactivos</option>
                 </select>
+                <select id="filtroBotella" onchange="filtrarTabla()"
+                        style="flex:1; padding:0.55rem 0.75rem; border:1.5px solid #e0e0e0; border-radius:8px;
+                               font-size:0.85rem; font-family:inherit; background:#fff; cursor:pointer; outline:none;">
+                    <option value="">Todas las botellas</option>
+                    <option value="alerta">⚠ Alerta (≥80% vendido)</option>
+                </select>
             </div>
         </div>
         <p id="sinResultados" style="display:none; padding:2rem; text-align:center; color:var(--muted); font-size:0.88rem;">
@@ -120,12 +126,16 @@
                         <th>Vendidos (ml)</th>
                         <th>Stock (ml)</th>
                         <th>Frasco</th>
+                        <th>% Botella</th>
                         <th>Estado</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="p : ${productos}">
+                    <tr th:each="p : ${productos}"
+                        th:with="vendidoMl=${vendidosPorProducto.get(p.id) != null ? vendidosPorProducto.get(p.id) : 0},
+                                 pctBotella=${p.mlBotella != null and p.mlBotella > 0 ? (vendidoMl * 100 / p.mlBotella) : null}"
+                        th:attr="data-pct-botella=${pctBotella != null ? pctBotella : -1}">
                         <td th:text="${p.id}" style="color:var(--muted);"></td>
                         <td>
                             <strong th:text="${p.nombre}"></strong>
@@ -215,6 +225,14 @@
                             <span th:unless="${p.precioBotella != null}" style="font-size:0.75rem; color:#ccc;">—</span>
                         </td>
                         <td>
+                            <span th:if="${pctBotella != null}"
+                                  th:text="${pctBotella} + '%'"
+                                  th:style="${pctBotella >= 80 ? 'font-weight:700; color:#c0392b;' : 'font-weight:600; color:#444;'}"></span>
+                            <span th:if="${pctBotella != null and pctBotella >= 80}"
+                                  style="font-size:0.68rem; color:#c0392b; font-weight:600; display:block; margin-top:2px;">ALERTA</span>
+                            <span th:unless="${pctBotella != null}" style="font-size:0.75rem; color:#ccc;">—</span>
+                        </td>
+                        <td>
                             <span th:if="${p.activo}"  class="badge badge-activo">Activo</span>
                             <span th:unless="${p.activo}" class="badge badge-inactivo">Inactivo</span>
                         </td>
@@ -251,6 +269,7 @@
         var texto     = document.getElementById('filtroTexto').value.toLowerCase().trim();
         var categoria = document.getElementById('filtroCategoria').value.toLowerCase();
         var estado    = document.getElementById('filtroEstado').value.toLowerCase();
+        var botella   = document.getElementById('filtroBotella').value;
 
         var filas     = document.querySelectorAll('.admin-table tbody tr');
         var visibles  = 0;
@@ -260,13 +279,15 @@
             var nombre    = celdas[1].textContent.toLowerCase();
             var marca     = celdas[2].textContent.toLowerCase();
             var cat       = celdas[5].textContent.toLowerCase();
-            var estadoFila = celdas[13].textContent.toLowerCase().trim();
+            var estadoFila = celdas[14].textContent.toLowerCase().trim();
+            var pctBotella = parseInt(fila.getAttribute('data-pct-botella'), 10);
 
             var okTexto    = !texto     || nombre.includes(texto) || marca.includes(texto);
             var okCat      = !categoria || cat.includes(categoria);
             var okEstado   = !estado    || estadoFila.includes(estado);
+            var okBotella  = !botella   || (botella === 'alerta' && pctBotella >= 80);
 
-            var mostrar = okTexto && okCat && okEstado;
+            var mostrar = okTexto && okCat && okEstado && okBotella;
             fila.style.display = mostrar ? '' : 'none';
             if (mostrar) visibles++;
         });
