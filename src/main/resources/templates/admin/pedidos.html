@@ -219,8 +219,8 @@
                                     <option value="CREADO"          th:selected="${p.estadoPedido.name() == 'CREADO' or p.estadoPedido.name() == 'NUEVO'}">Creado</option>
                                     <option value="PENDIENTE_PAGO"  th:selected="${p.estadoPedido.name() == 'PENDIENTE_PAGO'}">Pendiente de pago</option>
                                     <option value="CONFIRMADO"      th:selected="${p.estadoPedido.name() == 'CONFIRMADO'}">Confirmado</option>
-                                    <option th:if="${p.entorno != 'local'}" value="LISTO_PARA_ENVIO" th:selected="${p.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
-                                    <option th:if="${p.entorno != 'local'}" value="ENVIADO"          th:selected="${p.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
+                                    <option th:if="${p.entorno != 'local' or p.envioPorPaqueteria == true}" value="LISTO_PARA_ENVIO" th:selected="${p.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
+                                    <option th:if="${p.entorno != 'local' or p.envioPorPaqueteria == true}" value="ENVIADO"          th:selected="${p.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
                                     <option value="ENTREGADO"       th:selected="${p.estadoPedido.name() == 'ENTREGADO'}">Entregado</option>
                                     <option value="CANCELADO"       th:selected="${p.estadoPedido.name() == 'CANCELADO'}">Cancelado</option>
                                     <option th:if="${p.estadoPedido.name() == 'EN_REVISION'}"

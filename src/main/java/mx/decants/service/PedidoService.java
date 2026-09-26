@@ -751,12 +751,21 @@ public class PedidoService {
         });
     }
 
+    public void marcarEnvioPorPaqueteria(Long id, boolean marcar) {
+        pedidoRepository.findById(id).ifPresent(p -> {
+            p.setEnvioPorPaqueteria(marcar ? Boolean.TRUE : null);
+            pedidoRepository.save(p);
+            log.info("Pedido #{} → envío por paquetería: {}", id, marcar);
+        });
+    }
+
     public void cambiarEstado(Long id, String estadoStr) {
         pedidoRepository.findById(id).ifPresent(p -> {
             try {
                 EstadoPedido nuevoEstado = EstadoPedido.valueOf(estadoStr);
                 boolean esLocal = "local".equals(p.getEntorno());
-                if (esLocal && (nuevoEstado == EstadoPedido.LISTO_PARA_ENVIO || nuevoEstado == EstadoPedido.ENVIADO)) {
+                boolean vaPorPaqueteria = Boolean.TRUE.equals(p.getEnvioPorPaqueteria());
+                if (esLocal && !vaPorPaqueteria && (nuevoEstado == EstadoPedido.LISTO_PARA_ENVIO || nuevoEstado == EstadoPedido.ENVIADO)) {
                     log.warn("Pedido #{} es local — estado {} no permitido", id, estadoStr);
                     return;
                 }

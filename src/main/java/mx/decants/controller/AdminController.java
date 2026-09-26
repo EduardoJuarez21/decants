@@ -316,6 +316,17 @@ public class AdminController {
         return "redirect:/aura-gestion/pedidos";
     }
 
+    @PostMapping("/pedidos/{id}/paqueteria")
+    public String marcarEnvioPorPaqueteria(@PathVariable Long id,
+                                           @RequestParam boolean marcar,
+                                           RedirectAttributes ra) {
+        pedidoService.marcarEnvioPorPaqueteria(id, marcar);
+        ra.addFlashAttribute("mensaje", marcar
+            ? "Pedido marcado para envío por paquetería."
+            : "Se quitó la marca de envío por paquetería.");
+        return "redirect:/aura-gestion/pedidos/" + id;
+    }
+
     @GetMapping("/pedidos/{id}")
     public String detallePedido(@PathVariable Long id, Model model) {
         Optional<Pedido> pedido = pedidoService.buscarPorId(id);

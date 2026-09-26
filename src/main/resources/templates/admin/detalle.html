@@ -343,6 +343,29 @@
                 </div>
             </div>
 
+            <!-- Envío por paquetería (excepción a pedido local en persona) -->
+            <div class="side-card" th:if="${pedido.entorno == 'local'}">
+                <p class="side-card-title">Envío por paquetería</p>
+                <div class="side-card-body">
+                    <p th:if="${pedido.envioPorPaqueteria == true}" style="font-size:0.8rem; color:#2e7d32; margin:0 0 0.75rem;">
+                        📦 Este pedido local se envía por paquetería — ya puedes usar los estados "Listo para envío" y "Enviado".
+                    </p>
+                    <p th:unless="${pedido.envioPorPaqueteria == true}" style="font-size:0.8rem; color:var(--muted); margin:0 0 0.75rem;">
+                        Por defecto, un pedido local se entrega en persona. Si este en particular se va a mandar por paquetería, márcalo aquí.
+                    </p>
+                    <form th:if="${pedido.envioPorPaqueteria != true}"
+                          th:action="@{/aura-gestion/pedidos/{id}/paqueteria(id=${pedido.id})}" method="post">
+                        <input type="hidden" name="marcar" value="true">
+                        <button type="submit" class="btn-dark">Marcar envío por paquetería</button>
+                    </form>
+                    <form th:if="${pedido.envioPorPaqueteria == true}"
+                          th:action="@{/aura-gestion/pedidos/{id}/paqueteria(id=${pedido.id})}" method="post">
+                        <input type="hidden" name="marcar" value="false">
+                        <button type="submit" class="btn-dark" style="background:#8a8a8a;">Quitar marca de paquetería</button>
+                    </form>
+                </div>
+            </div>
+
             <!-- Guía de envío -->
             <div class="side-card">
                 <p class="side-card-title">Guía de envío</p>

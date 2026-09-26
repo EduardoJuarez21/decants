@@ -86,6 +86,8 @@ public class Pedido {
     @Column(length = 500)
     private String linkGuia; // link de rastreo de la paqueteria, para que cliente y admin vean el estatus en automatico
 
+    private Boolean envioPorPaqueteria; // pedido local que, en la practica, se manda por paqueteria en vez de entregarse en persona
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoPedido estadoPedido = EstadoPedido.NUEVO;
@@ -201,6 +203,9 @@ public class Pedido {
 
     public String getLinkGuia() { return linkGuia; }
     public void setLinkGuia(String linkGuia) { this.linkGuia = linkGuia; }
+
+    public Boolean getEnvioPorPaqueteria() { return envioPorPaqueteria; }
+    public void setEnvioPorPaqueteria(Boolean envioPorPaqueteria) { this.envioPorPaqueteria = envioPorPaqueteria; }
 
     public EstadoPedido getEstadoPedido() { return estadoPedido; }
     public void setEstadoPedido(EstadoPedido estadoPedido) { this.estadoPedido = estadoPedido; }
