@@ -33,6 +33,11 @@ public class Vendedor {
     @ColumnDefault("15")
     private double comisionPorcentaje = 15;
 
+    // Codigo del ultimo pedido cuya comision ya se le pago; pedidos con fecha
+    // igual o posterior a este se muestran como pendientes en el historico de
+    // comisiones. null = no se ha marcado ningun corte, todo se ve pendiente.
+    private String pagadoHastaPedido;
+
     @Column(nullable = false)
     private LocalDateTime fechaCreacion;
 
@@ -64,6 +69,9 @@ public class Vendedor {
 
     public double getComisionPorcentaje() { return comisionPorcentaje; }
     public void setComisionPorcentaje(double comisionPorcentaje) { this.comisionPorcentaje = comisionPorcentaje; }
+
+    public String getPagadoHastaPedido() { return pagadoHastaPedido; }
+    public void setPagadoHastaPedido(String pagadoHastaPedido) { this.pagadoHastaPedido = pagadoHastaPedido; }
 
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
 }

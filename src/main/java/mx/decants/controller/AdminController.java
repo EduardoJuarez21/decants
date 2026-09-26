@@ -538,7 +538,8 @@ public class AdminController {
         } catch (Exception e) {
             mes = YearMonth.now();
         }
-        Map<String, Object> comision = pedidoService.comisionVendedor(vendedor, vendedorEntity.getComisionPorcentaje());
+        Map<String, Object> comision = pedidoService.comisionVendedor(
+            vendedor, vendedorEntity.getComisionPorcentaje(), vendedorEntity.getPagadoHastaPedido());
         model.addAttribute("comisionMes", mes.toString());
         model.addAttribute("comisionMesAnterior", mes.minusMonths(1).toString());
         model.addAttribute("comisionMesSiguiente", mes.plusMonths(1).toString());
@@ -694,8 +695,10 @@ public class AdminController {
     public String editarVendedor(@PathVariable Long id, @RequestParam String nombre,
                                   @RequestParam int metaMonto, @RequestParam(required = false) String metaPremio,
                                   @RequestParam double comisionPorcentaje,
+                                  @RequestParam(required = false) String pagadoHastaPedido,
                                   RedirectAttributes ra) {
-        vendedorService.actualizar(id, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "", comisionPorcentaje);
+        vendedorService.actualizar(id, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "",
+            comisionPorcentaje, pagadoHastaPedido);
         ra.addFlashAttribute("mensaje", "Vendedora actualizada.");
         return "redirect:/aura-gestion/vendedores";
     }

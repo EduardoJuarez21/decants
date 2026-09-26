@@ -128,6 +128,7 @@
                         <th>Comisión %</th>
                         <th>Meta del mes</th>
                         <th>Premio</th>
+                        <th>Pagado hasta pedido</th>
                         <th>Estado</th>
                         <th>Contraseña</th>
                         <th></th>
@@ -152,6 +153,11 @@
                         <td>
                             <input th:form="'form-editar-' + ${v.id}" name="metaPremio" type="text" th:value="${v.metaPremio}" placeholder="opcional"
                                    style="width:140px; padding:0.4rem 0.6rem; border:1px solid #ddd; border-radius:6px; font-size:0.85rem; font-family:inherit;">
+                        </td>
+                        <td>
+                            <input th:form="'form-editar-' + ${v.id}" name="pagadoHastaPedido" type="text" th:value="${v.pagadoHastaPedido}"
+                                   placeholder="ej. AURA-X4GHA6SA"
+                                   style="width:150px; padding:0.4rem 0.6rem; border:1px solid #ddd; border-radius:6px; font-size:0.8rem; font-family:monospace;">
                         </td>
                         <td>
                             <span th:if="${v.activo}"  class="badge badge-activo">Activa</span>

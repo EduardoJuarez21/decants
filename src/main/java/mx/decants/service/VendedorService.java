@@ -43,12 +43,15 @@ public class VendedorService {
         return vendedorRepository.save(v);
     }
 
-    public void actualizar(Long id, String nombre, int metaMonto, String metaPremio, double comisionPorcentaje) {
+    public void actualizar(Long id, String nombre, int metaMonto, String metaPremio, double comisionPorcentaje,
+                            String pagadoHastaPedido) {
         vendedorRepository.findById(id).ifPresent(v -> {
             v.setNombre(nombre.trim());
             v.setMetaMonto(metaMonto);
             v.setMetaPremio(metaPremio);
             v.setComisionPorcentaje(comisionPorcentaje);
+            v.setPagadoHastaPedido(pagadoHastaPedido != null && !pagadoHastaPedido.isBlank()
+                ? pagadoHastaPedido.trim().toUpperCase() : null);
             vendedorRepository.save(v);
         });
     }

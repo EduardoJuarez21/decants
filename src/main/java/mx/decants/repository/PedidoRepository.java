@@ -19,6 +19,8 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     Optional<Pedido> findByCodigoPublicoAndTelefono(String codigoPublico, String telefono);
 
+    Optional<Pedido> findByCodigoPublico(String codigoPublico);
+
     List<Pedido> findByVendedorAndFechaCreacionAfterAndEstadoPedidoNot(
         String vendedor, LocalDateTime desde, EstadoPedido estadoExcluido);
 

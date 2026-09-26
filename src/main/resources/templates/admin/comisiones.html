@@ -150,14 +150,20 @@
                     </div>
                 </th:block>
             </div>
-            <p style="font-size:0.78rem; color:var(--muted); margin:0 0 1rem;">
+            <p style="font-size:0.78rem; color:var(--muted); margin:0 0 0.4rem;">
                 Todas las ventas de <span th:text="${vendedorEtiqueta}"></span>, ordenadas por fecha — no solo las del mes seleccionado arriba.
+            </p>
+            <p th:if="${esAdmin}" style="font-size:0.75rem; color:var(--muted); margin:0 0 1rem;">
+                El corte "Pagado" / "Pendiente" se configura en
+                <a th:href="@{/aura-gestion/vendedores}" class="admin-link">Vendedoras</a>
+                (campo "Pagado hasta pedido").
             </p>
             <p th:if="${comisionDetalle.isEmpty()}" style="color:var(--muted); font-size:0.85rem;">Sin ventas de <span th:text="${vendedorEtiqueta}"></span> aún.</p>
             <div th:if="${!comisionDetalle.isEmpty()}" style="overflow-x:auto;">
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th>Estado</th>
                             <th>Pedido</th>
                             <th>Fecha</th>
                             <th>Producto</th>
@@ -172,6 +178,10 @@
                     </thead>
                     <tbody>
                         <tr th:each="fila : ${comisionDetalle}">
+                            <td>
+                                <span th:if="${fila.pagada}" class="badge" style="background:#e8f5e9; color:#2e7d32;">✅ Pagado</span>
+                                <span th:unless="${fila.pagada}" class="badge" style="background:#fff8e6; color:#8a6d1f;">⏳ Pendiente</span>
+                            </td>
                             <td style="font-family:monospace; font-size:0.8rem; color:var(--muted);" th:text="${fila.codigoPedido}"></td>
                             <td style="color:var(--muted); white-space:nowrap;" th:text="${#temporals.format(fila.fecha, 'dd/MM/yyyy HH:mm')}"></td>
                             <td th:text="${fila.nombre}"></td>
