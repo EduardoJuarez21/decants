@@ -283,7 +283,13 @@
                     </div>
                     <div class="info-field" th:if="${pedido.numeroGuia != null and !#strings.isEmpty(pedido.numeroGuia)}">
                         <span class="info-label">Número de guía</span>
-                        <span class="info-value" th:text="${pedido.numeroGuia}"
+                        <a th:if="${#strings.startsWith(pedido.numeroGuia, 'http')}"
+                           class="info-value" th:href="${pedido.numeroGuia}" target="_blank" rel="noopener"
+                           style="color:var(--gold); font-weight:600; text-decoration:none;">
+                            Ver estatus del envío ↗
+                        </a>
+                        <span th:unless="${#strings.startsWith(pedido.numeroGuia, 'http')}"
+                              class="info-value" th:text="${pedido.numeroGuia}"
                               style="font-family:monospace; letter-spacing:0.5px;"></span>
                     </div>
                     <div class="info-field" th:if="${pedido.linkGuia != null and !#strings.isEmpty(pedido.linkGuia)}">

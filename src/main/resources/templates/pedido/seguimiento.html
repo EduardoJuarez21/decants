@@ -172,7 +172,13 @@
                 <div class="order-summary-item"
                      th:if="${pedido.numeroGuia != null and !#strings.isEmpty(pedido.numeroGuia)}">
                     <span class="label">Número de guía</span>
-                    <span class="value" style="font-weight:600; color:var(--dark);"
+                    <a th:if="${#strings.startsWith(pedido.numeroGuia, 'http')}"
+                       th:href="${pedido.numeroGuia}" target="_blank" rel="noopener"
+                       class="value" style="font-weight:700; color:var(--gold); text-decoration:none;">
+                        Ver estatus del envío ↗
+                    </a>
+                    <span th:unless="${#strings.startsWith(pedido.numeroGuia, 'http')}"
+                          class="value" style="font-weight:600; color:var(--dark);"
                           th:text="${pedido.numeroGuia}"></span>
                 </div>
 
@@ -283,8 +289,15 @@
                                 Listo — pronto se asigna guía de envío
                             </div>
                             <div class="step-sub"
-                                 th:if="${pedido.estadoPedido.name() == 'ENVIADO' and pedido.numeroGuia != null}">
+                                 th:if="${pedido.estadoPedido.name() == 'ENVIADO' and pedido.numeroGuia != null and !#strings.startsWith(pedido.numeroGuia, 'http')}">
                                 Guía: <strong th:text="${pedido.numeroGuia}"></strong>
+                            </div>
+                            <div class="step-sub"
+                                 th:if="${pedido.estadoPedido.name() == 'ENVIADO' and pedido.numeroGuia != null and #strings.startsWith(pedido.numeroGuia, 'http')}">
+                                <a th:href="${pedido.numeroGuia}" target="_blank" rel="noopener"
+                                   style="color:var(--gold); font-weight:700; text-decoration:none;">
+                                    Ver estatus del envío ↗
+                                </a>
                             </div>
                             <div class="step-sub"
                                  th:if="${pedido.estadoPedido.name() == 'ENVIADO' and pedido.linkGuia != null and !#strings.isEmpty(pedido.linkGuia)}">

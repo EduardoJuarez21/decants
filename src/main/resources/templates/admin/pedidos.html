@@ -237,12 +237,17 @@
                                  th:text="'📝 ' + ${p.observaciones}" th:title="${p.observaciones}">
                             </div>
                         </td>
-                        <td style="font-family:monospace; font-size:0.78rem;">
-                            <a th:if="${p.linkGuia != null and !#strings.isEmpty(p.linkGuia)}"
+                        <td style="font-family:monospace; font-size:0.78rem;"
+                            th:with="tieneLink=${p.linkGuia != null and !#strings.isEmpty(p.linkGuia)},
+                                     guiaEsLink=${p.numeroGuia != null and #strings.startsWith(p.numeroGuia, 'http')}">
+                            <a th:if="${tieneLink}"
                                th:href="${p.linkGuia}" target="_blank" rel="noopener"
                                style="color:var(--gold); text-decoration:none;"
-                               th:text="${p.numeroGuia != null and !#strings.isEmpty(p.numeroGuia)} ? ${p.numeroGuia} : 'Ver ↗'"></a>
-                            <span th:unless="${p.linkGuia != null and !#strings.isEmpty(p.linkGuia)}"
+                               th:text="${p.numeroGuia != null and !#strings.isEmpty(p.numeroGuia) and !guiaEsLink} ? ${p.numeroGuia} : 'Ver ↗'"></a>
+                            <a th:if="${!tieneLink and guiaEsLink}"
+                               th:href="${p.numeroGuia}" target="_blank" rel="noopener"
+                               style="color:var(--gold); text-decoration:none;">Ver ↗</a>
+                            <span th:if="${!tieneLink and !guiaEsLink}"
                                   th:text="${p.numeroGuia != null and !#strings.isEmpty(p.numeroGuia)} ? ${p.numeroGuia} : '—'"></span>
                         </td>
                         <td th:text="${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
