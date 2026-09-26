@@ -742,11 +742,12 @@ public class PedidoService {
         return saved;
     }
 
-    public void actualizarGuia(Long id, String guia) {
+    public void actualizarGuia(Long id, String guia, String linkGuia) {
         pedidoRepository.findById(id).ifPresent(p -> {
             p.setNumeroGuia(guia != null && !guia.isBlank() ? guia.trim() : null);
+            p.setLinkGuia(linkGuia != null && !linkGuia.isBlank() ? linkGuia.trim() : null);
             pedidoRepository.save(p);
-            log.info("Pedido #{} → guía: {}", id, guia);
+            log.info("Pedido #{} → guía: {}, link: {}", id, guia, linkGuia);
         });
     }
 

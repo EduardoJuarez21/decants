@@ -83,6 +83,9 @@ public class Pedido {
     @Column(length = 100)
     private String numeroGuia;
 
+    @Column(length = 500)
+    private String linkGuia; // link de rastreo de la paqueteria, para que cliente y admin vean el estatus en automatico
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoPedido estadoPedido = EstadoPedido.NUEVO;
@@ -196,6 +199,9 @@ public class Pedido {
     public String getNumeroGuia() { return numeroGuia; }
     public void setNumeroGuia(String numeroGuia) { this.numeroGuia = numeroGuia; }
 
+    public String getLinkGuia() { return linkGuia; }
+    public void setLinkGuia(String linkGuia) { this.linkGuia = linkGuia; }
+
     public EstadoPedido getEstadoPedido() { return estadoPedido; }
     public void setEstadoPedido(EstadoPedido estadoPedido) { this.estadoPedido = estadoPedido; }
 
@@ -224,6 +230,7 @@ public class Pedido {
                 + " está listo para enviarse. En breve recibirás el número de guía. — Aura Decants MX";
             case ENVIADO -> "Hola " + cliente + "! Tu pedido " + codigo + " está en camino."
                 + (numeroGuia != null && !numeroGuia.isBlank() ? " Número de guía: " + numeroGuia + "." : "")
+                + (linkGuia != null && !linkGuia.isBlank() ? " Rastréalo aquí: " + linkGuia : "")
                 + " — Aura Decants MX";
             case ENTREGADO -> "Hola " + cliente + "! Tu pedido " + codigo
                 + " fue entregado. ¡Gracias por confiar en nosotros! — Aura Decants MX";

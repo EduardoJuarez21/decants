@@ -237,8 +237,14 @@
                                  th:text="'📝 ' + ${p.observaciones}" th:title="${p.observaciones}">
                             </div>
                         </td>
-                        <td style="font-family:monospace; font-size:0.78rem;"
-                            th:text="${p.numeroGuia != null and !#strings.isEmpty(p.numeroGuia)} ? ${p.numeroGuia} : '—'"></td>
+                        <td style="font-family:monospace; font-size:0.78rem;">
+                            <a th:if="${p.linkGuia != null and !#strings.isEmpty(p.linkGuia)}"
+                               th:href="${p.linkGuia}" target="_blank" rel="noopener"
+                               style="color:var(--gold); text-decoration:none;"
+                               th:text="${p.numeroGuia != null and !#strings.isEmpty(p.numeroGuia)} ? ${p.numeroGuia} : 'Ver ↗'"></a>
+                            <span th:unless="${p.linkGuia != null and !#strings.isEmpty(p.linkGuia)}"
+                                  th:text="${p.numeroGuia != null and !#strings.isEmpty(p.numeroGuia)} ? ${p.numeroGuia} : '—'"></span>
+                        </td>
                         <td th:text="${#temporals.format(p.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
                             <div style="display:flex; gap:0.5rem; align-items:center; white-space:nowrap;">

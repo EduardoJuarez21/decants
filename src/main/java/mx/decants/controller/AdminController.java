@@ -300,9 +300,10 @@ public class AdminController {
     @PostMapping("/pedidos/{id}/guia")
     public String actualizarGuia(@PathVariable Long id,
                                  @RequestParam(required = false) String guia,
+                                 @RequestParam(required = false) String linkGuia,
                                  RedirectAttributes ra) {
-        pedidoService.actualizarGuia(id, guia);
-        ra.addFlashAttribute("mensaje", "Número de guía actualizado.");
+        pedidoService.actualizarGuia(id, guia, linkGuia);
+        ra.addFlashAttribute("mensaje", "Guía de envío actualizada.");
         return "redirect:/aura-gestion/pedidos/" + id;
     }
 

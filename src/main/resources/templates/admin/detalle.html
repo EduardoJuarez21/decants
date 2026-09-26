@@ -286,6 +286,13 @@
                         <span class="info-value" th:text="${pedido.numeroGuia}"
                               style="font-family:monospace; letter-spacing:0.5px;"></span>
                     </div>
+                    <div class="info-field" th:if="${pedido.linkGuia != null and !#strings.isEmpty(pedido.linkGuia)}">
+                        <span class="info-label">Rastreo</span>
+                        <a class="info-value" th:href="${pedido.linkGuia}" target="_blank" rel="noopener"
+                           style="color:var(--gold); font-weight:600; text-decoration:none;">
+                            Ver estatus del envío ↗
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -330,16 +337,21 @@
                 </div>
             </div>
 
-            <!-- Número de guía -->
+            <!-- Guía de envío -->
             <div class="side-card">
-                <p class="side-card-title">Número de guía</p>
+                <p class="side-card-title">Guía de envío</p>
                 <div class="side-card-body">
-                    <form th:action="@{/aura-gestion/pedidos/{id}/guia(id=${pedido.id})}" method="post">
+                    <form th:action="@{/aura-gestion/pedidos/{id}/guia(id=${pedido.id})}" method="post"
+                          style="display:flex; flex-direction:column; gap:0.6rem;">
                         <input type="text" name="guia"
                                th:value="${pedido.numeroGuia}"
-                               placeholder="Ej. 1Z999AA10123456784"
+                               placeholder="Número de guía — ej. 1Z999AA10123456784"
                                class="action-input"
                                style="font-family:monospace;">
+                        <input type="url" name="linkGuia"
+                               th:value="${pedido.linkGuia}"
+                               placeholder="Link de rastreo de la paquetería (opcional)"
+                               class="action-input">
                         <button type="submit" class="btn-dark">Guardar guía</button>
                     </form>
                 </div>
