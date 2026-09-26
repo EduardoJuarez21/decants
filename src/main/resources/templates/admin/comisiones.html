@@ -72,7 +72,8 @@
     <div class="admin-card" style="margin-bottom:1.5rem;">
         <div class="admin-card-header" style="display:flex; align-items:center; justify-content:space-between;">
             <h2>💰 Comisión a pagar — <span th:text="${vendedorEtiqueta}"></span></h2>
-            <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div style="display:flex; align-items:center; gap:0.6rem;">
+                <span style="font-size:0.7rem; color:var(--muted);">Registrar pago de:</span>
                 <a th:href="@{/aura-gestion/comisiones(mes=${comisionMesAnterior}, vendedor=${vendedor})}" class="admin-link" style="font-size:0.85rem;">&#8592;</a>
                 <span style="font-size:0.85rem; font-weight:600; color:#1a1a1a; min-width:120px; text-align:center;" th:text="${comisionMesEtiqueta}"></span>
                 <a th:unless="${comisionEsMesActual}" th:href="@{/aura-gestion/comisiones(mes=${comisionMesSiguiente}, vendedor=${vendedor})}" class="admin-link" style="font-size:0.85rem;">&#8594;</a>
@@ -131,25 +132,28 @@
 
             <div style="display:flex; gap:2rem; margin-bottom:1.25rem; flex-wrap:wrap;">
                 <div>
-                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Ventas de <span th:text="${vendedorEtiqueta}"></span></div>
+                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Ventas de <span th:text="${vendedorEtiqueta}"></span> (histórico)</div>
                     <div style="font-size:1.4rem; font-weight:700; color:#1a1a1a;">$<span th:text="${comisionVentasTotales}"></span></div>
                 </div>
                 <div>
-                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Comisión pendiente (acumulado)</div>
+                    <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Comisión pendiente</div>
                     <div style="font-size:1.4rem; font-weight:700; color:#2e7d32;">$<span th:text="${#numbers.formatDecimal(comisionPendiente, 1, 2)}"></span></div>
                 </div>
                 <th:block th:if="${esAdmin}">
                     <div>
-                        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Costo de producción</div>
+                        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Costo de producción (histórico)</div>
                         <div style="font-size:1.4rem; font-weight:700; color:#c0392b;">$<span th:text="${#numbers.formatDecimal(comisionCostoTotal, 1, 2)}"></span></div>
                     </div>
                     <div>
-                        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Tu ganancia</div>
+                        <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#999; margin-bottom:0.3rem;">Tu ganancia (histórico)</div>
                         <div style="font-size:1.4rem; font-weight:700; color:#1a1a1a;">$<span th:text="${#numbers.formatDecimal(comisionGanancia, 1, 2)}"></span></div>
                     </div>
                 </th:block>
             </div>
-            <p th:if="${comisionDetalle.isEmpty()}" style="color:var(--muted); font-size:0.85rem;">Sin ventas de <span th:text="${vendedorEtiqueta}"></span> en este mes.</p>
+            <p style="font-size:0.78rem; color:var(--muted); margin:0 0 1rem;">
+                Todas las ventas de <span th:text="${vendedorEtiqueta}"></span>, ordenadas por fecha — no solo las del mes seleccionado arriba.
+            </p>
+            <p th:if="${comisionDetalle.isEmpty()}" style="color:var(--muted); font-size:0.85rem;">Sin ventas de <span th:text="${vendedorEtiqueta}"></span> aún.</p>
             <div th:if="${!comisionDetalle.isEmpty()}" style="overflow-x:auto;">
                 <table class="admin-table">
                     <thead>

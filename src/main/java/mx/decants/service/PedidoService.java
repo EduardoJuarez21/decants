@@ -401,12 +401,13 @@ public class PedidoService {
             .sum();
     }
 
+    // Historico completo del vendedor (no solo un mes) -- la comision pendiente ya
+    // es un saldo acumulado de toda su historia, asi que el detalle que se muestra
+    // en pantalla debe cubrir lo mismo para que las ventas listadas expliquen ese
+    // acumulado, en vez de mostrar solo un mes cuando el pendiente arrastra varios.
     @Transactional(readOnly = true)
-    public Map<String, Object> comisionVendedor(String vendedor, YearMonth mes, double comisionPorcentaje) {
-        LocalDateTime desde = mes.atDay(1).atStartOfDay();
-        LocalDateTime hasta = mes.plusMonths(1).atDay(1).atStartOfDay();
-        List<Pedido> pedidos = pedidoRepository.findByVendedorAndFechaCreacionBetweenAndEstadoPedidoNot(
-            vendedor, desde, hasta, EstadoPedido.CANCELADO);
+    public Map<String, Object> comisionVendedor(String vendedor, double comisionPorcentaje) {
+        List<Pedido> pedidos = pedidoRepository.findByVendedorAndEstadoPedidoNot(vendedor, EstadoPedido.CANCELADO);
 
         int ventasTotales = pedidos.stream()
             .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
@@ -468,27 +469,6 @@ public class PedidoService {
         resultado.put("ganancia", ganancia);
         resultado.put("detalle", detalle);
         return resultado;
-    }
-
-    // Comision generada en TODA la historia del vendedor (no solo el mes en pantalla),
-    // para poder comparar contra lo pagado acumulado y que un pendiente de un mes
-    // se arrastre solo al sumarse con lo generado despues, sin logica de "traspaso" aparte.
-    @Transactional(readOnly = true)
-    public double comisionTotalAcumulada(String vendedor, double comisionPorcentaje) {
-        List<Pedido> pedidos = pedidoRepository.findByVendedorAndEstadoPedidoNot(vendedor, EstadoPedido.CANCELADO);
-
-        double comisionTotal = 0;
-        for (Pedido pedido : pedidos) {
-            double factorDescuento = 1.0;
-            int subtotalPedido = pedido.getItems().stream().mapToInt(PedidoItem::getSubtotal).sum();
-            if (subtotalPedido > 0 && pedido.getTotalPagado() != null) {
-                factorDescuento = pedido.getTotalPagado() / (double) subtotalPedido;
-            }
-            for (PedidoItem item : pedido.getItems()) {
-                comisionTotal += item.getSubtotal() * (comisionPorcentaje / 100.0) * factorDescuento;
-            }
-        }
-        return comisionTotal;
     }
 
     // ── Deuda de la vendedora hacia la empresa (consignación) ───────────────────

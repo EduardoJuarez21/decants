@@ -538,7 +538,7 @@ public class AdminController {
         } catch (Exception e) {
             mes = YearMonth.now();
         }
-        Map<String, Object> comision = pedidoService.comisionVendedor(vendedor, mes, vendedorEntity.getComisionPorcentaje());
+        Map<String, Object> comision = pedidoService.comisionVendedor(vendedor, vendedorEntity.getComisionPorcentaje());
         model.addAttribute("comisionMes", mes.toString());
         model.addAttribute("comisionMesAnterior", mes.minusMonths(1).toString());
         model.addAttribute("comisionMesSiguiente", mes.plusMonths(1).toString());
@@ -551,10 +551,11 @@ public class AdminController {
         model.addAttribute("comisionDetalle", comision.get("detalle"));
         Optional<ComisionPago> comisionPagoOpt = comisionPagoService.buscar(vendedor, mes);
         model.addAttribute("comisionPago", comisionPagoOpt.orElse(null));
-        // Pendiente = comision generada en TODA la historia menos lo pagado en TODA la
-        // historia (no solo del mes en pantalla), para que un pendiente de un mes anterior
-        // se arrastre automaticamente al sumarse con lo del mes siguiente.
-        double comisionAcumulada = pedidoService.comisionTotalAcumulada(vendedor, vendedorEntity.getComisionPorcentaje());
+        // Pendiente = comision generada en TODA la historia (comisionTotal ya es
+        // historico completo, ver comisionVendedor) menos lo pagado en TODA la
+        // historia, para que un pendiente de un mes anterior se arrastre
+        // automaticamente al sumarse con lo del mes siguiente.
+        double comisionAcumulada = (double) comision.get("comisionTotal");
         int totalPagadoAcumulado = comisionPagoService.totalPagadoAcumulado(vendedor);
         model.addAttribute("comisionPendiente", Math.max(0, comisionAcumulada - totalPagadoAcumulado));
 
