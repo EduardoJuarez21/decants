@@ -191,23 +191,15 @@
                         <td style="font-weight:600; color:var(--gold);"
                             th:text="${p.totalPagado != null ? '$' + p.totalPagado + ' MXN' : '—'}"></td>
                         <td>
-                            <div style="display:flex; flex-direction:column; gap:0.25rem; align-items:flex-start;">
-                                <span th:if="${p.entorno == 'local'}"
-                                      style="background:#e0ecf7; color:#1a4a7a; font-size:0.7rem; font-weight:700;
-                                             padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px; white-space:nowrap;">🏠 LOCAL</span>
-                                <span th:unless="${p.entorno == 'local'}"
-                                      style="background:#fbe9d9; color:#8a5a1f; font-size:0.7rem; font-weight:700;
-                                             padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px; white-space:nowrap;">📦 PAQUETERÍA</span>
-                                <span th:if="${p.entorno == 'test'}"
-                                      style="background:#fff3cd; color:#856404; font-size:0.7rem; font-weight:700;
-                                             padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">TEST</span>
-                                <span th:if="${p.entorno == 'manual'}"
-                                      style="background:#e8e0f8; color:#4a2d8a; font-size:0.7rem; font-weight:700;
-                                             padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">MANUAL</span>
-                                <span th:if="${p.entorno == null or p.entorno == 'live'}"
-                                      style="background:#d4edda; color:#155724; font-size:0.7rem; font-weight:700;
-                                             padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">LIVE</span>
-                            </div>
+                            <span th:if="${p.entorno == 'test'}"
+                                  style="background:#fff3cd; color:#856404; font-size:0.7rem; font-weight:700;
+                                         padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">TEST</span>
+                            <span th:if="${p.entorno == 'manual'}"
+                                  style="background:#e8e0f8; color:#4a2d8a; font-size:0.7rem; font-weight:700;
+                                         padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">MANUAL</span>
+                            <span th:if="${p.entorno == null or p.entorno == 'live'}"
+                                  style="background:#d4edda; color:#155724; font-size:0.7rem; font-weight:700;
+                                         padding:0.15rem 0.5rem; border-radius:4px; letter-spacing:0.5px;">LIVE</span>
                         </td>
                         <td>
                             <form th:action="@{/aura-gestion/pedidos/{id}/estado(id=${p.id})}" method="post" onsubmit="return false;">
