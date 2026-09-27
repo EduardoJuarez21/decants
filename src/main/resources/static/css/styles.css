@@ -1515,6 +1515,7 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 
 /* ── Mobile CTA bar ── */
 .mobile-bottom-cta { display: none; }
+.mobile-search-overlay { display: none; }
 @media (max-width: 768px) {
   body { padding-bottom: 68px; }
   .mobile-bottom-cta {
@@ -1563,14 +1564,13 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 
   /* ── Buscador móvil: overlay de pantalla completa ── */
   .mobile-search-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 2100;
-  background: var(--white);
-  flex-direction: column;
-}
-.mobile-search-overlay.open { display: flex; }
+    position: fixed;
+    inset: 0;
+    z-index: 2100;
+    background: var(--white);
+    flex-direction: column;
+  }
+  .mobile-search-overlay.open { display: flex; }
 .mso-header {
   display: flex;
   align-items: center;
