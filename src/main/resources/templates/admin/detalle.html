@@ -269,6 +269,17 @@
                  th:if="${pedido.direccion != null and !#strings.isEmpty(pedido.direccion)}">
                 <p class="section-title">Envío</p>
                 <div class="info-row">
+                    <div class="info-field">
+                        <span class="info-label">Tipo de envío</span>
+                        <span class="info-value">
+                            <span th:if="${pedido.entorno == 'local'}"
+                                  style="background:#e0ecf7; color:#1a4a7a; font-size:0.75rem; font-weight:700;
+                                         padding:0.15rem 0.6rem; border-radius:4px;">🏠 LOCAL</span>
+                            <span th:unless="${pedido.entorno == 'local'}"
+                                  style="background:#fbe9d9; color:#8a5a1f; font-size:0.75rem; font-weight:700;
+                                         padding:0.15rem 0.6rem; border-radius:4px;">📦 PAQUETERÍA</span>
+                        </span>
+                    </div>
                     <div class="info-field" style="grid-column:1/-1;">
                         <span class="info-label">Dirección de entrega</span>
                         <span class="info-value">
