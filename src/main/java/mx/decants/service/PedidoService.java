@@ -428,6 +428,10 @@ public class PedidoService {
                 factorDescuento = pedido.getTotalPagado() / (double) subtotalPedido;
             }
 
+            List<Map<String, Object>> items = new ArrayList<>();
+            double comisionPedido = 0;
+            Double costoPedido = null;
+
             for (PedidoItem item : pedido.getItems()) {
                 Producto p = item.getProducto();
                 Double costoItem = null;
@@ -436,6 +440,7 @@ public class PedidoService {
                     if (ml != null) {
                         costoItem = p.getCostoPorMl() * ml * item.getCantidad();
                         costoTotal += costoItem;
+                        costoPedido = (costoPedido != null ? costoPedido : 0) + costoItem;
                     }
                 }
 
@@ -444,22 +449,29 @@ public class PedidoService {
                 // que venda, sin necesitar una tarifa configurada por producto.
                 double subtotal = item.getSubtotal() * (comisionPorcentaje / 100.0) * factorDescuento;
                 comisionTotal += subtotal;
+                comisionPedido += subtotal;
 
-                Map<String, Object> fila = new LinkedHashMap<>();
-                fila.put("codigoPedido", pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId()));
-                fila.put("nombre", item.getNombre());
-                fila.put("variante", item.getVariante());
-                fila.put("cantidad", item.getCantidad());
-                fila.put("precioUnitario", item.getPrecioUnitario() * factorDescuento);
-                fila.put("fecha", pedido.getFechaCreacion());
-                fila.put("subtotal", subtotal);
-                fila.put("costoProduccion", costoItem);
-                fila.put("observaciones", pedido.getObservaciones());
-                // Inclusivo: al marcar "pagado hasta aqui" en un pedido, ese pedido tambien
-                // queda como pagado (no solo los anteriores a el).
-                fila.put("pagada", pagadoHastaFecha != null && !pedido.getFechaCreacion().isAfter(pagadoHastaFecha));
-                detalle.add(fila);
+                Map<String, Object> itemFila = new LinkedHashMap<>();
+                itemFila.put("nombre", item.getNombre());
+                itemFila.put("variante", item.getVariante());
+                itemFila.put("cantidad", item.getCantidad());
+                itemFila.put("precioUnitario", item.getPrecioUnitario() * factorDescuento);
+                itemFila.put("subtotal", subtotal);
+                itemFila.put("costoProduccion", costoItem);
+                items.add(itemFila);
             }
+
+            Map<String, Object> filaPedido = new LinkedHashMap<>();
+            filaPedido.put("codigoPedido", pedido.getCodigoPublico() != null ? pedido.getCodigoPublico() : ("#" + pedido.getId()));
+            filaPedido.put("fecha", pedido.getFechaCreacion());
+            filaPedido.put("observaciones", pedido.getObservaciones());
+            filaPedido.put("comisionPedido", comisionPedido);
+            filaPedido.put("costoPedido", costoPedido);
+            filaPedido.put("items", items);
+            // Inclusivo: al marcar "pagado hasta aqui" en un pedido, ese pedido tambien
+            // queda como pagado (no solo los anteriores a el).
+            filaPedido.put("pagada", pagadoHastaFecha != null && !pedido.getFechaCreacion().isAfter(pagadoHastaFecha));
+            detalle.add(filaPedido);
         }
         detalle.sort((a, b) -> ((LocalDateTime) b.get("fecha")).compareTo((LocalDateTime) a.get("fecha")));
 

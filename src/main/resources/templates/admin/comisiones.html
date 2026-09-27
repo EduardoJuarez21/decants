@@ -170,48 +170,73 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Estado</th>
                             <th>Pedido</th>
                             <th>Fecha</th>
-                            <th>Producto</th>
-                            <th>Presentación</th>
-                            <th style="text-align:right;">Cantidad</th>
-                            <th style="text-align:right;">Precio de venta</th>
-                            <th style="text-align:right;">% Comisión</th>
-                            <th style="text-align:right;">Subtotal</th>
+                            <th style="text-align:right;">Comisión del pedido</th>
                             <th th:if="${esEjuarez}" style="text-align:right;">Costo de producción</th>
                             <th>Notas</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="fila : ${comisionDetalle}">
-                            <td>
-                                <span th:if="${fila.pagada}" class="badge" style="background:#e8f5e9; color:#2e7d32;">✅ Pagado</span>
-                                <div th:unless="${fila.pagada}">
-                                    <span class="badge" style="background:#fff8e6; color:#8a6d1f;">⏳ Pendiente</span>
-                                    <form th:if="${esAdmin}" th:action="@{/aura-gestion/comisiones/marcar-pagado-hasta}" method="post" style="margin-top:0.3rem;">
-                                        <input type="hidden" name="vendedor" th:value="${vendedor}">
-                                        <input type="hidden" name="mes" th:value="${comisionMes}">
-                                        <input type="hidden" name="fecha" th:value="${fila.fecha}">
-                                        <button type="submit" style="background:none; border:none; color:#8a6d1f; text-decoration:underline;
-                                                                      font-size:0.68rem; cursor:pointer; font-family:inherit; padding:0;">
-                                            Marcar pagado hasta aquí
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                            <td style="font-family:monospace; font-size:0.8rem; color:var(--muted);" th:text="${fila.codigoPedido}"></td>
-                            <td style="color:var(--muted); white-space:nowrap;" th:text="${#temporals.format(fila.fecha, 'dd/MM/yyyy HH:mm')}"></td>
-                            <td th:text="${fila.nombre}"></td>
-                            <td th:text="${fila.variante}"></td>
-                            <td style="text-align:right;" th:text="${fila.cantidad}"></td>
-                            <td style="text-align:right;" th:text="|$${#numbers.formatDecimal(fila.precioUnitario, 1, 2)}|"></td>
-                            <td style="text-align:right;" th:text="${comisionPorcentaje} + '%'"></td>
-                            <td style="text-align:right; font-weight:700; color:#2e7d32;" th:text="|$${#numbers.formatDecimal(fila.subtotal, 1, 2)}|"></td>
-                            <td th:if="${esEjuarez}" style="text-align:right; color:#c0392b;"
-                                th:text="${fila.costoProduccion != null ? '$' + #numbers.formatDecimal(fila.costoProduccion, 1, 2) : '—'}"></td>
-                            <td style="font-size:0.8rem; color:#8a6d1f; max-width:180px;" th:text="${fila.observaciones}"></td>
-                        </tr>
+                        <th:block th:each="pedido : ${comisionDetalle}">
+                            <tr onclick="toggleDetallePedido(this)" style="cursor:pointer;">
+                                <td style="color:var(--muted);">▸</td>
+                                <td>
+                                    <span th:if="${pedido.pagada}" class="badge" style="background:#e8f5e9; color:#2e7d32;">✅ Pagado</span>
+                                    <div th:unless="${pedido.pagada}" onclick="event.stopPropagation();">
+                                        <span class="badge" style="background:#fff8e6; color:#8a6d1f;">⏳ Pendiente</span>
+                                        <form th:if="${esAdmin}" th:action="@{/aura-gestion/comisiones/marcar-pagado-hasta}" method="post" style="margin-top:0.3rem;">
+                                            <input type="hidden" name="vendedor" th:value="${vendedor}">
+                                            <input type="hidden" name="mes" th:value="${comisionMes}">
+                                            <input type="hidden" name="fecha" th:value="${pedido.fecha}">
+                                            <button type="submit" style="background:none; border:none; color:#8a6d1f; text-decoration:underline;
+                                                                          font-size:0.68rem; cursor:pointer; font-family:inherit; padding:0;">
+                                                Marcar pagado hasta aquí
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td style="font-family:monospace; font-size:0.8rem; color:var(--muted);" th:text="${pedido.codigoPedido}"></td>
+                                <td style="color:var(--muted); white-space:nowrap;" th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td style="text-align:right; font-weight:700; color:#2e7d32;" th:text="|$${#numbers.formatDecimal(pedido.comisionPedido, 1, 2)}|"></td>
+                                <td th:if="${esEjuarez}" style="text-align:right; color:#c0392b;"
+                                    th:text="${pedido.costoPedido != null ? '$' + #numbers.formatDecimal(pedido.costoPedido, 1, 2) : '—'}"></td>
+                                <td style="font-size:0.8rem; color:#8a6d1f; max-width:180px;" th:text="${pedido.observaciones}"></td>
+                            </tr>
+                            <tr class="fila-detalle-pedido" style="display:none;">
+                                <td th:colspan="${esEjuarez} ? 7 : 6" style="padding:0; background:#fafafa;">
+                                    <table style="width:100%; border-collapse:collapse;">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:24px;"></th>
+                                                <th style="font-size:0.72rem; padding:0.4rem 0.6rem;">Producto</th>
+                                                <th style="font-size:0.72rem; padding:0.4rem 0.6rem;">Presentación</th>
+                                                <th style="font-size:0.72rem; padding:0.4rem 0.6rem; text-align:right;">Cantidad</th>
+                                                <th style="font-size:0.72rem; padding:0.4rem 0.6rem; text-align:right;">Precio de venta</th>
+                                                <th style="font-size:0.72rem; padding:0.4rem 0.6rem; text-align:right;">% Comisión</th>
+                                                <th style="font-size:0.72rem; padding:0.4rem 0.6rem; text-align:right;">Subtotal</th>
+                                                <th th:if="${esEjuarez}" style="font-size:0.72rem; padding:0.4rem 0.6rem; text-align:right;">Costo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="item : ${pedido.items}">
+                                                <td></td>
+                                                <td style="font-size:0.82rem; padding:0.4rem 0.6rem;" th:text="${item.nombre}"></td>
+                                                <td style="font-size:0.82rem; padding:0.4rem 0.6rem;" th:text="${item.variante}"></td>
+                                                <td style="font-size:0.82rem; padding:0.4rem 0.6rem; text-align:right;" th:text="${item.cantidad}"></td>
+                                                <td style="font-size:0.82rem; padding:0.4rem 0.6rem; text-align:right;" th:text="|$${#numbers.formatDecimal(item.precioUnitario, 1, 2)}|"></td>
+                                                <td style="font-size:0.82rem; padding:0.4rem 0.6rem; text-align:right;" th:text="${comisionPorcentaje} + '%'"></td>
+                                                <td style="font-size:0.82rem; padding:0.4rem 0.6rem; text-align:right; font-weight:700; color:#2e7d32;" th:text="|$${#numbers.formatDecimal(item.subtotal, 1, 2)}|"></td>
+                                                <td th:if="${esEjuarez}" style="font-size:0.82rem; padding:0.4rem 0.6rem; text-align:right; color:#c0392b;"
+                                                    th:text="${item.costoProduccion != null ? '$' + #numbers.formatDecimal(item.costoProduccion, 1, 2) : '—'}"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </th:block>
                     </tbody>
                 </table>
             </div>
@@ -343,6 +368,13 @@
 </div>
 
 <script>
+    function toggleDetallePedido(fila) {
+        var detalle = fila.nextElementSibling;
+        var abierto = detalle.style.display !== 'none';
+        detalle.style.display = abierto ? 'none' : 'table-row';
+        fila.querySelector('td').textContent = abierto ? '▸' : '▾';
+    }
+
     function filtrarComisiones() {
         var texto = document.getElementById('filtroComisiones').value.toLowerCase().trim();
         var filas = document.querySelectorAll('#tbodyComisiones tr');
