@@ -112,6 +112,9 @@
                         <input type="checkbox" class="chkEstado" value="Listo para envío" checked onchange="aplicarFiltros()"> Listo para envío
                     </label>
                     <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
+                        <input type="checkbox" class="chkEstado" value="Paquetería" checked onchange="aplicarFiltros()"> Paquetería
+                    </label>
+                    <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
                         <input type="checkbox" class="chkEstado" value="Enviado" checked onchange="aplicarFiltros()"> Enviado
                     </label>
                     <label style="display:flex; align-items:center; gap:0.5rem; padding:0.3rem 0.4rem; font-size:0.82rem; cursor:pointer;">
@@ -304,6 +307,7 @@ function badgeClassParaEstado(estado) {
         case 'PENDIENTE_PAGO':   return 'badge-pendiente';
         case 'CONFIRMADO':       return 'badge-confirmado';
         case 'LISTO_PARA_ENVIO': return 'badge-listo-envio';
+        case 'PAQUETERIA':       return 'badge-paqueteria';
         case 'ENVIADO':          return 'badge-enviado';
         case 'ENTREGADO':        return 'badge-entregado';
         case 'CANCELADO':        return 'badge-cancelado';
