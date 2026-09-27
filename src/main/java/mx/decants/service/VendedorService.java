@@ -43,15 +43,26 @@ public class VendedorService {
         return vendedorRepository.save(v);
     }
 
-    public void actualizar(Long id, String nombre, int metaMonto, String metaPremio, double comisionPorcentaje,
-                            String pagadoHastaPedido) {
+    public void actualizar(Long id, String nombre, int metaMonto, String metaPremio, double comisionPorcentaje) {
         vendedorRepository.findById(id).ifPresent(v -> {
             v.setNombre(nombre.trim());
             v.setMetaMonto(metaMonto);
             v.setMetaPremio(metaPremio);
             v.setComisionPorcentaje(comisionPorcentaje);
-            v.setPagadoHastaPedido(pagadoHastaPedido != null && !pagadoHastaPedido.isBlank()
-                ? pagadoHastaPedido.trim().toUpperCase() : null);
+            vendedorRepository.save(v);
+        });
+    }
+
+    public void marcarPagadoHasta(String usuario, java.time.LocalDateTime fecha) {
+        vendedorRepository.findByUsuarioIgnoreCase(usuario).ifPresent(v -> {
+            v.setPagadoHastaFecha(fecha);
+            vendedorRepository.save(v);
+        });
+    }
+
+    public void quitarCortePagado(String usuario) {
+        vendedorRepository.findByUsuarioIgnoreCase(usuario).ifPresent(v -> {
+            v.setPagadoHastaFecha(null);
             vendedorRepository.save(v);
         });
     }

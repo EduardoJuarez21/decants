@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.LinkedHashMap;
@@ -539,7 +540,8 @@ public class AdminController {
             mes = YearMonth.now();
         }
         Map<String, Object> comision = pedidoService.comisionVendedor(
-            vendedor, vendedorEntity.getComisionPorcentaje(), vendedorEntity.getPagadoHastaPedido());
+            vendedor, vendedorEntity.getComisionPorcentaje(), vendedorEntity.getPagadoHastaFecha());
+        model.addAttribute("pagadoHastaFecha", vendedorEntity.getPagadoHastaFecha());
         model.addAttribute("comisionMes", mes.toString());
         model.addAttribute("comisionMesAnterior", mes.minusMonths(1).toString());
         model.addAttribute("comisionMesSiguiente", mes.plusMonths(1).toString());
@@ -589,6 +591,25 @@ public class AdminController {
         comisionPagoService.desmarcar(vendedor, YearMonth.parse(mes));
         ra.addFlashAttribute("mensaje", "Se quitó la marca de pagado.");
         return "redirect:/aura-gestion/comisiones?vendedor=" + vendedor + "&mes=" + mes;
+    }
+
+    @PostMapping("/comisiones/marcar-pagado-hasta")
+    public String marcarPagadoHasta(@RequestParam String vendedor,
+                                    @RequestParam String fecha,
+                                    @RequestParam(required = false) String mes,
+                                    RedirectAttributes ra) {
+        vendedorService.marcarPagadoHasta(vendedor, LocalDateTime.parse(fecha));
+        ra.addFlashAttribute("mensaje", "Se marcaron como pagados los pedidos hasta esa fecha.");
+        return "redirect:/aura-gestion/comisiones?vendedor=" + vendedor + (mes != null ? "&mes=" + mes : "");
+    }
+
+    @PostMapping("/comisiones/quitar-corte-pagado")
+    public String quitarCortePagado(@RequestParam String vendedor,
+                                    @RequestParam(required = false) String mes,
+                                    RedirectAttributes ra) {
+        vendedorService.quitarCortePagado(vendedor);
+        ra.addFlashAttribute("mensaje", "Se quitó el corte de pagado — todo vuelve a verse pendiente.");
+        return "redirect:/aura-gestion/comisiones?vendedor=" + vendedor + (mes != null ? "&mes=" + mes : "");
     }
 
     private static String capitalizar(String s) {
@@ -695,10 +716,8 @@ public class AdminController {
     public String editarVendedor(@PathVariable Long id, @RequestParam String nombre,
                                   @RequestParam int metaMonto, @RequestParam(required = false) String metaPremio,
                                   @RequestParam double comisionPorcentaje,
-                                  @RequestParam(required = false) String pagadoHastaPedido,
                                   RedirectAttributes ra) {
-        vendedorService.actualizar(id, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "",
-            comisionPorcentaje, pagadoHastaPedido);
+        vendedorService.actualizar(id, nombre, metaMonto, metaPremio != null ? metaPremio.trim() : "", comisionPorcentaje);
         ra.addFlashAttribute("mensaje", "Vendedora actualizada.");
         return "redirect:/aura-gestion/vendedores";
     }

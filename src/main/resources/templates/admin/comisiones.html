@@ -153,11 +153,18 @@
             <p style="font-size:0.78rem; color:var(--muted); margin:0 0 0.4rem;">
                 Todas las ventas de <span th:text="${vendedorEtiqueta}"></span>, ordenadas por fecha — no solo las del mes seleccionado arriba.
             </p>
-            <p th:if="${esAdmin}" style="font-size:0.75rem; color:var(--muted); margin:0 0 1rem;">
-                El corte "Pagado" / "Pendiente" se configura en
-                <a th:href="@{/aura-gestion/vendedores}" class="admin-link">Vendedoras</a>
-                (campo "Pagado hasta pedido").
-            </p>
+            <div th:if="${esAdmin}" style="display:flex; align-items:center; gap:0.75rem; margin:0 0 1rem; flex-wrap:wrap;">
+                <p style="font-size:0.75rem; color:var(--muted); margin:0;">
+                    Usa "Marcar pagado hasta aquí" en cualquier pedido para marcar ese pedido y todos los anteriores como pagados.
+                </p>
+                <form th:if="${pagadoHastaFecha != null}" th:action="@{/aura-gestion/comisiones/quitar-corte-pagado}" method="post"
+                      onsubmit="return confirm('¿Quitar el corte de pagado? Todo volverá a verse pendiente.');" style="margin:0;">
+                    <input type="hidden" name="vendedor" th:value="${vendedor}">
+                    <input type="hidden" name="mes" th:value="${comisionMes}">
+                    <button type="submit" style="background:none; border:none; color:#c0392b; text-decoration:underline;
+                                                  font-size:0.75rem; cursor:pointer; font-family:inherit;">Quitar corte de pagado</button>
+                </form>
+            </div>
             <p th:if="${comisionDetalle.isEmpty()}" style="color:var(--muted); font-size:0.85rem;">Sin ventas de <span th:text="${vendedorEtiqueta}"></span> aún.</p>
             <div th:if="${!comisionDetalle.isEmpty()}" style="overflow-x:auto;">
                 <table class="admin-table">
@@ -180,7 +187,18 @@
                         <tr th:each="fila : ${comisionDetalle}">
                             <td>
                                 <span th:if="${fila.pagada}" class="badge" style="background:#e8f5e9; color:#2e7d32;">✅ Pagado</span>
-                                <span th:unless="${fila.pagada}" class="badge" style="background:#fff8e6; color:#8a6d1f;">⏳ Pendiente</span>
+                                <div th:unless="${fila.pagada}">
+                                    <span class="badge" style="background:#fff8e6; color:#8a6d1f;">⏳ Pendiente</span>
+                                    <form th:if="${esAdmin}" th:action="@{/aura-gestion/comisiones/marcar-pagado-hasta}" method="post" style="margin-top:0.3rem;">
+                                        <input type="hidden" name="vendedor" th:value="${vendedor}">
+                                        <input type="hidden" name="mes" th:value="${comisionMes}">
+                                        <input type="hidden" name="fecha" th:value="${fila.fecha}">
+                                        <button type="submit" style="background:none; border:none; color:#8a6d1f; text-decoration:underline;
+                                                                      font-size:0.68rem; cursor:pointer; font-family:inherit; padding:0;">
+                                            Marcar pagado hasta aquí
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                             <td style="font-family:monospace; font-size:0.8rem; color:var(--muted);" th:text="${fila.codigoPedido}"></td>
                             <td style="color:var(--muted); white-space:nowrap;" th:text="${#temporals.format(fila.fecha, 'dd/MM/yyyy HH:mm')}"></td>

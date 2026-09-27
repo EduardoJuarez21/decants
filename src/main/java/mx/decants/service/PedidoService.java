@@ -406,17 +406,8 @@ public class PedidoService {
     // en pantalla debe cubrir lo mismo para que las ventas listadas expliquen ese
     // acumulado, en vez de mostrar solo un mes cuando el pendiente arrastra varios.
     @Transactional(readOnly = true)
-    public Map<String, Object> comisionVendedor(String vendedor, double comisionPorcentaje, String pagadoHastaPedido) {
+    public Map<String, Object> comisionVendedor(String vendedor, double comisionPorcentaje, LocalDateTime pagadoHastaFecha) {
         List<Pedido> pedidos = pedidoRepository.findByVendedorAndEstadoPedidoNot(vendedor, EstadoPedido.CANCELADO);
-
-        // Corte manual: pedidos antes de este ya se le pagaron, este y los
-        // posteriores (por fecha) siguen pendientes -- ver Vendedor.pagadoHastaPedido.
-        LocalDateTime corte = null;
-        if (pagadoHastaPedido != null && !pagadoHastaPedido.isBlank()) {
-            corte = pedidoRepository.findByCodigoPublico(pagadoHastaPedido.trim())
-                .map(Pedido::getFechaCreacion).orElse(null);
-        }
-        final LocalDateTime corteFinal = corte;
 
         int ventasTotales = pedidos.stream()
             .mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0)
@@ -464,7 +455,9 @@ public class PedidoService {
                 fila.put("subtotal", subtotal);
                 fila.put("costoProduccion", costoItem);
                 fila.put("observaciones", pedido.getObservaciones());
-                fila.put("pagada", corteFinal != null && pedido.getFechaCreacion().isBefore(corteFinal));
+                // Inclusivo: al marcar "pagado hasta aqui" en un pedido, ese pedido tambien
+                // queda como pagado (no solo los anteriores a el).
+                fila.put("pagada", pagadoHastaFecha != null && !pedido.getFechaCreacion().isAfter(pagadoHastaFecha));
                 detalle.add(fila);
             }
         }
