@@ -253,6 +253,7 @@
                         <option value="PENDIENTE_PAGO" th:selected="${pedido.estadoPedido.name() == 'PENDIENTE_PAGO'}">Pendiente de pago</option>
                         <option value="CONFIRMADO" th:selected="${pedido.estadoPedido.name() == 'CONFIRMADO'}">Confirmado</option>
                         <option value="LISTO_PARA_ENVIO" th:selected="${pedido.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
+                        <option value="PAQUETERIA" th:selected="${pedido.estadoPedido.name() == 'PAQUETERIA'}">Paquetería</option>
                         <option value="ENVIADO" th:selected="${pedido.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
                         <option value="ENTREGADO" th:selected="${pedido.estadoPedido.name() == 'ENTREGADO'}">Entregado</option>
                         <option value="CANCELADO" th:selected="${pedido.estadoPedido.name() == 'CANCELADO'}">Cancelado</option>

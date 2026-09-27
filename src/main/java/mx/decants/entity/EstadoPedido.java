@@ -6,6 +6,7 @@ public enum EstadoPedido {
     CREADO("Creado"),
     CONFIRMADO("Confirmado"),
     LISTO_PARA_ENVIO("Listo para envío"),
+    PAQUETERIA("Paquetería"),
     ENVIADO("Enviado"),
     ENTREGADO("Entregado"),
     CANCELADO("Cancelado"),

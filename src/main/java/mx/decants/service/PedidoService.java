@@ -50,8 +50,8 @@ public class PedidoService {
     );
 
     private static final Set<EstadoPedido> ESTADOS_VALIDOS = Set.of(
-        EstadoPedido.CREADO, EstadoPedido.CONFIRMADO,
-        EstadoPedido.LISTO_PARA_ENVIO, EstadoPedido.ENVIADO, EstadoPedido.ENTREGADO
+        EstadoPedido.CREADO, EstadoPedido.CONFIRMADO, EstadoPedido.LISTO_PARA_ENVIO,
+        EstadoPedido.PAQUETERIA, EstadoPedido.ENVIADO, EstadoPedido.ENTREGADO
     );
 
     private final PedidoRepository pedidoRepository;
@@ -581,6 +581,7 @@ public class PedidoService {
             case "PENDIENTE_PAGO"   -> EstadoPedido.PENDIENTE_PAGO;
             case "CONFIRMADO"       -> EstadoPedido.CONFIRMADO;
             case "LISTO_PARA_ENVIO" -> EstadoPedido.LISTO_PARA_ENVIO;
+            case "PAQUETERIA"       -> EstadoPedido.PAQUETERIA;
             case "ENVIADO"          -> EstadoPedido.ENVIADO;
             case "ENTREGADO"        -> EstadoPedido.ENTREGADO;
             case "CANCELADO"        -> EstadoPedido.CANCELADO;
@@ -709,6 +710,7 @@ public class PedidoService {
             case "PENDIENTE_PAGO"   -> EstadoPedido.PENDIENTE_PAGO;
             case "CONFIRMADO"       -> EstadoPedido.CONFIRMADO;
             case "LISTO_PARA_ENVIO" -> EstadoPedido.LISTO_PARA_ENVIO;
+            case "PAQUETERIA"       -> EstadoPedido.PAQUETERIA;
             case "ENVIADO"          -> EstadoPedido.ENVIADO;
             case "ENTREGADO"        -> EstadoPedido.ENTREGADO;
             case "CANCELADO"        -> EstadoPedido.CANCELADO;
@@ -760,7 +762,8 @@ public class PedidoService {
                 EstadoPedido nuevoEstado = EstadoPedido.valueOf(estadoStr);
                 boolean esLocal = "local".equals(p.getEntorno());
                 boolean vaPorPaqueteria = Boolean.TRUE.equals(p.getEnvioPorPaqueteria());
-                if (esLocal && !vaPorPaqueteria && (nuevoEstado == EstadoPedido.LISTO_PARA_ENVIO || nuevoEstado == EstadoPedido.ENVIADO)) {
+                if (esLocal && !vaPorPaqueteria && (nuevoEstado == EstadoPedido.LISTO_PARA_ENVIO
+                        || nuevoEstado == EstadoPedido.PAQUETERIA || nuevoEstado == EstadoPedido.ENVIADO)) {
                     log.warn("Pedido #{} es local — estado {} no permitido", id, estadoStr);
                     return;
                 }

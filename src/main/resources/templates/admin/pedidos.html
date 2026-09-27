@@ -219,6 +219,7 @@
                                             p.estadoPedido.name() == 'CREADO'          ? 'badge-creado'       :
                                             p.estadoPedido.name() == 'CONFIRMADO'      ? 'badge-confirmado'   :
                                             p.estadoPedido.name() == 'LISTO_PARA_ENVIO'? 'badge-listo-envio'  :
+                                            p.estadoPedido.name() == 'PAQUETERIA'      ? 'badge-paqueteria'   :
                                             p.estadoPedido.name() == 'ENVIADO'         ? 'badge-enviado'      :
                                             p.estadoPedido.name() == 'ENTREGADO'       ? 'badge-entregado'    :
                                             p.estadoPedido.name() == 'CANCELADO'       ? 'badge-cancelado'    :
@@ -228,6 +229,7 @@
                                     <option value="PENDIENTE_PAGO"  th:selected="${p.estadoPedido.name() == 'PENDIENTE_PAGO'}">Pendiente de pago</option>
                                     <option value="CONFIRMADO"      th:selected="${p.estadoPedido.name() == 'CONFIRMADO'}">Confirmado</option>
                                     <option th:if="${p.entorno != 'local' or p.envioPorPaqueteria == true}" value="LISTO_PARA_ENVIO" th:selected="${p.estadoPedido.name() == 'LISTO_PARA_ENVIO'}">Listo para envío</option>
+                                    <option th:if="${p.entorno != 'local' or p.envioPorPaqueteria == true}" value="PAQUETERIA"      th:selected="${p.estadoPedido.name() == 'PAQUETERIA'}">Paquetería</option>
                                     <option th:if="${p.entorno != 'local' or p.envioPorPaqueteria == true}" value="ENVIADO"          th:selected="${p.estadoPedido.name() == 'ENVIADO'}">Enviado</option>
                                     <option value="ENTREGADO"       th:selected="${p.estadoPedido.name() == 'ENTREGADO'}">Entregado</option>
                                     <option value="CANCELADO"       th:selected="${p.estadoPedido.name() == 'CANCELADO'}">Cancelado</option>

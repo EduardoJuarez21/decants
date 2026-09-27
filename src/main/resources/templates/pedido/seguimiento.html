@@ -247,7 +247,7 @@
                     </div>
 
                     <!-- Paso 2: Confirmado / Pago recibido -->
-                    <div th:with="confirmados=#{'CONFIRMADO','LISTO_PARA_ENVIO','ENVIADO','ENTREGADO','EN_REVISION'}"
+                    <div th:with="confirmados=#{'CONFIRMADO','LISTO_PARA_ENVIO','PAQUETERIA','ENVIADO','ENTREGADO','EN_REVISION'}"
                          th:class="${confirmados.contains(pedido.estadoPedido.name()) ? 'timeline-step done' :
                                      pedido.estadoPedido.name() == 'PENDIENTE_PAGO' ? 'timeline-step active' : 'timeline-step active'}">
                         <div class="step-dot"
@@ -262,7 +262,7 @@
                     </div>
 
                     <!-- Paso 3: En preparación -->
-                    <div th:with="preparados=#{'LISTO_PARA_ENVIO','ENVIADO','ENTREGADO'}"
+                    <div th:with="preparados=#{'LISTO_PARA_ENVIO','PAQUETERIA','ENVIADO','ENTREGADO'}"
                          th:class="${preparados.contains(pedido.estadoPedido.name()) ? 'timeline-step done' :
                                      pedido.estadoPedido.name() == 'CONFIRMADO' ? 'timeline-step active' : 'timeline-step'}">
                         <div class="step-dot"
@@ -278,7 +278,7 @@
                     <!-- Paso 4: Enviado / En camino -->
                     <div th:with="enviados=#{'ENVIADO','ENTREGADO'}"
                          th:class="${enviados.contains(pedido.estadoPedido.name()) ? 'timeline-step done' :
-                                     pedido.estadoPedido.name() == 'LISTO_PARA_ENVIO' ? 'timeline-step active' : 'timeline-step'}">
+                                     (pedido.estadoPedido.name() == 'LISTO_PARA_ENVIO' or pedido.estadoPedido.name() == 'PAQUETERIA') ? 'timeline-step active' : 'timeline-step'}">
                         <div class="step-dot"
                              th:text="${enviados.contains(pedido.estadoPedido.name()) ? '✓' : '4'}"></div>
                         <div class="step-body">
@@ -287,6 +287,10 @@
                             <div class="step-sub"
                                  th:if="${pedido.estadoPedido.name() == 'LISTO_PARA_ENVIO' and pedido.entorno != 'local'}">
                                 Listo — pronto se asigna guía de envío
+                            </div>
+                            <div class="step-sub"
+                                 th:if="${pedido.estadoPedido.name() == 'PAQUETERIA'}">
+                                Ya se entregó a la paquetería — en breve recibirás la guía
                             </div>
                             <div class="step-sub"
                                  th:if="${pedido.estadoPedido.name() == 'ENVIADO' and pedido.numeroGuia != null and !#strings.startsWith(pedido.numeroGuia, 'http')}">

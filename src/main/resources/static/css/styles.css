@@ -1085,6 +1085,7 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 .badge-creado        { background: #e3f2fd; color: #1565c0; }
 .badge-confirmado    { background: #e8f5e9; color: #2e7d32; }
 .badge-listo-envio   { background: #fff3e0; color: #bf360c; }
+.badge-paqueteria    { background: #fbe9d9; color: #8a5a1f; }
 .badge-enviado       { background: #ede7f6; color: #4527a0; }
 .badge-entregado     { background: #e0f2f1; color: #00695c; }
 .badge-cancelado     { background: #fce4ec; color: #c62828; }

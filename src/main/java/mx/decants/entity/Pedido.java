@@ -233,6 +233,8 @@ public class Pedido {
                 + " fue confirmado. Ya estamos preparando tus fragancias. — Aura Decants MX";
             case LISTO_PARA_ENVIO -> "Hola " + cliente + "! Tu pedido " + codigo
                 + " está listo para enviarse. En breve recibirás el número de guía. — Aura Decants MX";
+            case PAQUETERIA -> "Hola " + cliente + "! Tu pedido " + codigo
+                + " ya se entregó a la paquetería. En cuanto tengamos la guía te la compartimos. — Aura Decants MX";
             case ENVIADO -> "Hola " + cliente + "! Tu pedido " + codigo + " está en camino."
                 + (numeroGuia != null && !numeroGuia.isBlank() ? " Número de guía: " + numeroGuia + "." : "")
                 + (linkGuia != null && !linkGuia.isBlank() ? " Rastréalo aquí: " + linkGuia : "")
