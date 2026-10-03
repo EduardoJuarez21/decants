@@ -496,7 +496,8 @@ public class PedidoService {
         List<Pedido> pedidos = pedidoRepository.findByVendedorAndEstadoPedidoNotIn(
             vendedor, Set.of(EstadoPedido.ENTREGADO, EstadoPedido.CANCELADO));
 
-        int total = pedidos.stream().mapToInt(p -> p.getTotalPagado() != null ? p.getTotalPagado() : 0).sum();
+        // Lo que ya abonó (montoAbonado) se descuenta: debe solo el saldo pendiente
+        int total = pedidos.stream().mapToInt(PedidoService::saldoDeuda).sum();
 
         List<Map<String, Object>> detalle = new ArrayList<>();
         for (Pedido pedido : pedidos) {
@@ -506,6 +507,8 @@ public class PedidoService {
             fila.put("estado", pedido.getEstadoPedido().getEtiqueta());
             fila.put("productos", pedido.getProductosSeleccionados());
             fila.put("total", pedido.getTotalPagado());
+            fila.put("abonado", pedido.getMontoAbonado());
+            fila.put("pendiente", saldoDeuda(pedido));
             detalle.add(fila);
         }
         detalle.sort((a, b) -> ((LocalDateTime) b.get("fecha")).compareTo((LocalDateTime) a.get("fecha")));
@@ -514,6 +517,11 @@ public class PedidoService {
         resultado.put("total", total);
         resultado.put("detalle", detalle);
         return resultado;
+    }
+
+    private static int saldoDeuda(Pedido pedido) {
+        if (pedido.getSaldoPendiente() != null) return pedido.getSaldoPendiente();
+        return pedido.getTotalPagado() != null ? pedido.getTotalPagado() : 0;
     }
 
     private static Integer mlEquivalente(PedidoItem item, Producto p) {

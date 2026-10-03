@@ -270,6 +270,8 @@
                             <th>Estado</th>
                             <th>Productos</th>
                             <th style="text-align:right;">Total</th>
+                            <th style="text-align:right;">Abonado</th>
+                            <th style="text-align:right;">Debe</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -278,7 +280,9 @@
                             <td style="color:var(--muted); white-space:nowrap;" th:text="${#temporals.format(fila.fecha, 'dd/MM/yyyy HH:mm')}"></td>
                             <td th:text="${fila.estado}"></td>
                             <td th:text="${fila.productos}"></td>
-                            <td style="text-align:right; font-weight:700;" th:text="|$${fila.total}|"></td>
+                            <td style="text-align:right;" th:text="|$${fila.total}|"></td>
+                            <td style="text-align:right; color:var(--muted);" th:text="${fila.abonado != null ? '$' + fila.abonado : '—'}"></td>
+                            <td style="text-align:right; font-weight:700;" th:text="|$${fila.pendiente}|"></td>
                         </tr>
                     </tbody>
                 </table>
