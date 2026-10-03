@@ -230,6 +230,13 @@
                 Marcar como Best Seller ★
             </label>
 
+            <!-- Nuevo ingreso -->
+            <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; font-size:0.88rem; color:#444;">
+                <input type="checkbox" name="nuevo" value="true" th:checked="${producto.nuevo}"
+                       style="width:16px; height:16px; cursor:pointer; accent-color:#1a1a1a;">
+                Marcar como Nuevo ingreso (aparece en la portada)
+            </label>
+
             <!-- Promoción -->
             <div style="border:1.5px solid #f5e0c8; background:#fffaf3; border-radius:10px; padding:0.9rem 1rem; display:flex; flex-direction:column; gap:0.7rem;">
                 <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; font-size:0.88rem; color:#444; font-weight:600;">

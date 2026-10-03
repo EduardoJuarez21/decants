@@ -436,6 +436,7 @@ public class AdminController {
                                   @RequestParam(required = false) Integer precio5ml,
                                   @RequestParam(required = false) Integer precio3ml,
                                   @RequestParam(defaultValue = "false") boolean bestSeller,
+                                  @RequestParam(defaultValue = "false") boolean nuevo,
                                   @RequestParam(required = false) Integer stock,
                                   @RequestParam(required = false) String caracteristicas,
                                   @RequestParam(required = false) String inspiracion,
@@ -452,7 +453,7 @@ public class AdminController {
                                   @RequestParam(required = false) Double comisionFamiliar5ml,
                                   @RequestParam(required = false) Double comisionFamiliar3ml,
                                   RedirectAttributes ra) {
-        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje, proveedor, costoPorMl, markup, concentracion, precioBotella, mlBotella, comisionFamiliar, comisionFamiliar5ml, comisionFamiliar3ml);
+        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, nuevo, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje, proveedor, costoPorMl, markup, concentracion, precioBotella, mlBotella, comisionFamiliar, comisionFamiliar5ml, comisionFamiliar3ml);
         productoService.actualizarStock(id, stock);
         productoService.actualizarStockBotella(id, stockBotella);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");

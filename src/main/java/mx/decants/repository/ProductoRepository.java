@@ -26,6 +26,12 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     Page<Producto> findByCategoriaAndGeneroInAndActivoTrue(String categoria, List<String> generos, Pageable pageable);
 
+    long countByActivoTrue();
+
+    List<Producto> findByNuevoTrueAndActivoTrueOrderByIdDesc();
+
+    List<Producto> findByPromoActivoTrueAndActivoTrueOrderByIdDesc();
+
     Optional<Producto> findBySlugAndActivoTrue(String slug);
 
     boolean existsBySlug(String slug);

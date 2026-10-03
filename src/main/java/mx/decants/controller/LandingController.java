@@ -1,10 +1,13 @@
 package mx.decants.controller;
 
 import mx.decants.entity.Cupon;
+import mx.decants.entity.EstadoPedido;
 import mx.decants.entity.Kit;
 import mx.decants.entity.Producto;
+import mx.decants.entity.Resena;
 import mx.decants.repository.CuponRepository;
 import mx.decants.repository.KitRepository;
+import mx.decants.repository.PedidoRepository;
 import mx.decants.service.ConfiguracionService;
 import mx.decants.service.ProductoService;
 import mx.decants.service.ResenaService;
@@ -38,6 +41,7 @@ public class LandingController {
     private final KitRepository kitRepository;
     private final VisitaService visitaService;
     private final ResenaService resenaService;
+    private final PedidoRepository pedidoRepository;
 
     @Value("${app.base-url:https://auradecantsmx.com}")
     private String baseUrl;
@@ -47,7 +51,9 @@ public class LandingController {
                              CuponRepository cuponRepository,
                              KitRepository kitRepository,
                              VisitaService visitaService,
-                             ResenaService resenaService) {
+                             ResenaService resenaService,
+                             PedidoRepository pedidoRepository) {
+        this.pedidoRepository = pedidoRepository;
         this.productoService = productoService;
         this.configuracionService = configuracionService;
         this.cuponRepository = cuponRepository;
@@ -85,8 +91,19 @@ public class LandingController {
         model.addAttribute("umbralEnvioGratis", configuracionService.getUmbralEnvioGratis());
         model.addAttribute("textoEnvioLocal",   configuracionService.getTextoEnvioLocal());
         model.addAttribute("waNumero",          configuracionService.getWhatsappNegocio());
-        model.addAttribute("resenas",           resenaService.listarAprobadas());
+        var resenas = resenaService.listarAprobadas();
+        model.addAttribute("resenas",           resenas);
         model.addAttribute("msiMontoMinimo",    configuracionService.getMsiMontoMinimo());
+
+        // Franja de confianza: pedidos entregados redondeados hacia abajo a decenas ("+80")
+        long entregados = pedidoRepository.countByEstadoPedido(EstadoPedido.ENTREGADO);
+        model.addAttribute("pedidosEntregados", entregados >= 10 ? (entregados / 10) * 10 : 0);
+        model.addAttribute("resenasPromedio", resenas.stream()
+                .mapToInt(Resena::getCalificacion).average().orElse(0));
+        model.addAttribute("totalFragancias", productoService.contarActivos());
+
+        model.addAttribute("productosNuevos", productoService.nuevosParaPortada());
+        model.addAttribute("productosPromo",  productoService.promosParaPortada());
 
         Map<String, Kit> kitsMap = kitRepository.findAllByOrderByOrdenAsc().stream()
                 .collect(Collectors.toMap(Kit::getSlug, k -> k));

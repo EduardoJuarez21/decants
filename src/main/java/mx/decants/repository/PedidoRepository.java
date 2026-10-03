@@ -15,6 +15,8 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     List<Pedido> findAllByOrderByFechaCreacionDesc();
 
+    long countByEstadoPedido(EstadoPedido estadoPedido);
+
     Optional<Pedido> findByStripeSessionId(String stripeSessionId);
 
     Optional<Pedido> findByCodigoPublicoAndTelefono(String codigoPublico, String telefono);

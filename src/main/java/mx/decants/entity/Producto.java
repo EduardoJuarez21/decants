@@ -57,6 +57,9 @@ public class Producto {
 
     private boolean bestSeller;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean nuevo;           // aparece en "Nuevos ingresos" de la portada
+
     private boolean soloItem;        // true = solo disponible individual / paquete exclusivo
 
     @Column(nullable = false)
@@ -145,6 +148,9 @@ public class Producto {
     public boolean isBestSeller() { return bestSeller; }
     public void setBestSeller(boolean bestSeller) { this.bestSeller = bestSeller; }
 
+    public boolean isNuevo() { return nuevo; }
+    public void setNuevo(boolean nuevo) { this.nuevo = nuevo; }
+
     public boolean isSoloItem() { return soloItem; }
     public void setSoloItem(boolean soloItem) { this.soloItem = soloItem; }
 
@@ -195,6 +201,15 @@ public class Producto {
     public Integer getPrecioConDescuento() { return conDescuento(precio); }
     public Integer getPrecio5mlConDescuento() { return conDescuento(precio5ml); }
     public Integer getPrecio3mlConDescuento() { return conDescuento(precio3ml); }
+
+    // --- Precio "desde": la presentación más chica disponible ---
+
+    public Integer getPrecioDesde() {
+        if (precio3ml != null) return precio3ml;
+        if (precio5ml != null) return precio5ml;
+        return precio;
+    }
+    public Integer getPrecioDesdeConDescuento() { return conDescuento(getPrecioDesde()); }
 
     private Integer conDescuento(Integer precioBase) {
         if (!promoActivo || descuentoPorcentaje == null || precioBase == null) return null;

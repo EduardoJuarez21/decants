@@ -58,6 +58,32 @@ public class ProductoService {
     }
 
     @Transactional(readOnly = true)
+    public long contarActivos() {
+        return productoRepository.countByActivoTrue();
+    }
+
+    private static final int MAX_DESTACADOS_PORTADA = 8;
+
+    @Transactional(readOnly = true)
+    public List<Producto> nuevosParaPortada() {
+        return conStock(productoRepository.findByNuevoTrueAndActivoTrueOrderByIdDesc());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Producto> promosParaPortada() {
+        return conStock(productoRepository.findByPromoActivoTrueAndActivoTrueOrderByIdDesc().stream()
+                .filter(p -> p.getDescuentoPorcentaje() != null)
+                .toList());
+    }
+
+    private List<Producto> conStock(List<Producto> productos) {
+        return productos.stream()
+                .filter(p -> p.getStock() == null || p.getStock() > 0)
+                .limit(MAX_DESTACADOS_PORTADA)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public byte[] exportarCsvParaIA(List<Producto> productos, java.util.Map<Long, String> archivoPorProducto) {
         StringBuilder sb = new StringBuilder();
         sb.append("Archivo,Marca,Nombre,Categoria,Genero,Familia,Notas,Caracteristicas,Inspiracion,")
@@ -100,7 +126,7 @@ public class ProductoService {
         return productoRepository.findById(id);
     }
 
-    public void actualizar(Long id, Integer precio, Integer precio5ml, Integer precio3ml, String nombre, String marca, boolean bestSeller, String caracteristicas, String inspiracion,
+    public void actualizar(Long id, Integer precio, Integer precio5ml, Integer precio3ml, String nombre, String marca, boolean bestSeller, boolean nuevo, String caracteristicas, String inspiracion,
                            boolean promoActivo, Integer descuentoPorcentaje, String proveedor, Double costoPorMl, Double markup, String concentracion,
                            Integer precioBotella, Integer mlBotella,
                            Double comisionFamiliar, Double comisionFamiliar5ml, Double comisionFamiliar3ml) {
@@ -111,6 +137,7 @@ public class ProductoService {
             p.setPrecio5ml(precio5ml != null && precio5ml > 0 ? precio5ml : null);
             p.setPrecio3ml(precio3ml != null && precio3ml > 0 ? precio3ml : null);
             p.setBestSeller(bestSeller);
+            p.setNuevo(nuevo);
             p.setCaracteristicas(caracteristicas != null && !caracteristicas.isBlank() ? caracteristicas.trim() : null);
             p.setInspiracion(inspiracion != null && !inspiracion.isBlank() ? inspiracion.trim() : null);
             p.setConcentracion(concentracion != null && !concentracion.isBlank() ? concentracion.trim() : null);

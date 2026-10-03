@@ -145,6 +145,34 @@
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════
+     FRANJA DE CONFIANZA
+════════════════════════════════════════════════════════════ -->
+<div class="trust-strip">
+    <div class="container trust-grid">
+        <div class="trust-item" th:if="${pedidosEntregados > 0}">
+            <span class="trust-num" th:text="|+${pedidosEntregados}|">+80</span>
+            <span class="trust-label">pedidos entregados</span>
+        </div>
+        <a href="#resenas" class="trust-item" th:if="${!resenas.isEmpty()}">
+            <span class="trust-num"><span th:text="${#numbers.formatDecimal(resenasPromedio, 1, 'NONE', 1, 'POINT')}">5.0</span> <span class="trust-star">★</span></span>
+            <span class="trust-label" th:text="|en ${resenas.size()} reseñas|">en 21 reseñas</span>
+        </a>
+        <div class="trust-item">
+            <span class="trust-num" th:text="${totalFragancias}">79</span>
+            <span class="trust-label">fragancias disponibles</span>
+        </div>
+        <div class="trust-item">
+            <span class="trust-num">100%</span>
+            <span class="trust-label">botellas originales</span>
+        </div>
+        <div class="trust-item">
+            <span class="trust-num">3–7</span>
+            <span class="trust-label">días hábiles a todo México</span>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
      MESES SIN INTERESES
 ════════════════════════════════════════════════════════════ -->
 <div class="msi-banner">
@@ -207,6 +235,67 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
+     DESTACADOS: NUEVOS INGRESOS Y PROMOCIONES
+════════════════════════════════════════════════════════════ -->
+<section id="destacados" class="destacados-section"
+         th:if="${!productosNuevos.isEmpty() or !productosPromo.isEmpty()}">
+    <div class="container">
+
+        <div class="destacados-bloque" th:if="${!productosNuevos.isEmpty()}">
+            <div class="destacados-header">
+                <span class="destacados-kicker">Recién llegados</span>
+                <h2>Nuevos ingresos</h2>
+            </div>
+            <div class="destacados-row">
+                <a class="dest-card" th:each="p : ${productosNuevos}" th:href="@{/perfume/{slug}(slug=${p.slug})}">
+                    <div class="dest-img">
+                        <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" loading="lazy" decoding="async">
+                        <span class="dest-badge">Nuevo</span>
+                        <span th:if="${p.precioDesdeConDescuento != null}" class="dest-badge dest-badge-promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
+                    </div>
+                    <div class="dest-info">
+                        <p class="dest-brand" th:text="${p.marca}"></p>
+                        <h3 th:text="${p.nombre}"></h3>
+                        <p class="dest-family" th:text="${p.familia}"></p>
+                        <p class="dest-price">
+                            desde
+                            <span th:if="${p.precioDesdeConDescuento != null}" class="size-price-old" th:text="|$${p.precioDesde}|"></span>
+                            <strong th:text="|$${p.precioDesdeConDescuento != null ? p.precioDesdeConDescuento : p.precioDesde}|"></strong>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="destacados-bloque" th:if="${!productosPromo.isEmpty()}">
+            <div class="destacados-header">
+                <span class="destacados-kicker">Por tiempo limitado</span>
+                <h2>Promociones del mes</h2>
+            </div>
+            <div class="destacados-row">
+                <a class="dest-card" th:each="p : ${productosPromo}" th:href="@{/perfume/{slug}(slug=${p.slug})}">
+                    <div class="dest-img">
+                        <img th:src="@{${p.imagenPrincipal}}" th:alt="${p.nombre}" loading="lazy" decoding="async">
+                        <span class="dest-badge dest-badge-promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
+                    </div>
+                    <div class="dest-info">
+                        <p class="dest-brand" th:text="${p.marca}"></p>
+                        <h3 th:text="${p.nombre}"></h3>
+                        <p class="dest-family" th:text="${p.familia}"></p>
+                        <p class="dest-price">
+                            desde
+                            <span class="size-price-old" th:text="|$${p.precioDesde}|"></span>
+                            <strong class="dest-price-promo" th:text="|$${p.precioDesdeConDescuento}|"></strong>
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
      PRODUCTOS
 ════════════════════════════════════════════════════════════ -->
 <section id="productos" class="bg-beige section-center">
@@ -247,7 +336,8 @@
                              th:alt="|Características ${p.nombre}|"
                              class="product-img-hover" loading="lazy" decoding="async">
                     </a>
-                    <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
+                    <span th:if="${p.nuevo}" class="badge-nuevo">Nuevo</span>
+                    <span th:if="${p.bestSeller and !p.nuevo}" class="badge-bestseller">Best Seller</span>
                     <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="badge-promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
                     <span th:if="${p.stock != null and p.stock == 0}"
                           class="badge-bestseller"
@@ -386,7 +476,8 @@
                              th:alt="|Características ${p.nombre}|"
                              class="product-img-hover" loading="lazy" decoding="async">
                     </a>
-                    <span th:if="${p.bestSeller}" class="badge-bestseller">Best Seller</span>
+                    <span th:if="${p.nuevo}" class="badge-nuevo">Nuevo</span>
+                    <span th:if="${p.bestSeller and !p.nuevo}" class="badge-bestseller">Best Seller</span>
                     <span th:if="${p.promoActivo and p.descuentoPorcentaje != null}" class="badge-promo" th:text="|-${p.descuentoPorcentaje}%|"></span>
                     <span th:if="${p.stock != null and p.stock == 0}"
                           class="badge-bestseller"
