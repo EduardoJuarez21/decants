@@ -162,6 +162,9 @@ public class PedidoService {
         if ("botella".equals(variant)) {
             return p.getPrecioBotella() != null ? p.getPrecioBotella() : p.getPrecio();
         }
+        if ("2ml".equals(variant) && p.getPrecio2ml() != null) {
+            return p.getPrecio2ml(); // el 2 ml no lleva promo
+        }
         if ("3ml".equals(variant) && p.getPrecio3ml() != null) {
             return p.getPrecio3mlConDescuento() != null ? p.getPrecio3mlConDescuento() : p.getPrecio3ml();
         }
@@ -363,6 +366,7 @@ public class PedidoService {
 
     private static int mlDeVariante(String variante) {
         return switch (variante) {
+            case "2ml"  -> 2;
             case "3ml"  -> 3;
             case "5ml"  -> 5;
             case "10ml" -> 10;
@@ -529,6 +533,7 @@ public class PedidoService {
         if (v == null) return null;
         if (v.startsWith("Frasco ")) return p.getMlBotella();
         return switch (v) {
+            case "2ml"  -> 2;
             case "3ml"  -> 3;
             case "5ml"  -> 5;
             case "10ml" -> 10;

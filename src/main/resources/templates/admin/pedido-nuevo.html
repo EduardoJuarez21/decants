@@ -420,6 +420,10 @@ function buscarProducto(q) {
             btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
                 p.id + ',\'3ml\',' + p.precio3ml + ')">3ml · $' + p.precio3ml + promoTag + '</button>';
         }
+        if (p.precio2ml !== null && p.precio2ml !== undefined) {
+            btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +
+                p.id + ',\'2ml\',' + p.precio2ml + ')">2ml · $' + p.precio2ml + '</button>';
+        }
         var hasBotella = p.precioBotella !== null && p.precioBotella !== undefined;
         if (hasBotella) {
             btns += '<button type="button" class="size-add-btn" onclick="agregarProducto(' +

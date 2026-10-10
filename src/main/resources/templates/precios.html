@@ -141,6 +141,7 @@
                         <th>Marca</th>
                         <th>Perfume</th>
                         <th>Para</th>
+                        <th class="num">2&nbsp;ml</th>
                         <th class="num">3&nbsp;ml</th>
                         <th class="num">5&nbsp;ml</th>
                         <th class="num">10&nbsp;ml</th>
@@ -159,6 +160,10 @@
                         </td>
                         <td class="precios-genero"
                             th:text="${p.genero == 'hombre' ? 'Hombre' : (p.genero == 'mujer' ? 'Mujer' : 'Unisex')}"></td>
+                        <td class="num">
+                            <span class="precios-price"
+                                  th:text="${p.precio2ml != null ? '$' + p.precio2ml : '—'}"></span>
+                        </td>
                         <td class="num">
                             <span th:if="${p.precio3mlConDescuento != null}">
                                 <span class="precios-price-strike" th:text="'$' + ${p.precio3ml}"></span>
@@ -210,6 +215,7 @@
                         <th>Marca</th>
                         <th>Perfume</th>
                         <th>Para</th>
+                        <th class="num">2&nbsp;ml</th>
                         <th class="num">3&nbsp;ml</th>
                         <th class="num">5&nbsp;ml</th>
                         <th class="num">10&nbsp;ml</th>
@@ -228,6 +234,10 @@
                         </td>
                         <td class="precios-genero"
                             th:text="${p.genero == 'hombre' ? 'Hombre' : (p.genero == 'mujer' ? 'Mujer' : 'Unisex')}"></td>
+                        <td class="num">
+                            <span class="precios-price"
+                                  th:text="${p.precio2ml != null ? '$' + p.precio2ml : '—'}"></span>
+                        </td>
                         <td class="num">
                             <span th:if="${p.precio3mlConDescuento != null}">
                                 <span class="precios-price-strike" th:text="'$' + ${p.precio3ml}"></span>

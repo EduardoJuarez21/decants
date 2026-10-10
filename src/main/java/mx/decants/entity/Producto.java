@@ -52,6 +52,8 @@ public class Producto {
 
     private Integer precio3ml;       // null si no tiene presentación 3 ml
 
+    private Integer precio2ml;       // null si no tiene presentación 2 ml (no aplica promo)
+
     @Column(nullable = false)
     private Double calificacion;
 
@@ -142,6 +144,9 @@ public class Producto {
     public Integer getPrecio3ml() { return precio3ml; }
     public void setPrecio3ml(Integer precio3ml) { this.precio3ml = precio3ml; }
 
+    public Integer getPrecio2ml() { return precio2ml; }
+    public void setPrecio2ml(Integer precio2ml) { this.precio2ml = precio2ml; }
+
     public Double getCalificacion() { return calificacion; }
     public void setCalificacion(Double calificacion) { this.calificacion = calificacion; }
 
@@ -204,7 +209,10 @@ public class Producto {
 
     // --- Precio "desde": la presentación más chica disponible ---
 
+    // El 2 ml no lleva promo: con promo activa, el "desde" es la presentación más chica con descuento.
     public Integer getPrecioDesde() {
+        boolean conPromo = promoActivo && descuentoPorcentaje != null;
+        if (precio2ml != null && !conPromo) return precio2ml;
         if (precio3ml != null) return precio3ml;
         if (precio5ml != null) return precio5ml;
         return precio;
@@ -221,6 +229,7 @@ public class Producto {
     public Double getCostoProduccion10ml() { return costoProduccion(10); }
     public Double getCostoProduccion5ml()  { return costoProduccion(5); }
     public Double getCostoProduccion3ml()  { return costoProduccion(3); }
+    public Double getCostoProduccion2ml()  { return costoProduccion(2); }
 
     private Double costoProduccion(int ml) {
         return costoPorMl != null ? costoPorMl * ml : null;

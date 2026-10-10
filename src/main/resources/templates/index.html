@@ -362,6 +362,15 @@
                     </div>
                     <p class="product-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
                     <div th:if="${(p.precio3ml != null or p.precio5ml != null) and (p.stock == null or p.stock > 0)}" class="size-options">
+                        <button th:if="${p.precio2ml != null}" class="size-btn"
+                                th:data-id="${p.id}"
+                                th:data-name="|${p.nombre} 2ml|"
+                                th:data-price="${p.precio2ml}"
+                                th:data-variant="2ml"
+                                onclick="addFromBtn(this)">
+                            <span class="size-label">2 ml</span>
+                            <span class="size-price" th:text="|$${p.precio2ml}|"></span>
+                        </button>
                         <button th:if="${p.precio3ml != null}" class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 3ml|"
@@ -502,6 +511,15 @@
                     </div>
                     <p class="product-inspiracion" th:if="${p.inspiracion != null and !p.inspiracion.isBlank()}" th:text="${p.inspiracion}"></p>
                     <div th:if="${(p.precio3ml != null or p.precio5ml != null) and (p.stock == null or p.stock > 0)}" class="size-options">
+                        <button th:if="${p.precio2ml != null}" class="size-btn"
+                                th:data-id="${p.id}"
+                                th:data-name="|${p.nombre} 2ml|"
+                                th:data-price="${p.precio2ml}"
+                                th:data-variant="2ml"
+                                onclick="addFromBtn(this)">
+                            <span class="size-label">2 ml</span>
+                            <span class="size-price" th:text="|$${p.precio2ml}|"></span>
+                        </button>
                         <button th:if="${p.precio3ml != null}" class="size-btn"
                                 th:data-id="${p.id}"
                                 th:data-name="|${p.nombre} 3ml|"

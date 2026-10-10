@@ -87,7 +87,7 @@ public class ProductoService {
     public byte[] exportarCsvParaIA(List<Producto> productos, java.util.Map<Long, String> archivoPorProducto) {
         StringBuilder sb = new StringBuilder();
         sb.append("Archivo,Marca,Nombre,Categoria,Genero,Familia,Notas,Caracteristicas,Inspiracion,")
-          .append("Precio3ml,Precio5ml,Precio10ml,PromoActiva,DescuentoPorcentaje\n");
+          .append("Precio2ml,Precio3ml,Precio5ml,Precio10ml,PromoActiva,DescuentoPorcentaje\n");
         for (Producto p : productos) {
             sb.append(csv(archivoPorProducto.get(p.getId())))
               .append(",").append(csv(p.getMarca()))
@@ -98,6 +98,7 @@ public class ProductoService {
               .append(",").append(csv(p.getNotas()))
               .append(",").append(csv(p.getCaracteristicas()))
               .append(",").append(csv(p.getInspiracion()))
+              .append(",").append(csv(p.getPrecio2ml()))
               .append(",").append(csv(p.getPrecio3ml()))
               .append(",").append(csv(p.getPrecio5ml()))
               .append(",").append(csv(p.getPrecio()))
@@ -126,7 +127,7 @@ public class ProductoService {
         return productoRepository.findById(id);
     }
 
-    public void actualizar(Long id, Integer precio, Integer precio5ml, Integer precio3ml, String nombre, String marca, boolean bestSeller, boolean nuevo, String caracteristicas, String inspiracion,
+    public void actualizar(Long id, Integer precio, Integer precio5ml, Integer precio3ml, Integer precio2ml, String nombre, String marca, boolean bestSeller, boolean nuevo, String caracteristicas, String inspiracion,
                            boolean promoActivo, Integer descuentoPorcentaje, String proveedor, Double costoPorMl, Double markup, String concentracion,
                            Integer precioBotella, Integer mlBotella,
                            Double comisionFamiliar, Double comisionFamiliar5ml, Double comisionFamiliar3ml) {
@@ -136,6 +137,7 @@ public class ProductoService {
             if (precio != null && precio > 0)         p.setPrecio(precio);
             p.setPrecio5ml(precio5ml != null && precio5ml > 0 ? precio5ml : null);
             p.setPrecio3ml(precio3ml != null && precio3ml > 0 ? precio3ml : null);
+            p.setPrecio2ml(precio2ml != null && precio2ml > 0 ? precio2ml : null);
             p.setBestSeller(bestSeller);
             p.setNuevo(nuevo);
             p.setCaracteristicas(caracteristicas != null && !caracteristicas.isBlank() ? caracteristicas.trim() : null);
@@ -177,7 +179,7 @@ public class ProductoService {
     }
 
     public Producto crear(String nombre, String marca, String categoria, String genero,
-                          String familia, String notas, String caracteristicas, Integer precio, Integer precio5ml, Integer precio3ml,
+                          String familia, String notas, String caracteristicas, Integer precio, Integer precio5ml, Integer precio3ml, Integer precio2ml,
                           boolean bestSeller, String imagenPrincipal, String imagenCaracteristicas, int orden,
                           String proveedor, Double costoPorMl, Double markup, String concentracion) {
         Producto p = new Producto();
@@ -192,6 +194,7 @@ public class ProductoService {
         p.setPrecio(precio);
         p.setPrecio5ml(precio5ml != null && precio5ml > 0 ? precio5ml : null);
         p.setPrecio3ml(precio3ml != null && precio3ml > 0 ? precio3ml : null);
+        p.setPrecio2ml(precio2ml != null && precio2ml > 0 ? precio2ml : null);
         p.setBestSeller(bestSeller);
         p.setImagenPrincipal(imagenPrincipal);
         p.setImagenCaracteristicas(imagenCaracteristicas);

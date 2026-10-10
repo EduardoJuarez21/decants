@@ -21,6 +21,7 @@ public interface PedidoItemRepository extends JpaRepository<PedidoItem, Long> {
     List<Object[]> findTopProductos(@Param("estados") Collection<EstadoPedido> estados, Pageable pageable);
 
     @Query("SELECT i.producto.id, SUM(CASE i.variante " +
+           "WHEN '2ml' THEN i.cantidad * 2 " +
            "WHEN '3ml' THEN i.cantidad * 3 " +
            "WHEN '5ml' THEN i.cantidad * 5 " +
            "WHEN '10ml' THEN i.cantidad * 10 " +

@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${producto.marca + ' ' + producto.nombre + ' — Decant desde $' + (producto.precio3ml != null ? producto.precio3ml : producto.precio) + ' MXN | Aura Decants MX'}"></title>
+    <title th:text="${producto.marca + ' ' + producto.nombre + ' — Decant desde $' + producto.precioDesde + ' MXN | Aura Decants MX'}"></title>
     <meta name="description"
-          th:content="|Decant de ${producto.marca} ${producto.nombre} en 3, 5 y 10 ml. ${producto.familia}. Perfume 100% original, envíos a toda la República Mexicana.|">
+          th:content="|Decant de ${producto.marca} ${producto.nombre} en ${producto.precio2ml != null ? '2, ' : ''}3, 5 y 10 ml. ${producto.familia}. Perfume 100% original, envíos a toda la República Mexicana.|">
     <link rel="canonical" th:href="${baseUrl + '/perfume/' + producto.slug}">
     <link rel="icon" type="image/png" th:href="@{/favicon.png}">
 
@@ -144,6 +144,13 @@
             </div>
 
             <div class="prod-precios" th:if="${producto.stock == null or producto.stock > 0}">
+                <div class="prod-precio-box" th:if="${producto.precio2ml != null}"
+                     th:data-id="${producto.id}" th:data-name="|${producto.nombre} 2ml|"
+                     th:data-price="${producto.precio2ml}"
+                     data-variant="2ml" onclick="agregarAlCarritoBtn(this)">
+                    <span class="prod-precio-label">2 ml</span>
+                    <span class="prod-precio-actual" th:text="|$${producto.precio2ml}|"></span>
+                </div>
                 <div class="prod-precio-box" th:if="${producto.precio3ml != null}"
                      th:classappend="${producto.precio3mlConDescuento != null} ? ' prod-precio-promo'"
                      th:data-id="${producto.id}" th:data-name="|${producto.nombre} 3ml|"

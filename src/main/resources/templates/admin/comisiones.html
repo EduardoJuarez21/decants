@@ -323,6 +323,19 @@
                 </thead>
                 <tbody id="tbodyComisiones">
                     <th:block th:each="p : ${productos}">
+                        <tr th:if="${p.precio2ml != null}"
+                            th:with="comision=${p.precio2ml * comisionPorcentaje / 100}, costo=${p.costoProduccion2ml},
+                                     negocio=${costo != null ? p.precio2ml - costo - comision : null}">
+                            <td th:text="${p.nombre}"></td>
+                            <td th:text="${p.marca}" style="color:var(--muted);"></td>
+                            <td>2 ml</td>
+                            <td th:text="|$${p.precio2ml}|"></td>
+                            <td style="font-weight:700; color:#2e7d32;"
+                                th:text="|$${#numbers.formatDecimal(comision, 1, 2)}|"></td>
+                            <td th:if="${esAdmin}" style="font-weight:700;"
+                                th:style="${negocio != null and negocio < 0} ? 'color:#c0392b;' : 'color:#1a1a1a;'"
+                                th:text="${negocio != null ? '$' + #numbers.formatDecimal(negocio, 1, 2) : '—'}"></td>
+                        </tr>
                         <tr th:if="${p.precio3ml != null}"
                             th:with="comision=${p.precio3ml * comisionPorcentaje / 100}, costo=${p.costoProduccion3ml},
                                      negocio=${costo != null ? p.precio3ml - costo - comision : null}">

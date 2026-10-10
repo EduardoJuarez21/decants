@@ -178,6 +178,7 @@ public class AdminController {
                 m.put("precio3ml", p.getPrecio3ml() != null
                         ? (p.getPrecio3mlConDescuento() != null ? p.getPrecio3mlConDescuento() : p.getPrecio3ml())
                         : null);
+                m.put("precio2ml", p.getPrecio2ml());
                 m.put("precioBotella", p.getPrecioBotella());
                 m.put("mlBotella", p.getMlBotella());
                 m.put("promoActivo", p.isPromoActivo() && p.getDescuentoPorcentaje() != null);
@@ -386,6 +387,7 @@ public class AdminController {
                                 @RequestParam Integer precio,
                                 @RequestParam(required = false) Integer precio5ml,
                                 @RequestParam(required = false) Integer precio3ml,
+                                @RequestParam(required = false) Integer precio2ml,
                                 @RequestParam(defaultValue = "false") boolean bestSeller,
                                 @RequestParam int orden,
                                 @RequestParam(required = false) String proveedor,
@@ -404,7 +406,7 @@ public class AdminController {
             }
 
             productoService.crear(nombre, marca, categoria, genero,
-                familia, notas, caracteristicas, precio, precio5ml, precio3ml, bestSeller, pathPrincipal, pathCar, orden,
+                familia, notas, caracteristicas, precio, precio5ml, precio3ml, precio2ml, bestSeller, pathPrincipal, pathCar, orden,
                 proveedor, costoPorMl, markup, concentracion);
 
             ra.addFlashAttribute("mensaje", "Producto \"" + nombre + "\" creado correctamente.");
@@ -435,6 +437,7 @@ public class AdminController {
                                   @RequestParam Integer precio,
                                   @RequestParam(required = false) Integer precio5ml,
                                   @RequestParam(required = false) Integer precio3ml,
+                                  @RequestParam(required = false) Integer precio2ml,
                                   @RequestParam(defaultValue = "false") boolean bestSeller,
                                   @RequestParam(defaultValue = "false") boolean nuevo,
                                   @RequestParam(required = false) Integer stock,
@@ -453,7 +456,7 @@ public class AdminController {
                                   @RequestParam(required = false) Double comisionFamiliar5ml,
                                   @RequestParam(required = false) Double comisionFamiliar3ml,
                                   RedirectAttributes ra) {
-        productoService.actualizar(id, precio, precio5ml, precio3ml, nombre, marca, bestSeller, nuevo, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje, proveedor, costoPorMl, markup, concentracion, precioBotella, mlBotella, comisionFamiliar, comisionFamiliar5ml, comisionFamiliar3ml);
+        productoService.actualizar(id, precio, precio5ml, precio3ml, precio2ml, nombre, marca, bestSeller, nuevo, caracteristicas, inspiracion, promoActivo, descuentoPorcentaje, proveedor, costoPorMl, markup, concentracion, precioBotella, mlBotella, comisionFamiliar, comisionFamiliar5ml, comisionFamiliar3ml);
         productoService.actualizarStock(id, stock);
         productoService.actualizarStockBotella(id, stockBotella);
         ra.addFlashAttribute("mensaje", "Producto actualizado correctamente.");
