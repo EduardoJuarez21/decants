@@ -567,6 +567,9 @@ section      { padding: 6rem 2rem; }
   text-decoration: none;
   transition: all var(--ease);
 }
+/* Con 4 tamaños (2/3/5/10 ml) no caben en una fila: van de 2 en 2 */
+.size-options:has(> .size-btn:nth-child(4)) { flex-wrap: wrap; }
+.size-options:has(> .size-btn:nth-child(4)) .size-btn { flex: 1 1 calc(50% - 0.5rem); min-width: 0; }
 .size-btn:hover { background: var(--gold); border-color: var(--gold); }
 .size-btn:hover .size-label, .size-btn:hover .size-price { color: var(--black); }
 .size-label { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
@@ -1483,9 +1486,6 @@ textarea.form-control { resize: vertical; min-height: 96px; }
 
   .size-options { gap: 0.35rem; margin-top: 0.25rem; }
   .size-btn { padding: 0.35rem 0.3rem; border-radius: 6px; }
-  /* Con 4 tamaños (2/3/5/10 ml) no caben en una fila: van de 2 en 2 */
-  .size-options:has(> .size-btn:nth-child(4)) { flex-wrap: wrap; }
-  .size-options:has(> .size-btn:nth-child(4)) .size-btn { flex: 1 1 calc(50% - 0.35rem); }
   .size-label { font-size: 0.62rem; }
   .size-price { font-size: 0.82rem; }
 }
